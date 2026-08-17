@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniAttend 360 | Universal Attendance & Anti-Proxy Platform</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- HTML5 QR Scanner -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+    .pin-glow { text-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- TOP NAVIGATION & ROLE SWITCHER -->
+  <header class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="bg-blue-600 p-2 rounded-xl text-white">
+          <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-lg tracking-tight leading-none">UniAttend 360</h1>
+          <p class="text-xs text-blue-200 mt-0.5">Enterprise Anti-Proxy Attendance Platform</p>
+        </div>
+      </div>
+
+      <!-- Persona / Role Selector -->
+      <div class="flex items-center space-x-3">
+        <span class="text-xs font-semibold text-blue-200 uppercase tracking-wider hidden sm:inline">Role View:</span>
+        <select id="roleSelector" onchange="switchRole(this.value)" class="bg-blue-800 text-white font-medium text-sm rounded-lg px-3 py-1.5 border border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="PRINCIPAL">🏛️ Principal / Vice Chancellor</option>
+          <option value="HOD">👔 Departmental Head (HOD)</option>
+          <option value="TEACHER">👨‍🏫 Teacher / Faculty</option>
+          <option value="STUDENT" selected>🎓 Student Mobile View</option>
+        </select>
+        <span id="apiStatus" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+          ● API Connected
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ACTIVE PROFILE BANNER -->
+    <div id="profileBanner" class="mb-6 p-4 rounded-xl border flex items-center justify-between bg-purple-50 border-purple-200">
+      <div class="flex items-center space-x-3">
+        <span id="roleIcon" class="text-2xl">🎓</span>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h2 id="profileName" class="font-bold text-slate-800 text-base">Alex Chen (ANU-ENG-CSE-2024-001)</h2>
+            <span id="roleTag" class="bg-purple-600 text-white text-xs font-bold px-2 py-0.5 rounded">STUDENT</span>
+          </div>
+          <p id="profileDesc" class="text-xs text-slate-600 mt-0.5">Mobile self check-in, live GPS verification, attendance 360 & 'What-If' simulator.</p>
+        </div>
+      </div>
+      <div class="text-right hidden sm:block">
+        <span class="text-xs text-slate-500 font-medium">Apex National University</span>
+        <p class="text-xs font-semibold text-slate-700">Computer Science & Engineering</p>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: STUDENT VIEW (MOBILE FIRST) -->
+    <!-- ============================================== -->
+    <div id="viewStudent" class="space-y-6">
+      
+      <!-- Student Top Metric Row -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="glass-card p-5 rounded-2xl shadow-sm border-l-4 border-emerald-500">
+          <span class="text-xs font-semibold text-slate-500 uppercase">Overall Attendance</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <h3 class="text-3xl font-extrabold text-slate-900">82.4%</h3>
+            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full">Eligible for Exams</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-2">Target: 75.0% minimum threshold</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl shadow-sm border-l-4 border-blue-500">
+          <span class="text-xs font-semibold text-slate-500 uppercase">Lectures Attended</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <h3 class="text-3xl font-extrabold text-slate-900">79 <span class="text-lg font-medium text-slate-500">/ 96</span></h3>
+            <span class="text-xs text-blue-600 font-medium">4 Active Courses</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-2">17 total absences recorded</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl shadow-sm border-l-4 border-amber-500">
+          <span class="text-xs font-semibold text-slate-500 uppercase">Buffer Status</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <h3 class="text-3xl font-extrabold text-amber-600">+3 Classes</h3>
+            <span class="text-xs text-slate-500">Safe Margin</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-2">Can afford to miss 3 classes safely</p>
+        </div>
+      </div>
+
+      <!-- Student Check-In & Scanner Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Live Check-In Card -->
+        <div class="glass-card p-6 rounded-2xl shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-slate-900 text-base flex items-center">
+              <i data-lucide="scan" class="w-5 h-5 text-blue-600 mr-2"></i>
+              Mobile Classroom Check-In
+            </h3>
+            <span class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded">Tri-Factor Shield</span>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Select Current Lecture Session</label>
+              <select id="studentCourseSelect" class="w-full bg-slate-100 border border-slate-300 rounded-lg p-2.5 text-sm font-medium">
+                <option value="CS401">CS401: Distributed Systems (Room LH-101)</option>
+                <option value="CS402">CS402: Data Engineering Pipelines (Room CS-LAB-A)</option>
+                <option value="CS403">CS403: Advanced Database Systems (Room LH-102)</option>
+              </select>
+            </div>
+
+            <!-- GPS Simulation Radio -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Your Physical GPS Location</label>
+              <div class="space-y-2 text-xs">
+                <label class="flex items-center p-2.5 rounded-lg border border-emerald-300 bg-emerald-50 cursor-pointer">
+                  <input type="radio" name="studentLoc" value="IN_CLASS" checked class="text-blue-600 mr-2">
+                  <span class="font-semibold text-emerald-900">🟢 In Classroom LH-101 (Distance: 12 meters)</span>
+                </label>
+                <label class="flex items-center p-2.5 rounded-lg border border-rose-300 bg-rose-50 cursor-pointer">
+                  <input type="radio" name="studentLoc" value="AT_HOME" class="text-blue-600 mr-2">
+                  <span class="font-semibold text-rose-900">🔴 WhatsApp Photo Attack: Absent At Home (1.8 km)</span>
+                </label>
+                <label class="flex items-center p-2.5 rounded-lg border border-amber-300 bg-amber-50 cursor-pointer">
+                  <input type="radio" name="studentLoc" value="CANTEEN" class="text-blue-600 mr-2">
+                  <span class="font-semibold text-amber-900">🔴 In Campus Cafeteria (450 meters away)</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Enter 4-Digit Security PIN from Screen</label>
+              <input type="text" id="studentPinInput" placeholder="e.g. 8492" maxlength="6" value="8492" class="w-full bg-slate-100 border border-slate-300 rounded-lg p-2.5 text-sm font-bold tracking-widest text-center">
+            </div>
+
+            <button onclick="submitStudentCheckIn()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition duration-150 flex items-center justify-center space-x-2">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Verify & Submit Attendance</span>
+            </button>
+
+            <!-- Verification Feedback -->
+            <div id="checkInResult" class="hidden p-4 rounded-xl text-xs font-medium"></div>
+          </div>
+        </div>
+
+        <!-- 'What-If' Attendance Simulator -->
+        <div class="glass-card p-6 rounded-2xl shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-slate-900 text-base flex items-center">
+              <i data-lucide="calculator" class="w-5 h-5 text-indigo-600 mr-2"></i>
+              'What-If' Attendance Simulator
+            </h3>
+            <span class="text-xs bg-indigo-100 text-indigo-800 font-semibold px-2 py-0.5 rounded">Exam Eligibility</span>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Select Subject</label>
+              <select class="w-full bg-slate-100 border border-slate-300 rounded-lg p-2 text-xs font-medium">
+                <option>CS401: Distributed Systems (Current: 71.4% - Warning)</option>
+                <option>CS402: Data Engineering (Current: 88.2% - Safe)</option>
+              </select>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-medium mb-1">
+                <span>If I attend next N consecutive classes:</span>
+                <span id="sliderAttendVal" class="font-bold text-blue-600">+5 classes</span>
+              </div>
+              <input type="range" min="0" max="15" value="5" id="sliderAttend" oninput="updateSimulation()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-medium mb-1">
+                <span>If I miss next M classes:</span>
+                <span id="sliderMissVal" class="font-bold text-rose-600">0 classes</span>
+              </div>
+              <input type="range" min="0" max="8" value="0" id="sliderMiss" oninput="updateSimulation()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <!-- Simulation Projected Result Card -->
+            <div class="p-4 bg-indigo-50 border border-indigo-200 rounded-xl space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-indigo-900 font-semibold">Projected Attendance:</span>
+                <span id="simResultPct" class="text-2xl font-extrabold text-indigo-700">78.6%</span>
+              </div>
+              <p id="simResultStatus" class="text-xs font-medium text-emerald-700">✅ Safely satisfies the 75.0% exam requirement!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: TEACHER VIEW (PROJECTOR KIOSK) -->
+    <!-- ============================================== -->
+    <div id="viewTeacher" class="space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Live Rotating Projector Display -->
+        <div class="glass-card p-6 rounded-2xl shadow-sm lg:col-span-1 space-y-4 text-center">
+          <h3 class="font-bold text-slate-900 text-base flex items-center justify-center">
+            <i data-lucide="projector" class="w-5 h-5 text-blue-600 mr-2"></i>
+            Classroom Projector Display
+          </h3>
+          <p class="text-xs text-slate-500">Room LH-101 • Radius: 50m Geofence</p>
+
+          <!-- Animated Dynamic QR Box -->
+          <div class="border-2 border-blue-900 rounded-2xl p-4 bg-white shadow-inner inline-block">
+            <img id="kioskQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=UniAttend-Demo-Token-8492" class="w-44 h-44 mx-auto rounded-lg" alt="Dynamic QR">
+            <p class="text-xs text-slate-500 mt-2">⏳ Token rotates in: <span id="kioskCountdown" class="font-bold text-blue-600">8s</span></p>
+          </div>
+
+          <!-- PIN Card -->
+          <div class="bg-gradient-to-r from-blue-900 to-blue-700 text-white rounded-xl p-4 shadow">
+            <span class="text-xs uppercase tracking-widest text-blue-200 font-semibold">Rolling Security PIN</span>
+            <div id="kioskPin" class="text-4xl font-extrabold tracking-widest my-1 pin-glow">8492</div>
+            <span class="text-xs text-blue-200">Refreshes every 8 seconds</span>
+          </div>
+
+          <button onclick="refreshKioskToken()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold py-2 rounded-lg border">
+            🔄 Refresh Token Now
+          </button>
+        </div>
+
+        <!-- Live Digital Attendance Roster -->
+        <div class="glass-card p-6 rounded-2xl shadow-sm lg:col-span-2 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">Live Digital Attendance Sheet</h3>
+              <p class="text-xs text-slate-500">CS401: Distributed Systems • Term 2026</p>
+            </div>
+            <span class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full">
+              Verified: 18 / 30 Present (60%)
+            </span>
+          </div>
+
+          <div class="overflow-x-auto max-h-80 border rounded-xl">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-100 text-slate-700 font-bold uppercase sticky top-0">
+                <tr>
+                  <th class="p-3">Roll Number</th>
+                  <th class="p-3">Student Name</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3">Scan Time</th>
+                  <th class="p-3">Distance</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr class="bg-emerald-50/60 font-medium">
+                  <td class="p-3">CSE-2024-001</td>
+                  <td class="p-3 text-slate-900">Alex Chen</td>
+                  <td class="p-3"><span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">🟢 PRESENT</span></td>
+                  <td class="p-3">10:02:14 AM</td>
+                  <td class="p-3 font-semibold text-emerald-700">11.4m</td>
+                </tr>
+                <tr class="bg-emerald-50/60 font-medium">
+                  <td class="p-3">CSE-2024-002</td>
+                  <td class="p-3 text-slate-900">Chloe Adams</td>
+                  <td class="p-3"><span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">🟢 PRESENT</span></td>
+                  <td class="p-3">10:02:30 AM</td>
+                  <td class="p-3 font-semibold text-emerald-700">8.2m</td>
+                </tr>
+                <tr class="bg-rose-50/60 font-medium">
+                  <td class="p-3">CSE-2024-003</td>
+                  <td class="p-3 text-slate-900">David Miller</td>
+                  <td class="p-3"><span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded">🚨 PROXY BLOCKED</span></td>
+                  <td class="p-3">10:03:01 AM</td>
+                  <td class="p-3 font-semibold text-rose-700">1.8 km (At Home)</td>
+                </tr>
+                <tr>
+                  <td class="p-3">CSE-2024-004</td>
+                  <td class="p-3 text-slate-900">Emily Clark</td>
+                  <td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">⏳ AWAITING SCAN</span></td>
+                  <td class="p-3">—</td>
+                  <td class="p-3">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex space-x-3">
+            <button class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow">
+              💾 Lock & Commit Attendance to Database
+            </button>
+            <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2.5 rounded-xl text-xs border">
+              👨‍🏫 Manual Override
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: HOD VIEW (DEPARTMENT HEAD) -->
+    <!-- ============================================== -->
+    <div id="viewHod" class="space-y-6 hidden">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="glass-card p-4 rounded-xl border-l-4 border-blue-600">
+          <span class="text-xs text-slate-500 font-semibold">Enrolled Students</span>
+          <h3 class="text-2xl font-bold text-slate-900 mt-1">120</h3>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-emerald-600">
+          <span class="text-xs text-slate-500 font-semibold">Dept Average Attendance</span>
+          <h3 class="text-2xl font-bold text-slate-900 mt-1">81.2%</h3>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-rose-600">
+          <span class="text-xs text-slate-500 font-semibold">Defaulter Cases (<75%)</span>
+          <h3 class="text-2xl font-bold text-rose-600 mt-1">14</h3>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-indigo-600">
+          <span class="text-xs text-slate-500 font-semibold">Active Courses</span>
+          <h3 class="text-2xl font-bold text-slate-900 mt-1">4</h3>
+        </div>
+      </div>
+
+      <!-- Action Card -->
+      <div class="glass-card p-6 rounded-2xl space-y-4">
+        <h3 class="font-bold text-slate-900 text-base">HOD Action & Warning Letter Dispatcher</h3>
+        <p class="text-xs text-slate-500">1-click automated batch generator to issue official attendance shortage notices to all 14 defaulters.</p>
+        <button class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow">
+          📨 Batch Dispatch Official Warning Letters to Parents
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 4: PRINCIPAL VIEW (EXECUTIVE DASHBOARD) -->
+    <!-- ============================================== -->
+    <div id="viewPrincipal" class="space-y-6 hidden">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="glass-card p-4 rounded-xl border-l-4 border-blue-900">
+          <span class="text-xs text-slate-500 font-semibold">University Students</span>
+          <h3 class="text-2xl font-bold text-slate-900 mt-1">240</h3>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-emerald-600">
+          <span class="text-xs text-slate-500 font-semibold">University Avg Attendance</span>
+          <h3 class="text-2xl font-bold text-slate-900 mt-1">82.8%</h3>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-rose-600">
+          <span class="text-xs text-slate-500 font-semibold">Total Defaulters</span>
+          <h3 class="text-2xl font-bold text-rose-600 mt-1">32</h3>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-indigo-600">
+          <span class="text-xs text-slate-500 font-semibold">Campuses / Colleges</span>
+          <h3 class="text-2xl font-bold text-slate-900 mt-1">2</h3>
+        </div>
+      </div>
+
+      <div class="glass-card p-6 rounded-2xl space-y-4">
+        <h3 class="font-bold text-slate-900 text-base">Executive Board Compliance Reports</h3>
+        <button class="bg-blue-900 hover:bg-blue-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow">
+          📥 Download Master Executive PDF Audit Pack
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t py-4 text-center text-xs text-slate-500">
+    UniAttend 360 • Built with Tri-Factor Anti-Proxy Security • Ready for Vercel & GitHub Deployment
+  </footer>
+
+  <!-- SCRIPT FOR SWITCHING ROLES & INTERACTIVE DEMO -->
+  <script>
+    lucide.createIcons();
+
+    function switchRole(role) {
+      // Hide all views
+      document.getElementById('viewStudent').classList.add('hidden');
+      document.getElementById('viewTeacher').classList.add('hidden');
+      document.getElementById('viewHod').classList.add('hidden');
+      document.getElementById('viewPrincipal').classList.add('hidden');
+
+      const banner = document.getElementById('profileBanner');
+      const icon = document.getElementById('roleIcon');
+      const name = document.getElementById('profileName');
+      const tag = document.getElementById('roleTag');
+      const desc = document.getElementById('profileDesc');
+
+      if (role === 'STUDENT') {
+        document.getElementById('viewStudent').classList.remove('hidden');
+        banner.className = "mb-6 p-4 rounded-xl border flex items-center justify-between bg-purple-50 border-purple-200";
+        icon.innerText = "🎓";
+        name.innerText = "Alex Chen (ANU-ENG-CSE-2024-001)";
+        tag.innerText = "STUDENT";
+        tag.className = "bg-purple-600 text-white text-xs font-bold px-2 py-0.5 rounded";
+        desc.innerText = "Mobile self check-in, live GPS verification, attendance 360 & 'What-If' simulator.";
+      } else if (role === 'TEACHER') {
+        document.getElementById('viewTeacher').classList.remove('hidden');
+        banner.className = "mb-6 p-4 rounded-xl border flex items-center justify-between bg-emerald-50 border-emerald-200";
+        icon.innerText = "👨‍🏫";
+        name.innerText = "Prof. Sarah Jenkins (Instructor CS401)";
+        tag.innerText = "TEACHER";
+        tag.className = "bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded";
+        desc.innerText = "Smart classroom projector kiosk, dynamic rotating QR, rolling PIN & live roster.";
+      } else if (role === 'HOD') {
+        document.getElementById('viewHod').classList.remove('hidden');
+        banner.className = "mb-6 p-4 rounded-xl border flex items-center justify-between bg-sky-50 border-sky-200";
+        icon.innerText = "👔";
+        name.innerText = "Dr. Robert Miller (HOD, Computer Science)";
+        tag.innerText = "HOD";
+        tag.className = "bg-sky-600 text-white text-xs font-bold px-2 py-0.5 rounded";
+        desc.innerText = "Department-level health, course defaulter rosters, batch warning notice dispatcher.";
+      } else if (role === 'PRINCIPAL') {
+        document.getElementById('viewPrincipal').classList.remove('hidden');
+        banner.className = "mb-6 p-4 rounded-xl border flex items-center justify-between bg-blue-50 border-blue-200";
+        icon.innerText = "🏛️";
+        name.innerText = "Dr. Arthur Vance (Principal & Chancellor)";
+        tag.innerText = "PRINCIPAL";
+        tag.className = "bg-blue-900 text-white text-xs font-bold px-2 py-0.5 rounded";
+        desc.innerText = "Executive oversight across all colleges, departments, faculty performance & audits.";
+      }
+      lucide.createIcons();
+    }
+
+    function submitStudentCheckIn() {
+      const loc = document.querySelector('input[name="studentLoc"]:checked').value;
+      const resBox = document.getElementById('checkInResult');
+      resBox.classList.remove('hidden');
+
+      if (loc === 'IN_CLASS') {
+        resBox.className = "p-4 rounded-xl text-xs font-medium bg-emerald-100 text-emerald-900 border border-emerald-300";
+        resBox.innerHTML = "<b>✅ VERIFIED PRESENT!</b><br/>Tri-Factor checks passed: GPS Distance: 11.8m (Classroom LH-101) • PIN Valid • Device Unique.";
+      } else if (loc === 'AT_HOME') {
+        resBox.className = "p-4 rounded-xl text-xs font-medium bg-rose-100 text-rose-900 border border-rose-300";
+        resBox.innerHTML = "<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>Failed Shield 2 (GPS Geofence): Your location is 1.8 km away from Classroom LH-101. WhatsApp QR photo scan blocked.";
+      } else {
+        resBox.className = "p-4 rounded-xl text-xs font-medium bg-amber-100 text-amber-900 border border-amber-300";
+        resBox.innerHTML = "<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>Failed Shield 2 (GPS Geofence): 450 meters away (Campus Cafeteria). Must be within 50m of LH-101.";
+      }
+    }
+
+    function updateSimulation() {
+      const att = parseInt(document.getElementById('sliderAttend').value);
+      const miss = parseInt(document.getElementById('sliderMiss').value);
+      document.getElementById('sliderAttendVal').innerText = `+${att} classes`;
+      document.getElementById('sliderMissVal').innerText = `${miss} classes`;
+
+      const currHeld = 28;
+      const currAtt = 20;
+      const newHeld = currHeld + att + miss;
+      const newAtt = currAtt + att;
+      const newPct = ((newAtt / newHeld) * 100).toFixed(1);
+
+      document.getElementById('simResultPct').innerText = `${newPct}%`;
+      const statusEl = document.getElementById('simResultStatus');
+      if (newPct >= 75.0) {
+        statusEl.className = "text-xs font-medium text-emerald-700";
+        statusEl.innerText = "✅ Safely satisfies the 75.0% exam requirement!";
+      } else {
+        statusEl.className = "text-xs font-medium text-rose-700";
+        statusEl.innerText = "⚠️ Still below 75.0% threshold. Attend more classes!";
+      }
+    }
+
+    let countdown = 8;
+    setInterval(() => {
+      countdown -= 1;
+      if (countdown <= 0) {
+        countdown = 8;
+        const pins = ["8492", "3174", "9052", "6621", "4810"];
+        const randomPin = pins[Math.floor(Math.random() * pins.length)];
+        const pinEl = document.getElementById('kioskPin');
+        if (pinEl) pinEl.innerText = randomPin;
+        const studentPin = document.getElementById('studentPinInput');
+        if (studentPin) studentPin.value = randomPin;
+      }
+      const countEl = document.getElementById('kioskCountdown');
+      if (countEl) countEl.innerText = `${countdown}s`;
+    }, 1000);
+
+    function refreshKioskToken() {
+      countdown = 8;
+    }
+  </script>
+</body>
+</html>
