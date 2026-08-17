@@ -29,10 +29,10 @@ ROLE_DEFINITIONS = {
         }
     },
     "HOD": {
-        "title": "Departmental Head (HOD)",
+        "title": "Course Coordinator (Data Science)",
         "icon": "👔",
         "badge_color": "#0284C7",
-        "description": "Department-level management, faculty lecture regularity, subject-wise defaulter approval, and parent intimation notices.",
+        "description": "Department & academic coordination (Mrs. Shiji Johnson), faculty lecture regularity, subject defaulter approvals, and parent intimation notices.",
         "permissions": {
             "view_all_departments": False,
             "view_campus_kpis": True,
