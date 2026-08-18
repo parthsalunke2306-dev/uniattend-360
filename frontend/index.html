@@ -623,21 +623,69 @@
   <script>
     lucide.createIcons();
 
-    // Accounts Database & Credentials
+    // Comprehensive Database of Registered User Accounts & Emails
     const REGISTERED_PROFILES = {
       "CHMC-DS-2024-001": {
         role: "STUDENT",
         name: "Captain (Lead Data Science)",
         identifier: "CHMC-DS-2024-001",
+        email: "captain.ds@chmc.edu",
+        username: "chmc.ds.2024.001",
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "B.Sc. Data Science (Sem 5) • Class Size: 5 Students • Smt. C.H.M. College"
+        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-001 • Smt. C.H.M. College"
+      },
+      "CHMC-DS-2024-002": {
+        role: "STUDENT",
+        name: "Aarav Sharma",
+        identifier: "CHMC-DS-2024-002",
+        email: "aarav.sharma@chmc.edu",
+        username: "chmc.ds.2024.002",
+        avatar: "🎓",
+        badge: "STUDENT",
+        badgeClass: "bg-purple-500 text-white",
+        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-002 • Smt. C.H.M. College"
+      },
+      "CHMC-DS-2024-003": {
+        role: "STUDENT",
+        name: "Priya Patel",
+        identifier: "CHMC-DS-2024-003",
+        email: "priya.patel@chmc.edu",
+        username: "chmc.ds.2024.003",
+        avatar: "🎓",
+        badge: "STUDENT",
+        badgeClass: "bg-purple-500 text-white",
+        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-003 • Smt. C.H.M. College"
+      },
+      "CHMC-DS-2024-004": {
+        role: "STUDENT",
+        name: "Rohan Gupta",
+        identifier: "CHMC-DS-2024-004",
+        email: "rohan.gupta@chmc.edu",
+        username: "chmc.ds.2024.004",
+        avatar: "🎓",
+        badge: "STUDENT",
+        badgeClass: "bg-purple-500 text-white",
+        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-004 • Smt. C.H.M. College"
+      },
+      "CHMC-DS-2024-005": {
+        role: "STUDENT",
+        name: "Ananya Verma",
+        identifier: "CHMC-DS-2024-005",
+        email: "ananya.verma@chmc.edu",
+        username: "chmc.ds.2024.005",
+        avatar: "🎓",
+        badge: "STUDENT",
+        badgeClass: "bg-purple-500 text-white",
+        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-005 • Smt. C.H.M. College"
       },
       "faculty.razia": {
         role: "TEACHER_RAZIA",
         name: "Miss Razia Khan",
         identifier: "Faculty (Data Mining)",
+        email: "razia.khan@chmc.edu",
+        username: "razia.khan",
         avatar: "👨‍🏫",
         badge: "FACULTY",
         badgeClass: "bg-emerald-500 text-white",
@@ -649,6 +697,8 @@
         role: "TEACHER_ANSHUL",
         name: "Mr. Anshul Chimnani",
         identifier: "Faculty (Data Warehousing)",
+        email: "anshul.chimnani@chmc.edu",
+        username: "anshul.chimnani",
         avatar: "👨‍🏫",
         badge: "FACULTY",
         badgeClass: "bg-emerald-500 text-white",
@@ -660,6 +710,8 @@
         role: "TEACHER_KALYANI",
         name: "Miss Kalyani Patil",
         identifier: "Faculty (DAA)",
+        email: "kalyani.patil@chmc.edu",
+        username: "kalyani.patil",
         avatar: "👨‍🏫",
         badge: "FACULTY",
         badgeClass: "bg-emerald-500 text-white",
@@ -671,6 +723,8 @@
         role: "COORDINATOR",
         name: "Mrs. Shiji Johnson",
         identifier: "Course Coordinator",
+        email: "shiji.johnson@chmc.edu",
+        username: "coordinator.ds",
         avatar: "👔",
         badge: "COORDINATOR",
         badgeClass: "bg-indigo-500 text-white",
@@ -680,6 +734,8 @@
         role: "PRINCIPAL",
         name: "Dr. Manju Lalwani Pathak",
         identifier: "Principal",
+        email: "principal@chmc.edu",
+        username: "principal.chmc",
         avatar: "🏛️",
         badge: "PRINCIPAL",
         badgeClass: "bg-blue-600 text-white",
@@ -716,19 +772,26 @@
 
     function handleLoginSubmit(e) {
       e.preventDefault();
-      const idInput = document.getElementById('loginIdentifier').value.trim();
+      const idInput = document.getElementById('loginIdentifier').value.trim().toLowerCase();
       const pwdInput = document.getElementById('loginPassword').value.trim();
       
-      const foundKey = Object.keys(REGISTERED_PROFILES).find(k => 
-        k.toLowerCase() === idInput.toLowerCase() || 
-        REGISTERED_PROFILES[k].name.toLowerCase().includes(idInput.toLowerCase())
-      );
+      // Robust lookup by email, roll number, username, or name
+      const foundKey = Object.keys(REGISTERED_PROFILES).find(k => {
+        const p = REGISTERED_PROFILES[k];
+        return (
+          k.toLowerCase() === idInput ||
+          (p.email && p.email.toLowerCase() === idInput) ||
+          (p.username && p.username.toLowerCase() === idInput) ||
+          (p.identifier && p.identifier.toLowerCase() === idInput) ||
+          p.name.toLowerCase().includes(idInput)
+        );
+      });
 
       if (foundKey) {
         quickAuth(foundKey);
       } else {
         const errEl = document.getElementById('loginError');
-        errEl.innerText = "❌ Invalid identifier. Try 'CHMC-DS-2024-001' or click a quick profile below.";
+        errEl.innerText = `❌ No account found matching '${idInput}'. You can use official email (e.g. principal@chmc.edu, captain.ds@chmc.edu) or Roll No.`;
         errEl.classList.remove('hidden');
       }
     }
