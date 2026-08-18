@@ -15,7 +15,7 @@ from database.models import (
     University, College, Department, Course, Student, TimetableSession, 
     RawAttendanceLog, FactAttendance, StudentCourseSummary
 )
-from database.db_manager import get_db_session, init_db
+from database.db_manager import get_db_session, init_db, drop_db
 from pipeline.validator import AttendanceValidator
 from pipeline.etl_pipeline import AttendanceETLPipeline
 from data.data_generator import seed_hierarchy_and_academics, generate_raw_attendance_stream
@@ -24,6 +24,7 @@ from data.data_generator import seed_hierarchy_and_academics, generate_raw_atten
 @pytest.fixture(scope="module")
 def setup_database():
     """Initializes schema and seeds initial data."""
+    drop_db()
     init_db()
     with get_db_session() as session:
         seed_hierarchy_and_academics(session)

@@ -22,12 +22,15 @@ from PIL import Image
 # Default Secret Key for HMAC Token Generation
 SECRET_SALT = "UniAttend-AntiProxy-Salt-2026-SuperSecure"
 
-# Smt. C.H.M. College (Ulhasnagar) Campus Classroom GPS Coordinates
+# Smt. C.H.M. College & Campus Classroom GPS Coordinates
 DEFAULT_CLASSROOM_GEO = {
     "DS-LAB-1": {"name": "Data Science Lab 1 (CHM Campus)", "lat": 19.22150, "lon": 73.16440, "radius_m": 45.0},
     "LH-201": {"name": "Degree College Lecture Hall 201", "lat": 19.22165, "lon": 73.16455, "radius_m": 50.0},
     "LH-202": {"name": "Degree College Lecture Hall 202", "lat": 19.22180, "lon": 73.16470, "radius_m": 50.0},
-    "AUD-CHM": {"name": "Smt. C.H.M. College Auditorium", "lat": 19.22130, "lon": 73.16420, "radius_m": 80.0}
+    "AUD-CHM": {"name": "Smt. C.H.M. College Auditorium", "lat": 19.22130, "lon": 73.16420, "radius_m": 80.0},
+    "LH-101": {"name": "Lecture Hall 101", "lat": 28.54502, "lon": 77.19265, "radius_m": 50.0},
+    "LH-102": {"name": "Lecture Hall 102", "lat": 28.54515, "lon": 77.19280, "radius_m": 50.0},
+    "CS-LAB-A": {"name": "Computer Science Lab A", "lat": 28.54530, "lon": 77.19295, "radius_m": 45.0},
 }
 
 

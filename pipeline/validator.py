@@ -33,9 +33,17 @@ class AttendanceValidator:
             if sess.room_number != log.room_code or sess.day_of_week != scan_day:
                 continue
 
+            s_time = sess.start_time
+            if isinstance(s_time, str):
+                s_time = datetime.strptime(s_time.split(".")[0], "%H:%M:%S").time()
+
+            e_time = sess.end_time
+            if isinstance(e_time, str):
+                e_time = datetime.strptime(e_time.split(".")[0], "%H:%M:%S").time()
+
             # Calculate allowed window
-            sess_start_dt = datetime.combine(log.scan_timestamp.date(), sess.start_time)
-            sess_end_dt = datetime.combine(log.scan_timestamp.date(), sess.end_time)
+            sess_start_dt = datetime.combine(log.scan_timestamp.date(), s_time)
+            sess_end_dt = datetime.combine(log.scan_timestamp.date(), e_time)
 
             window_start = sess_start_dt - timedelta(minutes=self.pre_class_buffer_minutes)
             window_end = sess_start_dt + timedelta(minutes=self.post_class_buffer_minutes)

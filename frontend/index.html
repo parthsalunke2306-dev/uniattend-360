@@ -73,23 +73,100 @@
     .pin-hud {
       text-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
     }
-    /* Custom mobile dropdown */
-    select option {
-      background-color: #131B2E;
-      color: #FFFFFF;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-purple-600 selection:text-white">
 
+  <!-- ============================================== -->
+  <!-- SECURE AUTHENTICATION MODAL (LOGIN PORTAL) -->
+  <!-- ============================================== -->
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl border border-purple-500/40 shadow-2xl shadow-purple-950/50 space-y-6 relative overflow-hidden">
+      
+      <!-- Top Decorative Accent -->
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/30 rounded-full blur-2xl"></div>
+      <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-600/20 rounded-full blur-2xl"></div>
+
+      <!-- Header -->
+      <div class="text-center space-y-1.5 relative z-10">
+        <div class="h-12 w-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 mx-auto shadow-lg shadow-purple-900/40 flex items-center justify-center">
+          <div class="h-full w-full bg-stitch-bg rounded-[14px] flex items-center justify-center">
+            <i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>
+          </div>
+        </div>
+        <h2 class="text-xl font-extrabold text-white tracking-tight">Smt. C.H.M. College</h2>
+        <p class="text-xs text-purple-300 font-mono">Department of Data Science • Secure Portal</p>
+      </div>
+
+      <!-- Login Form -->
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-4 relative z-10">
+        <div class="space-y-1">
+          <label class="text-xs font-mono text-slate-400">Roll No / Faculty ID / Email</label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="text" id="loginIdentifier" placeholder="e.g. CHMC-DS-2024-001" required value="CHMC-DS-2024-001" class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-mono text-slate-400">Password</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="password" id="loginPassword" value="CHMC@2026!" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+          <span class="flex items-center text-emerald-400"><i data-lucide="smartphone" class="w-3 h-3 mr-1"></i> Hardware Locked</span>
+          <span class="text-slate-500">Default: CHMC@2026!</span>
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-900/40 text-xs font-mono flex items-center justify-center space-x-2 transition duration-150">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>SECURE SIGN IN</span>
+        </button>
+
+        <div id="loginError" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center"></div>
+      </form>
+
+      <!-- 1-Click Quick Demo Switcher -->
+      <div class="space-y-2 pt-2 border-t border-stitch-border relative z-10">
+        <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider block text-center">⚡ 1-Click Instant Login (Select Profile):</span>
+        <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
+          <button onclick="quickAuth('CHMC-DS-2024-001')" class="p-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-left truncate">
+            🎓 Captain (Student)
+          </button>
+          <button onclick="quickAuth('faculty.razia')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
+            👨‍🏫 Miss Razia (Data Mining)
+          </button>
+          <button onclick="quickAuth('faculty.anshul')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
+            👨‍🏫 Mr. Anshul (Data Whse)
+          </button>
+          <button onclick="quickAuth('faculty.kalyani')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
+            👨‍🏫 Miss Kalyani (DAA)
+          </button>
+          <button onclick="quickAuth('coordinator.ds')" class="p-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-left truncate">
+            👔 Mrs. Shiji (Coordinator)
+          </button>
+          <button onclick="quickAuth('principal.chmc')" class="p-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 text-left truncate">
+            🏛️ Dr. Manju (Principal)
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ============================================== -->
   <!-- TOP RESPONSIVE NAVIGATION BAR -->
-  <header class="glass-panel sticky top-0 z-50 border-b border-stitch-border shadow-md">
+  <!-- ============================================== -->
+  <header class="glass-panel sticky top-0 z-40 border-b border-stitch-border shadow-md">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
       
-      <!-- Responsive Flex Container -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4">
         
-        <!-- Row 1: Brand & Online Indicator -->
+        <!-- Left Brand Row -->
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2.5">
             <div class="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
@@ -102,36 +179,42 @@
                 <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-white truncate">Smt. C.H.M. College</h1>
                 <span class="bg-purple-500/20 text-purple-300 text-[9px] sm:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30 shrink-0">DATA SCIENCE</span>
               </div>
-              <p class="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate">UniAttend 360 • Anti-Proxy Shield</p>
+              <p class="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate">UniAttend 360 • Anti-Proxy Platform</p>
             </div>
           </div>
 
-          <!-- Mobile Online Badge -->
-          <div class="flex sm:hidden items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono shrink-0">
-            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>LIVE</span>
+          <!-- Mobile User Action -->
+          <div class="flex sm:hidden items-center space-x-2">
+            <button onclick="openLoginModal()" class="p-2 rounded-xl bg-stitch-surface border border-stitch-border text-slate-300 text-xs flex items-center space-x-1">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="handleLogout()" class="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            </button>
           </div>
         </div>
 
-        <!-- Row 2 (Mobile) / Right Side (Desktop): Role Switcher -->
-        <div class="flex items-center space-x-2.5 w-full sm:w-auto">
-          <div class="w-full sm:w-auto flex items-center bg-stitch-surface/90 px-3 py-1.5 sm:py-2 rounded-xl border border-stitch-border shadow-inner">
-            <span class="text-[10px] sm:text-[11px] font-mono text-purple-400 font-bold uppercase mr-2 shrink-0">ROLE:</span>
-            <select id="roleSelector" onchange="switchRole(this.value)" class="w-full sm:w-auto bg-transparent text-white font-semibold text-xs focus:outline-none cursor-pointer truncate">
-              <option value="STUDENT" selected>🎓 Student: Captain (CHMC-DS-2024-001)</option>
-              <option value="TEACHER_RAZIA">👨‍🏫 Faculty: Miss Razia Khan (Data Mining)</option>
-              <option value="TEACHER_ANSHUL">👨‍🏫 Faculty: Mr. Anshul Chimnani (Data Warehousing)</option>
-              <option value="TEACHER_KALYANI">👨‍🏫 Faculty: Miss Kalyani Patil (DAA)</option>
-              <option value="COORDINATOR">👔 Coordinator: Mrs. Shiji Johnson</option>
-              <option value="PRINCIPAL">🏛️ Principal: Dr. Manju Lalwani Pathak</option>
-            </select>
+        <!-- Right Side: Authenticated User Pill & Actions -->
+        <div class="flex items-center justify-between sm:justify-end space-x-2.5 w-full sm:w-auto">
+          
+          <div id="navUserBadge" class="flex items-center space-x-2 bg-stitch-surface px-3 py-1.5 rounded-xl border border-stitch-border shadow-inner">
+            <span id="navUserIcon" class="text-sm">🎓</span>
+            <span id="navUserName" class="text-xs font-semibold text-white truncate max-w-[150px] sm:max-w-[200px]">Captain (Student)</span>
+            <span id="navUserRole" class="bg-purple-500/20 text-purple-300 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30">STUDENT</span>
           </div>
 
-          <!-- Desktop Online Badge -->
-          <div class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono shrink-0">
-            <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>LIVE</span>
+          <div class="hidden sm:flex items-center space-x-2">
+            <button onclick="openLoginModal()" class="px-3 py-1.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-300 text-xs font-mono flex items-center space-x-1.5">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-purple-400"></i>
+              <span>Switch Profile</span>
+            </button>
+
+            <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center space-x-1.5">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+              <span>Logout</span>
+            </button>
           </div>
+
         </div>
 
       </div>
@@ -139,7 +222,7 @@
     </div>
   </header>
 
-  <!-- MAIN HUD CONTENT -->
+  <!-- MAIN CONTENT CONTAINER -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
     <!-- ACTIVE PROFILE HUD BANNER -->
@@ -163,13 +246,12 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- VIEW 1: STUDENT MOBILE CHECK-IN & 360 -->
+    <!-- VIEW 1: STUDENT VIEW (MOBILE FIRST) -->
     <!-- ============================================== -->
     <div id="viewStudent" class="space-y-4 sm:space-y-6">
       
       <!-- Top Metrics HUD -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <!-- Metric 1 -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden neon-border-emerald">
           <div class="flex items-center justify-between">
             <span class="text-[11px] sm:text-xs font-mono text-emerald-400 uppercase tracking-wider">Overall Attendance</span>
@@ -184,7 +266,6 @@
           </div>
         </div>
 
-        <!-- Metric 2 -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden neon-border">
           <div class="flex items-center justify-between">
             <span class="text-[11px] sm:text-xs font-mono text-purple-400 uppercase tracking-wider">Lectures Attended</span>
@@ -197,7 +278,6 @@
           <p class="text-[11px] sm:text-xs text-slate-400 mt-2 sm:mt-3 font-mono truncate">Miss Razia, Mr. Anshul, Miss Kalyani</p>
         </div>
 
-        <!-- Metric 3 -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden border border-stitch-border">
           <div class="flex items-center justify-between">
             <span class="text-[11px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider">Classroom Geofence</span>
@@ -228,7 +308,6 @@
           <div class="relative w-full h-40 sm:h-48 rounded-xl bg-slate-950/90 border border-purple-500/40 overflow-hidden flex flex-col items-center justify-center p-3">
             <div class="absolute inset-0 scanner-laser pointer-events-none"></div>
             
-            <!-- Scanner Frame Corners -->
             <div class="w-28 h-28 sm:w-32 sm:h-32 border-2 border-dashed border-purple-400/60 rounded-xl flex items-center justify-center relative">
               <i data-lucide="qr-code" class="w-12 h-12 sm:w-16 sm:h-16 text-purple-300/40 animate-pulse"></i>
             </div>
@@ -255,7 +334,7 @@
               </label>
               <label class="flex items-center p-2.5 rounded-xl border border-rose-500/40 bg-rose-500/10 cursor-pointer text-rose-300">
                 <input type="radio" name="studentLoc" value="AT_HOME" class="text-rose-500 mr-2 shrink-0">
-                <span class="truncate">🔴 Absent At Home (1.8km away)</span>
+                <span class="truncate">🔴 Absent At Home (1.8km away - Proxy Test)</span>
               </label>
             </div>
           </div>
@@ -270,7 +349,7 @@
           </div>
 
           <!-- Submit Button -->
-          <button onclick="submitStudentCheckIn()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 sm:py-3 rounded-xl shadow-lg shadow-purple-900/40 transition duration-150 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+          <button onclick="submitStudentCheckIn()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 sm:py-3 rounded-xl shadow-lg shadow-purple-900/40 transition duration-150 flex items-center justify-center space-x-2 text-xs sm:text-sm font-mono">
             <i data-lucide="shield-check" class="w-4 h-4 sm:w-5 sm:h-5"></i>
             <span>SUBMIT LIVE CHECK-IN</span>
           </button>
@@ -291,7 +370,6 @@
 
           <!-- 3 Subject Cards -->
           <div class="space-y-2.5 sm:space-y-3">
-            <!-- Subject 1 -->
             <div class="p-3 sm:p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="flex items-center space-x-1.5 flex-wrap">
@@ -306,7 +384,6 @@
               </div>
             </div>
 
-            <!-- Subject 2 -->
             <div class="p-3 sm:p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="flex items-center space-x-1.5 flex-wrap">
@@ -321,7 +398,6 @@
               </div>
             </div>
 
-            <!-- Subject 3 -->
             <div class="p-3 sm:p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="flex items-center space-x-1.5 flex-wrap">
@@ -538,72 +614,183 @@
 
   <!-- FOOTER -->
   <footer class="border-t border-stitch-border py-4 text-center text-[10px] sm:text-xs font-mono text-slate-500 px-3">
-    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Powered by Google Stitch "Neon Analytical"
+    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Role-Based Authentication & Device Lock
   </footer>
 
-  <!-- SCRIPT FOR SWITCHING ROLES & REAL-TIME INTERACTION -->
+  <!-- ============================================== -->
+  <!-- COMPLETE AUTHENTICATION & APP CONTROLLER SCRIPT -->
+  <!-- ============================================== -->
   <script>
     lucide.createIcons();
 
-    function switchRole(role) {
+    // Accounts Database & Credentials
+    const REGISTERED_PROFILES = {
+      "CHMC-DS-2024-001": {
+        role: "STUDENT",
+        name: "Captain (Lead Data Science)",
+        identifier: "CHMC-DS-2024-001",
+        avatar: "🎓",
+        badge: "STUDENT",
+        badgeClass: "bg-purple-500 text-white",
+        desc: "B.Sc. Data Science (Sem 5) • Class Size: 5 Students • Smt. C.H.M. College"
+      },
+      "faculty.razia": {
+        role: "TEACHER_RAZIA",
+        name: "Miss Razia Khan",
+        identifier: "Faculty (Data Mining)",
+        avatar: "👨‍🏫",
+        badge: "FACULTY",
+        badgeClass: "bg-emerald-500 text-white",
+        desc: "Classroom Projector Kiosk • Data Science Lab 1 (CHM Campus)",
+        subjectTitle: "Data Mining (DS301-DM)",
+        roomTag: "DS-LAB-1"
+      },
+      "faculty.anshul": {
+        role: "TEACHER_ANSHUL",
+        name: "Mr. Anshul Chimnani",
+        identifier: "Faculty (Data Warehousing)",
+        avatar: "👨‍🏫",
+        badge: "FACULTY",
+        badgeClass: "bg-emerald-500 text-white",
+        desc: "Classroom Projector Kiosk • Degree College LH-201 (CHM Campus)",
+        subjectTitle: "Data Warehousing (DS302-DW)",
+        roomTag: "LH-201"
+      },
+      "faculty.kalyani": {
+        role: "TEACHER_KALYANI",
+        name: "Miss Kalyani Patil",
+        identifier: "Faculty (DAA)",
+        avatar: "👨‍🏫",
+        badge: "FACULTY",
+        badgeClass: "bg-emerald-500 text-white",
+        desc: "Classroom Projector Kiosk • Degree College LH-202 (CHM Campus)",
+        subjectTitle: "Design and Analysis of Algorithms (DS303-DAA)",
+        roomTag: "LH-202"
+      },
+      "coordinator.ds": {
+        role: "COORDINATOR",
+        name: "Mrs. Shiji Johnson",
+        identifier: "Course Coordinator",
+        avatar: "👔",
+        badge: "COORDINATOR",
+        badgeClass: "bg-indigo-500 text-white",
+        desc: "Academic & Department Coordinator • Department of Data Science"
+      },
+      "principal.chmc": {
+        role: "PRINCIPAL",
+        name: "Dr. Manju Lalwani Pathak",
+        identifier: "Principal",
+        avatar: "🏛️",
+        badge: "PRINCIPAL",
+        badgeClass: "bg-blue-600 text-white",
+        desc: "Executive Head & Principal • Smt. C.H.M. College (Ulhasnagar)"
+      }
+    };
+
+    // Current Session State
+    let activeSession = null;
+
+    function initAuth() {
+      const saved = localStorage.getItem('uniattend_360_session');
+      if (saved) {
+        try {
+          activeSession = JSON.parse(saved);
+          applySession(activeSession);
+        } catch (e) {
+          handleLogout();
+        }
+      } else {
+        // Default to student Captain on first load
+        quickAuth('CHMC-DS-2024-001');
+      }
+    }
+
+    function openLoginModal() {
+      document.getElementById('loginModal').classList.remove('hidden');
+      document.getElementById('loginError').classList.add('hidden');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('loginModal').classList.add('hidden');
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const idInput = document.getElementById('loginIdentifier').value.trim();
+      const pwdInput = document.getElementById('loginPassword').value.trim();
+      
+      const foundKey = Object.keys(REGISTERED_PROFILES).find(k => 
+        k.toLowerCase() === idInput.toLowerCase() || 
+        REGISTERED_PROFILES[k].name.toLowerCase().includes(idInput.toLowerCase())
+      );
+
+      if (foundKey) {
+        quickAuth(foundKey);
+      } else {
+        const errEl = document.getElementById('loginError');
+        errEl.innerText = "❌ Invalid identifier. Try 'CHMC-DS-2024-001' or click a quick profile below.";
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    function quickAuth(key) {
+      const profile = REGISTERED_PROFILES[key];
+      if (!profile) return;
+
+      activeSession = {
+        key: key,
+        ...profile,
+        token: "jwt_token_secure_" + Date.now()
+      };
+
+      localStorage.setItem('uniattend_360_session', JSON.stringify(activeSession));
+      applySession(activeSession);
+      closeLoginModal();
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('uniattend_360_session');
+      activeSession = null;
+      openLoginModal();
+    }
+
+    function applySession(session) {
+      // Hide all views
       document.getElementById('viewStudent').classList.add('hidden');
       document.getElementById('viewTeacher').classList.add('hidden');
       document.getElementById('viewCoordinator').classList.add('hidden');
       document.getElementById('viewPrincipal').classList.add('hidden');
 
-      const avatar = document.getElementById('roleAvatar');
-      const name = document.getElementById('profileName');
-      const badge = document.getElementById('roleBadge');
-      const desc = document.getElementById('profileDesc');
+      // Update Nav
+      document.getElementById('navUserIcon').innerText = session.avatar;
+      document.getElementById('navUserName').innerText = session.name;
+      document.getElementById('navUserRole').innerText = session.badge;
 
-      if (role === 'STUDENT') {
+      // Update Profile Banner
+      document.getElementById('roleAvatar').innerText = session.avatar;
+      document.getElementById('profileName').innerText = session.name;
+      document.getElementById('roleBadge').innerText = session.badge;
+      document.getElementById('roleBadge').className = `${session.badgeClass} font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded shrink-0`;
+      document.getElementById('profileDesc').innerText = session.desc;
+
+      // Activate Role View
+      if (session.role === 'STUDENT') {
         document.getElementById('viewStudent').classList.remove('hidden');
-        avatar.innerText = "🎓";
-        name.innerText = "Captain (Roll No: CHMC-DS-2024-001)";
-        badge.innerText = "STUDENT";
-        badge.className = "bg-purple-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded";
-        desc.innerText = "B.Sc. Data Science (Sem 5) • Class Size: 5 Students • Smt. C.H.M. College";
-      } else if (role.startsWith('TEACHER')) {
+      } else if (session.role.startsWith('TEACHER')) {
         document.getElementById('viewTeacher').classList.remove('hidden');
-        avatar.innerText = "👨‍🏫";
-        badge.innerText = "FACULTY";
-        badge.className = "bg-emerald-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded";
-
-        const titleEl = document.getElementById('teacherSubjectTitle');
-        const roomTag = document.getElementById('kioskRoomTag');
-
-        if (role === 'TEACHER_RAZIA') {
-          name.innerText = "Miss Razia Khan (Faculty - Data Mining)";
-          titleEl.innerText = "Data Mining (DS301-DM)";
-          roomTag.innerText = "DS-LAB-1";
-          desc.innerText = "Classroom Projector Kiosk • Data Science Lab 1 (CHM Campus)";
-        } else if (role === 'TEACHER_ANSHUL') {
-          name.innerText = "Mr. Anshul Chimnani (Faculty - Data Warehousing)";
-          titleEl.innerText = "Data Warehousing (DS302-DW)";
-          roomTag.innerText = "LH-201";
-          desc.innerText = "Classroom Projector Kiosk • Degree College LH-201 (CHM Campus)";
-        } else if (role === 'TEACHER_KALYANI') {
-          name.innerText = "Miss Kalyani Patil (Faculty - DAA)";
-          titleEl.innerText = "Design and Analysis of Algorithms (DS303-DAA)";
-          roomTag.innerText = "LH-202";
-          desc.innerText = "Classroom Projector Kiosk • Degree College LH-202 (CHM Campus)";
-        }
-      } else if (role === 'COORDINATOR') {
+        document.getElementById('teacherSubjectTitle').innerText = session.subjectTitle || "Lecture Session";
+        document.getElementById('kioskRoomTag').innerText = session.roomTag || "DS-LAB-1";
+      } else if (session.role === 'COORDINATOR') {
         document.getElementById('viewCoordinator').classList.remove('hidden');
-        avatar.innerText = "👔";
-        name.innerText = "Mrs. Shiji Johnson (Course Coordinator)";
-        badge.innerText = "COORDINATOR";
-        badge.className = "bg-indigo-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded";
-        desc.innerText = "Academic & Department Coordinator • Department of Data Science";
-      } else if (role === 'PRINCIPAL') {
+      } else if (session.role === 'PRINCIPAL') {
         document.getElementById('viewPrincipal').classList.remove('hidden');
-        avatar.innerText = "🏛️";
-        name.innerText = "Dr. Manju Lalwani Pathak (Principal)";
-        badge.innerText = "PRINCIPAL";
-        badge.className = "bg-blue-600 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded";
-        desc.innerText = "Executive Head & Principal • Smt. C.H.M. College (Ulhasnagar)";
       }
+
       lucide.createIcons();
+    }
+
+    function switchRole(roleKey) {
+      quickAuth(roleKey);
     }
 
     function submitStudentCheckIn() {
@@ -649,6 +836,9 @@
     function simulateScan() {
       alert("⚡ Simulated real-time scan events for the 5 Data Science students!");
     }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', initAuth);
   </script>
 </body>
 </html>
