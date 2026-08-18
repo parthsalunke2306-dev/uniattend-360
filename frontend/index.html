@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>UniAttend 360 | Smt. C.H.M. College (Data Science)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -46,6 +46,7 @@
       background-color: #0B1326;
       color: #DAE2FD;
       font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
     }
     .neon-border {
       border: 1px solid rgba(168, 85, 247, 0.3);
@@ -56,7 +57,7 @@
       box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
     }
     .glass-panel {
-      background: rgba(23, 31, 51, 0.75);
+      background: rgba(23, 31, 51, 0.85);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -69,78 +70,94 @@
       0%, 100% { top: 5%; }
       50% { top: 90%; }
     }
-    .hud-glow {
-      text-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
-    }
     .pin-hud {
       text-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+    }
+    /* Custom mobile dropdown */
+    select option {
+      background-color: #131B2E;
+      color: #FFFFFF;
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-purple-600 selection:text-white">
 
-  <!-- TOP HUD BAR -->
-  <header class="glass-panel sticky top-0 z-50 border-b border-stitch-border">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+  <!-- TOP RESPONSIVE NAVIGATION BAR -->
+  <header class="glass-panel sticky top-0 z-50 border-b border-stitch-border shadow-md">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
       
-      <!-- College & Department Brand -->
-      <div class="flex items-center space-x-3">
-        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 shadow-lg shadow-purple-900/30 flex items-center justify-center">
-          <div class="h-full w-full bg-stitch-bg rounded-[10px] flex items-center justify-center">
-            <i data-lucide="radar" class="w-5 h-5 text-emerald-400"></i>
+      <!-- Responsive Flex Container -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4">
+        
+        <!-- Row 1: Brand & Online Indicator -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <div class="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
+              <div class="h-full w-full bg-stitch-bg rounded-[10px] flex items-center justify-center">
+                <i data-lucide="radar" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400"></i>
+              </div>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center space-x-1.5">
+                <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-white truncate">Smt. C.H.M. College</h1>
+                <span class="bg-purple-500/20 text-purple-300 text-[9px] sm:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30 shrink-0">DATA SCIENCE</span>
+              </div>
+              <p class="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate">UniAttend 360 • Anti-Proxy Shield</p>
+            </div>
+          </div>
+
+          <!-- Mobile Online Badge -->
+          <div class="flex sm:hidden items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono shrink-0">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>LIVE</span>
           </div>
         </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-white">Smt. C.H.M. College</h1>
-            <span class="bg-purple-500/20 text-purple-300 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-purple-500/30">DATA SCIENCE</span>
+
+        <!-- Row 2 (Mobile) / Right Side (Desktop): Role Switcher -->
+        <div class="flex items-center space-x-2.5 w-full sm:w-auto">
+          <div class="w-full sm:w-auto flex items-center bg-stitch-surface/90 px-3 py-1.5 sm:py-2 rounded-xl border border-stitch-border shadow-inner">
+            <span class="text-[10px] sm:text-[11px] font-mono text-purple-400 font-bold uppercase mr-2 shrink-0">ROLE:</span>
+            <select id="roleSelector" onchange="switchRole(this.value)" class="w-full sm:w-auto bg-transparent text-white font-semibold text-xs focus:outline-none cursor-pointer truncate">
+              <option value="STUDENT" selected>🎓 Student: Captain (CHMC-DS-2024-001)</option>
+              <option value="TEACHER_RAZIA">👨‍🏫 Faculty: Miss Razia Khan (Data Mining)</option>
+              <option value="TEACHER_ANSHUL">👨‍🏫 Faculty: Mr. Anshul Chimnani (Data Warehousing)</option>
+              <option value="TEACHER_KALYANI">👨‍🏫 Faculty: Miss Kalyani Patil (DAA)</option>
+              <option value="COORDINATOR">👔 Coordinator: Mrs. Shiji Johnson</option>
+              <option value="PRINCIPAL">🏛️ Principal: Dr. Manju Lalwani Pathak</option>
+            </select>
           </div>
-          <p class="text-[11px] text-slate-400 font-mono">UniAttend 360 • Tri-Factor Anti-Proxy Shield</p>
-        </div>
-      </div>
 
-      <!-- Role / Profile Switcher -->
-      <div class="flex items-center space-x-3">
-        <div class="flex items-center space-x-2 bg-stitch-surface px-3 py-1.5 rounded-xl border border-stitch-border">
-          <span class="text-[11px] font-mono text-purple-400 uppercase">PROFILE:</span>
-          <select id="roleSelector" onchange="switchRole(this.value)" class="bg-transparent text-white font-medium text-xs focus:outline-none cursor-pointer">
-            <option value="STUDENT" class="bg-stitch-bg text-white" selected>🎓 Student: Captain (CHMC-DS-2024-001)</option>
-            <option value="TEACHER_RAZIA" class="bg-stitch-bg text-white">👨‍🏫 Faculty: Miss Razia Khan (Data Mining)</option>
-            <option value="TEACHER_ANSHUL" class="bg-stitch-bg text-white">👨‍🏫 Faculty: Mr. Anshul Chimnani (Data Warehousing)</option>
-            <option value="TEACHER_KALYANI" class="bg-stitch-bg text-white">👨‍🏫 Faculty: Miss Kalyani Patil (DAA)</option>
-            <option value="COORDINATOR" class="bg-stitch-bg text-white">👔 Coordinator: Mrs. Shiji Johnson</option>
-            <option value="PRINCIPAL" class="bg-stitch-bg text-white">🏛️ Principal: Dr. Manju Lalwani Pathak</option>
-          </select>
+          <!-- Desktop Online Badge -->
+          <div class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono shrink-0">
+            <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>LIVE</span>
+          </div>
         </div>
 
-        <div class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
-          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>ONLINE</span>
-        </div>
       </div>
 
     </div>
   </header>
 
   <!-- MAIN HUD CONTENT -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
     <!-- ACTIVE PROFILE HUD BANNER -->
-    <div id="profileBanner" class="glass-panel p-4 rounded-2xl border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-purple-950/20">
-      <div class="flex items-center space-x-3.5">
-        <div id="roleAvatar" class="h-12 w-12 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-2xl shadow-inner">
+    <div id="profileBanner" class="glass-panel p-3.5 sm:p-4 rounded-2xl border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-purple-950/20">
+      <div class="flex items-center space-x-3 min-w-0">
+        <div id="roleAvatar" class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-xl sm:text-2xl shrink-0 shadow-inner">
           🎓
         </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <h2 id="profileName" class="font-bold text-white text-base">Captain (Roll No: CHMC-DS-2024-001)</h2>
-            <span id="roleBadge" class="bg-purple-500 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded">STUDENT</span>
+        <div class="min-w-0">
+          <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+            <h2 id="profileName" class="font-bold text-white text-sm sm:text-base truncate">Captain (Roll No: CHMC-DS-2024-001)</h2>
+            <span id="roleBadge" class="bg-purple-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded shrink-0">STUDENT</span>
           </div>
-          <p id="profileDesc" class="text-xs text-slate-400 mt-0.5">B.Sc. Data Science (Sem 5) • Class Size: 5 Students • Smt. C.H.M. College</p>
+          <p id="profileDesc" class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">B.Sc. Data Science (Sem 5) • Class Size: 5 Students • Smt. C.H.M. College</p>
         </div>
       </div>
-      <div class="flex items-center space-x-2 text-xs font-mono text-slate-400 bg-stitch-surface/80 px-3 py-2 rounded-xl border border-stitch-border">
-        <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i>
+      <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-slate-400 bg-stitch-surface/80 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-stitch-border w-fit shrink-0">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-400"></i>
         <span>Campus: <b class="text-slate-200">Ulhasnagar, Mumbai</b></span>
       </div>
     </div>
@@ -148,80 +165,80 @@
     <!-- ============================================== -->
     <!-- VIEW 1: STUDENT MOBILE CHECK-IN & 360 -->
     <!-- ============================================== -->
-    <div id="viewStudent" class="space-y-6">
+    <div id="viewStudent" class="space-y-4 sm:space-y-6">
       
       <!-- Top Metrics HUD -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <!-- Metric 1 -->
-        <div class="glass-panel p-5 rounded-2xl relative overflow-hidden neon-border-emerald">
+        <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden neon-border-emerald">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono text-emerald-400 uppercase tracking-wider">Overall Attendance</span>
-            <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30">EXAM ELIGIBLE</span>
+            <span class="text-[11px] sm:text-xs font-mono text-emerald-400 uppercase tracking-wider">Overall Attendance</span>
+            <span class="bg-emerald-500/20 text-emerald-300 text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30">EXAM ELIGIBLE</span>
           </div>
           <div class="flex items-baseline justify-between mt-2">
-            <div class="text-4xl font-extrabold font-mono text-white">92.4%</div>
-            <span class="text-xs text-slate-400 font-mono">Cutoff: 75.0%</span>
+            <div class="text-3xl sm:text-4xl font-extrabold font-mono text-white">92.4%</div>
+            <span class="text-[11px] sm:text-xs text-slate-400 font-mono">Cutoff: 75.0%</span>
           </div>
-          <div class="w-full bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
+          <div class="w-full bg-slate-800 h-1.5 sm:h-2 rounded-full mt-3 overflow-hidden">
             <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 92.4%"></div>
           </div>
         </div>
 
         <!-- Metric 2 -->
-        <div class="glass-panel p-5 rounded-2xl relative overflow-hidden neon-border">
+        <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden neon-border">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono text-purple-400 uppercase tracking-wider">Lectures Attended</span>
-            <span class="text-xs font-mono text-purple-300">3 Subjects</span>
+            <span class="text-[11px] sm:text-xs font-mono text-purple-400 uppercase tracking-wider">Lectures Attended</span>
+            <span class="text-[11px] sm:text-xs font-mono text-purple-300">3 Subjects</span>
           </div>
           <div class="flex items-baseline justify-between mt-2">
-            <div class="text-4xl font-extrabold font-mono text-white">68 <span class="text-lg text-slate-500 font-normal">/ 74</span></div>
-            <span class="text-xs text-emerald-400 font-mono">+6 Safe Margin</span>
+            <div class="text-3xl sm:text-4xl font-extrabold font-mono text-white">68 <span class="text-base sm:text-lg text-slate-500 font-normal">/ 74</span></div>
+            <span class="text-[11px] sm:text-xs text-emerald-400 font-mono">+6 Safe Margin</span>
           </div>
-          <p class="text-xs text-slate-400 mt-3 font-mono">Miss Razia, Mr. Anshul, Miss Kalyani</p>
+          <p class="text-[11px] sm:text-xs text-slate-400 mt-2 sm:mt-3 font-mono truncate">Miss Razia, Mr. Anshul, Miss Kalyani</p>
         </div>
 
         <!-- Metric 3 -->
-        <div class="glass-panel p-5 rounded-2xl relative overflow-hidden border border-stitch-border">
+        <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden border border-stitch-border">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Classroom Geofence</span>
-            <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded">LOCKED</span>
+            <span class="text-[11px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider">Classroom Geofence</span>
+            <span class="bg-emerald-500/20 text-emerald-400 text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 rounded">LOCKED</span>
           </div>
           <div class="flex items-baseline justify-between mt-2">
-            <div class="text-2xl font-bold font-mono text-emerald-400">11.8m Away</div>
-            <span class="text-xs text-slate-400 font-mono">Max: 45m</span>
+            <div class="text-xl sm:text-2xl font-bold font-mono text-emerald-400">11.8m Away</div>
+            <span class="text-[11px] sm:text-xs text-slate-400 font-mono">Max: 45m</span>
           </div>
-          <p class="text-xs text-slate-400 mt-3 font-mono">Data Science Lab 1 (CHM Campus)</p>
+          <p class="text-[11px] sm:text-xs text-slate-400 mt-2 sm:mt-3 font-mono truncate">Data Science Lab 1 (CHM Campus)</p>
         </div>
       </div>
 
       <!-- Student Check-In HUD & Scanner -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         
         <!-- Interactive Check-in Card -->
-        <div class="glass-panel p-6 rounded-2xl space-y-4 neon-border">
-          <div class="flex items-center justify-between border-b border-stitch-border pb-3">
-            <h3 class="font-bold text-white text-base flex items-center">
-              <i data-lucide="scan-face" class="w-5 h-5 text-purple-400 mr-2"></i>
+        <div class="glass-panel p-4 sm:p-6 rounded-2xl space-y-3.5 sm:space-y-4 neon-border">
+          <div class="flex items-center justify-between border-b border-stitch-border pb-2.5 sm:pb-3">
+            <h3 class="font-bold text-white text-sm sm:text-base flex items-center">
+              <i data-lucide="scan-face" class="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 mr-2"></i>
               Mobile Classroom Check-In
             </h3>
-            <span class="bg-purple-500/20 text-purple-300 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-purple-500/30">TRI-FACTOR SHIELD</span>
+            <span class="bg-purple-500/20 text-purple-300 text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-purple-500/30">TRI-FACTOR SHIELD</span>
           </div>
 
           <!-- Holographic Scanner Simulation -->
-          <div class="relative w-full h-48 rounded-xl bg-slate-950/80 border border-purple-500/40 overflow-hidden flex flex-col items-center justify-center p-4">
+          <div class="relative w-full h-40 sm:h-48 rounded-xl bg-slate-950/90 border border-purple-500/40 overflow-hidden flex flex-col items-center justify-center p-3">
             <div class="absolute inset-0 scanner-laser pointer-events-none"></div>
             
             <!-- Scanner Frame Corners -->
-            <div class="w-32 h-32 border-2 border-dashed border-purple-400/60 rounded-xl flex items-center justify-center relative">
-              <i data-lucide="qr-code" class="w-16 h-16 text-purple-300/40 animate-pulse"></i>
+            <div class="w-28 h-28 sm:w-32 sm:h-32 border-2 border-dashed border-purple-400/60 rounded-xl flex items-center justify-center relative">
+              <i data-lucide="qr-code" class="w-12 h-12 sm:w-16 sm:h-16 text-purple-300/40 animate-pulse"></i>
             </div>
-            <p class="text-[11px] font-mono text-purple-300 mt-2 z-10">Point Camera at Projector Screen</p>
+            <p class="text-[10px] sm:text-[11px] font-mono text-purple-300 mt-2 z-10">Point Camera at Projector Screen</p>
           </div>
 
           <!-- Session Select -->
           <div class="space-y-1">
-            <label class="text-xs font-mono text-slate-400">Active Lecture Session</label>
-            <select id="studentCourseSelect" class="w-full bg-stitch-surface border border-stitch-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+            <label class="text-[11px] sm:text-xs font-mono text-slate-400">Active Lecture Session</label>
+            <select id="studentCourseSelect" class="w-full bg-stitch-surface border border-stitch-border rounded-xl p-2 sm:p-2.5 text-xs text-white focus:outline-none focus:border-purple-500 truncate">
               <option value="DS301-DM">DS301-DM: Data Mining — Miss Razia Khan (DS-LAB-1)</option>
               <option value="DS302-DW">DS302-DW: Data Warehousing — Mr. Anshul Chimnani (LH-201)</option>
               <option value="DS303-DAA">DS303-DAA: Design & Analysis of Algorithms — Miss Kalyani Patil (LH-202)</option>
@@ -230,102 +247,102 @@
 
           <!-- GPS Location Simulator -->
           <div class="space-y-1.5">
-            <label class="text-xs font-mono text-slate-400">Physical Location Verification (GPS Geofence)</label>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+            <label class="text-[11px] sm:text-xs font-mono text-slate-400">Location Verification (GPS Geofence)</label>
+            <div class="grid grid-cols-1 gap-2 text-xs font-mono">
               <label class="flex items-center p-2.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 cursor-pointer text-emerald-300">
-                <input type="radio" name="studentLoc" value="IN_CLASS" checked class="text-emerald-500 mr-2">
-                <span>🟢 In DS-LAB-1 (11.8m)</span>
+                <input type="radio" name="studentLoc" value="IN_CLASS" checked class="text-emerald-500 mr-2 shrink-0">
+                <span class="truncate">🟢 In DS-LAB-1 (Distance: 11.8m)</span>
               </label>
               <label class="flex items-center p-2.5 rounded-xl border border-rose-500/40 bg-rose-500/10 cursor-pointer text-rose-300">
-                <input type="radio" name="studentLoc" value="AT_HOME" class="text-rose-500 mr-2">
-                <span>🔴 Absent At Home (1.8km)</span>
+                <input type="radio" name="studentLoc" value="AT_HOME" class="text-rose-500 mr-2 shrink-0">
+                <span class="truncate">🔴 Absent At Home (1.8km away)</span>
               </label>
             </div>
           </div>
 
           <!-- Security PIN -->
           <div class="space-y-1">
-            <div class="flex justify-between items-center text-xs font-mono">
+            <div class="flex justify-between items-center text-[11px] sm:text-xs font-mono">
               <span class="text-slate-400">Rolling 4-Digit Security PIN</span>
-              <span class="text-emerald-400">Auto-Synced from Screen</span>
+              <span class="text-emerald-400">Auto-Synced</span>
             </div>
-            <input type="text" id="studentPinInput" value="8492" maxlength="4" class="w-full bg-stitch-surface border border-emerald-500/40 rounded-xl p-2.5 text-center font-mono font-extrabold text-2xl text-emerald-400 tracking-[0.3em] focus:outline-none">
+            <input type="text" id="studentPinInput" value="8492" maxlength="4" class="w-full bg-stitch-surface border border-emerald-500/40 rounded-xl p-2 sm:p-2.5 text-center font-mono font-extrabold text-xl sm:text-2xl text-emerald-400 tracking-[0.3em] focus:outline-none">
           </div>
 
           <!-- Submit Button -->
-          <button onclick="submitStudentCheckIn()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-900/40 transition duration-150 flex items-center justify-center space-x-2">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          <button onclick="submitStudentCheckIn()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 sm:py-3 rounded-xl shadow-lg shadow-purple-900/40 transition duration-150 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+            <i data-lucide="shield-check" class="w-4 h-4 sm:w-5 sm:h-5"></i>
             <span>SUBMIT LIVE CHECK-IN</span>
           </button>
 
           <!-- Result Alert Box -->
-          <div id="checkInResult" class="hidden p-4 rounded-xl text-xs font-mono"></div>
+          <div id="checkInResult" class="hidden p-3.5 sm:p-4 rounded-xl text-xs font-mono"></div>
         </div>
 
         <!-- Subject 360 & 'What-If' Calculator -->
-        <div class="glass-panel p-6 rounded-2xl space-y-5 border border-stitch-border">
-          <div class="flex items-center justify-between border-b border-stitch-border pb-3">
-            <h3 class="font-bold text-white text-base flex items-center">
-              <i data-lucide="layers" class="w-5 h-5 text-emerald-400 mr-2"></i>
+        <div class="glass-panel p-4 sm:p-6 rounded-2xl space-y-4 sm:space-y-5 border border-stitch-border">
+          <div class="flex items-center justify-between border-b border-stitch-border pb-2.5 sm:pb-3">
+            <h3 class="font-bold text-white text-sm sm:text-base flex items-center">
+              <i data-lucide="layers" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 mr-2"></i>
               Subject Attendance & 'What-If' Engine
             </h3>
-            <span class="text-xs font-mono text-slate-400">Semester 5</span>
+            <span class="text-[10px] sm:text-xs font-mono text-slate-400">Sem 5</span>
           </div>
 
           <!-- 3 Subject Cards -->
-          <div class="space-y-3">
+          <div class="space-y-2.5 sm:space-y-3">
             <!-- Subject 1 -->
-            <div class="p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between">
-              <div>
-                <div class="flex items-center space-x-2">
-                  <span class="font-bold text-white text-xs">Data Mining</span>
-                  <span class="text-[10px] font-mono text-slate-400">Miss Razia Khan</span>
+            <div class="p-3 sm:p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5 flex-wrap">
+                  <span class="font-bold text-white text-xs truncate">Data Mining</span>
+                  <span class="text-[10px] font-mono text-slate-400 truncate">Miss Razia Khan</span>
                 </div>
-                <p class="text-[11px] text-slate-400 mt-0.5">24 Held • 22 Attended • DS-LAB-1</p>
+                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">24 Held • 22 Attended • DS-LAB-1</p>
               </div>
-              <div class="text-right">
-                <span class="font-mono font-extrabold text-lg text-emerald-400">91.7%</span>
-                <div class="text-[10px] font-mono text-emerald-300">SAFE</div>
+              <div class="text-right shrink-0">
+                <span class="font-mono font-extrabold text-base sm:text-lg text-emerald-400">91.7%</span>
+                <div class="text-[9px] sm:text-[10px] font-mono text-emerald-300 font-bold">SAFE</div>
               </div>
             </div>
 
             <!-- Subject 2 -->
-            <div class="p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between">
-              <div>
-                <div class="flex items-center space-x-2">
-                  <span class="font-bold text-white text-xs">Data Warehousing</span>
-                  <span class="text-[10px] font-mono text-slate-400">Mr. Anshul Chimnani</span>
+            <div class="p-3 sm:p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5 flex-wrap">
+                  <span class="font-bold text-white text-xs truncate">Data Warehousing</span>
+                  <span class="text-[10px] font-mono text-slate-400 truncate">Mr. Anshul Chimnani</span>
                 </div>
-                <p class="text-[11px] text-slate-400 mt-0.5">25 Held • 24 Attended • LH-201</p>
+                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">25 Held • 24 Attended • LH-201</p>
               </div>
-              <div class="text-right">
-                <span class="font-mono font-extrabold text-lg text-emerald-400">96.0%</span>
-                <div class="text-[10px] font-mono text-emerald-300">SAFE</div>
+              <div class="text-right shrink-0">
+                <span class="font-mono font-extrabold text-base sm:text-lg text-emerald-400">96.0%</span>
+                <div class="text-[9px] sm:text-[10px] font-mono text-emerald-300 font-bold">SAFE</div>
               </div>
             </div>
 
             <!-- Subject 3 -->
-            <div class="p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between">
-              <div>
-                <div class="flex items-center space-x-2">
-                  <span class="font-bold text-white text-xs">Design & Analysis of Algorithms</span>
-                  <span class="text-[10px] font-mono text-slate-400">Miss Kalyani Patil</span>
+            <div class="p-3 sm:p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5 flex-wrap">
+                  <span class="font-bold text-white text-xs truncate">Design & Analysis of Algo</span>
+                  <span class="text-[10px] font-mono text-slate-400 truncate">Miss Kalyani Patil</span>
                 </div>
-                <p class="text-[11px] text-slate-400 mt-0.5">25 Held • 22 Attended • LH-202</p>
+                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">25 Held • 22 Attended • LH-202</p>
               </div>
-              <div class="text-right">
-                <span class="font-mono font-extrabold text-lg text-emerald-400">88.0%</span>
-                <div class="text-[10px] font-mono text-emerald-300">SAFE</div>
+              <div class="text-right shrink-0">
+                <span class="font-mono font-extrabold text-base sm:text-lg text-emerald-400">88.0%</span>
+                <div class="text-[9px] sm:text-[10px] font-mono text-emerald-300 font-bold">SAFE</div>
               </div>
             </div>
           </div>
 
           <!-- 'What-If' Attendance Simulator -->
-          <div class="p-4 rounded-xl bg-gradient-to-tr from-purple-950/40 to-slate-900 border border-purple-500/30 space-y-3">
-            <span class="text-xs font-mono text-purple-300 font-bold uppercase tracking-wider">🧮 'What-If' Exam Clearance Simulator</span>
+          <div class="p-3.5 sm:p-4 rounded-xl bg-gradient-to-tr from-purple-950/40 to-slate-900 border border-purple-500/30 space-y-2.5 sm:space-y-3">
+            <span class="text-[10px] sm:text-xs font-mono text-purple-300 font-bold uppercase tracking-wider">🧮 'What-If' Exam Clearance Simulator</span>
             
             <div class="space-y-1">
-              <div class="flex justify-between text-xs font-mono">
+              <div class="flex justify-between text-[11px] sm:text-xs font-mono">
                 <span class="text-slate-400">If I attend next N consecutive classes:</span>
                 <span id="sliderVal" class="text-emerald-400 font-bold">+4 classes</span>
               </div>
@@ -333,8 +350,8 @@
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-purple-500/20">
-              <span class="text-xs font-mono text-slate-300">Projected Cumulative Attendance:</span>
-              <span id="simResult" class="font-mono font-extrabold text-xl text-emerald-400">92.8%</span>
+              <span class="text-[11px] sm:text-xs font-mono text-slate-300">Projected Attendance:</span>
+              <span id="simResult" class="font-mono font-extrabold text-lg sm:text-xl text-emerald-400">92.8%</span>
             </div>
           </div>
 
@@ -347,29 +364,29 @@
     <!-- ============================================== -->
     <!-- VIEW 2: TEACHER / PROFESSOR CLASSROOM KIOSK -->
     <!-- ============================================== -->
-    <div id="viewTeacher" class="space-y-6 hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div id="viewTeacher" class="space-y-4 sm:space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         
         <!-- Live Rotating Projector Display -->
-        <div class="glass-panel p-6 rounded-2xl lg:col-span-1 text-center space-y-4 neon-border">
+        <div class="glass-panel p-4 sm:p-6 rounded-2xl lg:col-span-1 text-center space-y-3.5 sm:space-y-4 neon-border">
           <div class="flex items-center justify-between border-b border-stitch-border pb-2">
             <span class="text-xs font-mono text-purple-400 font-bold">PROJECTOR KIOSK</span>
             <span id="kioskRoomTag" class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded">DS-LAB-1</span>
           </div>
 
           <!-- Rotating Dynamic QR Code -->
-          <div class="p-4 bg-white rounded-2xl inline-block shadow-xl">
-            <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CHMC-DS-Token-8492" class="w-44 h-44 mx-auto rounded-lg" alt="Dynamic QR">
-            <div class="text-[11px] font-mono text-slate-700 mt-2 font-semibold">
+          <div class="p-3 sm:p-4 bg-white rounded-2xl inline-block shadow-xl">
+            <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CHMC-DS-Token-8492" class="w-36 h-36 sm:w-44 sm:h-44 mx-auto rounded-lg" alt="Dynamic QR">
+            <div class="text-[10px] sm:text-[11px] font-mono text-slate-700 mt-2 font-semibold">
               ⏳ Rotates in: <span id="kioskTimer" class="text-purple-600 font-bold">8s</span>
             </div>
           </div>
 
           <!-- Large Rolling PIN HUD -->
-          <div class="p-4 rounded-xl bg-gradient-to-tr from-purple-950 to-slate-900 border border-emerald-500/40">
-            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Rolling Security PIN</span>
-            <div id="kioskPinDisplay" class="font-mono font-extrabold text-4xl text-emerald-400 tracking-[0.25em] my-1 pin-hud">8492</div>
-            <span class="text-[10px] font-mono text-emerald-400/80">Refreshes every 8 seconds • 45m Geofence</span>
+          <div class="p-3 sm:p-4 rounded-xl bg-gradient-to-tr from-purple-950 to-slate-900 border border-emerald-500/40">
+            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase tracking-wider">Rolling Security PIN</span>
+            <div id="kioskPinDisplay" class="font-mono font-extrabold text-3xl sm:text-4xl text-emerald-400 tracking-[0.2em] my-1 pin-hud">8492</div>
+            <span class="text-[9px] sm:text-[10px] font-mono text-emerald-400/80">Refreshes every 8 seconds • 45m Geofence</span>
           </div>
 
           <button onclick="simulateScan()" class="w-full bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-purple-200 text-xs font-mono font-bold py-2 rounded-xl">
@@ -378,74 +395,74 @@
         </div>
 
         <!-- 5-Student Live Digital Attendance Roster -->
-        <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-4 border border-stitch-border">
-          <div class="flex items-center justify-between border-b border-stitch-border pb-3">
+        <div class="glass-panel p-4 sm:p-6 rounded-2xl lg:col-span-2 space-y-3.5 sm:space-y-4 border border-stitch-border">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-stitch-border pb-3">
             <div>
-              <h3 id="teacherSubjectTitle" class="font-bold text-white text-base">Data Mining (DS301-DM)</h3>
-              <p class="text-xs font-mono text-slate-400">Instructor: Miss Razia Khan • Total Enrolled: 5 Students</p>
+              <h3 id="teacherSubjectTitle" class="font-bold text-white text-sm sm:text-base">Data Mining (DS301-DM)</h3>
+              <p class="text-[11px] sm:text-xs font-mono text-slate-400">Instructor: Miss Razia Khan • Class: 5 Students</p>
             </div>
-            <span class="bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/30">
+            <span class="bg-emerald-500/20 text-emerald-300 font-mono text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-500/30 w-fit">
               Verified: 4 / 5 Present
             </span>
           </div>
 
-          <!-- Table of 5 Data Science Students -->
-          <div class="overflow-x-auto border border-stitch-border rounded-xl">
-            <table class="w-full text-left text-xs font-mono">
+          <!-- Table of 5 Data Science Students (Horizontal Scroll on Mobile) -->
+          <div class="overflow-x-auto border border-stitch-border rounded-xl -mx-1 sm:mx-0">
+            <table class="w-full text-left text-xs font-mono whitespace-nowrap">
               <thead class="bg-stitch-surface text-slate-300 uppercase">
                 <tr>
-                  <th class="p-3">Roll No</th>
-                  <th class="p-3">Student Name</th>
-                  <th class="p-3">Status</th>
-                  <th class="p-3">GPS Distance</th>
-                  <th class="p-3">Check-In Time</th>
+                  <th class="p-2.5 sm:p-3">Roll No</th>
+                  <th class="p-2.5 sm:p-3">Student Name</th>
+                  <th class="p-2.5 sm:p-3">Status</th>
+                  <th class="p-2.5 sm:p-3">GPS Distance</th>
+                  <th class="p-2.5 sm:p-3">Check-In Time</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-stitch-border text-slate-300">
                 <tr class="bg-emerald-500/5">
-                  <td class="p-3 font-bold text-white">CHMC-DS-2024-001</td>
-                  <td class="p-3 text-white font-sans font-semibold">Captain (Lead)</td>
-                  <td class="p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
-                  <td class="p-3 text-emerald-400">11.8m</td>
-                  <td class="p-3">09:02:14 AM</td>
+                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-001</td>
+                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Captain (Lead)</td>
+                  <td class="p-2.5 sm:p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
+                  <td class="p-2.5 sm:p-3 text-emerald-400">11.8m</td>
+                  <td class="p-2.5 sm:p-3">09:02:14 AM</td>
                 </tr>
                 <tr class="bg-emerald-500/5">
-                  <td class="p-3 font-bold text-white">CHMC-DS-2024-002</td>
-                  <td class="p-3 text-white font-sans font-semibold">Aarav Sharma</td>
-                  <td class="p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
-                  <td class="p-3 text-emerald-400">14.2m</td>
-                  <td class="p-3">09:02:40 AM</td>
+                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-002</td>
+                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Aarav Sharma</td>
+                  <td class="p-2.5 sm:p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
+                  <td class="p-2.5 sm:p-3 text-emerald-400">14.2m</td>
+                  <td class="p-2.5 sm:p-3">09:02:40 AM</td>
                 </tr>
                 <tr class="bg-rose-500/5">
-                  <td class="p-3 font-bold text-white">CHMC-DS-2024-003</td>
-                  <td class="p-3 text-white font-sans font-semibold">Priya Patel</td>
-                  <td class="p-3"><span class="bg-rose-500/20 text-rose-300 font-bold px-2 py-0.5 rounded">🚨 PROXY BLOCKED</span></td>
-                  <td class="p-3 text-rose-400">1.8 km (At Home)</td>
-                  <td class="p-3">09:03:10 AM</td>
+                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-003</td>
+                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Priya Patel</td>
+                  <td class="p-2.5 sm:p-3"><span class="bg-rose-500/20 text-rose-300 font-bold px-2 py-0.5 rounded">🚨 PROXY BLOCKED</span></td>
+                  <td class="p-2.5 sm:p-3 text-rose-400">1.8 km (At Home)</td>
+                  <td class="p-2.5 sm:p-3">09:03:10 AM</td>
                 </tr>
                 <tr class="bg-emerald-500/5">
-                  <td class="p-3 font-bold text-white">CHMC-DS-2024-004</td>
-                  <td class="p-3 text-white font-sans font-semibold">Rohan Gupta</td>
-                  <td class="p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
-                  <td class="p-3 text-emerald-400">8.6m</td>
-                  <td class="p-3">09:04:02 AM</td>
+                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-004</td>
+                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Rohan Gupta</td>
+                  <td class="p-2.5 sm:p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
+                  <td class="p-2.5 sm:p-3 text-emerald-400">8.6m</td>
+                  <td class="p-2.5 sm:p-3">09:04:02 AM</td>
                 </tr>
                 <tr class="bg-emerald-500/5">
-                  <td class="p-3 font-bold text-white">CHMC-DS-2024-005</td>
-                  <td class="p-3 text-white font-sans font-semibold">Ananya Verma</td>
-                  <td class="p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
-                  <td class="p-3 text-emerald-400">12.0m</td>
-                  <td class="p-3">09:04:18 AM</td>
+                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-005</td>
+                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Ananya Verma</td>
+                  <td class="p-2.5 sm:p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
+                  <td class="p-2.5 sm:p-3 text-emerald-400">12.0m</td>
+                  <td class="p-2.5 sm:p-3">09:04:18 AM</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="flex space-x-3 pt-2">
-            <button class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs font-mono shadow-lg shadow-emerald-950/40">
+          <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+            <button class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs font-mono shadow-lg shadow-emerald-950/40">
               💾 LOCK & COMMIT ATTENDANCE
             </button>
-            <button class="bg-stitch-surface hover:bg-slate-800 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs font-mono border border-stitch-border">
+            <button class="w-full sm:w-auto bg-stitch-surface hover:bg-slate-800 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs font-mono border border-stitch-border">
               👨‍🏫 MANUAL OVERRIDE
             </button>
           </div>
@@ -457,34 +474,34 @@
     <!-- ============================================== -->
     <!-- VIEW 3: COURSE COORDINATOR (MRS. SHIJI JOHNSON) -->
     <!-- ============================================== -->
-    <div id="viewCoordinator" class="space-y-6 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="glass-panel p-4 rounded-xl border-l-4 border-purple-500">
-          <span class="text-xs font-mono text-slate-400">Data Science Students</span>
-          <h3 class="text-2xl font-extrabold font-mono text-white mt-1">5</h3>
+    <div id="viewCoordinator" class="space-y-4 sm:space-y-6 hidden">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-purple-500">
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Students</span>
+          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">5</h3>
         </div>
-        <div class="glass-panel p-4 rounded-xl border-l-4 border-emerald-500">
-          <span class="text-xs font-mono text-slate-400">Dept Avg Attendance</span>
-          <h3 class="text-2xl font-extrabold font-mono text-emerald-400 mt-1">87.4%</h3>
+        <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-emerald-500">
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Avg Attendance</span>
+          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-emerald-400 mt-1">87.4%</h3>
         </div>
-        <div class="glass-panel p-4 rounded-xl border-l-4 border-rose-500">
-          <span class="text-xs font-mono text-slate-400">Defaulters (<75%)</span>
-          <h3 class="text-2xl font-extrabold font-mono text-rose-400 mt-1">1</h3>
+        <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-rose-500">
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Defaulters</span>
+          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-rose-400 mt-1">1</h3>
         </div>
-        <div class="glass-panel p-4 rounded-xl border-l-4 border-indigo-500">
-          <span class="text-xs font-mono text-slate-400">Faculty Members</span>
-          <h3 class="text-2xl font-extrabold font-mono text-white mt-1">3</h3>
+        <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-indigo-500">
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Faculty</span>
+          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">3</h3>
         </div>
       </div>
 
       <!-- Coordinator Action Center -->
-      <div class="glass-panel p-6 rounded-2xl space-y-4 border border-stitch-border">
-        <h3 class="font-bold text-white text-base flex items-center">
-          <i data-lucide="mail-warning" class="w-5 h-5 text-rose-400 mr-2"></i>
-          Official Shortage Warning Dispatcher
+      <div class="glass-panel p-4 sm:p-6 rounded-2xl space-y-3.5 sm:space-y-4 border border-stitch-border">
+        <h3 class="font-bold text-white text-sm sm:text-base flex items-center">
+          <i data-lucide="mail-warning" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-400 mr-2"></i>
+          Shortage Warning Dispatcher
         </h3>
         <p class="text-xs text-slate-400">1-click automated batch generator to issue official attendance shortage warning letters for students below 75%.</p>
-        <button class="bg-rose-600 hover:bg-rose-500 text-white font-mono font-bold px-4 py-2.5 rounded-xl text-xs shadow-lg shadow-rose-950/40">
+        <button class="w-full sm:w-auto bg-rose-600 hover:bg-rose-500 text-white font-mono font-bold px-4 py-2.5 rounded-xl text-xs shadow-lg shadow-rose-950/40">
           📨 BATCH DISPATCH OFFICIAL WARNING NOTICE PDFS
         </button>
       </div>
@@ -493,25 +510,25 @@
     <!-- ============================================== -->
     <!-- VIEW 4: PRINCIPAL VIEW (DR. MANJU LALWANI PATHAK) -->
     <!-- ============================================== -->
-    <div id="viewPrincipal" class="space-y-6 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="glass-panel p-5 rounded-xl border-l-4 border-purple-600">
-          <span class="text-xs font-mono text-slate-400">Department</span>
-          <h3 class="text-xl font-bold text-white mt-1">B.Sc. Data Science</h3>
+    <div id="viewPrincipal" class="space-y-4 sm:space-y-6 hidden">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div class="glass-panel p-4 sm:p-5 rounded-xl border-l-4 border-purple-600">
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Department</span>
+          <h3 class="text-lg sm:text-xl font-bold text-white mt-1">B.Sc. Data Science</h3>
         </div>
-        <div class="glass-panel p-5 rounded-xl border-l-4 border-emerald-500">
-          <span class="text-xs font-mono text-slate-400">Academic Regularity</span>
-          <h3 class="text-xl font-bold text-emerald-400 mt-1">98.2% Regular</h3>
+        <div class="glass-panel p-4 sm:p-5 rounded-xl border-l-4 border-emerald-500">
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Academic Regularity</span>
+          <h3 class="text-lg sm:text-xl font-bold text-emerald-400 mt-1">98.2% Regular</h3>
         </div>
-        <div class="glass-panel p-5 rounded-xl border-l-4 border-indigo-500">
-          <span class="text-xs font-mono text-slate-400">Campus Status</span>
-          <h3 class="text-xl font-bold text-white mt-1">Smt. C.H.M. College</h3>
+        <div class="glass-panel p-4 sm:p-5 rounded-xl border-l-4 border-indigo-500">
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Campus Status</span>
+          <h3 class="text-lg sm:text-xl font-bold text-white mt-1">Smt. C.H.M. College</h3>
         </div>
       </div>
 
-      <div class="glass-panel p-6 rounded-2xl space-y-4 border border-stitch-border">
-        <h3 class="font-bold text-white text-base">Executive Board Compliance Pack</h3>
-        <button class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-mono font-bold px-5 py-3 rounded-xl text-xs shadow-lg">
+      <div class="glass-panel p-4 sm:p-6 rounded-2xl space-y-3.5 sm:space-y-4 border border-stitch-border">
+        <h3 class="font-bold text-white text-sm sm:text-base">Executive Board Compliance Pack</h3>
+        <button class="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-mono font-bold px-5 py-3 rounded-xl text-xs shadow-lg">
           📥 DOWNLOAD MASTER EXECUTIVE AUDIT REPORT (PDF)
         </button>
       </div>
@@ -520,8 +537,8 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="border-t border-stitch-border py-4 text-center text-xs font-mono text-slate-500">
-    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Powered by Google Stitch "Neon Analytical" Design System
+  <footer class="border-t border-stitch-border py-4 text-center text-[10px] sm:text-xs font-mono text-slate-500 px-3">
+    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Powered by Google Stitch "Neon Analytical"
   </footer>
 
   <!-- SCRIPT FOR SWITCHING ROLES & REAL-TIME INTERACTION -->
@@ -544,13 +561,13 @@
         avatar.innerText = "🎓";
         name.innerText = "Captain (Roll No: CHMC-DS-2024-001)";
         badge.innerText = "STUDENT";
-        badge.className = "bg-purple-500 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded";
+        badge.className = "bg-purple-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded";
         desc.innerText = "B.Sc. Data Science (Sem 5) • Class Size: 5 Students • Smt. C.H.M. College";
       } else if (role.startsWith('TEACHER')) {
         document.getElementById('viewTeacher').classList.remove('hidden');
         avatar.innerText = "👨‍🏫";
         badge.innerText = "FACULTY";
-        badge.className = "bg-emerald-500 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded";
+        badge.className = "bg-emerald-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded";
 
         const titleEl = document.getElementById('teacherSubjectTitle');
         const roomTag = document.getElementById('kioskRoomTag');
@@ -576,14 +593,14 @@
         avatar.innerText = "👔";
         name.innerText = "Mrs. Shiji Johnson (Course Coordinator)";
         badge.innerText = "COORDINATOR";
-        badge.className = "bg-indigo-500 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded";
+        badge.className = "bg-indigo-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded";
         desc.innerText = "Academic & Department Coordinator • Department of Data Science";
       } else if (role === 'PRINCIPAL') {
         document.getElementById('viewPrincipal').classList.remove('hidden');
         avatar.innerText = "🏛️";
         name.innerText = "Dr. Manju Lalwani Pathak (Principal)";
         badge.innerText = "PRINCIPAL";
-        badge.className = "bg-blue-600 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded";
+        badge.className = "bg-blue-600 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded";
         desc.innerText = "Executive Head & Principal • Smt. C.H.M. College (Ulhasnagar)";
       }
       lucide.createIcons();
@@ -595,10 +612,10 @@
       resBox.classList.remove('hidden');
 
       if (loc === 'IN_CLASS') {
-        resBox.className = "p-4 rounded-xl text-xs font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/40";
+        resBox.className = "p-3 sm:p-4 rounded-xl text-xs font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/40";
         resBox.innerHTML = "<b>✅ VERIFIED PRESENT!</b><br/>Tri-Factor checks passed: GPS Distance: 11.8m (DS-LAB-1) • Rolling PIN Valid • Device Unique.";
       } else {
-        resBox.className = "p-4 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-300 border border-rose-500/40";
+        resBox.className = "p-3 sm:p-4 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-300 border border-rose-500/40";
         resBox.innerHTML = "<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>Shield 2 (GPS Geofence) Failed: Location is 1.8 km away from DS-LAB-1. Remote WhatsApp scan blocked.";
       }
     }
