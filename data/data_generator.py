@@ -309,12 +309,16 @@ def seed_chmc_user_accounts(session: Session):
     uni = session.query(University).filter_by(code=COLLEGE_CONFIG["university_code"]).first()
     dept = session.query(Department).filter_by(dept_code=COLLEGE_CONFIG["dept_code"]).first()
 
+    from api.security import PasswordHasherService
+    default_pw_hash = PasswordHasherService.hash("CHMC@2026!")
+
     # 1. Principal: Dr. Manju Lalwani Pathak
     p_user = session.query(UserAccount).filter_by(username="principal.chmc").first()
     if not p_user:
         p_user = UserAccount(
             username="principal.chmc",
             email="principal@chmc.edu",
+            password_hash=default_pw_hash,
             full_name=f"{COLLEGE_CONFIG['principal']} (Principal, Smt. C.H.M. College)",
             role="PRINCIPAL",
             university_id=uni.id,
@@ -328,6 +332,7 @@ def seed_chmc_user_accounts(session: Session):
         c_user = UserAccount(
             username="coordinator.ds",
             email="shiji.johnson@chmc.edu",
+            password_hash=default_pw_hash,
             full_name=f"{COLLEGE_CONFIG['coordinator']} (Course Coordinator, Data Science)",
             role="HOD",
             university_id=uni.id,
@@ -345,6 +350,7 @@ def seed_chmc_user_accounts(session: Session):
             f_user = UserAccount(
                 username=uname,
                 email=fac.email,
+                password_hash=default_pw_hash,
                 full_name=f"{fac.full_name} (Faculty)",
                 role="TEACHER",
                 university_id=uni.id,
@@ -363,6 +369,7 @@ def seed_chmc_user_accounts(session: Session):
             s_user = UserAccount(
                 username=s_uname,
                 email=st.email,
+                password_hash=default_pw_hash,
                 full_name=f"{st.full_name} ({st.student_id_str})",
                 role="STUDENT",
                 university_id=uni.id,
@@ -373,7 +380,7 @@ def seed_chmc_user_accounts(session: Session):
             session.add(s_user)
 
     session.commit()
-    print("[DATA GEN] User accounts for Smt. C.H.M. College seeded successfully.")
+    print("[DATA GEN] User accounts for Smt. C.H.M. College seeded successfully with Argon2id password hashes.")
 
 
 def generate_chmc_attendance_stream(session: Session, weeks: int = 8) -> int:

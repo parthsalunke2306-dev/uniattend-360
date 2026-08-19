@@ -242,10 +242,11 @@ class UserAccount(Base):
     __tablename__ = "user_accounts"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(50), nullable=False, unique=True)
-    email = Column(String(100), nullable=False, unique=True)
+    username = Column(String(50), nullable=False, unique=True, index=True)
+    email = Column(String(100), nullable=False, unique=True, index=True)
+    password_hash = Column(String(255), nullable=False, default="")  # Argon2id / bcrypt hash
     full_name = Column(String(150), nullable=False)
-    # Roles: PRINCIPAL, HOD, TEACHER, STUDENT
+    # Roles: PRINCIPAL, COORDINATOR, TEACHER, STUDENT, ADMIN
     role = Column(String(30), nullable=False, default="STUDENT")
     
     # Associated Entity Foreign Keys
@@ -255,5 +256,121 @@ class UserAccount(Base):
     student_id = Column(Integer, ForeignKey("students.id"), nullable=True)
     
     avatar_icon = Column(String(50), default="👤")
+    is_active = Column(Boolean, default=True, nullable=False)
+    
+    # Brute-force & Lockout Protection
+    failed_login_attempts = Column(Integer, default=0, nullable=False)
+    is_locked = Column(Boolean, default=False, nullable=False)
+    lockout_until = Column(DateTime, nullable=True)
+    last_login_at = Column(DateTime, nullable=True)
+    last_failed_login_at = Column(DateTime, nullable=True)
+    
+    # 2-Step Verification (MFA)
+    mfa_enabled = Column(Boolean, default=False, nullable=False)
+    mfa_type = Column(String(30), default="TOTP")  # TOTP, WEBAUTHN, EMAIL_FALLBACK
+    
     created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    # Relationships
+    mfa_config = relationship("UserMFA", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    passkeys = relationship("UserPasskey", back_populates="user", cascade="all, delete-orphan")
+    recovery_codes = relationship("UserRecoveryCode", back_populates="user", cascade="all, delete-orphan")
+    sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
+    audit_logs = relationship("SecurityAuditLog", back_populates="user", cascade="all, delete-orphan")
+
+
+class UserMFA(Base):
+    """TOTP 2-Step Verification configuration for User Accounts."""
+    __tablename__ = "user_mfa"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("user_accounts.id", ondelete="CASCADE"), nullable=False, unique=True)
+    secret_key = Column(String(128), nullable=False)  # Base32 TOTP secret
+    is_verified = Column(Boolean, default=False, nullable=False)
+    last_used_timestep = Column(Integer, default=0, nullable=False)  # Replay attack prevention
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    user = relationship("UserAccount", back_populates="mfa_config")
+
+
+class UserRecoveryCode(Base):
+    """Single-use emergency recovery codes for MFA bypass recovery."""
+    __tablename__ = "user_recovery_codes"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("user_accounts.id", ondelete="CASCADE"), nullable=False, index=True)
+    code_hash = Column(String(255), nullable=False)  # Argon2id/bcrypt hashed
+    is_used = Column(Boolean, default=False, nullable=False)
+    used_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.now)
+
+    user = relationship("UserAccount", back_populates="recovery_codes")
+
+
+class UserPasskey(Base):
+    """W3C WebAuthn / FIDO2 / Passkey biometric credential (zero raw biometrics stored)."""
+    __tablename__ = "user_passkeys"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("user_accounts.id", ondelete="CASCADE"), nullable=False, index=True)
+    credential_id = Column(String(255), nullable=False, unique=True, index=True)
+    public_key = Column(Text, nullable=False)  # Base64 encoded public key
+    sign_count = Column(Integer, default=0, nullable=False)  # Clone/replay detector
+    device_name = Column(String(150), nullable=False, default="Biometric Passkey")
+    transports = Column(String(100), default="internal")  # internal (FaceID/TouchID/WindowsHello), hybrid, usb
+    aaguid = Column(String(64), nullable=True)
+    created_at = Column(DateTime, default=datetime.now)
+    last_used_at = Column(DateTime, nullable=True)
+
+    user = relationship("UserAccount", back_populates="passkeys")
+
+
+class UserSession(Base):
+    """Active user sessions and trusted devices with cryptographic revocation tracking."""
+    __tablename__ = "user_sessions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("user_accounts.id", ondelete="CASCADE"), nullable=False, index=True)
+    session_token = Column(String(255), nullable=False, unique=True, index=True)
+    device_fingerprint = Column(String(150), nullable=False)
+    device_name = Column(String(150), nullable=False, default="Web Browser")
+    ip_address = Column(String(64), nullable=True)
+    user_agent = Column(String(255), nullable=True)
+    is_trusted = Column(Boolean, default=False, nullable=False)
+    is_revoked = Column(Boolean, default=False, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.now)
+    last_activity_at = Column(DateTime, default=datetime.now)
+
+    user = relationship("UserAccount", back_populates="sessions")
+
+
+class SecurityAuditLog(Base):
+    """Append-only security audit log recording authentication and authorization events."""
+    __tablename__ = "security_audit_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("user_accounts.id", ondelete="SET NULL"), nullable=True, index=True)
+    event_type = Column(String(50), nullable=False, index=True)
+    severity = Column(String(20), default="INFO", nullable=False)  # INFO, WARNING, CRITICAL
+    ip_address = Column(String(64), nullable=True)
+    user_agent = Column(String(255), nullable=True)
+    device_fingerprint = Column(String(150), nullable=True)
+    details = Column(Text, nullable=True)  # JSON metadata (NEVER secrets or passwords)
+    created_at = Column(DateTime, default=datetime.now, index=True)
+
+    user = relationship("UserAccount", back_populates="audit_logs")
+
+
+class LoginAttempt(Base):
+    """Tracks failed and successful login attempts for rate-limiting and brute-force detection."""
+    __tablename__ = "login_attempts"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    identifier = Column(String(100), nullable=False, index=True)
+    ip_address = Column(String(64), nullable=True, index=True)
+    success = Column(Boolean, default=False, nullable=False)
+    attempted_at = Column(DateTime, default=datetime.now, index=True)
 
