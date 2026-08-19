@@ -286,10 +286,10 @@
             <span class="bg-emerald-500/20 text-emerald-400 text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 rounded">LOCKED</span>
           </div>
           <div class="flex items-baseline justify-between mt-2">
-            <div class="text-xl sm:text-2xl font-bold font-mono text-emerald-400">11.8m Away</div>
-            <span class="text-[11px] sm:text-xs text-slate-400 font-mono">Max: 45m</span>
+            <div class="text-xl sm:text-2xl font-bold font-mono text-emerald-400"><span id="studentDistDisplay">6.8m</span> Away</div>
+            <span class="text-[11px] sm:text-xs text-slate-400 font-mono">Max: <span id="studentGeofenceCutoff">10.0m</span></span>
           </div>
-          <p class="text-[11px] sm:text-xs text-slate-400 mt-2 sm:mt-3 font-mono truncate">Data Science Lab 1 (CHM Campus)</p>
+          <p class="text-[11px] sm:text-xs text-slate-400 mt-2 sm:mt-3 font-mono truncate">Data Science Lab / Room (CHM Campus)</p>
         </div>
       </div>
 
@@ -346,7 +346,7 @@
             <div class="grid grid-cols-1 gap-2 text-xs font-mono">
               <label class="flex items-center p-2.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 cursor-pointer text-emerald-300">
                 <input type="radio" name="studentLoc" value="IN_CLASS" checked class="text-emerald-500 mr-2 shrink-0">
-                <span class="truncate">🟢 In Classroom / Lab (Distance: 11.8m)</span>
+                <span class="truncate">🟢 In Classroom / Lab (Distance: 6.8m - In Range)</span>
               </label>
               <label class="flex items-center p-2.5 rounded-xl border border-rose-500/40 bg-rose-500/10 cursor-pointer text-rose-300">
                 <input type="radio" name="studentLoc" value="AT_HOME" class="text-rose-500 mr-2 shrink-0">
@@ -553,7 +553,37 @@
           <div class="p-3 sm:p-4 rounded-xl bg-gradient-to-tr from-purple-950 to-slate-900 border border-emerald-500/40">
             <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase tracking-wider">Rolling Security PIN</span>
             <div id="kioskPinDisplay" class="font-mono font-extrabold text-3xl sm:text-4xl text-emerald-400 tracking-[0.2em] my-1 pin-hud">8492</div>
-            <span class="text-[9px] sm:text-[10px] font-mono text-emerald-400/80">Refreshes every 8 seconds • 45m Geofence</span>
+            <span class="text-[9px] sm:text-[10px] font-mono text-emerald-400/80">Refreshes every 8 seconds • <span id="kioskGeofenceTag">10m</span> Geofence</span>
+          </div>
+
+          <!-- Dynamic Geofence Range Controller for Teachers -->
+          <div class="p-3.5 rounded-xl bg-stitch-surface border border-emerald-500/40 space-y-2.5 text-left">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider flex items-center">
+                <i data-lucide="radio" class="w-3.5 h-3.5 mr-1 text-emerald-400"></i>
+                Geofence Range Control
+              </span>
+              <span id="teacherRadiusBadge" class="bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/40">
+                10m (Default)
+              </span>
+            </div>
+            
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                <span>Classroom Boundary Range:</span>
+                <span id="radiusMeterVal" class="text-white font-bold">10 meters</span>
+              </div>
+              <input type="range" min="5" max="50" value="10" step="1" id="teacherGeofenceSlider" oninput="handleTeacherRadiusChange(this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="grid grid-cols-2 gap-1.5 pt-1 text-[10px] font-mono">
+              <button type="button" onclick="setGeofencePreset(8)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-stitch-border text-center truncate">🔬 Compact (8m)</button>
+              <button type="button" onclick="setGeofencePreset(10)" id="presetBtn10" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-center font-bold truncate">🎛️ Standard (10m)</button>
+              <button type="button" onclick="setGeofencePreset(20)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-stitch-border text-center truncate">🏛️ Large Hall (20m)</button>
+              <button type="button" onclick="setGeofencePreset(40)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-stitch-border text-center truncate">🎪 Aud (40m)</button>
+            </div>
+            <p class="text-[9px] font-mono text-slate-400">⚡ Teachers can dynamically expand or restrict the geofence perimeter in real-time.</p>
           </div>
 
           <!-- Teacher Unit Switcher -->
@@ -1114,6 +1144,28 @@
       } catch (e) {}
     }
 
+    // Active Dynamic Geofence Radius (Default: 10 meters)
+    let activeGeofenceRadius = 10;
+
+    function handleTeacherRadiusChange(val) {
+      activeGeofenceRadius = parseInt(val, 10);
+      const badge = document.getElementById('teacherRadiusBadge');
+      const label = document.getElementById('radiusMeterVal');
+      const kioskTag = document.getElementById('kioskGeofenceTag');
+      const studentCutoff = document.getElementById('studentGeofenceCutoff');
+      
+      if (badge) badge.innerText = `${activeGeofenceRadius}m ${activeGeofenceRadius === 10 ? '(Default)' : '(Custom)'}`;
+      if (label) label.innerText = `${activeGeofenceRadius} meters`;
+      if (kioskTag) kioskTag.innerText = `${activeGeofenceRadius}m`;
+      if (studentCutoff) studentCutoff.innerText = `${activeGeofenceRadius}.0m`;
+    }
+
+    function setGeofencePreset(val) {
+      const slider = document.getElementById('teacherGeofenceSlider');
+      if (slider) slider.value = val;
+      handleTeacherRadiusChange(val);
+    }
+
     function submitStudentCheckIn() {
       const loc = document.querySelector('input[name="studentLoc"]:checked').value;
       const resBox = document.getElementById('checkInResult');
@@ -1122,10 +1174,10 @@
 
       if (loc === 'IN_CLASS') {
         resBox.className = "p-3 sm:p-4 rounded-xl text-xs font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/40";
-        resBox.innerHTML = `<b>✅ VERIFIED PRESENT!</b><br/>Tri-Factor checks passed: Session [${selectedCourse}] • GPS Distance: 11.8m • Rolling PIN Valid • Device Unique.`;
+        resBox.innerHTML = `<b>✅ VERIFIED PRESENT!</b><br/>Tri-Factor checks passed: Session [${selectedCourse}] • GPS Distance: 6.8m (Classroom Perimeter: ${activeGeofenceRadius}m) • Rolling PIN Valid • Device Unique.`;
       } else {
         resBox.className = "p-3 sm:p-4 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-300 border border-rose-500/40";
-        resBox.innerHTML = `<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>Shield 2 (GPS Geofence) Failed: Location is 1.8 km away from classroom. Remote scan blocked.`;
+        resBox.innerHTML = `<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>Shield 2 (GPS Geofence) Failed: Location is 1.8 km away from classroom (Allowed: ${activeGeofenceRadius}m). Remote scan blocked.`;
       }
     }
 

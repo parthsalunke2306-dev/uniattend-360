@@ -22,18 +22,18 @@ from PIL import Image
 # Default Secret Key for HMAC Token Generation
 SECRET_SALT = "UniAttend-AntiProxy-Salt-2026-SuperSecure"
 
-# Smt. C.H.M. College (Ulhasnagar) Campus Classroom GPS Coordinates
+# Smt. C.H.M. College (Ulhasnagar) Campus Classroom GPS Coordinates (Default: 10.0 meters)
 DEFAULT_CLASSROOM_GEO = {
-    "E-104": {"name": "Extension Building Room 104 (Theory)", "lat": 19.22170, "lon": 73.16460, "radius_m": 45.0},
-    "M-113": {"name": "Data Science Lab (Main Building 113)", "lat": 19.22150, "lon": 73.16440, "radius_m": 45.0},
-    "M-103": {"name": "Main Building Room 103 (FOR Practical)", "lat": 19.22140, "lon": 73.16430, "radius_m": 45.0},
-    "DS-LAB-1": {"name": "Data Science Lab (Main Building 113)", "lat": 19.22150, "lon": 73.16440, "radius_m": 45.0},
-    "LH-201": {"name": "Extension Building Room 104 (E-104)", "lat": 19.22170, "lon": 73.16460, "radius_m": 45.0},
-    "LH-202": {"name": "Extension Building Room 104 (E-104)", "lat": 19.22170, "lon": 73.16460, "radius_m": 45.0},
-    "AUD-CHM": {"name": "Smt. C.H.M. College Auditorium", "lat": 19.22130, "lon": 73.16420, "radius_m": 80.0},
-    "LH-101": {"name": "Lecture Hall 101", "lat": 28.54502, "lon": 77.19265, "radius_m": 50.0},
-    "LH-102": {"name": "Lecture Hall 102", "lat": 28.54515, "lon": 77.19280, "radius_m": 50.0},
-    "CS-LAB-A": {"name": "Computer Science Lab A", "lat": 28.54530, "lon": 77.19295, "radius_m": 45.0},
+    "E-104": {"name": "Extension Building Room 104 (Theory)", "lat": 19.22170, "lon": 73.16460, "radius_m": 10.0},
+    "M-113": {"name": "Data Science Lab (Main Building 113)", "lat": 19.22150, "lon": 73.16440, "radius_m": 10.0},
+    "M-103": {"name": "Main Building Room 103 (FOR Practical)", "lat": 19.22140, "lon": 73.16430, "radius_m": 10.0},
+    "DS-LAB-1": {"name": "Data Science Lab (Main Building 113)", "lat": 19.22150, "lon": 73.16440, "radius_m": 10.0},
+    "LH-201": {"name": "Extension Building Room 104 (E-104)", "lat": 19.22170, "lon": 73.16460, "radius_m": 10.0},
+    "LH-202": {"name": "Extension Building Room 104 (E-104)", "lat": 19.22170, "lon": 73.16460, "radius_m": 10.0},
+    "AUD-CHM": {"name": "Smt. C.H.M. College Auditorium", "lat": 19.22130, "lon": 73.16420, "radius_m": 40.0},
+    "LH-101": {"name": "Lecture Hall 101", "lat": 28.54502, "lon": 77.19265, "radius_m": 10.0},
+    "LH-102": {"name": "Lecture Hall 102", "lat": 28.54515, "lon": 77.19280, "radius_m": 10.0},
+    "CS-LAB-A": {"name": "Computer Science Lab A", "lat": 28.54530, "lon": 77.19295, "radius_m": 10.0},
 }
 
 
@@ -139,12 +139,13 @@ class AntiProxyEngine:
         student_lon: float,
         device_fingerprint: str,
         room_code: str = "LH-101",
-        custom_time: Optional[float] = None
+        custom_time: Optional[float] = None,
+        custom_radius_m: Optional[float] = None
     ) -> Dict[str, Any]:
         """
         Validates student check-in through all 4 Anti-Proxy security shields:
           1. Cryptographic Token / PIN freshness (within TTL window)
-          2. GPS Classroom Geofence radius check (< 50m)
+          2. GPS Classroom Geofence radius check (< custom_radius_m or default 10m)
           3. Single-Device Hardware Binding (prevents marking for multiple friends)
           4. Duplicate check (preventing double scans)
         """
@@ -155,7 +156,7 @@ class AntiProxyEngine:
         class_geo = DEFAULT_CLASSROOM_GEO.get(room_code, DEFAULT_CLASSROOM_GEO["LH-101"])
         class_lat = class_geo["lat"]
         class_lon = class_geo["lon"]
-        max_radius = class_geo["radius_m"]
+        max_radius = custom_radius_m if custom_radius_m is not None else class_geo.get("radius_m", 10.0)
 
         # ------------------------------------------------
         # SHIELD 1: TOKEN / PIN FRESHNESS CHECK
