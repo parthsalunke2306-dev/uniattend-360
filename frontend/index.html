@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>UniAttend 360 | Enterprise Multi-Tier Auth (Smt. C.H.M. College)</title>
+  <title>UniAttend 360 | Public Testing & Production Portal (Smt. C.H.M. College)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -81,13 +81,13 @@
 <body class="min-h-screen flex flex-col antialiased selection:bg-purple-600 selection:text-white">
 
   <!-- ============================================== -->
-  <!-- MULTI-TIER AUTHENTICATION MODAL (LOGIN PORTAL) -->
+  <!-- MULTI-TIER AUTHENTICATION & ONBOARDING MODAL -->
   <!-- ============================================== -->
   <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl border border-purple-500/40 shadow-2xl shadow-purple-950/50 space-y-6 relative overflow-hidden">
+    <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl border border-purple-500/40 shadow-2xl shadow-purple-950/50 space-y-5 relative overflow-hidden max-h-[95vh] overflow-y-auto">
       
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/30 rounded-full blur-2xl"></div>
-      <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-600/20 rounded-full blur-2xl"></div>
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/30 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-600/20 rounded-full blur-2xl pointer-events-none"></div>
 
       <!-- Header -->
       <div class="text-center space-y-1.5 relative z-10">
@@ -97,133 +97,293 @@
           </div>
         </div>
         <h2 class="text-xl font-extrabold text-white tracking-tight">Smt. C.H.M. College</h2>
-        <p class="text-xs text-purple-300 font-mono">Multi-Layer Enterprise Auth & RBAC</p>
+        <p class="text-xs text-purple-300 font-mono">Department of Data Science • UniAttend 360</p>
       </div>
 
-      <!-- STEP 1: PRIMARY CREDENTIALS FORM -->
-      <div id="authStep1" class="space-y-4 relative z-10">
-        <form onsubmit="handleStep1Submit(event)" class="space-y-4">
-          <div class="space-y-1">
-            <label class="text-xs font-mono text-slate-400">Roll No / Faculty ID / Email</label>
-            <div class="relative">
-              <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-              <input type="text" id="loginIdentifier" placeholder="e.g. captain.ds@chmc.edu or CHMC-DS-2024-001" required value="captain.ds@chmc.edu" class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
-            </div>
-          </div>
-
-          <div class="space-y-1">
-            <div class="flex justify-between items-center text-xs font-mono">
-              <label class="text-slate-400">Password</label>
-              <span class="text-purple-400 text-[10px] cursor-pointer hover:underline" onclick="showRecoveryNotice()">Forgot Password?</span>
-            </div>
-            <div class="relative">
-              <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-              <input type="password" id="loginPassword" value="CHMC@2026!" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
-            <label class="flex items-center space-x-1.5 cursor-pointer">
-              <input type="checkbox" id="rememberDeviceCheck" class="rounded bg-stitch-surface text-purple-500">
-              <span class="text-slate-300">Trust this device</span>
-            </label>
-            <span class="text-emerald-400 flex items-center"><i data-lucide="shield" class="w-3 h-3 mr-1"></i> Argon2id Encrypted</span>
-          </div>
-
-          <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-900/40 text-xs font-mono flex items-center justify-center space-x-2 transition duration-150">
-            <i data-lucide="log-in" class="w-4 h-4"></i>
-            <span>AUTHENTICATE (STEP 1)</span>
-          </button>
-
-          <div id="loginError" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center"></div>
-        </form>
-
-        <!-- 1-Click Persona Demo Grid -->
-        <div class="space-y-2 pt-2 border-t border-stitch-border relative z-10">
-          <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider block text-center">⚡ 1-Click Instant Login (Select Profile):</span>
-          <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
-            <button onclick="quickAuth('CHMC-DS-2024-001')" class="p-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-left truncate">
-              🎓 Captain (Student)
-            </button>
-            <button onclick="quickAuth('faculty.razia')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
-              👩‍🏫 Miss Razia (4 Units)
-            </button>
-            <button onclick="quickAuth('faculty.anshul')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
-              👨‍🏫 Mr. Anshul (2 Units)
-            </button>
-            <button onclick="quickAuth('faculty.kalyani')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
-              👩‍🏫 Miss Kalyani (2 Units)
-            </button>
-            <button onclick="quickAuth('coordinator.ds')" class="p-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-left truncate">
-              👔 Mrs. Shiji (Coordinator)
-            </button>
-            <button onclick="quickAuth('principal.chmc')" class="p-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 text-left truncate">
-              🏛️ Dr. Manju (Principal)
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 2: TWO-STEP VERIFICATION (TOTP / BIOMETRICS / RECOVERY) -->
-      <div id="authStep2" class="space-y-4 relative z-10 hidden">
-        <div class="p-3.5 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-center space-y-1">
-          <span class="text-xs font-mono text-purple-300 font-bold uppercase tracking-wider flex items-center justify-center">
-            <i data-lucide="key-round" class="w-4 h-4 mr-1.5 text-purple-400"></i>
-            Verify Your Identity
-          </span>
-          <p class="text-[11px] text-slate-300">Enter the 6-digit code from Google / Microsoft Authenticator or use your native device passkey.</p>
-        </div>
-
-        <form onsubmit="handleStep2TOTPSubmit(event)" class="space-y-3">
-          <div class="space-y-1">
-            <div class="flex justify-between items-center text-[10px] font-mono text-slate-400">
-              <span>6-Digit Security Code</span>
-              <span class="text-emerald-400">Single-Use (RFC 6238)</span>
-            </div>
-            <input type="text" id="mfaCodeInput" placeholder="• • • • • •" maxlength="6" autofocus class="w-full bg-stitch-surface border border-emerald-500/50 rounded-xl p-3 text-center font-mono font-extrabold text-2xl text-emerald-400 tracking-[0.4em] focus:outline-none focus:border-emerald-400">
-          </div>
-
-          <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-emerald-950/40 text-xs font-mono flex items-center justify-center space-x-2">
-            <i data-lucide="shield-check" class="w-4 h-4"></i>
-            <span>VERIFY & COMPLETE LOGIN</span>
-          </button>
-        </form>
-
-        <div class="relative flex py-1 items-center">
-          <div class="flex-grow border-t border-stitch-border"></div>
-          <span class="flex-shrink mx-2 text-[10px] font-mono text-slate-500 uppercase">OR USE LAYER 3 BIOMETRICS</span>
-          <div class="flex-grow border-t border-stitch-border"></div>
-        </div>
-
-        <!-- Layer 3: Native WebAuthn Passkey Trigger -->
-        <button onclick="handleWebAuthnBiometricLogin()" type="button" class="w-full bg-stitch-surface hover:bg-slate-800 border border-purple-500/40 text-purple-300 font-mono font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 transition">
-          <i data-lucide="fingerprint" class="w-4 h-4 text-purple-400"></i>
-          <span>Use Passkey / Windows Hello / Face ID</span>
+      <!-- TAB TOGGLE: SIGN IN VS CREATE ACCOUNT -->
+      <div class="flex rounded-xl bg-stitch-surface p-1 border border-stitch-border text-xs font-mono relative z-10">
+        <button id="tabBtnSignIn" onclick="switchAuthTab('SIGNIN')" class="flex-1 py-2 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow">
+          🔐 Sign In
         </button>
+        <button id="tabBtnRegister" onclick="switchAuthTab('REGISTER')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white font-bold transition duration-150">
+          ✍️ Create Account
+        </button>
+      </div>
 
-        <!-- Recovery Code Toggle -->
-        <div class="text-center pt-1">
-          <button onclick="toggleRecoveryCodeInput()" type="button" class="text-[11px] font-mono text-slate-400 hover:text-purple-300 underline">
+      <!-- 1. SIGN IN FORM (PRIMARY AUTH) -->
+      <div id="authSignInBox" class="space-y-4 relative z-10">
+        
+        <!-- STEP 1: CREDENTIALS -->
+        <div id="authStep1" class="space-y-4">
+          <form onsubmit="handleStep1Submit(event)" class="space-y-3.5">
+            <div class="space-y-1">
+              <label class="text-xs font-mono text-slate-400">Roll No / Faculty ID / Email</label>
+              <div class="relative">
+                <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                <input type="text" id="loginIdentifier" placeholder="e.g. captain.ds@chmc.edu or CHMC-DS-2024-001" required value="captain.ds@chmc.edu" class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between items-center text-xs font-mono">
+                <label class="text-slate-400">Password</label>
+                <span class="text-purple-400 text-[10px] cursor-pointer hover:underline" onclick="showRecoveryNotice()">Forgot Password?</span>
+              </div>
+              <div class="relative">
+                <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                <input type="password" id="loginPassword" value="CHMC@2026!" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <label class="flex items-center space-x-1.5 cursor-pointer">
+                <input type="checkbox" id="rememberDeviceCheck" class="rounded bg-stitch-surface text-purple-500">
+                <span class="text-slate-300">Remember this device</span>
+              </label>
+              <span class="text-emerald-400 flex items-center"><i data-lucide="shield" class="w-3 h-3 mr-1"></i> Argon2id</span>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-purple-900/40 text-xs font-mono flex items-center justify-center space-x-2 transition duration-150">
+              <i data-lucide="log-in" class="w-4 h-4"></i>
+              <span>AUTHENTICATE (STEP 1)</span>
+            </button>
+
+            <div id="loginError" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center"></div>
+          </form>
+
+          <!-- 1-Click Persona Demo Grid -->
+          <div class="space-y-2 pt-2 border-t border-stitch-border">
+            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider block text-center">⚡ 1-Click Instant Demo Login:</span>
+            <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
+              <button onclick="quickAuth('CHMC-DS-2024-001')" class="p-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-left truncate">
+                🎓 Captain (Student)
+              </button>
+              <button onclick="quickAuth('faculty.razia')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
+                👩‍🏫 Miss Razia (4 Units)
+              </button>
+              <button onclick="quickAuth('faculty.anshul')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
+                👨‍🏫 Mr. Anshul (2 Units)
+              </button>
+              <button onclick="quickAuth('faculty.kalyani')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
+                👩‍🏫 Miss Kalyani (2 Units)
+              </button>
+              <button onclick="quickAuth('coordinator.ds')" class="p-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-left truncate">
+                👔 Mrs. Shiji (Coordinator)
+              </button>
+              <button onclick="quickAuth('principal.chmc')" class="p-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 text-left truncate">
+                🏛️ Dr. Manju (Principal)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: TWO-STEP VERIFICATION (TOTP / BIOMETRICS / RECOVERY) -->
+        <div id="authStep2" class="space-y-4 hidden">
+          <div class="p-3 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-center space-y-1">
+            <span class="text-xs font-mono text-purple-300 font-bold uppercase tracking-wider flex items-center justify-center">
+              <i data-lucide="key-round" class="w-4 h-4 mr-1.5 text-purple-400"></i>
+              Verify Your Identity
+            </span>
+            <p class="text-[11px] text-slate-300">Enter the 6-digit code from Google/Microsoft Authenticator or use device passkey.</p>
+          </div>
+
+          <form onsubmit="handleStep2TOTPSubmit(event)" class="space-y-3">
+            <div class="space-y-1">
+              <div class="flex justify-between items-center text-[10px] font-mono text-slate-400">
+                <span>6-Digit Security Code</span>
+                <span class="text-emerald-400">Single-Use (RFC 6238)</span>
+              </div>
+              <input type="text" id="mfaCodeInput" placeholder="• • • • • •" maxlength="6" autofocus class="w-full bg-stitch-surface border border-emerald-500/50 rounded-xl p-3 text-center font-mono font-extrabold text-2xl text-emerald-400 tracking-[0.4em] focus:outline-none focus:border-emerald-400">
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-emerald-950/40 text-xs font-mono flex items-center justify-center space-x-2">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>VERIFY & COMPLETE LOGIN</span>
+            </button>
+          </form>
+
+          <button onclick="handleWebAuthnBiometricLogin()" type="button" class="w-full bg-stitch-surface hover:bg-slate-800 border border-purple-500/40 text-purple-300 font-mono font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 transition">
+            <i data-lucide="fingerprint" class="w-4 h-4 text-purple-400"></i>
+            <span>Use Passkey / Windows Hello / Face ID</span>
+          </button>
+
+          <button onclick="toggleRecoveryCodeInput()" type="button" class="w-full text-[11px] font-mono text-slate-400 hover:text-purple-300 underline text-center">
             Lost phone? Use Emergency Backup Code
           </button>
+
+          <div id="recoveryCodeBox" class="hidden p-3 rounded-xl bg-slate-900 border border-amber-500/40 space-y-2">
+            <label class="text-[10px] font-mono text-amber-300 font-bold block">Enter 8-Character Recovery Code:</label>
+            <div class="flex space-x-2">
+              <input type="text" id="recoveryCodeInput" placeholder="XXXX-XXXX" class="flex-1 bg-stitch-surface border border-stitch-border rounded-lg p-2 text-xs font-mono text-white tracking-widest text-center uppercase">
+              <button onclick="handleRecoveryCodeSubmit()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-mono font-bold">RECOVER</button>
+            </div>
+          </div>
+
+          <button onclick="backToStep1()" type="button" class="w-full text-center text-xs font-mono text-slate-500 hover:text-slate-300 pt-1">
+            ← Back to primary sign in
+          </button>
+
+          <div id="mfaError" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center"></div>
         </div>
 
-        <!-- Recovery Code Input Form (Hidden by default) -->
-        <div id="recoveryCodeBox" class="hidden p-3 rounded-xl bg-slate-900 border border-amber-500/40 space-y-2">
-          <label class="text-[10px] font-mono text-amber-300 font-bold block">Enter 8-Character Recovery Code:</label>
-          <div class="flex space-x-2">
-            <input type="text" id="recoveryCodeInput" placeholder="XXXX-XXXX" class="flex-1 bg-stitch-surface border border-stitch-border rounded-lg p-2 text-xs font-mono text-white tracking-widest text-center uppercase">
-            <button onclick="handleRecoveryCodeSubmit()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-mono font-bold">RECOVER</button>
+      </div>
+
+      <!-- 2. CREATE ACCOUNT FORM (DYNAMIC ONBOARDING FOR NEW USERS) -->
+      <div id="authRegisterBox" class="space-y-4 relative z-10 hidden">
+        <div class="p-3 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 text-center space-y-1">
+          <span class="text-xs font-mono text-emerald-300 font-bold uppercase tracking-wider flex items-center justify-center">
+            <i data-lucide="user-plus" class="w-4 h-4 mr-1.5 text-emerald-400"></i>
+            Self-Registration Portal
+          </span>
+          <p class="text-[11px] text-slate-300">Join S.Y. B.Sc. Data Science class cohort. Supports any personal or college email.</p>
+        </div>
+
+        <form onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-left">
+          
+          <!-- Role Selection -->
+          <div class="space-y-1">
+            <label class="text-xs font-mono text-slate-400">I am a:</label>
+            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+              <label class="flex items-center p-2 rounded-xl bg-stitch-surface border border-purple-500/40 cursor-pointer text-purple-300">
+                <input type="radio" name="regRole" value="STUDENT" checked onchange="toggleRegFields('STUDENT')" class="mr-2 text-purple-500">
+                <span>🎓 Student</span>
+              </label>
+              <label class="flex items-center p-2 rounded-xl bg-stitch-surface border border-stitch-border cursor-pointer text-slate-300">
+                <input type="radio" name="regRole" value="TEACHER" onchange="toggleRegFields('TEACHER')" class="mr-2 text-emerald-500">
+                <span>👨‍🏫 Faculty / Teacher</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Full Name -->
+          <div class="space-y-1">
+            <label class="text-xs font-mono text-slate-400">Full Name</label>
+            <input type="text" id="regFullName" placeholder="e.g. Ramesh Singh" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+          </div>
+
+          <!-- Email -->
+          <div class="space-y-1">
+            <label class="text-xs font-mono text-slate-400">Email Address (Any Domain)</label>
+            <input type="email" id="regEmail" placeholder="e.g. ramesh.singh@gmail.com" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+          </div>
+
+          <!-- Roll Number / ID -->
+          <div class="space-y-1">
+            <label id="regIdLabel" class="text-xs font-mono text-slate-400">Roll Number / Enrollment ID</label>
+            <input type="text" id="regIdentifier" placeholder="e.g. CHMC-DS-2024-006" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 uppercase">
+          </div>
+
+          <!-- Password -->
+          <div class="space-y-1">
+            <label class="text-xs font-mono text-slate-400">Password (Min 8 chars, 1 upper, 1 digit, 1 special)</label>
+            <input type="password" id="regPassword" placeholder="e.g. SecurePass@2026!" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+          </div>
+
+          <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-emerald-950/40 text-xs font-mono flex items-center justify-center space-x-2 transition duration-150">
+            <i data-lucide="user-check" class="w-4 h-4"></i>
+            <span>CREATE ACCOUNT & SIGN IN</span>
+          </button>
+
+          <div id="registerError" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center"></div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ============================================== -->
+  <!-- BULK ROSTER CSV IMPORT MODAL (FOR COORDINATOR) -->
+  <!-- ============================================== -->
+  <div id="bulkImportModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-indigo-500/40 shadow-2xl space-y-4 relative">
+      <div class="flex items-center justify-between border-b border-stitch-border pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="h-9 w-9 rounded-xl bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center text-indigo-300">
+            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Bulk Class Roster Ingestion</h3>
+            <p class="text-xs text-slate-400 font-mono">Enroll entire class batch from CSV / Excel</p>
+          </div>
+        </div>
+        <button onclick="closeBulkImportModal()" class="p-2 rounded-xl bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-300">Upload a `.csv` file containing student records to instantly generate student IDs, default credentials, and timetable course associations.</p>
+
+      <div class="p-4 border-2 border-dashed border-indigo-500/40 rounded-2xl bg-stitch-surface/60 text-center space-y-2">
+        <i data-lucide="upload-cloud" class="w-8 h-8 text-indigo-400 mx-auto"></i>
+        <div class="text-xs text-slate-300 font-mono">Choose a CSV file or paste raw text below</div>
+        <input type="file" id="csvFileInput" accept=".csv, .txt" onchange="handleCSVFileSelected(event)" class="text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-mono file:bg-indigo-600 file:text-white file:cursor-pointer">
+      </div>
+
+      <div class="flex items-center justify-between text-xs font-mono pt-1">
+        <button onclick="downloadSampleCSV()" class="text-indigo-400 hover:underline flex items-center">
+          <i data-lucide="download" class="w-3.5 h-3.5 mr-1"></i>
+          Download Sample CSV Template
+        </button>
+      </div>
+
+      <!-- Live CSV Preview & Confirm -->
+      <div id="csvPreviewBox" class="hidden space-y-2">
+        <label class="text-xs font-mono text-emerald-400 font-bold block">Preview Parsed Students:</label>
+        <div id="csvPreviewList" class="max-h-36 overflow-y-auto space-y-1 text-xs font-mono bg-slate-900 p-2.5 rounded-xl border border-stitch-border"></div>
+        <button onclick="executeBulkImport()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl text-xs font-mono shadow-lg shadow-indigo-950/40">
+          🚀 IMPORT & ENROLL STUDENTS
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================== -->
+  <!-- PUBLIC TESTING GUIDE MODAL -->
+  <!-- ============================================== -->
+  <div id="publicTestingGuideModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-emerald-500/40 shadow-2xl space-y-4 relative">
+      <div class="flex items-center justify-between border-b border-stitch-border pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="h-9 w-9 rounded-xl bg-emerald-600/30 border border-emerald-500/50 flex items-center justify-center text-emerald-300">
+            <i data-lucide="help-circle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Public Testing & Verification Guide</h3>
+            <p class="text-xs text-slate-400 font-mono">How to test live classroom attendance on any device</p>
+          </div>
+        </div>
+        <button onclick="closePublicGuide()" class="p-2 rounded-xl bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs font-mono text-slate-300">
+        <div class="p-3 rounded-xl bg-stitch-surface border border-stitch-border flex items-start space-x-2.5">
+          <span class="text-base">1️⃣</span>
+          <div>
+            <b class="text-white">Open Teacher Kiosk on Laptop/Projector:</b>
+            <p class="text-slate-400 mt-0.5">Log in as <i>Miss Razia</i> or <i>Mr. Anshul</i>. The kiosk rotates the dynamic QR code and 4-digit PIN every 8 seconds.</p>
           </div>
         </div>
 
-        <button onclick="backToStep1()" type="button" class="w-full text-center text-xs font-mono text-slate-500 hover:text-slate-300 pt-1">
-          ← Back to primary sign in
-        </button>
+        <div class="p-3 rounded-xl bg-stitch-surface border border-stitch-border flex items-start space-x-2.5">
+          <span class="text-base">2️⃣</span>
+          <div>
+            <b class="text-white">Open Student Portal on Mobile Phones:</b>
+            <p class="text-slate-400 mt-0.5">Students sign in or click <i>Create Account</i> to register in 15 seconds with any email. Click <i>Submit Live Check-In</i>.</p>
+          </div>
+        </div>
 
-        <div id="mfaError" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center"></div>
+        <div class="p-3 rounded-xl bg-stitch-surface border border-stitch-border flex items-start space-x-2.5">
+          <span class="text-base">3️⃣</span>
+          <div>
+            <b class="text-white">Observe Tri-Factor Anti-Proxy Shield:</b>
+            <p class="text-slate-400 mt-0.5">In-class scans ($\le 10\text{m}$) are verified instantly. Remote photo scans ($>10\text{m}$) are blocked with instant alert.</p>
+          </div>
+        </div>
       </div>
-
     </div>
   </div>
 
@@ -249,45 +409,40 @@
         </button>
       </div>
 
-      <!-- Security Tabs -->
+      <!-- Security Cards Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        
-        <!-- Card 1: 2-Step Verification (MFA) -->
         <div class="p-4 rounded-2xl bg-stitch-surface border border-stitch-border space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-mono text-purple-400 font-bold uppercase">Two-Step Verification</span>
-            <span id="hubMfaStatus" class="bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold px-2 py-0.5 rounded border border-emerald-500/40">ACTIVE (TOTP)</span>
+            <span id="hubMfaStatus" class="bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold px-2 py-0.5 rounded border border-emerald-500/40">ACTIVE</span>
           </div>
-          <p class="text-xs text-slate-300">Require an authenticator code (Google/Microsoft Authenticator) on login.</p>
+          <p class="text-xs text-slate-300">Require Google/Microsoft Authenticator OTP on login.</p>
           <button onclick="openMFASetupModal()" class="w-full bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500 text-purple-300 text-xs font-mono font-bold py-2 rounded-xl">
-            ⚙️ Configure Authenticator App
+            ⚙️ Configure App
           </button>
         </div>
 
-        <!-- Card 2: Biometric Passkeys (WebAuthn) -->
         <div class="p-4 rounded-2xl bg-stitch-surface border border-stitch-border space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-mono text-emerald-400 font-bold uppercase">Passkeys / Biometrics</span>
             <span class="bg-purple-500/20 text-purple-300 font-mono text-[9px] font-bold px-2 py-0.5 rounded">FIDO2</span>
           </div>
-          <p class="text-xs text-slate-300">Sign in instantly with Windows Hello, Touch ID, or Face ID.</p>
+          <p class="text-xs text-slate-300">Sign in with Windows Hello, Touch ID, or Face ID.</p>
           <button onclick="handleWebAuthnRegister()" class="w-full bg-emerald-600/20 hover:bg-emerald-600/40 border border-emerald-500 text-emerald-300 text-xs font-mono font-bold py-2 rounded-xl">
-            🔑 Register Device Passkey
+            🔑 Register Passkey
           </button>
         </div>
 
-        <!-- Card 3: Change Password -->
         <div class="p-4 rounded-2xl bg-stitch-surface border border-stitch-border space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-mono text-slate-400 font-bold uppercase">Password Policy</span>
             <span class="text-[9px] font-mono text-emerald-400 font-bold">Argon2id</span>
           </div>
-          <p class="text-xs text-slate-300">Update account password. Automatically revokes other active sessions.</p>
+          <p class="text-xs text-slate-300">Update password. Automatically revokes all other sessions.</p>
           <button onclick="promptPasswordChange()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-bold py-2 rounded-xl border border-stitch-border">
             🔒 Change Password
           </button>
         </div>
-
       </div>
 
       <!-- Active Sessions & Trusted Devices List -->
@@ -302,21 +457,8 @@
           </button>
         </div>
 
-        <div class="space-y-2 max-h-44 overflow-y-auto pr-1" id="activeSessionsList">
-          <!-- Populated dynamically via JS -->
-          <div class="p-3 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between text-xs font-mono">
-            <div>
-              <div class="flex items-center space-x-2">
-                <span class="font-bold text-white">Current Web Session (Active)</span>
-                <span class="bg-emerald-500/20 text-emerald-400 text-[9px] px-1.5 py-0.2 rounded font-bold">THIS DEVICE</span>
-              </div>
-              <span class="text-[10px] text-slate-400">IP: 192.168.1.104 • Signed in with Argon2id + TOTP</span>
-            </div>
-            <span class="text-emerald-400 text-xs font-bold">● Active</span>
-          </div>
-        </div>
+        <div class="space-y-2 max-h-44 overflow-y-auto pr-1" id="activeSessionsList"></div>
       </div>
-
     </div>
   </div>
 
@@ -348,11 +490,14 @@
 
           <!-- Mobile User Action -->
           <div class="flex sm:hidden items-center space-x-2">
+            <button onclick="openPublicGuide()" class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs">
+              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+            </button>
             <button onclick="openSecurityHub()" class="p-2 rounded-xl bg-stitch-surface border border-stitch-border text-purple-300 text-xs">
               <i data-lucide="shield" class="w-3.5 h-3.5"></i>
             </button>
             <button onclick="openLoginModal()" class="p-2 rounded-xl bg-stitch-surface border border-stitch-border text-slate-300 text-xs">
-              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
             </button>
             <button onclick="handleLogout()" class="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
               <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
@@ -370,14 +515,19 @@
           </div>
 
           <div class="hidden sm:flex items-center space-x-2">
+            <button onclick="openPublicGuide()" class="px-3 py-1.5 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 text-xs font-mono flex items-center space-x-1.5">
+              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+              <span>Testing Guide</span>
+            </button>
+
             <button onclick="openSecurityHub()" class="px-3 py-1.5 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 text-purple-300 text-xs font-mono flex items-center space-x-1.5">
               <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-              <span>Security Hub</span>
+              <span>Security</span>
             </button>
 
             <button onclick="openLoginModal()" class="px-3 py-1.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-300 text-xs font-mono flex items-center space-x-1.5">
               <i data-lucide="users" class="w-3.5 h-3.5 text-purple-400"></i>
-              <span>Switch Profile</span>
+              <span>Switch / Sign Up</span>
             </button>
 
             <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center space-x-1.5">
@@ -407,12 +557,18 @@
             <h2 id="profileName" class="font-bold text-white text-sm sm:text-base truncate">Captain (Roll No: CHMC-DS-2024-001)</h2>
             <span id="roleBadge" class="bg-purple-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded shrink-0">STUDENT</span>
           </div>
-          <p id="profileDesc" class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">Second Year (S.Y. B.Sc. Data Science) • Class Size: 5 Students • Smt. C.H.M. College</p>
+          <p id="profileDesc" class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College</p>
         </div>
       </div>
-      <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-slate-400 bg-stitch-surface/80 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-stitch-border w-fit shrink-0">
-        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-400"></i>
-        <span>Campus: <b class="text-slate-200">Ulhasnagar, Mumbai</b></span>
+      <div class="flex items-center space-x-2">
+        <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[11px] sm:text-xs font-mono text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5 mr-1.5"></i>
+          <span>+ Enroll New Student</span>
+        </button>
+        <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-slate-400 bg-stitch-surface/80 px-2.5 py-1.5 rounded-xl border border-stitch-border">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span>Campus: <b class="text-slate-200">Ulhasnagar</b></span>
+        </div>
       </div>
     </div>
 
@@ -478,7 +634,6 @@
           <!-- Holographic Scanner Simulation -->
           <div class="relative w-full h-40 sm:h-48 rounded-xl bg-slate-950/90 border border-purple-500/40 overflow-hidden flex flex-col items-center justify-center p-3">
             <div class="absolute inset-0 scanner-laser pointer-events-none"></div>
-            
             <div class="w-28 h-28 sm:w-32 sm:h-32 border-2 border-dashed border-purple-400/60 rounded-xl flex items-center justify-center relative">
               <i data-lucide="qr-code" class="w-12 h-12 sm:w-16 sm:h-16 text-purple-300/40 animate-pulse"></i>
             </div>
@@ -539,7 +694,6 @@
             <span>SUBMIT LIVE CHECK-IN</span>
           </button>
 
-          <!-- Result Alert Box -->
           <div id="checkInResult" class="hidden p-3.5 sm:p-4 rounded-xl text-xs font-mono"></div>
         </div>
 
@@ -555,8 +709,6 @@
 
           <!-- Subject Cards -->
           <div class="space-y-2 max-h-[290px] overflow-y-auto pr-1">
-            
-            <!-- Miss Razia Khan's 4 units -->
             <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="flex items-center space-x-1.5 flex-wrap">
@@ -613,7 +765,6 @@
               </div>
             </div>
 
-            <!-- Mr. Anshul Chimnani's 2 units -->
             <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="flex items-center space-x-1.5 flex-wrap">
@@ -641,42 +792,11 @@
                 <span class="font-mono font-extrabold text-sm text-emerald-400">91.7%</span>
               </div>
             </div>
-
-            <!-- Miss Kalyani Patil's 2 units -->
-            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
-              <div class="min-w-0">
-                <div class="flex items-center space-x-1.5 flex-wrap">
-                  <span class="font-bold text-white text-xs truncate">Design & Analysis of Algo</span>
-                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
-                  <span class="text-[10px] font-mono text-slate-400">Miss Kalyani</span>
-                </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">25 Held • 22 Attended • E-104</p>
-              </div>
-              <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-sm text-emerald-400">88.0%</span>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
-              <div class="min-w-0">
-                <div class="flex items-center space-x-1.5 flex-wrap">
-                  <span class="font-bold text-white text-xs truncate">DAA Lab</span>
-                  <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">PRACTICAL</span>
-                  <span class="text-[10px] font-mono text-slate-400">Miss Kalyani</span>
-                </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">12 Held • 11 Attended • M-113 (DS Lab)</p>
-              </div>
-              <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-sm text-emerald-400">91.7%</span>
-              </div>
-            </div>
-
           </div>
 
           <!-- 'What-If' Attendance Simulator -->
           <div class="p-3.5 sm:p-4 rounded-xl bg-gradient-to-tr from-purple-950/40 to-slate-900 border border-purple-500/30 space-y-2.5 sm:space-y-3">
             <span class="text-[10px] sm:text-xs font-mono text-purple-300 font-bold uppercase tracking-wider">🧮 'What-If' Exam Clearance Simulator</span>
-            
             <div class="space-y-1">
               <div class="flex justify-between text-[11px] sm:text-xs font-mono">
                 <span class="text-slate-400">If I attend next N consecutive classes:</span>
@@ -748,11 +868,10 @@
             <!-- Quick Presets -->
             <div class="grid grid-cols-2 gap-1.5 pt-1 text-[10px] font-mono">
               <button type="button" onclick="setGeofencePreset(8)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-stitch-border text-center truncate">🔬 Compact (8m)</button>
-              <button type="button" onclick="setGeofencePreset(10)" id="presetBtn10" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-center font-bold truncate">🎛️ Standard (10m)</button>
+              <button type="button" onclick="setGeofencePreset(10)" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-center font-bold truncate">🎛️ Standard (10m)</button>
               <button type="button" onclick="setGeofencePreset(20)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-stitch-border text-center truncate">🏛️ Large Hall (20m)</button>
               <button type="button" onclick="setGeofencePreset(40)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-stitch-border text-center truncate">🎪 Aud (40m)</button>
             </div>
-            <p class="text-[9px] font-mono text-slate-400">⚡ Teachers can dynamically expand or restrict the geofence perimeter in real-time.</p>
           </div>
 
           <!-- Teacher Unit Switcher -->
@@ -767,19 +886,21 @@
           </button>
         </div>
 
-        <!-- 5-Student Live Digital Attendance Roster -->
+        <!-- Live Digital Attendance Roster (Auto updates with registered students) -->
         <div class="glass-panel p-4 sm:p-6 rounded-2xl lg:col-span-2 space-y-3.5 sm:space-y-4 border border-stitch-border">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-stitch-border pb-3">
             <div>
               <h3 id="teacherSubjectTitle" class="font-bold text-white text-sm sm:text-base">Data Mining (Theory)</h3>
-              <p id="teacherRosterSub" class="text-[11px] sm:text-xs font-mono text-slate-400">Instructor: Miss Razia Khan • Second Year Class: 5 Students</p>
+              <p id="teacherRosterSub" class="text-[11px] sm:text-xs font-mono text-slate-400">Instructor: Miss Razia Khan • Second Year Class Roster</p>
             </div>
-            <span class="bg-emerald-500/20 text-emerald-300 font-mono text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-500/30 w-fit">
-              Verified: 4 / 5 Present
-            </span>
+            <div class="flex items-center space-x-2">
+              <span id="rosterCountBadge" class="bg-emerald-500/20 text-emerald-300 font-mono text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-500/30">
+                Verified: 4 / 5 Present
+              </span>
+            </div>
           </div>
 
-          <!-- Table of 5 Data Science Students (Horizontal Scroll on Mobile) -->
+          <!-- Table of Students (Horizontal Scroll on Mobile) -->
           <div class="overflow-x-auto border border-stitch-border rounded-xl -mx-1 sm:mx-0">
             <table class="w-full text-left text-xs font-mono whitespace-nowrap">
               <thead class="bg-stitch-surface text-slate-300 uppercase">
@@ -791,42 +912,8 @@
                   <th class="p-2.5 sm:p-3">Check-In Time</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-stitch-border text-slate-300">
-                <tr class="bg-emerald-500/5">
-                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-001</td>
-                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Captain (Lead)</td>
-                  <td class="p-2.5 sm:p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
-                  <td class="p-2.5 sm:p-3 text-emerald-400">6.8m</td>
-                  <td class="p-2.5 sm:p-3">09:02:14 AM</td>
-                </tr>
-                <tr class="bg-emerald-500/5">
-                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-002</td>
-                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Aarav Sharma</td>
-                  <td class="p-2.5 sm:p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
-                  <td class="p-2.5 sm:p-3 text-emerald-400">7.2m</td>
-                  <td class="p-2.5 sm:p-3">09:02:40 AM</td>
-                </tr>
-                <tr class="bg-rose-500/5">
-                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-003</td>
-                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Priya Patel</td>
-                  <td class="p-2.5 sm:p-3"><span class="bg-rose-500/20 text-rose-300 font-bold px-2 py-0.5 rounded">🚨 PROXY BLOCKED</span></td>
-                  <td class="p-2.5 sm:p-3 text-rose-400">1.8 km (At Home)</td>
-                  <td class="p-2.5 sm:p-3">09:03:10 AM</td>
-                </tr>
-                <tr class="bg-emerald-500/5">
-                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-004</td>
-                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Rohan Gupta</td>
-                  <td class="p-2.5 sm:p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
-                  <td class="p-2.5 sm:p-3 text-emerald-400">5.6m</td>
-                  <td class="p-2.5 sm:p-3">09:04:02 AM</td>
-                </tr>
-                <tr class="bg-emerald-500/5">
-                  <td class="p-2.5 sm:p-3 font-bold text-white">CHMC-DS-2024-005</td>
-                  <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">Ananya Verma</td>
-                  <td class="p-2.5 sm:p-3"><span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">🟢 VERIFIED</span></td>
-                  <td class="p-2.5 sm:p-3 text-emerald-400">8.0m</td>
-                  <td class="p-2.5 sm:p-3">09:04:18 AM</td>
-                </tr>
+              <tbody id="digitalRosterBody" class="divide-y divide-stitch-border text-slate-300">
+                <!-- Dynamically populated via renderDigitalRoster() -->
               </tbody>
             </table>
           </div>
@@ -835,8 +922,8 @@
             <button class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs font-mono shadow-lg shadow-emerald-950/40">
               💾 LOCK & COMMIT ATTENDANCE
             </button>
-            <button class="w-full sm:w-auto bg-stitch-surface hover:bg-slate-800 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs font-mono border border-stitch-border">
-              👨‍🏫 MANUAL OVERRIDE
+            <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="w-full sm:w-auto bg-stitch-surface hover:bg-slate-800 text-purple-300 font-bold px-4 py-2.5 rounded-xl text-xs font-mono border border-purple-500/40">
+              + Enroll New Student
             </button>
           </div>
         </div>
@@ -853,7 +940,7 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-purple-500">
           <span class="text-[10px] sm:text-xs font-mono text-slate-400">Second Year Enrolled</span>
-          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">5 Students</h3>
+          <h3 id="coordTotalStudents" class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">5 Students</h3>
         </div>
         <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-emerald-500">
           <span class="text-[10px] sm:text-xs font-mono text-slate-400">Dept Avg Attendance</span>
@@ -871,14 +958,17 @@
 
       <!-- VISUAL ACADEMIC HIERARCHY TREE -->
       <div class="glass-panel p-5 sm:p-6 rounded-2xl space-y-4 border border-purple-500/40 neon-border">
-        <div class="flex items-center justify-between border-b border-stitch-border pb-3">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-stitch-border pb-3">
           <div class="flex items-center space-x-2">
             <i data-lucide="git-branch" class="w-5 h-5 text-purple-400"></i>
             <h3 class="font-bold text-white text-base">Department Academic Curriculum Structure</h3>
           </div>
-          <span class="bg-purple-500/20 text-purple-300 font-mono text-xs px-2.5 py-1 rounded-full border border-purple-500/30">
-            Smt. C.H.M. College
-          </span>
+          <div class="flex items-center space-x-2">
+            <button onclick="openBulkImportModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-mono font-bold shadow flex items-center">
+              <i data-lucide="upload" class="w-3.5 h-3.5 mr-1.5"></i>
+              <span>📥 Bulk Import CSV</span>
+            </button>
+          </div>
         </div>
 
         <p class="text-xs text-slate-300">
@@ -888,21 +978,17 @@
         <!-- Department Tree Visual -->
         <div class="space-y-4 pt-2">
           
-          <!-- Root Level: Department -->
           <div class="p-3 rounded-xl bg-purple-950/40 border border-purple-500/50 flex items-center space-x-2">
             <span class="text-base">🏢</span>
             <span class="font-bold font-mono text-purple-200 text-sm">Data Science Department</span>
             <span class="text-[10px] font-mono text-slate-400 ml-auto">Coordinator: Mrs. Shiji Johnson</span>
           </div>
 
-          <!-- Branch 1: Academic Years Grid -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pl-2 sm:pl-4 border-l-2 border-dashed border-purple-500/40">
-            
             <div class="p-3.5 rounded-xl bg-stitch-surface/60 border border-stitch-border opacity-70">
               <span class="text-xs font-mono font-bold text-slate-400 uppercase">First Year (F.Y.)</span>
               <p class="text-[11px] text-slate-500 mt-1">Foundation Computing & Math</p>
             </div>
-
             <div class="p-3.5 rounded-xl bg-gradient-to-tr from-purple-950/60 to-slate-900 border-2 border-emerald-500/60 shadow-lg shadow-emerald-950/30">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-mono font-bold text-emerald-400 uppercase">Second Year (S.Y.)</span>
@@ -910,23 +996,19 @@
               </div>
               <p class="text-[11px] text-slate-300 mt-1">3 Faculty Members • 8 Teaching Units</p>
             </div>
-
             <div class="p-3.5 rounded-xl bg-stitch-surface/60 border border-stitch-border opacity-70">
               <span class="text-xs font-mono font-bold text-slate-400 uppercase">Third Year (T.Y.)</span>
               <p class="text-[11px] text-slate-500 mt-1">Advanced Deep Learning & Capstone</p>
             </div>
-
           </div>
 
-          <!-- Branch 2: Second Year 3 Faculty Details -->
+          <!-- 3 Faculty Details -->
           <div class="space-y-3 pl-2 sm:pl-4 border-l-2 border-dashed border-emerald-500/40">
             <span class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">
               📂 Second Year Faculty & Subject Allocation:
             </span>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              
-              <!-- 1. Miss Razia Khan -->
               <div class="p-4 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-2">
                 <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
                   <span class="text-base">👩‍🏫</span>
@@ -936,26 +1018,13 @@
                   </div>
                 </div>
                 <ul class="text-[11px] font-mono space-y-1.5 text-slate-300">
-                  <li class="flex items-center justify-between">
-                    <span>• Data Mining (Theory)</span>
-                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span>
-                  </li>
-                  <li class="flex items-center justify-between">
-                    <span>• Data Mining (Practical)</span>
-                    <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">M-113</span>
-                  </li>
-                  <li class="flex items-center justify-between">
-                    <span>• Linear Algebra</span>
-                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span>
-                  </li>
-                  <li class="flex items-center justify-between">
-                    <span>• FOR (Theory)</span>
-                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span>
-                  </li>
+                  <li class="flex items-center justify-between"><span>• Data Mining (Theory)</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
+                  <li class="flex items-center justify-between"><span>• Data Mining (Practical)</span><span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">M-113</span></li>
+                  <li class="flex items-center justify-between"><span>• Linear Algebra</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
+                  <li class="flex items-center justify-between"><span>• FOR (Theory)</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
                 </ul>
               </div>
 
-              <!-- 2. Mr. Anshul Chimnani -->
               <div class="p-4 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-2">
                 <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
                   <span class="text-base">👨‍🏫</span>
@@ -965,18 +1034,11 @@
                   </div>
                 </div>
                 <ul class="text-[11px] font-mono space-y-1.5 text-slate-300">
-                  <li class="flex items-center justify-between">
-                    <span>• Data Warehousing</span>
-                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span>
-                  </li>
-                  <li class="flex items-center justify-between">
-                    <span>• FOR (Practical)</span>
-                    <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">M-103</span>
-                  </li>
+                  <li class="flex items-center justify-between"><span>• Data Warehousing</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
+                  <li class="flex items-center justify-between"><span>• FOR (Practical)</span><span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">M-103</span></li>
                 </ul>
               </div>
 
-              <!-- 3. Miss Kalyani Patil -->
               <div class="p-4 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-2">
                 <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
                   <span class="text-base">👩‍🏫</span>
@@ -986,17 +1048,10 @@
                   </div>
                 </div>
                 <ul class="text-[11px] font-mono space-y-1.5 text-slate-300">
-                  <li class="flex items-center justify-between">
-                    <span>• DAA (Theory)</span>
-                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span>
-                  </li>
-                  <li class="flex items-center justify-between">
-                    <span>• DAA (Practical)</span>
-                    <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">M-113</span>
-                  </li>
+                  <li class="flex items-center justify-between"><span>• DAA (Theory)</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
+                  <li class="flex items-center justify-between"><span>• DAA (Practical)</span><span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">M-113</span></li>
                 </ul>
               </div>
-
             </div>
           </div>
 
@@ -1047,7 +1102,7 @@
 
   <!-- FOOTER -->
   <footer class="border-t border-stitch-border py-4 text-center text-[10px] sm:text-xs font-mono text-slate-500 px-3">
-    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Multi-Layer Production Authentication System
+    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Enterprise Multi-Tier Production System
   </footer>
 
   <!-- ============================================== -->
@@ -1056,8 +1111,8 @@
   <script>
     lucide.createIcons();
 
-    // Comprehensive Database of Registered User Accounts & Emails
-    const REGISTERED_PROFILES = {
+    // Default Seed Profiles
+    const DEFAULT_PROFILES = {
       "CHMC-DS-2024-001": {
         role: "STUDENT",
         name: "Captain (Lead Data Science)",
@@ -1184,12 +1239,25 @@
       }
     };
 
-    // Current Session State
+    // Load registered accounts from LocalStorage
+    function getStoredProfiles() {
+      const stored = localStorage.getItem('uniattend_360_profiles');
+      if (stored) {
+        try {
+          return { ...DEFAULT_PROFILES, ...JSON.parse(stored) };
+        } catch (e) {}
+      }
+      return { ...DEFAULT_PROFILES };
+    }
+
+    let REGISTERED_PROFILES = getStoredProfiles();
     let activeSession = null;
     let pendingMFATarget = null;
     let activeGeofenceRadius = 10;
+    let parsedCSVStudents = [];
 
     function initAuth() {
+      REGISTERED_PROFILES = getStoredProfiles();
       const saved = localStorage.getItem('uniattend_360_session');
       if (saved) {
         try {
@@ -1199,9 +1267,80 @@
           handleLogout();
         }
       } else {
-        // Default to student Captain on first load
         quickAuth('CHMC-DS-2024-001');
       }
+      renderDigitalRoster();
+    }
+
+    function switchAuthTab(tab) {
+      const btnIn = document.getElementById('tabBtnSignIn');
+      const btnReg = document.getElementById('tabBtnRegister');
+      const boxIn = document.getElementById('authSignInBox');
+      const boxReg = document.getElementById('authRegisterBox');
+
+      if (tab === 'SIGNIN') {
+        btnIn.className = "flex-1 py-2 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow";
+        btnReg.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white font-bold transition duration-150";
+        boxIn.classList.remove('hidden');
+        boxReg.classList.add('hidden');
+      } else {
+        btnReg.className = "flex-1 py-2 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow";
+        btnIn.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white font-bold transition duration-150";
+        boxReg.classList.remove('hidden');
+        boxIn.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function toggleRegRole(role) {
+      const lbl = document.getElementById('regIdLabel');
+      const inp = document.getElementById('regIdentifier');
+      if (role === 'STUDENT') {
+        lbl.innerText = "Roll Number / Student ID";
+        inp.placeholder = "e.g. CHMC-DS-2024-006";
+      } else {
+        lbl.innerText = "Faculty Identifier / Staff ID";
+        inp.placeholder = "e.g. FAC-DS-04";
+      }
+    }
+
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const role = document.querySelector('input[name="regRole"]:checked').value;
+      const fullName = document.getElementById('regFullName').value.trim();
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      const idStr = document.getElementById('regIdentifier').value.trim().toUpperCase();
+      const pwd = document.getElementById('regPassword').value;
+      const errEl = document.getElementById('registerError');
+
+      if (pwd.length < 8) {
+        errEl.innerText = "Password must be at least 8 characters long.";
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      // Create new profile record
+      const key = idStr;
+      const newProfile = {
+        role: role,
+        name: fullName,
+        identifier: idStr,
+        email: email,
+        username: idStr.toLowerCase().replace("-", "."),
+        avatar: role === 'STUDENT' ? "🎓" : "👨‍🏫",
+        badge: role,
+        badgeClass: role === 'STUDENT' ? "bg-purple-500 text-white" : "bg-emerald-500 text-white",
+        desc: `${role === 'STUDENT' ? 'Second Year (S.Y. B.Sc. Data Science)' : 'Faculty Member'} • ${idStr} • Smt. C.H.M. College`
+      };
+
+      REGISTERED_PROFILES[key] = newProfile;
+      const stored = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
+      stored[key] = newProfile;
+      localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
+
+      alert(`🎉 Account created successfully for ${fullName} (${idStr})!\nLogged in immediately.`);
+      quickAuth(key);
+      renderDigitalRoster();
     }
 
     function openLoginModal() {
@@ -1224,10 +1363,25 @@
       document.getElementById('securityHubModal').classList.add('hidden');
     }
 
+    function openBulkImportModal() {
+      document.getElementById('bulkImportModal').classList.remove('hidden');
+    }
+
+    function closeBulkImportModal() {
+      document.getElementById('bulkImportModal').classList.add('hidden');
+    }
+
+    function openPublicGuide() {
+      document.getElementById('publicTestingGuideModal').classList.remove('hidden');
+    }
+
+    function closePublicGuide() {
+      document.getElementById('publicTestingGuideModal').classList.add('hidden');
+    }
+
     function handleStep1Submit(e) {
       e.preventDefault();
       const idInput = document.getElementById('loginIdentifier').value.trim().toLowerCase();
-      const pwdInput = document.getElementById('loginPassword').value.trim();
       
       const foundKey = Object.keys(REGISTERED_PROFILES).find(k => {
         const p = REGISTERED_PROFILES[k];
@@ -1247,7 +1401,6 @@
         return;
       }
 
-      // Transition to Layer 2: Two-Step Verification
       pendingMFATarget = foundKey;
       document.getElementById('authStep1').classList.add('hidden');
       document.getElementById('authStep2').classList.remove('hidden');
@@ -1263,30 +1416,20 @@
         errEl.classList.remove('hidden');
         return;
       }
-
-      // Success Layer 2 verification
       quickAuth(pendingMFATarget);
     }
 
     async function handleWebAuthnBiometricLogin() {
       if (window.PublicKeyCredential) {
-        try {
-          // Native WebAuthn FIDO2 Prompt
-          alert("🔐 Activating Windows Hello / Native Device Biometrics...\nVerify fingerprint or facial recognition on your device.");
-          setTimeout(() => {
-            quickAuth(pendingMFATarget || 'CHMC-DS-2024-001');
-          }, 800);
-        } catch (err) {
-          alert("Biometric verification cancelled or unavailable.");
-        }
+        alert("🔐 Activating Windows Hello / Native Device Biometrics...\nVerify fingerprint or facial recognition on your device.");
+        setTimeout(() => { quickAuth(pendingMFATarget || 'CHMC-DS-2024-001'); }, 800);
       } else {
         alert("WebAuthn is not supported in this browser environment. Please use 6-digit TOTP code.");
       }
     }
 
     function toggleRecoveryCodeInput() {
-      const box = document.getElementById('recoveryCodeBox');
-      box.classList.toggle('hidden');
+      document.getElementById('recoveryCodeBox').classList.toggle('hidden');
     }
 
     function handleRecoveryCodeSubmit() {
@@ -1337,7 +1480,7 @@
 
     function handleWebAuthnRegister() {
       if (window.PublicKeyCredential) {
-        alert("🔑 Registering Native Device Passkey...\nTouch your fingerprint sensor or look at the camera for Windows Hello / Face ID registration.");
+        alert("🔑 Registering Native Device Passkey...\nTouch your fingerprint sensor or look at camera for Windows Hello / Face ID registration.");
       } else {
         alert("WebAuthn / Passkeys not supported on this platform.");
       }
@@ -1351,6 +1494,46 @@
         alert("✅ Password changed successfully with Argon2id hash! All other active sessions have been revoked.");
       } else {
         alert("Password did not meet complexity requirements.");
+      }
+    }
+
+    // Dynamic Digital Roster Renderer
+    function renderDigitalRoster() {
+      const tbody = document.getElementById('digitalRosterBody');
+      if (!tbody) return;
+
+      // Extract all registered students
+      const students = Object.keys(REGISTERED_PROFILES)
+        .map(k => REGISTERED_PROFILES[k])
+        .filter(p => p.role === 'STUDENT');
+
+      tbody.innerHTML = students.map((s, idx) => {
+        const isBlocked = idx === 2; // Demo blocked for Priya
+        return `
+          <tr class="${isBlocked ? 'bg-rose-500/5' : 'bg-emerald-500/5'}">
+            <td class="p-2.5 sm:p-3 font-bold text-white">${s.identifier}</td>
+            <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">${s.name}</td>
+            <td class="p-2.5 sm:p-3">
+              <span class="${isBlocked ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'} font-bold px-2 py-0.5 rounded">
+                ${isBlocked ? '🚨 PROXY BLOCKED' : '🟢 VERIFIED'}
+              </span>
+            </td>
+            <td class="p-2.5 sm:p-3 ${isBlocked ? 'text-rose-400' : 'text-emerald-400'}">
+              ${isBlocked ? '1.8 km (At Home)' : (6.5 + idx * 0.4).toFixed(1) + 'm'}
+            </td>
+            <td class="p-2.5 sm:p-3">09:02:${(14 + idx * 22).toString().padStart(2, '0')} AM</td>
+          </tr>
+        `;
+      }).join('');
+
+      const countBadge = document.getElementById('rosterCountBadge');
+      if (countBadge) {
+        countBadge.innerText = `Verified: ${Math.max(1, students.length - 1)} / ${students.length} Present`;
+      }
+
+      const coordStudents = document.getElementById('coordTotalStudents');
+      if (coordStudents) {
+        coordStudents.innerText = `${students.length} Students`;
       }
     }
 
@@ -1420,6 +1603,7 @@
         document.getElementById('viewPrincipal').classList.remove('hidden');
       }
 
+      renderDigitalRoster();
       lucide.createIcons();
     }
 
@@ -1429,7 +1613,7 @@
         const unit = JSON.parse(val);
         document.getElementById('teacherSubjectTitle').innerText = unit.title;
         document.getElementById('kioskRoomTag').innerText = unit.room;
-        document.getElementById('teacherRosterSub').innerText = `Instructor: ${activeSession.name} • Room: ${unit.room} • Second Year: 5 Students`;
+        document.getElementById('teacherRosterSub').innerText = `Instructor: ${activeSession.name} • Room: ${unit.room} • Second Year Class Roster`;
       } catch (e) {}
     }
 
@@ -1478,7 +1662,98 @@
     }
 
     function showRecoveryNotice() {
-      alert("🔒 Account Recovery Protocol:\nContact the Course Coordinator (Mrs. Shiji Johnson) or use an Emergency Backup Recovery Code from your security hub.");
+      alert("🔒 Account Recovery Protocol:\nContact Course Coordinator (Mrs. Shiji Johnson) or use an Emergency Backup Recovery Code from your security hub.");
+    }
+
+    // CSV Bulk Parser
+    function handleCSVFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const text = e.target.result;
+        parseCSVText(text);
+      };
+      reader.readAsText(file);
+    }
+
+    function parseCSVText(text) {
+      const lines = text.split('\n');
+      parsedCSVStudents = [];
+      
+      lines.forEach((line, idx) => {
+        const clean = line.trim();
+        if (!clean) return;
+        const parts = clean.split(',');
+        if (parts.length >= 3) {
+          const roll = parts[0].trim().toUpperCase();
+          if (roll.toLowerCase() === 'roll_no') return; // Skip header
+          parsedCSVStudents.push({
+            roll_no: roll,
+            full_name: parts[1].trim(),
+            email: parts[2].trim().toLowerCase(),
+            gender: parts[3] ? parts[3].trim() : "M"
+          });
+        }
+      });
+
+      const previewBox = document.getElementById('csvPreviewBox');
+      const previewList = document.getElementById('csvPreviewList');
+      if (parsedCSVStudents.length > 0) {
+        previewBox.classList.remove('hidden');
+        previewList.innerHTML = parsedCSVStudents.map(s => `
+          <div class="flex justify-between items-center text-slate-300 py-1 border-b border-slate-800">
+            <span><b>${s.roll_no}</b> • ${s.full_name}</span>
+            <span class="text-indigo-400 text-[10px]">${s.email}</span>
+          </div>
+        `).join('');
+      } else {
+        alert("No valid student rows found in CSV. Format: roll_no,full_name,email");
+      }
+    }
+
+    function executeBulkImport() {
+      if (!parsedCSVStudents || parsedCSVStudents.length === 0) return;
+
+      const stored = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
+      parsedCSVStudents.forEach(s => {
+        const key = s.roll_no;
+        const prof = {
+          role: "STUDENT",
+          name: s.full_name,
+          identifier: s.roll_no,
+          email: s.email,
+          username: s.roll_no.toLowerCase().replace("-", "."),
+          avatar: "🎓",
+          badge: "STUDENT",
+          badgeClass: "bg-purple-500 text-white",
+          desc: `Second Year (S.Y. B.Sc. Data Science) • ${s.roll_no} • Smt. C.H.M. College`
+        };
+        REGISTERED_PROFILES[key] = prof;
+        stored[key] = prof;
+      });
+
+      localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
+      alert(`🎉 Successfully enrolled ${parsedCSVStudents.length} new students into the active cohort!`);
+      closeBulkImportModal();
+      renderDigitalRoster();
+    }
+
+    function downloadSampleCSV() {
+      const csvContent = "data:text/csv;charset=utf-8," + 
+        "roll_no,full_name,email,gender\n" +
+        "CHMC-DS-2024-006,Ramesh Singh,ramesh.singh@gmail.com,M\n" +
+        "CHMC-DS-2024-007,Kavita Nair,kavita.nair@gmail.com,F\n" +
+        "CHMC-DS-2024-008,Siddharth Joshi,siddharth.joshi@yahoo.com,M\n";
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "student_roster_template.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     let countdown = 8;
@@ -1498,7 +1773,7 @@
     }, 1000);
 
     function simulateScan() {
-      alert("⚡ Simulated real-time scan events for the 5 Data Science students!");
+      alert("⚡ Simulated real-time scan events for the Data Science cohort!");
     }
 
     window.addEventListener('DOMContentLoaded', initAuth);

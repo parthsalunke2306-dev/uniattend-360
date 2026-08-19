@@ -337,3 +337,64 @@ def test_security_audit_logging_sanitization():
         assert "MySecretPassword123!" not in entry.details
         assert "JBSWY3DPEHPK3PXP" not in entry.details
         assert "[REDACTED]" in entry.details
+
+
+# ==========================================
+# 6. DYNAMIC SELF-REGISTRATION & ONBOARDING
+# ==========================================
+
+def test_student_self_registration_success():
+    """Verifies that a brand new student can self-register and get an active authenticated session."""
+    reg_resp = client.post("/api/v1/auth/register", json={
+        "full_name": "Ramesh Singh",
+        "email": "ramesh.singh@gmail.com",
+        "role": "STUDENT",
+        "identifier": "CHMC-DS-2024-006",
+        "password": "SecurePass@2026!",
+        "department_code": "DS",
+        "device_fingerprint": "DEV-RAMESH-MOBILE"
+    })
+    assert reg_resp.status_code == 200
+    data = reg_resp.json()
+    assert data["email"] == "ramesh.singh@gmail.com"
+    assert data["role"] == "STUDENT"
+    assert "token" in data
+    assert "session_token" in data
+
+    # Verify newly registered student can now immediately log in
+    login_resp = client.post("/api/v1/auth/login", json={
+        "identifier": "ramesh.singh@gmail.com",
+        "password": "SecurePass@2026!",
+        "device_fingerprint": "DEV-RAMESH-MOBILE"
+    })
+    assert login_resp.status_code == 200
+    assert login_resp.json()["email"] == "ramesh.singh@gmail.com"
+
+
+def test_bulk_student_roster_import():
+    """Verifies that Coordinator/Principal can bulk import new students."""
+    login_resp = client.post("/api/v1/auth/login", json={
+        "identifier": "coordinator.ds",
+        "password": "CHMC@2026!"
+    })
+    coord_token = login_resp.json()["token"]
+    coord_headers = {"Authorization": f"Bearer {coord_token}"}
+
+    bulk_resp = client.post("/api/v1/auth/bulk-import-students", headers=coord_headers, json={
+        "department_code": "DS",
+        "students": [
+            {"roll_no": "CHMC-DS-2024-007", "full_name": "Kavita Nair", "email": "kavita.nair@gmail.com", "gender": "F"},
+            {"roll_no": "CHMC-DS-2024-008", "full_name": "Siddharth Joshi", "email": "siddharth.joshi@yahoo.com", "gender": "M"}
+        ]
+    })
+    assert bulk_resp.status_code == 200
+    assert bulk_resp.json()["imported_count"] == 2
+
+    # Verify imported student can log in with default password
+    s_login = client.post("/api/v1/auth/login", json={
+        "identifier": "CHMC-DS-2024-007",
+        "password": "CHMC@2026!"
+    })
+    assert s_login.status_code == 200
+    assert s_login.json()["email"] == "kavita.nair@gmail.com"
+

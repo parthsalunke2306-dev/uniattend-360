@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 
 from database.models import (
     UserAccount, UserMFA, UserRecoveryCode, UserPasskey, 
-    UserSession, SecurityAuditLog, Student, Faculty, Department
+    UserSession, SecurityAuditLog, Student, Faculty, Department, StudentCourseSummary
 )
 from database.db_manager import get_db
 from pipeline.auth_manager import ROLE_DEFINITIONS
@@ -62,6 +62,29 @@ class RecoveryCodeRequest(BaseModel):
 class PasswordChangeRequest(BaseModel):
     current_password: str
     new_password: str
+
+
+class RegisterRequest(BaseModel):
+    full_name: str = Field(..., example="Ramesh Singh")
+    email: str = Field(..., example="ramesh.singh@gmail.com")
+    role: str = Field(default="STUDENT", example="STUDENT")  # STUDENT or TEACHER
+    identifier: str = Field(..., description="Roll No (e.g. CHMC-DS-2024-006) or Faculty ID", example="CHMC-DS-2024-006")
+    password: str = Field(..., example="SecurePass@2026!")
+    department_code: Optional[str] = Field(default="DS", example="DS")
+    device_fingerprint: Optional[str] = Field(default="DEV-BROWSER-CHROME-NEW")
+    device_name: Optional[str] = Field(default="Web Browser")
+
+
+class BulkImportStudentItem(BaseModel):
+    roll_no: str
+    full_name: str
+    email: str
+    gender: Optional[str] = "M"
+
+
+class BulkImportRequest(BaseModel):
+    students: List[BulkImportStudentItem]
+    department_code: Optional[str] = "DS"
 
 
 class MFASetupResponse(BaseModel):
@@ -180,6 +203,221 @@ def login_primary(req: LoginRequest, request: Request, db: Session = Depends(get
 
     # Generate full authenticated session
     return _build_authenticated_session_response(db, user, req.device_fingerprint, req.device_name, ip_addr, user_agent, req.remember_device)
+
+
+# ==========================================
+# 1B. SELF-REGISTRATION & ONBOARDING (NEW USERS)
+# ==========================================
+
+@auth_router.post("/register", response_model=UserSessionProfile)
+def register_new_user(req: RegisterRequest, request: Request, db: Session = Depends(get_db)):
+    """
+    Public Onboarding Endpoint:
+    Allows new students and faculty members to register dynamically.
+    Creates Student/Faculty records, assigns courses, hashes passwords with Argon2id,
+    and returns an active authenticated session.
+    """
+    clean_email = req.email.strip().lower()
+    clean_id = req.identifier.strip().upper()
+    ip_addr = request.client.host if request.client else "127.0.0.1"
+    user_agent = request.headers.get("user-agent", "Unknown")
+
+    # 1. Validate Password Strength
+    is_valid, msg = PasswordPolicy.validate(req.password)
+    if not is_valid:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=msg)
+
+    # 2. Check for duplicate email
+    if db.query(UserAccount).filter(UserAccount.email.ilike(clean_email)).first():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"An account with email '{clean_email}' already exists. Please log in."
+        )
+
+    # 3. Locate Department
+    dept = db.query(Department).filter(
+        (Department.dept_code == req.department_code) | (Department.name.ilike("%data science%"))
+    ).first()
+    dept_id = dept.id if dept else None
+
+    # 4. Create Student or Faculty Entity
+    student_id = None
+    faculty_id = None
+    role_normalized = req.role.upper()
+    if role_normalized not in ["STUDENT", "TEACHER"]:
+        role_normalized = "STUDENT"
+
+    pwd_hash = PasswordHasherService.hash(req.password)
+    uname = clean_id.lower().replace("-", ".").replace(" ", ".")
+
+    if role_normalized == "STUDENT":
+        # Check duplicate roll number
+        existing_student = db.query(Student).filter(Student.student_id_str.ilike(clean_id)).first()
+        if existing_student:
+            student_id = existing_student.id
+        else:
+            new_student = Student(
+                student_id_str=clean_id,
+                full_name=req.full_name,
+                email=clean_email,
+                department_id=dept_id,
+                batch_year=2024,
+                semester=3
+            )
+            db.add(new_student)
+            db.commit()
+            db.refresh(new_student)
+            student_id = new_student.id
+
+            # Initialize Course Summaries for newly registered student
+            if dept:
+                for c in dept.courses:
+                    summary = StudentCourseSummary(
+                        student_id=student_id,
+                        course_id=c.id,
+                        total_classes=0,
+                        attended_classes=0,
+                        late_classes=0,
+                        absent_classes=0,
+                        attendance_pct=100.0,
+                        is_defaulter=False
+                    )
+                    db.add(summary)
+                db.commit()
+
+        user = UserAccount(
+            username=uname,
+            email=clean_email,
+            password_hash=pwd_hash,
+            full_name=req.full_name,
+            role="STUDENT",
+            department_id=dept_id,
+            student_id=student_id,
+            avatar_icon="🎓"
+        )
+    else:
+        # Teacher registration
+        new_faculty = Faculty(
+            faculty_id_str=clean_id,
+            full_name=req.full_name,
+            email=clean_email,
+            department_id=dept_id,
+            designation="Assistant Professor"
+        )
+        db.add(new_faculty)
+        db.commit()
+        db.refresh(new_faculty)
+        faculty_id = new_faculty.id
+
+        user = UserAccount(
+            username=uname,
+            email=clean_email,
+            password_hash=pwd_hash,
+            full_name=f"{req.full_name} (Faculty)",
+            role="TEACHER",
+            department_id=dept_id,
+            faculty_id=faculty_id,
+            avatar_icon="👨‍🏫"
+        )
+
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    SecurityAuditLogger.log(
+        db=db,
+        user_id=user.id,
+        event_type="USER_REGISTERED",
+        severity="INFO",
+        ip_address=ip_addr,
+        user_agent=user_agent,
+        device_fingerprint=req.device_fingerprint,
+        details={"role": user.role, "identifier": clean_id, "email": clean_email}
+    )
+
+    return _build_authenticated_session_response(
+        db, user, req.device_fingerprint, req.device_name, ip_addr, user_agent, False
+    )
+
+
+@auth_router.post("/bulk-import-students")
+def bulk_import_students(
+    req: BulkImportRequest,
+    current_user: UserAccount = Depends(require_role(["PRINCIPAL", "HOD", "COORDINATOR", "ADMIN"])),
+    db: Session = Depends(get_db)
+):
+    """
+    Bulk Roster Ingestion:
+    Allows coordinators/admins to upload CSV student rosters in 1 click.
+    """
+    dept = db.query(Department).filter(
+        (Department.dept_code == req.department_code) | (Department.name.ilike("%data science%"))
+    ).first()
+    dept_id = dept.id if dept else None
+    default_pw_hash = PasswordHasherService.hash("CHMC@2026!")
+
+    imported_count = 0
+    skipped_count = 0
+
+    for item in req.students:
+        clean_roll = item.roll_no.strip().upper()
+        clean_email = item.email.strip().lower()
+
+        # Skip existing
+        if db.query(Student).filter(Student.student_id_str.ilike(clean_roll)).first():
+            skipped_count += 1
+            continue
+
+        student = Student(
+            student_id_str=clean_roll,
+            full_name=item.full_name,
+            email=clean_email,
+            department_id=dept_id,
+            batch_year=2024,
+            semester=3
+        )
+        db.add(student)
+        db.commit()
+        db.refresh(student)
+
+        # Create user account
+        uname = clean_roll.lower().replace("-", ".")
+        user = UserAccount(
+            username=uname,
+            email=clean_email,
+            password_hash=default_pw_hash,
+            full_name=f"{item.full_name} ({clean_roll})",
+            role="STUDENT",
+            department_id=dept_id,
+            student_id=student.id,
+            avatar_icon="🎓"
+        )
+        db.add(user)
+
+        # Initialize course summaries
+        if dept:
+            for c in dept.courses:
+                db.add(StudentCourseSummary(
+                    student_id=student.id,
+                    course_id=c.id,
+                    total_classes=0,
+                    attended_classes=0,
+                    late_classes=0,
+                    absent_classes=0,
+                    attendance_pct=100.0,
+                    is_defaulter=False
+                ))
+
+        imported_count += 1
+
+    db.commit()
+    return {
+        "status": "SUCCESS",
+        "imported_count": imported_count,
+        "skipped_count": skipped_count,
+        "message": f"Successfully enrolled {imported_count} new students into the active cohort."
+    }
+
 
 
 # ==========================================
