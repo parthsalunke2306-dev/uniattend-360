@@ -82,7 +82,7 @@ COLLEGE_CONFIG = {
             "course_name": "Data Mining (Theory)",
             "course_code": "DS201-DM-TH",
             "type": "Theory",
-            "room": "LH-201",
+            "room": "E-104",
             "days": ["Monday", "Wednesday"],
             "credits": 3,
             "semester": 3
@@ -92,7 +92,7 @@ COLLEGE_CONFIG = {
             "course_name": "Data Mining (Practical)",
             "course_code": "DS201-DM-PR",
             "type": "Practical",
-            "room": "DS-LAB-1",
+            "room": "M-113",
             "days": ["Friday"],
             "credits": 2,
             "semester": 3
@@ -102,7 +102,7 @@ COLLEGE_CONFIG = {
             "course_name": "Linear Algebra",
             "course_code": "DS202-LA",
             "type": "Theory",
-            "room": "LH-201",
+            "room": "E-104",
             "days": ["Tuesday", "Thursday"],
             "credits": 3,
             "semester": 3
@@ -112,7 +112,7 @@ COLLEGE_CONFIG = {
             "course_name": "FOR - Foundations of Research (Theory)",
             "course_code": "DS203-FOR-TH",
             "type": "Theory",
-            "room": "LH-201",
+            "room": "E-104",
             "days": ["Monday", "Thursday"],
             "credits": 3,
             "semester": 3
@@ -123,7 +123,7 @@ COLLEGE_CONFIG = {
             "course_name": "Data Warehousing",
             "course_code": "DS204-DW",
             "type": "Theory",
-            "room": "LH-202",
+            "room": "E-104",
             "days": ["Tuesday", "Thursday", "Friday"],
             "credits": 3,
             "semester": 3
@@ -133,7 +133,7 @@ COLLEGE_CONFIG = {
             "course_name": "FOR - Foundations of Research (Practical)",
             "course_code": "DS203-FOR-PR",
             "type": "Practical",
-            "room": "DS-LAB-1",
+            "room": "M-103",
             "days": ["Wednesday"],
             "credits": 2,
             "semester": 3
@@ -144,7 +144,7 @@ COLLEGE_CONFIG = {
             "course_name": "Design and Analysis of Algorithms (Theory)",
             "course_code": "DS205-DAA-TH",
             "type": "Theory",
-            "room": "LH-202",
+            "room": "E-104",
             "days": ["Monday", "Wednesday"],
             "credits": 3,
             "semester": 3
@@ -154,7 +154,7 @@ COLLEGE_CONFIG = {
             "course_name": "Design and Analysis of Algorithms (Practical)",
             "course_code": "DS205-DAA-PR",
             "type": "Practical",
-            "room": "DS-LAB-1",
+            "room": "M-113",
             "days": ["Thursday"],
             "credits": 2,
             "semester": 3
