@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>UniAttend 360 | Public Testing & Production Portal (Smt. C.H.M. College)</title>
+  <title>UniAttend 360 | Enterprise Multi-Tier Auth (Smt. C.H.M. College)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -76,101 +76,113 @@
     .pin-hud {
       text-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
     }
+    /* Mobile scrollbar smoothing */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(11, 19, 38, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(168, 85, 247, 0.4);
+      border-radius: 4px;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-purple-600 selection:text-white">
+<body class="min-h-screen flex flex-col antialiased selection:bg-purple-600 selection:text-white text-slate-100">
 
   <!-- ============================================== -->
   <!-- MULTI-TIER AUTHENTICATION & ONBOARDING MODAL -->
   <!-- ============================================== -->
-  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl border border-purple-500/40 shadow-2xl shadow-purple-950/50 space-y-5 relative overflow-hidden max-h-[95vh] overflow-y-auto">
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-sm sm:max-w-md p-5 sm:p-7 rounded-3xl border border-purple-500/40 shadow-2xl shadow-purple-950/50 space-y-4 relative overflow-hidden max-h-[92vh] overflow-y-auto">
       
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/30 rounded-full blur-2xl pointer-events-none"></div>
       <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-600/20 rounded-full blur-2xl pointer-events-none"></div>
 
       <!-- Header -->
-      <div class="text-center space-y-1.5 relative z-10">
-        <div class="h-12 w-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 mx-auto shadow-lg shadow-purple-900/40 flex items-center justify-center">
+      <div class="text-center space-y-1 relative z-10">
+        <div class="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 mx-auto shadow-lg shadow-purple-900/40 flex items-center justify-center">
           <div class="h-full w-full bg-stitch-bg rounded-[14px] flex items-center justify-center">
-            <i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>
+            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
           </div>
         </div>
-        <h2 class="text-xl font-extrabold text-white tracking-tight">Smt. C.H.M. College</h2>
-        <p class="text-xs text-purple-300 font-mono">Department of Data Science • UniAttend 360</p>
+        <h2 class="text-lg sm:text-xl font-extrabold text-white tracking-tight">Smt. C.H.M. College</h2>
+        <p class="text-[11px] text-purple-300 font-mono">Department of Data Science • S.Y.</p>
       </div>
 
       <!-- TAB TOGGLE: SIGN IN VS CREATE ACCOUNT -->
       <div class="flex rounded-xl bg-stitch-surface p-1 border border-stitch-border text-xs font-mono relative z-10">
-        <button id="tabBtnSignIn" onclick="switchAuthTab('SIGNIN')" class="flex-1 py-2 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow">
+        <button id="tabBtnSignIn" onclick="switchAuthTab('SIGNIN')" class="flex-1 py-1.5 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow">
           🔐 Sign In
         </button>
-        <button id="tabBtnRegister" onclick="switchAuthTab('REGISTER')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white font-bold transition duration-150">
+        <button id="tabBtnRegister" onclick="switchAuthTab('REGISTER')" class="flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold transition duration-150">
           ✍️ Create Account
         </button>
       </div>
 
       <!-- 1. SIGN IN FORM (PRIMARY AUTH) -->
-      <div id="authSignInBox" class="space-y-4 relative z-10">
+      <div id="authSignInBox" class="space-y-3.5 relative z-10">
         
         <!-- STEP 1: CREDENTIALS -->
-        <div id="authStep1" class="space-y-4">
-          <form onsubmit="handleStep1Submit(event)" class="space-y-3.5">
+        <div id="authStep1" class="space-y-3.5">
+          <form onsubmit="handleStep1Submit(event)" class="space-y-3">
             <div class="space-y-1">
-              <label class="text-xs font-mono text-slate-400">Roll No / Faculty ID / Email</label>
+              <label class="text-[11px] font-mono text-slate-400">Roll No / Faculty ID / Email</label>
               <div class="relative">
-                <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-                <input type="text" id="loginIdentifier" placeholder="e.g. captain.ds@chmc.edu or CHMC-DS-2024-001" required value="captain.ds@chmc.edu" class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
+                <input type="text" id="loginIdentifier" placeholder="e.g. captain.ds@chmc.edu or CHMC-DS-2024-001" required value="captain.ds@chmc.edu" class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
               </div>
             </div>
 
             <div class="space-y-1">
-              <div class="flex justify-between items-center text-xs font-mono">
+              <div class="flex justify-between items-center text-[11px] font-mono">
                 <label class="text-slate-400">Password</label>
-                <span class="text-purple-400 text-[10px] cursor-pointer hover:underline" onclick="showRecoveryNotice()">Forgot Password?</span>
+                <span class="text-purple-400 text-[10px] cursor-pointer hover:underline" onclick="showRecoveryNotice()">Forgot?</span>
               </div>
               <div class="relative">
-                <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-                <input type="password" id="loginPassword" value="CHMC@2026!" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
+                <input type="password" id="loginPassword" value="CHMC@2026!" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
               </div>
             </div>
 
-            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+            <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
               <label class="flex items-center space-x-1.5 cursor-pointer">
-                <input type="checkbox" id="rememberDeviceCheck" class="rounded bg-stitch-surface text-purple-500">
-                <span class="text-slate-300">Remember this device</span>
+                <input type="checkbox" id="rememberDeviceCheck" class="rounded bg-stitch-surface text-purple-500 text-xs">
+                <span class="text-slate-300">Remember device</span>
               </label>
               <span class="text-emerald-400 flex items-center"><i data-lucide="shield" class="w-3 h-3 mr-1"></i> Argon2id</span>
             </div>
 
-            <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-purple-900/40 text-xs font-mono flex items-center justify-center space-x-2 transition duration-150">
-              <i data-lucide="log-in" class="w-4 h-4"></i>
+            <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-purple-900/40 text-xs font-mono flex items-center justify-center space-x-1.5 transition duration-150">
+              <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
               <span>AUTHENTICATE (STEP 1)</span>
             </button>
 
-            <div id="loginError" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center"></div>
+            <div id="loginError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[11px] font-mono text-center"></div>
           </form>
 
           <!-- 1-Click Persona Demo Grid -->
-          <div class="space-y-2 pt-2 border-t border-stitch-border">
-            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider block text-center">⚡ 1-Click Instant Demo Login:</span>
-            <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
-              <button onclick="quickAuth('CHMC-DS-2024-001')" class="p-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-left truncate">
+          <div class="space-y-1.5 pt-2 border-t border-stitch-border">
+            <span class="text-[9px] font-mono text-slate-400 uppercase tracking-wider block text-center">⚡ 1-Click Demo Profiles:</span>
+            <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
+              <button onclick="quickAuth('CHMC-DS-2024-001')" class="p-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-left truncate">
                 🎓 Captain (Student)
               </button>
-              <button onclick="quickAuth('faculty.razia')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
+              <button onclick="quickAuth('faculty.razia')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
                 👩‍🏫 Miss Razia (4 Units)
               </button>
-              <button onclick="quickAuth('faculty.anshul')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
+              <button onclick="quickAuth('faculty.anshul')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
                 👨‍🏫 Mr. Anshul (2 Units)
               </button>
-              <button onclick="quickAuth('faculty.kalyani')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
+              <button onclick="quickAuth('faculty.kalyani')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
                 👩‍🏫 Miss Kalyani (2 Units)
               </button>
-              <button onclick="quickAuth('coordinator.ds')" class="p-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-left truncate">
-                👔 Mrs. Shiji (Coordinator)
+              <button onclick="quickAuth('coordinator.ds')" class="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-left truncate">
+                👔 Mrs. Shiji (Coord)
               </button>
-              <button onclick="quickAuth('principal.chmc')" class="p-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 text-left truncate">
+              <button onclick="quickAuth('principal.chmc')" class="p-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 text-left truncate">
                 🏛️ Dr. Manju (Principal)
               </button>
             </div>
@@ -178,113 +190,96 @@
         </div>
 
         <!-- STEP 2: TWO-STEP VERIFICATION (TOTP / BIOMETRICS / RECOVERY) -->
-        <div id="authStep2" class="space-y-4 hidden">
-          <div class="p-3 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-center space-y-1">
-            <span class="text-xs font-mono text-purple-300 font-bold uppercase tracking-wider flex items-center justify-center">
-              <i data-lucide="key-round" class="w-4 h-4 mr-1.5 text-purple-400"></i>
-              Verify Your Identity
+        <div id="authStep2" class="space-y-3.5 hidden">
+          <div class="p-2.5 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-center space-y-0.5">
+            <span class="text-[11px] font-mono text-purple-300 font-bold uppercase tracking-wider flex items-center justify-center">
+              <i data-lucide="key-round" class="w-3.5 h-3.5 mr-1 text-purple-400"></i>
+              2-Step Verification
             </span>
-            <p class="text-[11px] text-slate-300">Enter the 6-digit code from Google/Microsoft Authenticator or use device passkey.</p>
+            <p class="text-[10px] text-slate-300">Enter 6-digit code or use device passkey.</p>
           </div>
 
-          <form onsubmit="handleStep2TOTPSubmit(event)" class="space-y-3">
-            <div class="space-y-1">
-              <div class="flex justify-between items-center text-[10px] font-mono text-slate-400">
-                <span>6-Digit Security Code</span>
-                <span class="text-emerald-400">Single-Use (RFC 6238)</span>
-              </div>
-              <input type="text" id="mfaCodeInput" placeholder="• • • • • •" maxlength="6" autofocus class="w-full bg-stitch-surface border border-emerald-500/50 rounded-xl p-3 text-center font-mono font-extrabold text-2xl text-emerald-400 tracking-[0.4em] focus:outline-none focus:border-emerald-400">
-            </div>
-
-            <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-emerald-950/40 text-xs font-mono flex items-center justify-center space-x-2">
-              <i data-lucide="shield-check" class="w-4 h-4"></i>
-              <span>VERIFY & COMPLETE LOGIN</span>
+          <form onsubmit="handleStep2TOTPSubmit(event)" class="space-y-2.5">
+            <input type="text" id="mfaCodeInput" placeholder="• • • • • •" maxlength="6" autofocus class="w-full bg-stitch-surface border border-emerald-500/50 rounded-xl p-2.5 text-center font-mono font-extrabold text-xl text-emerald-400 tracking-[0.3em] focus:outline-none">
+            <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold py-2 rounded-xl text-xs font-mono shadow-md">
+              VERIFY & COMPLETE LOGIN
             </button>
           </form>
 
-          <button onclick="handleWebAuthnBiometricLogin()" type="button" class="w-full bg-stitch-surface hover:bg-slate-800 border border-purple-500/40 text-purple-300 font-mono font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 transition">
-            <i data-lucide="fingerprint" class="w-4 h-4 text-purple-400"></i>
-            <span>Use Passkey / Windows Hello / Face ID</span>
+          <button onclick="handleWebAuthnBiometricLogin()" type="button" class="w-full bg-stitch-surface hover:bg-slate-800 border border-purple-500/40 text-purple-300 font-mono font-bold py-2 rounded-xl text-[11px] flex items-center justify-center space-x-1.5">
+            <i data-lucide="fingerprint" class="w-3.5 h-3.5 text-purple-400"></i>
+            <span>Use Passkey (Windows Hello / Touch ID)</span>
           </button>
 
-          <button onclick="toggleRecoveryCodeInput()" type="button" class="w-full text-[11px] font-mono text-slate-400 hover:text-purple-300 underline text-center">
-            Lost phone? Use Emergency Backup Code
+          <button onclick="toggleRecoveryCodeInput()" type="button" class="w-full text-[10px] font-mono text-slate-400 hover:text-purple-300 underline text-center">
+            Use Emergency Recovery Code
           </button>
 
-          <div id="recoveryCodeBox" class="hidden p-3 rounded-xl bg-slate-900 border border-amber-500/40 space-y-2">
-            <label class="text-[10px] font-mono text-amber-300 font-bold block">Enter 8-Character Recovery Code:</label>
-            <div class="flex space-x-2">
-              <input type="text" id="recoveryCodeInput" placeholder="XXXX-XXXX" class="flex-1 bg-stitch-surface border border-stitch-border rounded-lg p-2 text-xs font-mono text-white tracking-widest text-center uppercase">
-              <button onclick="handleRecoveryCodeSubmit()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-mono font-bold">RECOVER</button>
+          <div id="recoveryCodeBox" class="hidden p-2.5 rounded-xl bg-slate-900 border border-amber-500/40 space-y-1.5">
+            <div class="flex space-x-1.5">
+              <input type="text" id="recoveryCodeInput" placeholder="XXXX-XXXX" class="flex-1 bg-stitch-surface border border-stitch-border rounded-lg p-1.5 text-xs font-mono text-white text-center uppercase">
+              <button onclick="handleRecoveryCodeSubmit()" class="px-2.5 py-1.5 bg-amber-600 text-white rounded-lg text-[11px] font-mono font-bold">RECOVER</button>
             </div>
           </div>
 
-          <button onclick="backToStep1()" type="button" class="w-full text-center text-xs font-mono text-slate-500 hover:text-slate-300 pt-1">
-            ← Back to primary sign in
+          <button onclick="backToStep1()" type="button" class="w-full text-center text-[10px] font-mono text-slate-500 hover:text-slate-300">
+            ← Back to sign in
           </button>
 
-          <div id="mfaError" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center"></div>
+          <div id="mfaError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[10px] font-mono text-center"></div>
         </div>
 
       </div>
 
-      <!-- 2. CREATE ACCOUNT FORM (DYNAMIC ONBOARDING FOR NEW USERS) -->
-      <div id="authRegisterBox" class="space-y-4 relative z-10 hidden">
-        <div class="p-3 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 text-center space-y-1">
-          <span class="text-xs font-mono text-emerald-300 font-bold uppercase tracking-wider flex items-center justify-center">
-            <i data-lucide="user-plus" class="w-4 h-4 mr-1.5 text-emerald-400"></i>
-            Self-Registration Portal
+      <!-- 2. CREATE ACCOUNT FORM (DYNAMIC ONBOARDING) -->
+      <div id="authRegisterBox" class="space-y-3 relative z-10 hidden">
+        <div class="p-2.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 text-center space-y-0.5">
+          <span class="text-[11px] font-mono text-emerald-300 font-bold uppercase tracking-wider flex items-center justify-center">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 mr-1 text-emerald-400"></i>
+            Self-Registration
           </span>
-          <p class="text-[11px] text-slate-300">Join S.Y. B.Sc. Data Science class cohort. Supports any personal or college email.</p>
+          <p class="text-[10px] text-slate-300">Join S.Y. Data Science class. Any email supported.</p>
         </div>
 
-        <form onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-left">
+        <form onsubmit="handleRegisterSubmit(event)" class="space-y-2.5 text-left">
           
-          <!-- Role Selection -->
-          <div class="space-y-1">
-            <label class="text-xs font-mono text-slate-400">I am a:</label>
-            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-              <label class="flex items-center p-2 rounded-xl bg-stitch-surface border border-purple-500/40 cursor-pointer text-purple-300">
-                <input type="radio" name="regRole" value="STUDENT" checked onchange="toggleRegFields('STUDENT')" class="mr-2 text-purple-500">
-                <span>🎓 Student</span>
-              </label>
-              <label class="flex items-center p-2 rounded-xl bg-stitch-surface border border-stitch-border cursor-pointer text-slate-300">
-                <input type="radio" name="regRole" value="TEACHER" onchange="toggleRegFields('TEACHER')" class="mr-2 text-emerald-500">
-                <span>👨‍🏫 Faculty / Teacher</span>
-              </label>
-            </div>
+          <div class="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
+            <label class="flex items-center p-1.5 rounded-lg bg-stitch-surface border border-purple-500/40 cursor-pointer text-purple-300">
+              <input type="radio" name="regRole" value="STUDENT" checked onchange="toggleRegRole('STUDENT')" class="mr-1.5 text-purple-500">
+              <span>🎓 Student</span>
+            </label>
+            <label class="flex items-center p-1.5 rounded-lg bg-stitch-surface border border-stitch-border cursor-pointer text-slate-300">
+              <input type="radio" name="regRole" value="TEACHER" onchange="toggleRegRole('TEACHER')" class="mr-1.5 text-emerald-500">
+              <span>👨‍🏫 Faculty</span>
+            </label>
           </div>
 
-          <!-- Full Name -->
-          <div class="space-y-1">
-            <label class="text-xs font-mono text-slate-400">Full Name</label>
-            <input type="text" id="regFullName" placeholder="e.g. Ramesh Singh" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+          <div class="space-y-0.5">
+            <label class="text-[10px] font-mono text-slate-400">Full Name</label>
+            <input type="text" id="regFullName" placeholder="e.g. Ramesh Singh" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
           </div>
 
-          <!-- Email -->
-          <div class="space-y-1">
-            <label class="text-xs font-mono text-slate-400">Email Address (Any Domain)</label>
-            <input type="email" id="regEmail" placeholder="e.g. ramesh.singh@gmail.com" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+          <div class="space-y-0.5">
+            <label class="text-[10px] font-mono text-slate-400">Email Address</label>
+            <input type="email" id="regEmail" placeholder="e.g. ramesh.singh@gmail.com" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
           </div>
 
-          <!-- Roll Number / ID -->
-          <div class="space-y-1">
-            <label id="regIdLabel" class="text-xs font-mono text-slate-400">Roll Number / Enrollment ID</label>
-            <input type="text" id="regIdentifier" placeholder="e.g. CHMC-DS-2024-006" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 uppercase">
+          <div class="space-y-0.5">
+            <label id="regIdLabel" class="text-[10px] font-mono text-slate-400">Roll Number / Student ID</label>
+            <input type="text" id="regIdentifier" placeholder="e.g. CHMC-DS-2024-006" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500 uppercase">
           </div>
 
-          <!-- Password -->
-          <div class="space-y-1">
-            <label class="text-xs font-mono text-slate-400">Password (Min 8 chars, 1 upper, 1 digit, 1 special)</label>
-            <input type="password" id="regPassword" placeholder="e.g. SecurePass@2026!" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+          <div class="space-y-0.5">
+            <label class="text-[10px] font-mono text-slate-400">Password (Min 8 chars)</label>
+            <input type="password" id="regPassword" placeholder="e.g. SecurePass@2026!" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
           </div>
 
-          <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-emerald-950/40 text-xs font-mono flex items-center justify-center space-x-2 transition duration-150">
-            <i data-lucide="user-check" class="w-4 h-4"></i>
+          <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold py-2 rounded-xl text-xs font-mono shadow-md flex items-center justify-center space-x-1.5">
+            <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
             <span>CREATE ACCOUNT & SIGN IN</span>
           </button>
 
-          <div id="registerError" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center"></div>
+          <div id="registerError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[10px] font-mono text-center"></div>
         </form>
       </div>
 
@@ -295,43 +290,42 @@
   <!-- ============================================== -->
   <!-- BULK ROSTER CSV IMPORT MODAL (FOR COORDINATOR) -->
   <!-- ============================================== -->
-  <div id="bulkImportModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-indigo-500/40 shadow-2xl space-y-4 relative">
-      <div class="flex items-center justify-between border-b border-stitch-border pb-3">
-        <div class="flex items-center space-x-2.5">
-          <div class="h-9 w-9 rounded-xl bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center text-indigo-300">
-            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+  <div id="bulkImportModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-md p-5 rounded-3xl border border-indigo-500/40 shadow-2xl space-y-3.5 relative max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-stitch-border pb-2.5">
+        <div class="flex items-center space-x-2">
+          <div class="h-8 w-8 rounded-xl bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center text-indigo-300">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-white">Bulk Class Roster Ingestion</h3>
-            <p class="text-xs text-slate-400 font-mono">Enroll entire class batch from CSV / Excel</p>
+            <h3 class="text-sm font-bold text-white">Bulk Class Roster Ingestion</h3>
+            <p class="text-[10px] text-slate-400 font-mono">Upload batch from CSV / Excel</p>
           </div>
         </div>
-        <button onclick="closeBulkImportModal()" class="p-2 rounded-xl bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white">
-          <i data-lucide="x" class="w-4 h-4"></i>
+        <button onclick="closeBulkImportModal()" class="p-1.5 rounded-lg bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
 
-      <p class="text-xs text-slate-300">Upload a `.csv` file containing student records to instantly generate student IDs, default credentials, and timetable course associations.</p>
+      <p class="text-[11px] text-slate-300">Upload a `.csv` file to instantly enroll batch students with timetable course associations.</p>
 
-      <div class="p-4 border-2 border-dashed border-indigo-500/40 rounded-2xl bg-stitch-surface/60 text-center space-y-2">
-        <i data-lucide="upload-cloud" class="w-8 h-8 text-indigo-400 mx-auto"></i>
-        <div class="text-xs text-slate-300 font-mono">Choose a CSV file or paste raw text below</div>
-        <input type="file" id="csvFileInput" accept=".csv, .txt" onchange="handleCSVFileSelected(event)" class="text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-mono file:bg-indigo-600 file:text-white file:cursor-pointer">
+      <div class="p-3 border-2 border-dashed border-indigo-500/40 rounded-2xl bg-stitch-surface/60 text-center space-y-1.5">
+        <i data-lucide="upload-cloud" class="w-6 h-6 text-indigo-400 mx-auto"></i>
+        <div class="text-[10px] text-slate-300 font-mono">Select CSV file</div>
+        <input type="file" id="csvFileInput" accept=".csv, .txt" onchange="handleCSVFileSelected(event)" class="text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-mono file:bg-indigo-600 file:text-white file:cursor-pointer">
       </div>
 
-      <div class="flex items-center justify-between text-xs font-mono pt-1">
-        <button onclick="downloadSampleCSV()" class="text-indigo-400 hover:underline flex items-center">
-          <i data-lucide="download" class="w-3.5 h-3.5 mr-1"></i>
-          Download Sample CSV Template
+      <div class="flex items-center justify-between text-[11px] font-mono">
+        <button onclick="downloadSampleCSV()" class="text-indigo-400 hover:underline flex items-center text-[10px]">
+          <i data-lucide="download" class="w-3 h-3 mr-1"></i>
+          Download Sample CSV
         </button>
       </div>
 
-      <!-- Live CSV Preview & Confirm -->
       <div id="csvPreviewBox" class="hidden space-y-2">
-        <label class="text-xs font-mono text-emerald-400 font-bold block">Preview Parsed Students:</label>
-        <div id="csvPreviewList" class="max-h-36 overflow-y-auto space-y-1 text-xs font-mono bg-slate-900 p-2.5 rounded-xl border border-stitch-border"></div>
-        <button onclick="executeBulkImport()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl text-xs font-mono shadow-lg shadow-indigo-950/40">
+        <label class="text-[10px] font-mono text-emerald-400 font-bold block">Preview Parsed Students:</label>
+        <div id="csvPreviewList" class="max-h-32 overflow-y-auto space-y-1 text-[10px] font-mono bg-slate-900 p-2 rounded-xl border border-stitch-border"></div>
+        <button onclick="executeBulkImport()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded-xl text-[11px] font-mono shadow-md">
           🚀 IMPORT & ENROLL STUDENTS
         </button>
       </div>
@@ -342,45 +336,45 @@
   <!-- ============================================== -->
   <!-- PUBLIC TESTING GUIDE MODAL -->
   <!-- ============================================== -->
-  <div id="publicTestingGuideModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-emerald-500/40 shadow-2xl space-y-4 relative">
-      <div class="flex items-center justify-between border-b border-stitch-border pb-3">
-        <div class="flex items-center space-x-2.5">
-          <div class="h-9 w-9 rounded-xl bg-emerald-600/30 border border-emerald-500/50 flex items-center justify-center text-emerald-300">
-            <i data-lucide="help-circle" class="w-5 h-5"></i>
+  <div id="publicTestingGuideModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-md p-5 rounded-3xl border border-emerald-500/40 shadow-2xl space-y-3.5 relative">
+      <div class="flex items-center justify-between border-b border-stitch-border pb-2.5">
+        <div class="flex items-center space-x-2">
+          <div class="h-8 w-8 rounded-xl bg-emerald-600/30 border border-emerald-500/50 flex items-center justify-center text-emerald-300">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-white">Public Testing & Verification Guide</h3>
-            <p class="text-xs text-slate-400 font-mono">How to test live classroom attendance on any device</p>
+            <h3 class="text-sm font-bold text-white">Public Testing Guide</h3>
+            <p class="text-[10px] text-slate-400 font-mono">Test live attendance on laptop & phone</p>
           </div>
         </div>
-        <button onclick="closePublicGuide()" class="p-2 rounded-xl bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white">
-          <i data-lucide="x" class="w-4 h-4"></i>
+        <button onclick="closePublicGuide()" class="p-1.5 rounded-lg bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
 
-      <div class="space-y-3 text-xs font-mono text-slate-300">
-        <div class="p-3 rounded-xl bg-stitch-surface border border-stitch-border flex items-start space-x-2.5">
-          <span class="text-base">1️⃣</span>
+      <div class="space-y-2.5 text-[11px] font-mono text-slate-300">
+        <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-start space-x-2">
+          <span>1️⃣</span>
           <div>
-            <b class="text-white">Open Teacher Kiosk on Laptop/Projector:</b>
-            <p class="text-slate-400 mt-0.5">Log in as <i>Miss Razia</i> or <i>Mr. Anshul</i>. The kiosk rotates the dynamic QR code and 4-digit PIN every 8 seconds.</p>
+            <b class="text-white">Teacher Kiosk (Laptop/Projector):</b>
+            <p class="text-slate-400 mt-0.5">Log in as <i>Miss Razia</i> or <i>Mr. Anshul</i>. The kiosk rotates the QR & PIN every 8 seconds.</p>
           </div>
         </div>
 
-        <div class="p-3 rounded-xl bg-stitch-surface border border-stitch-border flex items-start space-x-2.5">
-          <span class="text-base">2️⃣</span>
+        <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-start space-x-2">
+          <span>2️⃣</span>
           <div>
-            <b class="text-white">Open Student Portal on Mobile Phones:</b>
-            <p class="text-slate-400 mt-0.5">Students sign in or click <i>Create Account</i> to register in 15 seconds with any email. Click <i>Submit Live Check-In</i>.</p>
+            <b class="text-white">Student Portal (Mobile Phone):</b>
+            <p class="text-slate-400 mt-0.5">Students sign in or click <i>Create Account</i>. Click <i>Submit Live Check-In</i>.</p>
           </div>
         </div>
 
-        <div class="p-3 rounded-xl bg-stitch-surface border border-stitch-border flex items-start space-x-2.5">
-          <span class="text-base">3️⃣</span>
+        <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-start space-x-2">
+          <span>3️⃣</span>
           <div>
-            <b class="text-white">Observe Tri-Factor Anti-Proxy Shield:</b>
-            <p class="text-slate-400 mt-0.5">In-class scans ($\le 10\text{m}$) are verified instantly. Remote photo scans ($>10\text{m}$) are blocked with instant alert.</p>
+            <b class="text-white">Anti-Proxy Shield:</b>
+            <p class="text-slate-400 mt-0.5">In-class scans ($\le 10\text{m}$) pass. Remote photos ($>10\text{m}$) are blocked.</p>
           </div>
         </div>
       </div>
@@ -391,150 +385,123 @@
   <!-- ============================================== -->
   <!-- ENTERPRISE SECURITY & SESSIONS SETTINGS MODAL -->
   <!-- ============================================== -->
-  <div id="securityHubModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-2xl p-6 rounded-3xl border border-purple-500/40 shadow-2xl space-y-5 relative max-h-[90vh] overflow-y-auto">
+  <div id="securityHubModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-xl p-5 rounded-3xl border border-purple-500/40 shadow-2xl space-y-4 relative max-h-[90vh] overflow-y-auto">
       
-      <div class="flex items-center justify-between border-b border-stitch-border pb-3">
-        <div class="flex items-center space-x-2.5">
-          <div class="h-9 w-9 rounded-xl bg-purple-600/30 border border-purple-500/50 flex items-center justify-center text-purple-300">
-            <i data-lucide="shield" class="w-5 h-5"></i>
+      <div class="flex items-center justify-between border-b border-stitch-border pb-2.5">
+        <div class="flex items-center space-x-2">
+          <div class="h-8 w-8 rounded-xl bg-purple-600/30 border border-purple-500/50 flex items-center justify-center text-purple-300">
+            <i data-lucide="shield" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-white">Security & Trusted Devices Hub</h3>
-            <p class="text-xs text-slate-400 font-mono">Manage MFA, Native Passkeys, and Active Sessions</p>
+            <h3 class="text-sm font-bold text-white">Security & Trusted Devices</h3>
+            <p class="text-[10px] text-slate-400 font-mono">Manage MFA, Passkeys, and Active Sessions</p>
           </div>
         </div>
-        <button onclick="closeSecurityHub()" class="p-2 rounded-xl bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white">
-          <i data-lucide="x" class="w-4 h-4"></i>
+        <button onclick="closeSecurityHub()" class="p-1.5 rounded-lg bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
 
-      <!-- Security Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div class="p-4 rounded-2xl bg-stitch-surface border border-stitch-border space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <div class="p-3 rounded-2xl bg-stitch-surface border border-stitch-border space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono text-purple-400 font-bold uppercase">Two-Step Verification</span>
-            <span id="hubMfaStatus" class="bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold px-2 py-0.5 rounded border border-emerald-500/40">ACTIVE</span>
+            <span class="text-[10px] font-mono text-purple-400 font-bold uppercase">2-Step MFA</span>
+            <span id="hubMfaStatus" class="bg-emerald-500/20 text-emerald-300 font-mono text-[8px] font-bold px-1.5 py-0.2 rounded">ACTIVE</span>
           </div>
-          <p class="text-xs text-slate-300">Require Google/Microsoft Authenticator OTP on login.</p>
-          <button onclick="openMFASetupModal()" class="w-full bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500 text-purple-300 text-xs font-mono font-bold py-2 rounded-xl">
+          <p class="text-[10px] text-slate-300">Authenticator OTP.</p>
+          <button onclick="openMFASetupModal()" class="w-full bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500 text-purple-300 text-[10px] font-mono font-bold py-1.5 rounded-lg">
             ⚙️ Configure App
           </button>
         </div>
 
-        <div class="p-4 rounded-2xl bg-stitch-surface border border-stitch-border space-y-3">
+        <div class="p-3 rounded-2xl bg-stitch-surface border border-stitch-border space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono text-emerald-400 font-bold uppercase">Passkeys / Biometrics</span>
-            <span class="bg-purple-500/20 text-purple-300 font-mono text-[9px] font-bold px-2 py-0.5 rounded">FIDO2</span>
+            <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase">Passkeys</span>
+            <span class="bg-purple-500/20 text-purple-300 font-mono text-[8px] font-bold px-1.5 py-0.2 rounded">FIDO2</span>
           </div>
-          <p class="text-xs text-slate-300">Sign in with Windows Hello, Touch ID, or Face ID.</p>
-          <button onclick="handleWebAuthnRegister()" class="w-full bg-emerald-600/20 hover:bg-emerald-600/40 border border-emerald-500 text-emerald-300 text-xs font-mono font-bold py-2 rounded-xl">
+          <p class="text-[10px] text-slate-300">Windows Hello / Face ID.</p>
+          <button onclick="handleWebAuthnRegister()" class="w-full bg-emerald-600/20 hover:bg-emerald-600/40 border border-emerald-500 text-emerald-300 text-[10px] font-mono font-bold py-1.5 rounded-lg">
             🔑 Register Passkey
           </button>
         </div>
 
-        <div class="p-4 rounded-2xl bg-stitch-surface border border-stitch-border space-y-3">
+        <div class="p-3 rounded-2xl bg-stitch-surface border border-stitch-border space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono text-slate-400 font-bold uppercase">Password Policy</span>
-            <span class="text-[9px] font-mono text-emerald-400 font-bold">Argon2id</span>
+            <span class="text-[10px] font-mono text-slate-400 font-bold uppercase">Password</span>
+            <span class="text-[8px] font-mono text-emerald-400 font-bold">Argon2id</span>
           </div>
-          <p class="text-xs text-slate-300">Update password. Automatically revokes all other sessions.</p>
-          <button onclick="promptPasswordChange()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-bold py-2 rounded-xl border border-stitch-border">
+          <p class="text-[10px] text-slate-300">Update password.</p>
+          <button onclick="promptPasswordChange()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono font-bold py-1.5 rounded-lg border border-stitch-border">
             🔒 Change Password
           </button>
         </div>
       </div>
 
-      <!-- Active Sessions & Trusted Devices List -->
-      <div class="space-y-3 pt-2">
+      <!-- Active Sessions List -->
+      <div class="space-y-2 pt-1">
         <div class="flex items-center justify-between">
-          <h4 class="text-xs font-mono text-slate-300 uppercase font-bold tracking-wider flex items-center">
-            <i data-lucide="smartphone" class="w-4 h-4 mr-1.5 text-emerald-400"></i>
+          <h4 class="text-[10px] font-mono text-slate-300 uppercase font-bold tracking-wider flex items-center">
+            <i data-lucide="smartphone" class="w-3.5 h-3.5 mr-1 text-emerald-400"></i>
             Active Devices & Sessions
           </h4>
-          <button onclick="handleRevokeAllSessions()" class="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-mono">
-            🚨 Logout All Devices
+          <button onclick="handleRevokeAllSessions()" class="px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-[9px] font-mono">
+            🚨 Logout All
           </button>
         </div>
 
-        <div class="space-y-2 max-h-44 overflow-y-auto pr-1" id="activeSessionsList"></div>
+        <div class="space-y-1.5 max-h-36 overflow-y-auto" id="activeSessionsList"></div>
       </div>
     </div>
   </div>
 
 
   <!-- ============================================== -->
-  <!-- TOP RESPONSIVE NAVIGATION BAR -->
+  <!-- ULTRA-RESPONSIVE TOP NAVIGATION BAR -->
   <!-- ============================================== -->
   <header class="glass-panel sticky top-0 z-40 border-b border-stitch-border shadow-md">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5">
       
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4">
+      <div class="flex items-center justify-between gap-2">
         
-        <!-- Left Brand Row -->
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2.5">
-            <div class="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
-              <div class="h-full w-full bg-stitch-bg rounded-[10px] flex items-center justify-center">
-                <i data-lucide="radar" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400"></i>
-              </div>
-            </div>
-            <div class="min-w-0">
-              <div class="flex items-center space-x-1.5">
-                <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-white truncate">Smt. C.H.M. College</h1>
-                <span class="bg-purple-500/20 text-purple-300 text-[9px] sm:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30 shrink-0">SECOND YEAR DS</span>
-              </div>
-              <p class="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate">Department of Data Science • UniAttend 360</p>
+        <!-- Left: Logo & College Title -->
+        <div class="flex items-center space-x-2 min-w-0">
+          <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
+            <div class="h-full w-full bg-stitch-bg rounded-[9px] flex items-center justify-center">
+              <i data-lucide="radar" class="w-4 h-4 text-emerald-400"></i>
             </div>
           </div>
-
-          <!-- Mobile User Action -->
-          <div class="flex sm:hidden items-center space-x-2">
-            <button onclick="openPublicGuide()" class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs">
-              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
-            </button>
-            <button onclick="openSecurityHub()" class="p-2 rounded-xl bg-stitch-surface border border-stitch-border text-purple-300 text-xs">
-              <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-            </button>
-            <button onclick="openLoginModal()" class="p-2 rounded-xl bg-stitch-surface border border-stitch-border text-slate-300 text-xs">
-              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
-            </button>
-            <button onclick="handleLogout()" class="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
-              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-            </button>
+          <div class="min-w-0">
+            <div class="flex items-center space-x-1.5">
+              <h1 class="font-extrabold text-xs sm:text-sm tracking-tight text-white truncate">Smt. C.H.M. College</h1>
+              <span class="bg-purple-500/20 text-purple-300 text-[8px] sm:text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border border-purple-500/30 shrink-0">S.Y. DS</span>
+            </div>
+            <p class="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate">Dept of Data Science • UniAttend 360</p>
           </div>
         </div>
 
-        <!-- Right Side: Authenticated User Pill & Actions -->
-        <div class="flex items-center justify-between sm:justify-end space-x-2.5 w-full sm:w-auto">
+        <!-- Right: Action Buttons (Responsive Compact Row) -->
+        <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
           
-          <div id="navUserBadge" class="flex items-center space-x-2 bg-stitch-surface px-3 py-1.5 rounded-xl border border-stitch-border shadow-inner">
-            <span id="navUserIcon" class="text-sm">🎓</span>
-            <span id="navUserName" class="text-xs font-semibold text-white truncate max-w-[150px] sm:max-w-[200px]">Captain (Student)</span>
-            <span id="navUserRole" class="bg-purple-500/20 text-purple-300 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30">STUDENT</span>
-          </div>
+          <button onclick="openPublicGuide()" title="Public Testing Guide" class="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 text-xs font-mono flex items-center space-x-1">
+            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+            <span class="hidden md:inline text-[11px]">Guide</span>
+          </button>
 
-          <div class="hidden sm:flex items-center space-x-2">
-            <button onclick="openPublicGuide()" class="px-3 py-1.5 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 text-xs font-mono flex items-center space-x-1.5">
-              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
-              <span>Testing Guide</span>
-            </button>
+          <button onclick="openSecurityHub()" title="Security & Passkeys" class="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 text-purple-300 text-xs font-mono flex items-center space-x-1">
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+            <span class="hidden md:inline text-[11px]">Security</span>
+          </button>
 
-            <button onclick="openSecurityHub()" class="px-3 py-1.5 rounded-xl bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 text-purple-300 text-xs font-mono flex items-center space-x-1.5">
-              <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-              <span>Security</span>
-            </button>
+          <button onclick="openLoginModal()" title="Switch Persona / Sign Up" class="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-300 text-xs font-mono flex items-center space-x-1">
+            <i data-lucide="users" class="w-3.5 h-3.5 text-purple-400"></i>
+            <span class="hidden sm:inline text-[11px]">Switch Profile</span>
+          </button>
 
-            <button onclick="openLoginModal()" class="px-3 py-1.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-300 text-xs font-mono flex items-center space-x-1.5">
-              <i data-lucide="users" class="w-3.5 h-3.5 text-purple-400"></i>
-              <span>Switch / Sign Up</span>
-            </button>
-
-            <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center space-x-1.5">
-              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-              <span>Logout</span>
-            </button>
-          </div>
+          <button onclick="handleLogout()" title="Logout" class="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center space-x-1">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span class="hidden md:inline text-[11px]">Logout</span>
+          </button>
 
         </div>
 
@@ -544,270 +511,264 @@
   </header>
 
   <!-- MAIN CONTENT CONTAINER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-5 space-y-3 sm:space-y-5">
 
-    <!-- ACTIVE PROFILE HUD BANNER -->
-    <div id="profileBanner" class="glass-panel p-3.5 sm:p-4 rounded-2xl border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-purple-950/20">
-      <div class="flex items-center space-x-3 min-w-0">
-        <div id="roleAvatar" class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-xl sm:text-2xl shrink-0 shadow-inner">
+    <!-- COMPACT ACTIVE PROFILE HUD BANNER -->
+    <div id="profileBanner" class="glass-panel p-2.5 sm:p-3.5 rounded-2xl border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-lg shadow-purple-950/20">
+      
+      <div class="flex items-center space-x-2.5 min-w-0">
+        <div id="roleAvatar" class="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-base sm:text-xl shrink-0 shadow-inner">
           🎓
         </div>
         <div class="min-w-0">
-          <div class="flex items-center space-x-2 flex-wrap gap-y-1">
-            <h2 id="profileName" class="font-bold text-white text-sm sm:text-base truncate">Captain (Roll No: CHMC-DS-2024-001)</h2>
-            <span id="roleBadge" class="bg-purple-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded shrink-0">STUDENT</span>
+          <div class="flex items-center space-x-1.5 flex-wrap">
+            <h2 id="profileName" class="font-bold text-white text-xs sm:text-sm truncate">Captain (CHMC-DS-2024-001)</h2>
+            <span id="roleBadge" class="bg-purple-500 text-white font-mono text-[8px] sm:text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0">STUDENT</span>
           </div>
-          <p id="profileDesc" class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College</p>
+          <p id="profileDesc" class="text-[9px] sm:text-[11px] text-slate-400 mt-0.5 truncate">Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College</p>
         </div>
       </div>
-      <div class="flex items-center space-x-2">
-        <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[11px] sm:text-xs font-mono text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center">
-          <i data-lucide="user-plus" class="w-3.5 h-3.5 mr-1.5"></i>
-          <span>+ Enroll New Student</span>
+
+      <!-- Action Chips (Right Side) -->
+      <div class="flex items-center space-x-1.5 shrink-0 self-end sm:self-auto">
+        <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[9px] sm:text-[11px] font-mono text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg border border-emerald-500/30 flex items-center">
+          <i data-lucide="user-plus" class="w-3 h-3 mr-1"></i>
+          <span>+ Enroll Student</span>
         </button>
-        <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-slate-400 bg-stitch-surface/80 px-2.5 py-1.5 rounded-xl border border-stitch-border">
-          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-400"></i>
-          <span>Campus: <b class="text-slate-200">Ulhasnagar</b></span>
+        <div class="flex items-center space-x-1 text-[9px] sm:text-[11px] font-mono text-slate-400 bg-stitch-surface px-2 py-1 rounded-lg border border-stitch-border">
+          <i data-lucide="map-pin" class="w-3 h-3 text-emerald-400"></i>
+          <span><b>Ulhasnagar</b></span>
         </div>
       </div>
+
     </div>
 
     <!-- ============================================== -->
-    <!-- VIEW 1: STUDENT VIEW (MOBILE FIRST) -->
+    <!-- VIEW 1: STUDENT VIEW (MOBILE OPTIMIZED) -->
     <!-- ============================================== -->
-    <div id="viewStudent" class="space-y-4 sm:space-y-6">
+    <div id="viewStudent" class="space-y-3 sm:space-y-5">
       
-      <!-- Top Metrics HUD -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden neon-border-emerald">
+      <!-- TOP 3 METRICS HUD (RESPONSIVE 3-COLUMN COMPACT GRID) -->
+      <div class="grid grid-cols-3 gap-2 sm:gap-4">
+        
+        <!-- Metric 1: Overall Attendance -->
+        <div class="glass-panel p-2.5 sm:p-4 rounded-xl sm:rounded-2xl relative overflow-hidden neon-border-emerald flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] sm:text-xs font-mono text-emerald-400 uppercase tracking-wider">Overall Attendance</span>
-            <span class="bg-emerald-500/20 text-emerald-300 text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30">EXAM ELIGIBLE</span>
+            <span class="text-[8px] sm:text-xs font-mono text-emerald-400 uppercase tracking-wider truncate">Attendance</span>
+            <span class="hidden sm:inline bg-emerald-500/20 text-emerald-300 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">ELIGIBLE</span>
           </div>
-          <div class="flex items-baseline justify-between mt-2">
-            <div class="text-3xl sm:text-4xl font-extrabold font-mono text-white">93.6%</div>
-            <span class="text-[11px] sm:text-xs text-slate-400 font-mono">Cutoff: 75.0%</span>
+          <div class="my-1 sm:my-2">
+            <div class="text-lg sm:text-3xl font-extrabold font-mono text-white leading-tight">93.6%</div>
+            <span class="text-[8px] sm:text-[11px] text-slate-400 font-mono">Cutoff: 75%</span>
           </div>
-          <div class="w-full bg-slate-800 h-1.5 sm:h-2 rounded-full mt-3 overflow-hidden">
+          <div class="w-full bg-slate-800 h-1 sm:h-1.5 rounded-full overflow-hidden">
             <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 93.6%"></div>
           </div>
         </div>
 
-        <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden neon-border">
+        <!-- Metric 2: Lectures & Labs -->
+        <div class="glass-panel p-2.5 sm:p-4 rounded-xl sm:rounded-2xl relative overflow-hidden neon-border flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] sm:text-xs font-mono text-purple-400 uppercase tracking-wider">Lectures & Labs</span>
-            <span class="text-[11px] sm:text-xs font-mono text-purple-300">8 Units</span>
+            <span class="text-[8px] sm:text-xs font-mono text-purple-400 uppercase tracking-wider truncate">Classes</span>
+            <span class="hidden sm:inline text-[9px] font-mono text-purple-300">8 Units</span>
           </div>
-          <div class="flex items-baseline justify-between mt-2">
-            <div class="text-3xl sm:text-4xl font-extrabold font-mono text-white">88 <span class="text-base sm:text-lg text-slate-500 font-normal">/ 94</span></div>
-            <span class="text-[11px] sm:text-xs text-emerald-400 font-mono">+17 Safe Margin</span>
+          <div class="my-1 sm:my-2">
+            <div class="text-lg sm:text-3xl font-extrabold font-mono text-white leading-tight">88<span class="text-xs sm:text-base text-slate-500">/94</span></div>
+            <span class="text-[8px] sm:text-[11px] text-emerald-400 font-mono">+17 Safe</span>
           </div>
-          <p class="text-[11px] sm:text-xs text-slate-400 mt-2 sm:mt-3 font-mono truncate">Miss Razia, Mr. Anshul, Miss Kalyani</p>
+          <p class="hidden sm:block text-[9px] text-slate-400 font-mono truncate">Miss Razia, Anshul, Kalyani</p>
         </div>
 
-        <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden border border-stitch-border">
+        <!-- Metric 3: Classroom Geofence -->
+        <div class="glass-panel p-2.5 sm:p-4 rounded-xl sm:rounded-2xl relative overflow-hidden border border-stitch-border flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider">Classroom Geofence</span>
-            <span class="bg-emerald-500/20 text-emerald-400 text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 rounded">LOCKED</span>
+            <span class="text-[8px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider truncate">Geofence</span>
+            <span class="hidden sm:inline bg-emerald-500/20 text-emerald-400 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">LOCKED</span>
           </div>
-          <div class="flex items-baseline justify-between mt-2">
-            <div class="text-xl sm:text-2xl font-bold font-mono text-emerald-400"><span id="studentDistDisplay">6.8m</span> Away</div>
-            <span class="text-[11px] sm:text-xs text-slate-400 font-mono">Max: <span id="studentGeofenceCutoff">10.0m</span></span>
+          <div class="my-1 sm:my-2">
+            <div class="text-base sm:text-2xl font-bold font-mono text-emerald-400 leading-tight"><span id="studentDistDisplay">6.8m</span></div>
+            <span class="text-[8px] sm:text-[11px] text-slate-400 font-mono">Max: <span id="studentGeofenceCutoff">10.0m</span></span>
           </div>
-          <p class="text-[11px] sm:text-xs text-slate-400 mt-2 sm:mt-3 font-mono truncate">Data Science Lab / Room (CHM Campus)</p>
+          <p class="hidden sm:block text-[9px] text-slate-400 font-mono truncate">DS Lab / E-104</p>
         </div>
+
       </div>
 
-      <!-- Student Check-In HUD & Scanner -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <!-- Student Check-In & Scanner Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-5">
         
         <!-- Interactive Check-in Card -->
-        <div class="glass-panel p-4 sm:p-6 rounded-2xl space-y-3.5 sm:space-y-4 neon-border">
-          <div class="flex items-center justify-between border-b border-stitch-border pb-2.5 sm:pb-3">
-            <h3 class="font-bold text-white text-sm sm:text-base flex items-center">
-              <i data-lucide="scan-face" class="w-4 h-4 sm:w-5 sm:h-5 text-purple-400 mr-2"></i>
-              Mobile Classroom Check-In
+        <div class="glass-panel p-3.5 sm:p-5 rounded-2xl space-y-3 neon-border">
+          <div class="flex items-center justify-between border-b border-stitch-border pb-2">
+            <h3 class="font-bold text-white text-xs sm:text-sm flex items-center">
+              <i data-lucide="scan-face" class="w-4 h-4 text-purple-400 mr-1.5"></i>
+              Classroom Self-Checkin
             </h3>
-            <span class="bg-purple-500/20 text-purple-300 text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-purple-500/30">TRI-FACTOR SHIELD</span>
+            <span class="bg-purple-500/20 text-purple-300 text-[8px] sm:text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30">TRI-FACTOR SHIELD</span>
           </div>
 
-          <!-- Holographic Scanner Simulation -->
-          <div class="relative w-full h-40 sm:h-48 rounded-xl bg-slate-950/90 border border-purple-500/40 overflow-hidden flex flex-col items-center justify-center p-3">
+          <!-- Holographic Scanner Simulation (Compact Height on Mobile) -->
+          <div class="relative w-full h-28 sm:h-36 rounded-xl bg-slate-950/90 border border-purple-500/40 overflow-hidden flex flex-col items-center justify-center p-2">
             <div class="absolute inset-0 scanner-laser pointer-events-none"></div>
-            <div class="w-28 h-28 sm:w-32 sm:h-32 border-2 border-dashed border-purple-400/60 rounded-xl flex items-center justify-center relative">
-              <i data-lucide="qr-code" class="w-12 h-12 sm:w-16 sm:h-16 text-purple-300/40 animate-pulse"></i>
+            <div class="w-20 h-20 sm:w-24 sm:h-24 border-2 border-dashed border-purple-400/60 rounded-xl flex items-center justify-center relative">
+              <i data-lucide="qr-code" class="w-10 h-10 sm:w-12 sm:h-12 text-purple-300/40 animate-pulse"></i>
             </div>
-            <p class="text-[10px] sm:text-[11px] font-mono text-purple-300 mt-2 z-10">Point Camera at Projector Screen</p>
+            <p class="text-[9px] sm:text-[10px] font-mono text-purple-300 mt-1 z-10">Point Camera at Projector</p>
           </div>
 
-          <!-- Second Year Lecture Session Dropdown -->
-          <div class="space-y-1">
-            <label class="text-[11px] sm:text-xs font-mono text-slate-400">Active Second Year Lecture / Practical</label>
-            <select id="studentCourseSelect" class="w-full bg-stitch-surface border border-stitch-border rounded-xl p-2 sm:p-2.5 text-xs text-white focus:outline-none focus:border-purple-500 truncate">
-              <!-- Miss Razia Khan -->
+          <!-- Active Second Year Session Dropdown -->
+          <div class="space-y-0.5">
+            <label class="text-[10px] font-mono text-slate-400">Class Session / Venue</label>
+            <select id="studentCourseSelect" class="w-full bg-stitch-surface border border-stitch-border rounded-xl p-2 text-xs text-white focus:outline-none focus:border-purple-500 truncate">
               <optgroup label="👩‍🏫 Miss Razia Khan">
-                <option value="DS201-DM-TH">📘 DS201-DM-TH: Data Mining (Theory) — E-104 (Ext Bldg)</option>
-                <option value="DS201-DM-PR" selected>🔬 DS201-DM-PR: Data Mining (Practical) — M-113 (DS Lab)</option>
-                <option value="DS202-LA">📘 DS202-LA: Linear Algebra — E-104 (Ext Bldg)</option>
-                <option value="DS203-FOR-TH">📘 DS203-FOR-TH: FOR - Research Foundation (Theory) — E-104 (Ext Bldg)</option>
+                <option value="DS201-DM-TH">📘 DS201-DM-TH: Data Mining (Theory) — E-104</option>
+                <option value="DS201-DM-PR" selected>🔬 DS201-DM-PR: Data Mining (Practical) — M-113</option>
+                <option value="DS202-LA">📘 DS202-LA: Linear Algebra — E-104</option>
+                <option value="DS203-FOR-TH">📘 DS203-FOR-TH: FOR (Theory) — E-104</option>
               </optgroup>
-              <!-- Mr. Anshul Chimnani -->
               <optgroup label="👨‍🏫 Mr. Anshul Chimnani">
-                <option value="DS204-DW">📘 DS204-DW: Data Warehousing — E-104 (Ext Bldg)</option>
-                <option value="DS203-FOR-PR">🔬 DS203-FOR-PR: FOR - Research Foundation (Practical) — M-103 (Main Bldg)</option>
+                <option value="DS204-DW">📘 DS204-DW: Data Warehousing — E-104</option>
+                <option value="DS203-FOR-PR">🔬 DS203-FOR-PR: FOR (Practical) — M-103</option>
               </optgroup>
-              <!-- Miss Kalyani Patil -->
               <optgroup label="👩‍🏫 Miss Kalyani Patil">
-                <option value="DS205-DAA-TH">📘 DS205-DAA-TH: Design & Analysis of Algorithms (Theory) — E-104 (Ext Bldg)</option>
-                <option value="DS205-DAA-PR">🔬 DS205-DAA-PR: Design & Analysis of Algorithms (Practical) — M-113 (DS Lab)</option>
+                <option value="DS205-DAA-TH">📘 DS205-DAA-TH: DAA (Theory) — E-104</option>
+                <option value="DS205-DAA-PR">🔬 DS205-DAA-PR: DAA (Practical) — M-113</option>
               </optgroup>
             </select>
           </div>
 
           <!-- GPS Location Simulator -->
-          <div class="space-y-1.5">
-            <label class="text-[11px] sm:text-xs font-mono text-slate-400">Location Verification (GPS Geofence)</label>
-            <div class="grid grid-cols-1 gap-2 text-xs font-mono">
-              <label class="flex items-center p-2.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 cursor-pointer text-emerald-300">
-                <input type="radio" name="studentLoc" value="IN_CLASS" checked class="text-emerald-500 mr-2 shrink-0">
-                <span class="truncate">🟢 In Classroom / Lab (Distance: 6.8m - In Range)</span>
+          <div class="space-y-1">
+            <label class="text-[10px] font-mono text-slate-400">GPS Location Simulator</label>
+            <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
+              <label class="flex items-center p-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 cursor-pointer text-emerald-300">
+                <input type="radio" name="studentLoc" value="IN_CLASS" checked class="text-emerald-500 mr-1.5 shrink-0">
+                <span class="truncate">🟢 In-Class (6.8m)</span>
               </label>
-              <label class="flex items-center p-2.5 rounded-xl border border-rose-500/40 bg-rose-500/10 cursor-pointer text-rose-300">
-                <input type="radio" name="studentLoc" value="AT_HOME" class="text-rose-500 mr-2 shrink-0">
-                <span class="truncate">🔴 Absent At Home (1.8km away - Proxy Test)</span>
+              <label class="flex items-center p-2 rounded-xl border border-rose-500/40 bg-rose-500/10 cursor-pointer text-rose-300">
+                <input type="radio" name="studentLoc" value="AT_HOME" class="text-rose-500 mr-1.5 shrink-0">
+                <span class="truncate">🔴 Home (Proxy Test)</span>
               </label>
             </div>
           </div>
 
           <!-- Security PIN -->
-          <div class="space-y-1">
-            <div class="flex justify-between items-center text-[11px] sm:text-xs font-mono">
-              <span class="text-slate-400">Rolling 4-Digit Security PIN</span>
+          <div class="space-y-0.5">
+            <div class="flex justify-between items-center text-[10px] font-mono">
+              <span class="text-slate-400">Rolling PIN</span>
               <span class="text-emerald-400">Auto-Synced</span>
             </div>
-            <input type="text" id="studentPinInput" value="8492" maxlength="4" class="w-full bg-stitch-surface border border-emerald-500/40 rounded-xl p-2 sm:p-2.5 text-center font-mono font-extrabold text-xl sm:text-2xl text-emerald-400 tracking-[0.3em] focus:outline-none">
+            <input type="text" id="studentPinInput" value="8492" maxlength="4" class="w-full bg-stitch-surface border border-emerald-500/40 rounded-xl py-1.5 px-2 text-center font-mono font-extrabold text-lg sm:text-xl text-emerald-400 tracking-[0.3em] focus:outline-none">
           </div>
 
           <!-- Submit Button -->
-          <button onclick="submitStudentCheckIn()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 sm:py-3 rounded-xl shadow-lg shadow-purple-900/40 transition duration-150 flex items-center justify-center space-x-2 text-xs sm:text-sm font-mono">
-            <i data-lucide="shield-check" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+          <button onclick="submitStudentCheckIn()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-purple-900/40 flex items-center justify-center space-x-1.5 text-xs font-mono">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
             <span>SUBMIT LIVE CHECK-IN</span>
           </button>
 
-          <div id="checkInResult" class="hidden p-3.5 sm:p-4 rounded-xl text-xs font-mono"></div>
+          <div id="checkInResult" class="hidden p-2.5 rounded-xl text-[11px] font-mono"></div>
         </div>
 
-        <!-- Subject 360 & 'What-If' Calculator -->
-        <div class="glass-panel p-4 sm:p-6 rounded-2xl space-y-4 sm:space-y-5 border border-stitch-border">
-          <div class="flex items-center justify-between border-b border-stitch-border pb-2.5 sm:pb-3">
-            <h3 class="font-bold text-white text-sm sm:text-base flex items-center">
-              <i data-lucide="layers" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 mr-2"></i>
-              Second Year Subject Units (Theory & Practical)
+        <!-- Subject 360 & Simulator -->
+        <div class="glass-panel p-3.5 sm:p-5 rounded-2xl space-y-3 border border-stitch-border flex flex-col justify-between">
+          <div class="flex items-center justify-between border-b border-stitch-border pb-2">
+            <h3 class="font-bold text-white text-xs sm:text-sm flex items-center">
+              <i data-lucide="layers" class="w-4 h-4 text-emerald-400 mr-1.5"></i>
+              Second Year Subject Units (Sem 3)
             </h3>
-            <span class="text-[10px] sm:text-xs font-mono text-purple-300 font-bold">S.Y. (Sem 3)</span>
+            <span class="text-[9px] font-mono text-purple-300 font-bold">8 Units</span>
           </div>
 
-          <!-- Subject Cards -->
-          <div class="space-y-2 max-h-[290px] overflow-y-auto pr-1">
-            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+          <!-- Scrollable Subject Cards -->
+          <div class="space-y-1.5 max-h-48 sm:max-h-56 overflow-y-auto pr-1">
+            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
               <div class="min-w-0">
-                <div class="flex items-center space-x-1.5 flex-wrap">
-                  <span class="font-bold text-white text-xs truncate">Data Mining</span>
-                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
-                  <span class="text-[10px] font-mono text-slate-400">Miss Razia</span>
+                <div class="flex items-center space-x-1">
+                  <span class="font-bold text-white text-[11px] truncate">Data Mining</span>
+                  <span class="bg-blue-500/20 text-blue-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">TH</span>
+                  <span class="text-[9px] font-mono text-slate-400">Miss Razia</span>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">24 Held • 23 Attended • E-104</p>
+                <p class="text-[9px] text-slate-400">24 Held • E-104</p>
               </div>
-              <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-sm text-emerald-400">95.8%</span>
-              </div>
+              <span class="font-mono font-extrabold text-xs text-emerald-400">95.8%</span>
             </div>
 
-            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
               <div class="min-w-0">
-                <div class="flex items-center space-x-1.5 flex-wrap">
-                  <span class="font-bold text-white text-xs truncate">Data Mining (Lab)</span>
-                  <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">PRACTICAL</span>
-                  <span class="text-[10px] font-mono text-slate-400">Miss Razia</span>
+                <div class="flex items-center space-x-1">
+                  <span class="font-bold text-white text-[11px] truncate">Data Mining (Lab)</span>
+                  <span class="bg-emerald-500/20 text-emerald-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">PR</span>
+                  <span class="text-[9px] font-mono text-slate-400">Miss Razia</span>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">12 Held • 12 Attended • M-113 (DS Lab)</p>
+                <p class="text-[9px] text-slate-400">12 Held • M-113</p>
               </div>
-              <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-sm text-emerald-400">100.0%</span>
-              </div>
+              <span class="font-mono font-extrabold text-xs text-emerald-400">100%</span>
             </div>
 
-            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
               <div class="min-w-0">
-                <div class="flex items-center space-x-1.5 flex-wrap">
-                  <span class="font-bold text-white text-xs truncate">Linear Algebra</span>
-                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
-                  <span class="text-[10px] font-mono text-slate-400">Miss Razia</span>
+                <div class="flex items-center space-x-1">
+                  <span class="font-bold text-white text-[11px] truncate">Linear Algebra</span>
+                  <span class="bg-blue-500/20 text-blue-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">TH</span>
+                  <span class="text-[9px] font-mono text-slate-400">Miss Razia</span>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">24 Held • 22 Attended • E-104</p>
+                <p class="text-[9px] text-slate-400">24 Held • E-104</p>
               </div>
-              <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-sm text-emerald-400">91.7%</span>
-              </div>
+              <span class="font-mono font-extrabold text-xs text-emerald-400">91.7%</span>
             </div>
 
-            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
               <div class="min-w-0">
-                <div class="flex items-center space-x-1.5 flex-wrap">
-                  <span class="font-bold text-white text-xs truncate">FOR: Research Foundation</span>
-                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
-                  <span class="text-[10px] font-mono text-slate-400">Miss Razia</span>
+                <div class="flex items-center space-x-1">
+                  <span class="font-bold text-white text-[11px] truncate">FOR: Foundation</span>
+                  <span class="bg-blue-500/20 text-blue-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">TH</span>
+                  <span class="text-[9px] font-mono text-slate-400">Miss Razia</span>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">18 Held • 17 Attended • E-104</p>
+                <p class="text-[9px] text-slate-400">18 Held • E-104</p>
               </div>
-              <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-sm text-emerald-400">94.4%</span>
-              </div>
+              <span class="font-mono font-extrabold text-xs text-emerald-400">94.4%</span>
             </div>
 
-            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
               <div class="min-w-0">
-                <div class="flex items-center space-x-1.5 flex-wrap">
-                  <span class="font-bold text-white text-xs truncate">Data Warehousing</span>
-                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
-                  <span class="text-[10px] font-mono text-slate-400">Mr. Anshul</span>
+                <div class="flex items-center space-x-1">
+                  <span class="font-bold text-white text-[11px] truncate">Data Warehousing</span>
+                  <span class="bg-blue-500/20 text-blue-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">TH</span>
+                  <span class="text-[9px] font-mono text-slate-400">Mr. Anshul</span>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">25 Held • 24 Attended • E-104</p>
+                <p class="text-[9px] text-slate-400">25 Held • E-104</p>
               </div>
-              <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-sm text-emerald-400">96.0%</span>
-              </div>
+              <span class="font-mono font-extrabold text-xs text-emerald-400">96.0%</span>
             </div>
 
-            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
               <div class="min-w-0">
-                <div class="flex items-center space-x-1.5 flex-wrap">
-                  <span class="font-bold text-white text-xs truncate">FOR: Research Lab</span>
-                  <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">PRACTICAL</span>
-                  <span class="text-[10px] font-mono text-slate-400">Mr. Anshul</span>
+                <div class="flex items-center space-x-1">
+                  <span class="font-bold text-white text-[11px] truncate">FOR Lab</span>
+                  <span class="bg-emerald-500/20 text-emerald-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">PR</span>
+                  <span class="text-[9px] font-mono text-slate-400">Mr. Anshul</span>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-0.5">12 Held • 11 Attended • M-103 (Main Bldg)</p>
+                <p class="text-[9px] text-slate-400">12 Held • M-103</p>
               </div>
-              <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-sm text-emerald-400">91.7%</span>
-              </div>
+              <span class="font-mono font-extrabold text-xs text-emerald-400">91.7%</span>
             </div>
           </div>
 
-          <!-- 'What-If' Attendance Simulator -->
-          <div class="p-3.5 sm:p-4 rounded-xl bg-gradient-to-tr from-purple-950/40 to-slate-900 border border-purple-500/30 space-y-2.5 sm:space-y-3">
-            <span class="text-[10px] sm:text-xs font-mono text-purple-300 font-bold uppercase tracking-wider">🧮 'What-If' Exam Clearance Simulator</span>
-            <div class="space-y-1">
-              <div class="flex justify-between text-[11px] sm:text-xs font-mono">
-                <span class="text-slate-400">If I attend next N consecutive classes:</span>
+          <!-- 'What-If' Attendance Simulator (Compact) -->
+          <div class="p-2.5 rounded-xl bg-gradient-to-tr from-purple-950/40 to-slate-900 border border-purple-500/30 space-y-1.5">
+            <span class="text-[9px] font-mono text-purple-300 font-bold uppercase tracking-wider">🧮 'What-If' Attendance Calculator</span>
+            <div class="space-y-0.5">
+              <div class="flex justify-between text-[10px] font-mono">
+                <span class="text-slate-400">Attend next:</span>
                 <span id="sliderVal" class="text-emerald-400 font-bold">+4 classes</span>
               </div>
-              <input type="range" min="0" max="15" value="4" id="simSlider" oninput="updateSimulator(this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500">
+              <input type="range" min="0" max="15" value="4" id="simSlider" oninput="updateSimulator(this.value)" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500">
             </div>
 
-            <div class="flex items-center justify-between pt-2 border-t border-purple-500/20">
-              <span class="text-[11px] sm:text-xs font-mono text-slate-300">Projected Attendance:</span>
-              <span id="simResult" class="font-mono font-extrabold text-lg sm:text-xl text-emerald-400">94.1%</span>
+            <div class="flex items-center justify-between pt-1 border-t border-purple-500/20">
+              <span class="text-[10px] font-mono text-slate-300">Projected Attendance:</span>
+              <span id="simResult" class="font-mono font-extrabold text-sm sm:text-base text-emerald-400">94.1%</span>
             </div>
           </div>
 
@@ -820,110 +781,100 @@
     <!-- ============================================== -->
     <!-- VIEW 2: TEACHER / PROFESSOR CLASSROOM KIOSK -->
     <!-- ============================================== -->
-    <div id="viewTeacher" class="space-y-4 sm:space-y-6 hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div id="viewTeacher" class="space-y-3 sm:space-y-5 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-5">
         
         <!-- Live Rotating Projector Display -->
-        <div class="glass-panel p-4 sm:p-6 rounded-2xl lg:col-span-1 text-center space-y-3.5 sm:space-y-4 neon-border">
-          <div class="flex items-center justify-between border-b border-stitch-border pb-2">
-            <span class="text-xs font-mono text-purple-400 font-bold">PROJECTOR KIOSK</span>
-            <span id="kioskRoomTag" class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded">E-104</span>
+        <div class="glass-panel p-3.5 sm:p-5 rounded-2xl lg:col-span-1 text-center space-y-3 neon-border">
+          <div class="flex items-center justify-between border-b border-stitch-border pb-1.5">
+            <span class="text-[11px] font-mono text-purple-400 font-bold">PROJECTOR KIOSK</span>
+            <span id="kioskRoomTag" class="text-[9px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.2 rounded">E-104</span>
           </div>
 
           <!-- Rotating Dynamic QR Code -->
-          <div class="p-3 sm:p-4 bg-white rounded-2xl inline-block shadow-xl">
-            <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CHMC-DS-Token-8492" class="w-36 h-36 sm:w-44 sm:h-44 mx-auto rounded-lg" alt="Dynamic QR">
-            <div class="text-[10px] sm:text-[11px] font-mono text-slate-700 mt-2 font-semibold">
+          <div class="p-2.5 bg-white rounded-2xl inline-block shadow-xl">
+            <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CHMC-DS-Token-8492" class="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-lg" alt="Dynamic QR">
+            <div class="text-[10px] font-mono text-slate-700 mt-1 font-semibold">
               ⏳ Rotates in: <span id="kioskTimer" class="text-purple-600 font-bold">8s</span>
             </div>
           </div>
 
-          <!-- Large Rolling PIN HUD -->
-          <div class="p-3 sm:p-4 rounded-xl bg-gradient-to-tr from-purple-950 to-slate-900 border border-emerald-500/40">
-            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase tracking-wider">Rolling Security PIN</span>
-            <div id="kioskPinDisplay" class="font-mono font-extrabold text-3xl sm:text-4xl text-emerald-400 tracking-[0.2em] my-1 pin-hud">8492</div>
-            <span class="text-[9px] sm:text-[10px] font-mono text-emerald-400/80">Refreshes every 8 seconds • <span id="kioskGeofenceTag">10m</span> Geofence</span>
+          <!-- Rolling PIN HUD -->
+          <div class="p-2.5 rounded-xl bg-gradient-to-tr from-purple-950 to-slate-900 border border-emerald-500/40">
+            <span class="text-[8px] font-mono text-slate-400 uppercase tracking-wider">Rolling Security PIN</span>
+            <div id="kioskPinDisplay" class="font-mono font-extrabold text-2xl sm:text-3xl text-emerald-400 tracking-[0.2em] my-0.5 pin-hud">8492</div>
+            <span class="text-[9px] font-mono text-emerald-400/80">Refreshes every 8s • <span id="kioskGeofenceTag">10m</span> Range</span>
           </div>
 
-          <!-- Dynamic Geofence Range Controller for Teachers -->
-          <div class="p-3.5 rounded-xl bg-stitch-surface border border-emerald-500/40 space-y-2.5 text-left">
+          <!-- Dynamic Geofence Range Controller -->
+          <div class="p-2.5 rounded-xl bg-stitch-surface border border-emerald-500/40 space-y-2 text-left">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider flex items-center">
-                <i data-lucide="radio" class="w-3.5 h-3.5 mr-1 text-emerald-400"></i>
-                Geofence Range Control
-              </span>
-              <span id="teacherRadiusBadge" class="bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/40">
-                10m (Default)
-              </span>
+              <span class="text-[9px] font-mono text-emerald-400 font-bold uppercase tracking-wider">Geofence Range Control</span>
+              <span id="teacherRadiusBadge" class="bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold px-1.5 py-0.2 rounded border border-emerald-500/40">10m</span>
             </div>
             
-            <div class="space-y-1">
-              <div class="flex justify-between text-[10px] font-mono text-slate-400">
-                <span>Classroom Boundary Range:</span>
-                <span id="radiusMeterVal" class="text-white font-bold">10 meters</span>
-              </div>
-              <input type="range" min="5" max="50" value="10" step="1" id="teacherGeofenceSlider" oninput="handleTeacherRadiusChange(this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
+            <div class="space-y-0.5">
+              <input type="range" min="5" max="50" value="10" step="1" id="teacherGeofenceSlider" oninput="handleTeacherRadiusChange(this.value)" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
             </div>
 
             <!-- Quick Presets -->
-            <div class="grid grid-cols-2 gap-1.5 pt-1 text-[10px] font-mono">
-              <button type="button" onclick="setGeofencePreset(8)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-stitch-border text-center truncate">🔬 Compact (8m)</button>
-              <button type="button" onclick="setGeofencePreset(10)" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-center font-bold truncate">🎛️ Standard (10m)</button>
-              <button type="button" onclick="setGeofencePreset(20)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-stitch-border text-center truncate">🏛️ Large Hall (20m)</button>
-              <button type="button" onclick="setGeofencePreset(40)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-stitch-border text-center truncate">🎪 Aud (40m)</button>
+            <div class="grid grid-cols-4 gap-1 text-[9px] font-mono">
+              <button type="button" onclick="setGeofencePreset(8)" class="p-1 rounded bg-slate-800 text-slate-300 text-center truncate">8m</button>
+              <button type="button" onclick="setGeofencePreset(10)" class="p-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-center font-bold truncate">10m</button>
+              <button type="button" onclick="setGeofencePreset(20)" class="p-1 rounded bg-slate-800 text-slate-300 text-center truncate">20m</button>
+              <button type="button" onclick="setGeofencePreset(40)" class="p-1 rounded bg-slate-800 text-slate-300 text-center truncate">40m</button>
             </div>
           </div>
 
-          <!-- Teacher Unit Switcher -->
-          <div class="space-y-1 text-left">
-            <label class="text-[10px] font-mono text-slate-400">Select Teaching Unit / Room:</label>
-            <select id="teacherUnitSelector" onchange="handleTeacherUnitChange(this.value)" class="w-full bg-stitch-surface border border-stitch-border rounded-xl p-2 text-xs text-white focus:outline-none focus:border-purple-500 truncate">
+          <!-- Unit Selector -->
+          <div class="space-y-0.5 text-left">
+            <label class="text-[9px] font-mono text-slate-400">Select Teaching Unit:</label>
+            <select id="teacherUnitSelector" onchange="handleTeacherUnitChange(this.value)" class="w-full bg-stitch-surface border border-stitch-border rounded-xl p-1.5 text-xs text-white focus:outline-none focus:border-purple-500 truncate">
             </select>
           </div>
 
-          <button onclick="simulateScan()" class="w-full bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-purple-200 text-xs font-mono font-bold py-2 rounded-xl">
+          <button onclick="simulateScan()" class="w-full bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-purple-200 text-[11px] font-mono font-bold py-1.5 rounded-xl">
             ⚡ Simulate Quick Student Check-Ins
           </button>
         </div>
 
-        <!-- Live Digital Attendance Roster (Auto updates with registered students) -->
-        <div class="glass-panel p-4 sm:p-6 rounded-2xl lg:col-span-2 space-y-3.5 sm:space-y-4 border border-stitch-border">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-stitch-border pb-3">
-            <div>
-              <h3 id="teacherSubjectTitle" class="font-bold text-white text-sm sm:text-base">Data Mining (Theory)</h3>
-              <p id="teacherRosterSub" class="text-[11px] sm:text-xs font-mono text-slate-400">Instructor: Miss Razia Khan • Second Year Class Roster</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <span id="rosterCountBadge" class="bg-emerald-500/20 text-emerald-300 font-mono text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-500/30">
+        <!-- Live Digital Attendance Roster -->
+        <div class="glass-panel p-3.5 sm:p-5 rounded-2xl lg:col-span-2 space-y-3 border border-stitch-border flex flex-col justify-between">
+          <div>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-stitch-border pb-2">
+              <div>
+                <h3 id="teacherSubjectTitle" class="font-bold text-white text-xs sm:text-sm">Data Mining (Theory)</h3>
+                <p id="teacherRosterSub" class="text-[10px] font-mono text-slate-400">Instructor: Miss Razia Khan • Second Year Class</p>
+              </div>
+              <span id="rosterCountBadge" class="bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/30 w-fit">
                 Verified: 4 / 5 Present
               </span>
             </div>
+
+            <!-- Table of Students -->
+            <div class="overflow-x-auto border border-stitch-border rounded-xl mt-2 max-h-72 overflow-y-auto">
+              <table class="w-full text-left text-xs font-mono whitespace-nowrap">
+                <thead class="bg-stitch-surface text-slate-300 uppercase sticky top-0">
+                  <tr>
+                    <th class="p-2">Roll No</th>
+                    <th class="p-2">Student Name</th>
+                    <th class="p-2">Status</th>
+                    <th class="p-2">Distance</th>
+                    <th class="p-2">Time</th>
+                  </tr>
+                </thead>
+                <tbody id="digitalRosterBody" class="divide-y divide-stitch-border text-slate-300">
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <!-- Table of Students (Horizontal Scroll on Mobile) -->
-          <div class="overflow-x-auto border border-stitch-border rounded-xl -mx-1 sm:mx-0">
-            <table class="w-full text-left text-xs font-mono whitespace-nowrap">
-              <thead class="bg-stitch-surface text-slate-300 uppercase">
-                <tr>
-                  <th class="p-2.5 sm:p-3">Roll No</th>
-                  <th class="p-2.5 sm:p-3">Student Name</th>
-                  <th class="p-2.5 sm:p-3">Status</th>
-                  <th class="p-2.5 sm:p-3">GPS Distance</th>
-                  <th class="p-2.5 sm:p-3">Check-In Time</th>
-                </tr>
-              </thead>
-              <tbody id="digitalRosterBody" class="divide-y divide-stitch-border text-slate-300">
-                <!-- Dynamically populated via renderDigitalRoster() -->
-              </tbody>
-            </table>
-          </div>
-
-          <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
-            <button class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs font-mono shadow-lg shadow-emerald-950/40">
+          <div class="flex flex-col sm:flex-row space-y-1.5 sm:space-y-0 sm:space-x-2 pt-2">
+            <button class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl text-xs font-mono shadow-md">
               💾 LOCK & COMMIT ATTENDANCE
             </button>
-            <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="w-full sm:w-auto bg-stitch-surface hover:bg-slate-800 text-purple-300 font-bold px-4 py-2.5 rounded-xl text-xs font-mono border border-purple-500/40">
-              + Enroll New Student
+            <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="w-full sm:w-auto bg-stitch-surface hover:bg-slate-800 text-purple-300 font-bold px-3 py-2 rounded-xl text-xs font-mono border border-purple-500/40">
+              + Enroll Student
             </button>
           </div>
         </div>
@@ -934,165 +885,106 @@
     <!-- ============================================== -->
     <!-- VIEW 3: COURSE COORDINATOR (MRS. SHIJI JOHNSON) -->
     <!-- ============================================== -->
-    <div id="viewCoordinator" class="space-y-4 sm:space-y-6 hidden">
-      
-      <!-- Metrics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-        <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-purple-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Second Year Enrolled</span>
-          <h3 id="coordTotalStudents" class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">5 Students</h3>
+    <div id="viewCoordinator" class="space-y-3 sm:space-y-5 hidden">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
+        <div class="glass-panel p-3 rounded-xl border-l-4 border-purple-500">
+          <span class="text-[9px] font-mono text-slate-400">Cohort Enrolled</span>
+          <h3 id="coordTotalStudents" class="text-base sm:text-xl font-extrabold font-mono text-white mt-0.5">5 Students</h3>
         </div>
-        <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-emerald-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Dept Avg Attendance</span>
-          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-emerald-400 mt-1">88.5%</h3>
+        <div class="glass-panel p-3 rounded-xl border-l-4 border-emerald-500">
+          <span class="text-[9px] font-mono text-slate-400">Dept Avg</span>
+          <h3 class="text-base sm:text-xl font-extrabold font-mono text-emerald-400 mt-0.5">88.5%</h3>
         </div>
-        <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-rose-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Defaulters (&lt;75%)</span>
-          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-rose-400 mt-1">1 (Rohan)</h3>
+        <div class="glass-panel p-3 rounded-xl border-l-4 border-rose-500">
+          <span class="text-[9px] font-mono text-slate-400">Defaulters (&lt;75%)</span>
+          <h3 class="text-base sm:text-xl font-extrabold font-mono text-rose-400 mt-0.5">1 (Rohan)</h3>
         </div>
-        <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-indigo-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Faculty Members</span>
-          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">3 Faculty</h3>
+        <div class="glass-panel p-3 rounded-xl border-l-4 border-indigo-500">
+          <span class="text-[9px] font-mono text-slate-400">Faculty</span>
+          <h3 class="text-base sm:text-xl font-extrabold font-mono text-white mt-0.5">3 Faculty</h3>
         </div>
       </div>
 
-      <!-- VISUAL ACADEMIC HIERARCHY TREE -->
-      <div class="glass-panel p-5 sm:p-6 rounded-2xl space-y-4 border border-purple-500/40 neon-border">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-stitch-border pb-3">
-          <div class="flex items-center space-x-2">
-            <i data-lucide="git-branch" class="w-5 h-5 text-purple-400"></i>
-            <h3 class="font-bold text-white text-base">Department Academic Curriculum Structure</h3>
+      <!-- Curriculum Tree Visual -->
+      <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3 border border-purple-500/40 neon-border">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 border-b border-stitch-border pb-2">
+          <div class="flex items-center space-x-1.5">
+            <i data-lucide="git-branch" class="w-4 h-4 text-purple-400"></i>
+            <h3 class="font-bold text-white text-xs sm:text-sm">Department Curriculum Structure</h3>
           </div>
-          <div class="flex items-center space-x-2">
-            <button onclick="openBulkImportModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-mono font-bold shadow flex items-center">
-              <i data-lucide="upload" class="w-3.5 h-3.5 mr-1.5"></i>
-              <span>📥 Bulk Import CSV</span>
-            </button>
-          </div>
+          <button onclick="openBulkImportModal()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-mono font-bold shadow flex items-center self-start sm:self-auto">
+            <i data-lucide="upload" class="w-3 h-3 mr-1"></i>
+            <span>📥 Bulk Import CSV</span>
+          </button>
         </div>
 
-        <p class="text-xs text-slate-300">
-          Complete faculty course teaching matrix for the <b>Department of Data Science</b>:
-        </p>
-
-        <!-- Department Tree Visual -->
-        <div class="space-y-4 pt-2">
-          
-          <div class="p-3 rounded-xl bg-purple-950/40 border border-purple-500/50 flex items-center space-x-2">
-            <span class="text-base">🏢</span>
-            <span class="font-bold font-mono text-purple-200 text-sm">Data Science Department</span>
-            <span class="text-[10px] font-mono text-slate-400 ml-auto">Coordinator: Mrs. Shiji Johnson</span>
+        <div class="space-y-3">
+          <div class="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/50 flex items-center space-x-2">
+            <span class="text-sm">🏢</span>
+            <span class="font-bold font-mono text-purple-200 text-xs">Data Science Department</span>
+            <span class="text-[9px] font-mono text-slate-400 ml-auto">Coordinator: Mrs. Shiji Johnson</span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pl-2 sm:pl-4 border-l-2 border-dashed border-purple-500/40">
-            <div class="p-3.5 rounded-xl bg-stitch-surface/60 border border-stitch-border opacity-70">
-              <span class="text-xs font-mono font-bold text-slate-400 uppercase">First Year (F.Y.)</span>
-              <p class="text-[11px] text-slate-500 mt-1">Foundation Computing & Math</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2 pl-2 border-l-2 border-dashed border-emerald-500/40">
+            <div class="p-3 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-1.5">
+              <div class="flex items-center space-x-1.5 border-b border-stitch-border pb-1">
+                <span>👩‍🏫</span>
+                <h4 class="font-bold text-white text-xs">Miss Razia Khan</h4>
+              </div>
+              <ul class="text-[10px] font-mono space-y-1 text-slate-300">
+                <li>• Data Mining (TH: E-104 / PR: M-113)</li>
+                <li>• Linear Algebra (E-104)</li>
+                <li>• FOR (E-104)</li>
+              </ul>
             </div>
-            <div class="p-3.5 rounded-xl bg-gradient-to-tr from-purple-950/60 to-slate-900 border-2 border-emerald-500/60 shadow-lg shadow-emerald-950/30">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-mono font-bold text-emerald-400 uppercase">Second Year (S.Y.)</span>
-                <span class="bg-emerald-500/20 text-emerald-300 text-[9px] font-mono font-bold px-2 py-0.5 rounded">ACTIVE COHORT</span>
+
+            <div class="p-3 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-1.5">
+              <div class="flex items-center space-x-1.5 border-b border-stitch-border pb-1">
+                <span>👨‍🏫</span>
+                <h4 class="font-bold text-white text-xs">Mr. Anshul Chimnani</h4>
               </div>
-              <p class="text-[11px] text-slate-300 mt-1">3 Faculty Members • 8 Teaching Units</p>
+              <ul class="text-[10px] font-mono space-y-1 text-slate-300">
+                <li>• Data Warehousing (E-104)</li>
+                <li>• FOR Practical (M-103)</li>
+              </ul>
             </div>
-            <div class="p-3.5 rounded-xl bg-stitch-surface/60 border border-stitch-border opacity-70">
-              <span class="text-xs font-mono font-bold text-slate-400 uppercase">Third Year (T.Y.)</span>
-              <p class="text-[11px] text-slate-500 mt-1">Advanced Deep Learning & Capstone</p>
-            </div>
-          </div>
 
-          <!-- 3 Faculty Details -->
-          <div class="space-y-3 pl-2 sm:pl-4 border-l-2 border-dashed border-emerald-500/40">
-            <span class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">
-              📂 Second Year Faculty & Subject Allocation:
-            </span>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div class="p-4 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-2">
-                <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
-                  <span class="text-base">👩‍🏫</span>
-                  <div>
-                    <h4 class="font-bold text-white text-xs">Miss Razia Khan</h4>
-                    <span class="text-[10px] font-mono text-purple-300">4 Teaching Units</span>
-                  </div>
-                </div>
-                <ul class="text-[11px] font-mono space-y-1.5 text-slate-300">
-                  <li class="flex items-center justify-between"><span>• Data Mining (Theory)</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
-                  <li class="flex items-center justify-between"><span>• Data Mining (Practical)</span><span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">M-113</span></li>
-                  <li class="flex items-center justify-between"><span>• Linear Algebra</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
-                  <li class="flex items-center justify-between"><span>• FOR (Theory)</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
-                </ul>
+            <div class="p-3 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-1.5">
+              <div class="flex items-center space-x-1.5 border-b border-stitch-border pb-1">
+                <span>👩‍🏫</span>
+                <h4 class="font-bold text-white text-xs">Miss Kalyani Patil</h4>
               </div>
-
-              <div class="p-4 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-2">
-                <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
-                  <span class="text-base">👨‍🏫</span>
-                  <div>
-                    <h4 class="font-bold text-white text-xs">Mr. Anshul Chimnani</h4>
-                    <span class="text-[10px] font-mono text-emerald-300">2 Teaching Units</span>
-                  </div>
-                </div>
-                <ul class="text-[11px] font-mono space-y-1.5 text-slate-300">
-                  <li class="flex items-center justify-between"><span>• Data Warehousing</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
-                  <li class="flex items-center justify-between"><span>• FOR (Practical)</span><span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">M-103</span></li>
-                </ul>
-              </div>
-
-              <div class="p-4 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-2">
-                <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
-                  <span class="text-base">👩‍🏫</span>
-                  <div>
-                    <h4 class="font-bold text-white text-xs">Miss Kalyani Patil</h4>
-                    <span class="text-[10px] font-mono text-purple-300">2 Teaching Units</span>
-                  </div>
-                </div>
-                <ul class="text-[11px] font-mono space-y-1.5 text-slate-300">
-                  <li class="flex items-center justify-between"><span>• DAA (Theory)</span><span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded font-bold">E-104</span></li>
-                  <li class="flex items-center justify-between"><span>• DAA (Practical)</span><span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">M-113</span></li>
-                </ul>
-              </div>
+              <ul class="text-[10px] font-mono space-y-1 text-slate-300">
+                <li>• DAA (TH: E-104 / PR: M-113)</li>
+              </ul>
             </div>
           </div>
-
         </div>
-      </div>
-
-      <!-- Action Center -->
-      <div class="glass-panel p-4 sm:p-6 rounded-2xl space-y-3.5 sm:space-y-4 border border-stitch-border">
-        <h3 class="font-bold text-white text-sm sm:text-base flex items-center">
-          <i data-lucide="mail-warning" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-400 mr-2"></i>
-          Official Shortage Warning Dispatcher
-        </h3>
-        <p class="text-xs text-slate-400">1-click automated batch generator to issue official attendance shortage warning letters for students below 75%.</p>
-        <button class="w-full sm:w-auto bg-rose-600 hover:bg-rose-500 text-white font-mono font-bold px-4 py-2.5 rounded-xl text-xs shadow-lg shadow-rose-950/40">
-          📨 BATCH DISPATCH OFFICIAL WARNING NOTICE PDFS
-        </button>
       </div>
     </div>
 
     <!-- ============================================== -->
     <!-- VIEW 4: PRINCIPAL VIEW (DR. MANJU LALWANI PATHAK) -->
     <!-- ============================================== -->
-    <div id="viewPrincipal" class="space-y-4 sm:space-y-6 hidden">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div class="glass-panel p-4 sm:p-5 rounded-xl border-l-4 border-purple-600">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Department</span>
-          <h3 class="text-lg sm:text-xl font-bold text-white mt-1">B.Sc. Data Science</h3>
+    <div id="viewPrincipal" class="space-y-3 sm:space-y-5 hidden">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
+        <div class="glass-panel p-3 rounded-xl border-l-4 border-purple-600">
+          <span class="text-[9px] font-mono text-slate-400">Department</span>
+          <h3 class="text-sm sm:text-base font-bold text-white mt-0.5">B.Sc. Data Science</h3>
         </div>
-        <div class="glass-panel p-4 sm:p-5 rounded-xl border-l-4 border-emerald-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Academic Regularity</span>
-          <h3 class="text-lg sm:text-xl font-bold text-emerald-400 mt-1">98.2% Regular</h3>
+        <div class="glass-panel p-3 rounded-xl border-l-4 border-emerald-500">
+          <span class="text-[9px] font-mono text-slate-400">Regularity</span>
+          <h3 class="text-sm sm:text-base font-bold text-emerald-400 mt-0.5">98.2% Regular</h3>
         </div>
-        <div class="glass-panel p-4 sm:p-5 rounded-xl border-l-4 border-indigo-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Campus Status</span>
-          <h3 class="text-lg sm:text-xl font-bold text-white mt-1">Smt. C.H.M. College</h3>
+        <div class="glass-panel p-3 rounded-xl border-l-4 border-indigo-500">
+          <span class="text-[9px] font-mono text-slate-400">Campus</span>
+          <h3 class="text-sm sm:text-base font-bold text-white mt-0.5">Smt. C.H.M. College</h3>
         </div>
       </div>
 
-      <div class="glass-panel p-4 sm:p-6 rounded-2xl space-y-3.5 sm:space-y-4 border border-stitch-border">
-        <h3 class="font-bold text-white text-sm sm:text-base">Executive Board Compliance Pack</h3>
-        <button class="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-mono font-bold px-5 py-3 rounded-xl text-xs shadow-lg">
+      <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3 border border-stitch-border">
+        <h3 class="font-bold text-white text-xs sm:text-sm">Executive Board Compliance Pack</h3>
+        <button class="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-mono font-bold px-4 py-2.5 rounded-xl text-xs shadow-lg">
           📥 DOWNLOAD MASTER EXECUTIVE AUDIT REPORT (PDF)
         </button>
       </div>
@@ -1101,8 +993,8 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="border-t border-stitch-border py-4 text-center text-[10px] sm:text-xs font-mono text-slate-500 px-3">
-    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Enterprise Multi-Tier Production System
+  <footer class="border-t border-stitch-border py-3 text-center text-[9px] sm:text-[10px] font-mono text-slate-500 px-3">
+    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Responsive Enterprise Dashboard
   </footer>
 
   <!-- ============================================== -->
@@ -1115,14 +1007,14 @@
     const DEFAULT_PROFILES = {
       "CHMC-DS-2024-001": {
         role: "STUDENT",
-        name: "Captain (Lead Data Science)",
+        name: "Captain (Lead DS)",
         identifier: "CHMC-DS-2024-001",
         email: "captain.ds@chmc.edu",
         username: "chmc.ds.2024.001",
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-001 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
       },
       "CHMC-DS-2024-002": {
         role: "STUDENT",
@@ -1133,7 +1025,7 @@
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-002 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
       },
       "CHMC-DS-2024-003": {
         role: "STUDENT",
@@ -1144,7 +1036,7 @@
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-003 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
       },
       "CHMC-DS-2024-004": {
         role: "STUDENT",
@@ -1155,7 +1047,7 @@
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-004 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
       },
       "CHMC-DS-2024-005": {
         role: "STUDENT",
@@ -1166,7 +1058,7 @@
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-005 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
       },
       "faculty.razia": {
         role: "TEACHER_RAZIA",
@@ -1177,12 +1069,12 @@
         avatar: "👩‍🏫",
         badge: "FACULTY",
         badgeClass: "bg-emerald-500 text-white",
-        desc: "Second Year Faculty • Data Mining (Theory: E-104 / Lab: M-113), Linear Algebra, FOR",
+        desc: "Second Year Faculty • Data Mining (E-104 / M-113), Linear Algebra, FOR",
         units: [
           { code: "DS201-DM-TH", title: "Data Mining (Theory)", room: "E-104" },
           { code: "DS201-DM-PR", title: "Data Mining (Practical)", room: "M-113" },
           { code: "DS202-LA", title: "Linear Algebra", room: "E-104" },
-          { code: "DS203-FOR-TH", title: "FOR: Research Foundation (Theory)", room: "E-104" }
+          { code: "DS203-FOR-TH", title: "FOR: Research Foundation", room: "E-104" }
         ]
       },
       "faculty.anshul": {
@@ -1197,7 +1089,7 @@
         desc: "Second Year Faculty • Data Warehousing (E-104), FOR Practical (M-103)",
         units: [
           { code: "DS204-DW", title: "Data Warehousing", room: "E-104", isDefault: true },
-          { code: "DS203-FOR-PR", title: "FOR: Research Foundation (Practical)", room: "M-103" }
+          { code: "DS203-FOR-PR", title: "FOR: Research Lab", room: "M-103" }
         ]
       },
       "faculty.kalyani": {
@@ -1211,8 +1103,8 @@
         badgeClass: "bg-emerald-500 text-white",
         desc: "Second Year Faculty • DAA (Theory: E-104 / Lab: M-113)",
         units: [
-          { code: "DS205-DAA-TH", title: "Design & Analysis of Algorithms (Theory)", room: "E-104", isDefault: true },
-          { code: "DS205-DAA-PR", title: "Design & Analysis of Algorithms (Practical)", room: "M-113" }
+          { code: "DS205-DAA-TH", title: "DAA (Theory)", room: "E-104", isDefault: true },
+          { code: "DS205-DAA-PR", title: "DAA (Practical)", room: "M-113" }
         ]
       },
       "coordinator.ds": {
@@ -1239,13 +1131,10 @@
       }
     };
 
-    // Load registered accounts from LocalStorage
     function getStoredProfiles() {
       const stored = localStorage.getItem('uniattend_360_profiles');
       if (stored) {
-        try {
-          return { ...DEFAULT_PROFILES, ...JSON.parse(stored) };
-        } catch (e) {}
+        try { return { ...DEFAULT_PROFILES, ...JSON.parse(stored) }; } catch (e) {}
       }
       return { ...DEFAULT_PROFILES };
     }
@@ -1279,13 +1168,13 @@
       const boxReg = document.getElementById('authRegisterBox');
 
       if (tab === 'SIGNIN') {
-        btnIn.className = "flex-1 py-2 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow";
-        btnReg.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white font-bold transition duration-150";
+        btnIn.className = "flex-1 py-1.5 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow";
+        btnReg.className = "flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold transition duration-150";
         boxIn.classList.remove('hidden');
         boxReg.classList.add('hidden');
       } else {
-        btnReg.className = "flex-1 py-2 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow";
-        btnIn.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white font-bold transition duration-150";
+        btnReg.className = "flex-1 py-1.5 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow";
+        btnIn.className = "flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold transition duration-150";
         boxReg.classList.remove('hidden');
         boxIn.classList.add('hidden');
       }
@@ -1319,7 +1208,6 @@
         return;
       }
 
-      // Create new profile record
       const key = idStr;
       const newProfile = {
         role: role,
@@ -1412,7 +1300,7 @@
       const otp = document.getElementById('mfaCodeInput').value.trim();
       if (otp.length !== 6) {
         const errEl = document.getElementById('mfaError');
-        errEl.innerText = "Please enter a valid 6-digit authenticator code.";
+        errEl.innerText = "Please enter a valid 6-digit code.";
         errEl.classList.remove('hidden');
         return;
       }
@@ -1424,7 +1312,7 @@
         alert("🔐 Activating Windows Hello / Native Device Biometrics...\nVerify fingerprint or facial recognition on your device.");
         setTimeout(() => { quickAuth(pendingMFATarget || 'CHMC-DS-2024-001'); }, 800);
       } else {
-        alert("WebAuthn is not supported in this browser environment. Please use 6-digit TOTP code.");
+        alert("WebAuthn is not supported in this browser. Use 6-digit TOTP code.");
       }
     }
 
@@ -1435,7 +1323,7 @@
     function handleRecoveryCodeSubmit() {
       const code = document.getElementById('recoveryCodeInput').value.trim();
       if (code.length < 6) {
-        alert("Please enter a valid 8-character emergency recovery code.");
+        alert("Please enter a valid 8-character recovery code.");
         return;
       }
       alert("✅ Emergency Recovery Code validated! Single-use code consumed.");
@@ -1475,12 +1363,12 @@
     }
 
     function openMFASetupModal() {
-      alert("📲 Authenticator Setup:\n1. Open Google Authenticator or Microsoft Authenticator.\n2. Scan the secure college QR code.\n3. Save your 8 emergency backup recovery codes in a safe place.");
+      alert("📲 Authenticator Setup:\n1. Open Google Authenticator or Microsoft Authenticator.\n2. Scan the secure college QR code.\n3. Save your 8 backup recovery codes in a safe place.");
     }
 
     function handleWebAuthnRegister() {
       if (window.PublicKeyCredential) {
-        alert("🔑 Registering Native Device Passkey...\nTouch your fingerprint sensor or look at camera for Windows Hello / Face ID registration.");
+        alert("🔑 Registering Native Device Passkey...\nTouch fingerprint sensor or look at camera for Windows Hello / Face ID registration.");
       } else {
         alert("WebAuthn / Passkeys not supported on this platform.");
       }
@@ -1497,31 +1385,29 @@
       }
     }
 
-    // Dynamic Digital Roster Renderer
     function renderDigitalRoster() {
       const tbody = document.getElementById('digitalRosterBody');
       if (!tbody) return;
 
-      // Extract all registered students
       const students = Object.keys(REGISTERED_PROFILES)
         .map(k => REGISTERED_PROFILES[k])
         .filter(p => p.role === 'STUDENT');
 
       tbody.innerHTML = students.map((s, idx) => {
-        const isBlocked = idx === 2; // Demo blocked for Priya
+        const isBlocked = idx === 2;
         return `
           <tr class="${isBlocked ? 'bg-rose-500/5' : 'bg-emerald-500/5'}">
-            <td class="p-2.5 sm:p-3 font-bold text-white">${s.identifier}</td>
-            <td class="p-2.5 sm:p-3 text-white font-sans font-semibold">${s.name}</td>
-            <td class="p-2.5 sm:p-3">
-              <span class="${isBlocked ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'} font-bold px-2 py-0.5 rounded">
+            <td class="p-2 font-bold text-white text-[11px]">${s.identifier}</td>
+            <td class="p-2 text-white font-sans font-semibold text-[11px]">${s.name}</td>
+            <td class="p-2">
+              <span class="${isBlocked ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'} font-bold px-1.5 py-0.2 rounded text-[9px]">
                 ${isBlocked ? '🚨 PROXY BLOCKED' : '🟢 VERIFIED'}
               </span>
             </td>
-            <td class="p-2.5 sm:p-3 ${isBlocked ? 'text-rose-400' : 'text-emerald-400'}">
-              ${isBlocked ? '1.8 km (At Home)' : (6.5 + idx * 0.4).toFixed(1) + 'm'}
+            <td class="p-2 ${isBlocked ? 'text-rose-400' : 'text-emerald-400'} text-[10px]">
+              ${isBlocked ? '1.8 km (Home)' : (6.5 + idx * 0.4).toFixed(1) + 'm'}
             </td>
-            <td class="p-2.5 sm:p-3">09:02:${(14 + idx * 22).toString().padStart(2, '0')} AM</td>
+            <td class="p-2 text-[10px]">09:02:${(14 + idx * 22).toString().padStart(2, '0')} AM</td>
           </tr>
         `;
       }).join('');
@@ -1541,25 +1427,15 @@
       const list = document.getElementById('activeSessionsList');
       if (!list) return;
       list.innerHTML = `
-        <div class="p-3 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between text-xs font-mono">
+        <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between text-[11px] font-mono">
           <div>
-            <div class="flex items-center space-x-2">
-              <span class="font-bold text-white">Current Chrome Browser (Active)</span>
-              <span class="bg-emerald-500/20 text-emerald-400 text-[9px] px-1.5 py-0.2 rounded font-bold">THIS DEVICE</span>
+            <div class="flex items-center space-x-1.5">
+              <span class="font-bold text-white">Current Browser (Active)</span>
+              <span class="bg-emerald-500/20 text-emerald-400 text-[8px] px-1 py-0.2 rounded font-bold">THIS DEVICE</span>
             </div>
-            <span class="text-[10px] text-slate-400">IP: 192.168.1.104 • Signed in with Argon2id + TOTP MFA</span>
+            <span class="text-[9px] text-slate-400">IP: 192.168.1.104 • Signed in with Argon2id</span>
           </div>
-          <span class="text-emerald-400 text-xs font-bold">● Active</span>
-        </div>
-        <div class="p-3 rounded-xl bg-stitch-surface/60 border border-stitch-border flex items-center justify-between text-xs font-mono opacity-80">
-          <div>
-            <div class="flex items-center space-x-2">
-              <span class="font-bold text-slate-300">iPhone 15 - Safari (Mobile)</span>
-              <span class="bg-purple-500/20 text-purple-300 text-[9px] px-1.5 py-0.2 rounded">TRUSTED DEVICE</span>
-            </div>
-            <span class="text-[10px] text-slate-400">IP: 103.22.45.18 • Last active: 2 hours ago</span>
-          </div>
-          <button onclick="alert('Session revoked!')" class="text-rose-400 hover:text-rose-300 text-xs font-bold">Revoke</button>
+          <span class="text-emerald-400 text-[10px] font-bold">● Active</span>
         </div>
       `;
     }
@@ -1570,14 +1446,10 @@
       document.getElementById('viewCoordinator').classList.add('hidden');
       document.getElementById('viewPrincipal').classList.add('hidden');
 
-      document.getElementById('navUserIcon').innerText = session.avatar;
-      document.getElementById('navUserName').innerText = session.name;
-      document.getElementById('navUserRole').innerText = session.badge;
-
       document.getElementById('roleAvatar').innerText = session.avatar;
       document.getElementById('profileName').innerText = session.name;
       document.getElementById('roleBadge').innerText = session.badge;
-      document.getElementById('roleBadge').className = `${session.badgeClass} font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded shrink-0`;
+      document.getElementById('roleBadge').className = `${session.badgeClass} font-mono text-[8px] sm:text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0`;
       document.getElementById('profileDesc').innerText = session.desc;
 
       if (session.role === 'STUDENT') {
@@ -1613,19 +1485,17 @@
         const unit = JSON.parse(val);
         document.getElementById('teacherSubjectTitle').innerText = unit.title;
         document.getElementById('kioskRoomTag').innerText = unit.room;
-        document.getElementById('teacherRosterSub').innerText = `Instructor: ${activeSession.name} • Room: ${unit.room} • Second Year Class Roster`;
+        document.getElementById('teacherRosterSub').innerText = `Instructor: ${activeSession.name} • Room: ${unit.room} • Second Year`;
       } catch (e) {}
     }
 
     function handleTeacherRadiusChange(val) {
       activeGeofenceRadius = parseInt(val, 10);
       const badge = document.getElementById('teacherRadiusBadge');
-      const label = document.getElementById('radiusMeterVal');
       const kioskTag = document.getElementById('kioskGeofenceTag');
       const studentCutoff = document.getElementById('studentGeofenceCutoff');
       
-      if (badge) badge.innerText = `${activeGeofenceRadius}m ${activeGeofenceRadius === 10 ? '(Default)' : '(Custom)'}`;
-      if (label) label.innerText = `${activeGeofenceRadius} meters`;
+      if (badge) badge.innerText = `${activeGeofenceRadius}m`;
       if (kioskTag) kioskTag.innerText = `${activeGeofenceRadius}m`;
       if (studentCutoff) studentCutoff.innerText = `${activeGeofenceRadius}.0m`;
     }
@@ -1643,11 +1513,11 @@
       resBox.classList.remove('hidden');
 
       if (loc === 'IN_CLASS') {
-        resBox.className = "p-3 sm:p-4 rounded-xl text-xs font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/40";
-        resBox.innerHTML = `<b>✅ VERIFIED PRESENT!</b><br/>Tri-Factor checks passed: Session [${selectedCourse}] • GPS Distance: 6.8m (Classroom Perimeter: ${activeGeofenceRadius}m) • Rolling PIN Valid • Device Unique.`;
+        resBox.className = "p-2.5 rounded-xl text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/40";
+        resBox.innerHTML = `<b>✅ VERIFIED PRESENT!</b><br/>Tri-Factor checks passed: [${selectedCourse}] • GPS Distance: 6.8m (Classroom Perimeter: ${activeGeofenceRadius}m) • PIN Valid.`;
       } else {
-        resBox.className = "p-3 sm:p-4 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-300 border border-rose-500/40";
-        resBox.innerHTML = `<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>Shield 2 (GPS Geofence) Failed: Location is 1.8 km away from classroom (Allowed: ${activeGeofenceRadius}m). Remote scan blocked.`;
+        resBox.className = "p-2.5 rounded-xl text-[11px] font-mono bg-rose-500/10 text-rose-300 border border-rose-500/40";
+        resBox.innerHTML = `<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>GPS Geofence Failed: Location is 1.8 km away (Allowed: ${activeGeofenceRadius}m). Remote scan blocked.`;
       }
     }
 
@@ -1662,33 +1532,27 @@
     }
 
     function showRecoveryNotice() {
-      alert("🔒 Account Recovery Protocol:\nContact Course Coordinator (Mrs. Shiji Johnson) or use an Emergency Backup Recovery Code from your security hub.");
+      alert("🔒 Account Recovery Protocol:\nContact Course Coordinator (Mrs. Shiji Johnson) or use Emergency Recovery Code.");
     }
 
-    // CSV Bulk Parser
     function handleCSVFileSelected(event) {
       const file = event.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
-      reader.onload = function(e) {
-        const text = e.target.result;
-        parseCSVText(text);
-      };
+      reader.onload = function(e) { parseCSVText(e.target.result); };
       reader.readAsText(file);
     }
 
     function parseCSVText(text) {
       const lines = text.split('\n');
       parsedCSVStudents = [];
-      
-      lines.forEach((line, idx) => {
+      lines.forEach(line => {
         const clean = line.trim();
         if (!clean) return;
         const parts = clean.split(',');
         if (parts.length >= 3) {
           const roll = parts[0].trim().toUpperCase();
-          if (roll.toLowerCase() === 'roll_no') return; // Skip header
+          if (roll.toLowerCase() === 'roll_no') return;
           parsedCSVStudents.push({
             roll_no: roll,
             full_name: parts[1].trim(),
@@ -1705,11 +1569,11 @@
         previewList.innerHTML = parsedCSVStudents.map(s => `
           <div class="flex justify-between items-center text-slate-300 py-1 border-b border-slate-800">
             <span><b>${s.roll_no}</b> • ${s.full_name}</span>
-            <span class="text-indigo-400 text-[10px]">${s.email}</span>
+            <span class="text-indigo-400 text-[9px]">${s.email}</span>
           </div>
         `).join('');
       } else {
-        alert("No valid student rows found in CSV. Format: roll_no,full_name,email");
+        alert("No valid student rows found in CSV.");
       }
     }
 
@@ -1735,7 +1599,7 @@
       });
 
       localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
-      alert(`🎉 Successfully enrolled ${parsedCSVStudents.length} new students into the active cohort!`);
+      alert(`🎉 Enrolled ${parsedCSVStudents.length} students into the active cohort!`);
       closeBulkImportModal();
       renderDigitalRoster();
     }
@@ -1746,7 +1610,6 @@
         "CHMC-DS-2024-006,Ramesh Singh,ramesh.singh@gmail.com,M\n" +
         "CHMC-DS-2024-007,Kavita Nair,kavita.nair@gmail.com,F\n" +
         "CHMC-DS-2024-008,Siddharth Joshi,siddharth.joshi@yahoo.com,M\n";
-      
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
