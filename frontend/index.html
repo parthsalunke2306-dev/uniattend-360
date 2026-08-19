@@ -86,7 +86,6 @@
   <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
     <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl border border-purple-500/40 shadow-2xl shadow-purple-950/50 space-y-6 relative overflow-hidden">
       
-      <!-- Top Decorative Accent -->
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/30 rounded-full blur-2xl"></div>
       <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-600/20 rounded-full blur-2xl"></div>
 
@@ -98,7 +97,7 @@
           </div>
         </div>
         <h2 class="text-xl font-extrabold text-white tracking-tight">Smt. C.H.M. College</h2>
-        <p class="text-xs text-purple-300 font-mono">Department of Data Science • Secure Portal</p>
+        <p class="text-xs text-purple-300 font-mono">Department of Data Science • Second Year (S.Y.)</p>
       </div>
 
       <!-- Login Form -->
@@ -107,7 +106,7 @@
           <label class="text-xs font-mono text-slate-400">Roll No / Faculty ID / Email</label>
           <div class="relative">
             <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-            <input type="text" id="loginIdentifier" placeholder="e.g. CHMC-DS-2024-001" required value="CHMC-DS-2024-001" class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+            <input type="text" id="loginIdentifier" placeholder="e.g. captain.ds@chmc.edu or CHMC-DS-2024-001" required value="captain.ds@chmc.edu" class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
           </div>
         </div>
 
@@ -121,7 +120,7 @@
 
         <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
           <span class="flex items-center text-emerald-400"><i data-lucide="smartphone" class="w-3 h-3 mr-1"></i> Hardware Locked</span>
-          <span class="text-slate-500">Default: CHMC@2026!</span>
+          <span class="text-slate-500">Password: CHMC@2026!</span>
         </div>
 
         <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-900/40 text-xs font-mono flex items-center justify-center space-x-2 transition duration-150">
@@ -140,13 +139,13 @@
             🎓 Captain (Student)
           </button>
           <button onclick="quickAuth('faculty.razia')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
-            👨‍🏫 Miss Razia (Data Mining)
+            👨‍🏫 Miss Razia (4 Units)
           </button>
           <button onclick="quickAuth('faculty.anshul')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
-            👨‍🏫 Mr. Anshul (Data Whse)
+            👨‍🏫 Mr. Anshul (2 Units)
           </button>
           <button onclick="quickAuth('faculty.kalyani')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
-            👨‍🏫 Miss Kalyani (DAA)
+            👨‍🏫 Miss Kalyani (2 Units)
           </button>
           <button onclick="quickAuth('coordinator.ds')" class="p-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-left truncate">
             👔 Mrs. Shiji (Coordinator)
@@ -180,9 +179,9 @@
             <div class="min-w-0">
               <div class="flex items-center space-x-1.5">
                 <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-white truncate">Smt. C.H.M. College</h1>
-                <span class="bg-purple-500/20 text-purple-300 text-[9px] sm:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30 shrink-0">DATA SCIENCE</span>
+                <span class="bg-purple-500/20 text-purple-300 text-[9px] sm:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30 shrink-0">SECOND YEAR DS</span>
               </div>
-              <p class="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate">UniAttend 360 • Anti-Proxy Platform</p>
+              <p class="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate">Department of Data Science • UniAttend 360</p>
             </div>
           </div>
 
@@ -239,7 +238,7 @@
             <h2 id="profileName" class="font-bold text-white text-sm sm:text-base truncate">Captain (Roll No: CHMC-DS-2024-001)</h2>
             <span id="roleBadge" class="bg-purple-500 text-white font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded shrink-0">STUDENT</span>
           </div>
-          <p id="profileDesc" class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">B.Sc. Data Science (Sem 5) • Class Size: 5 Students • Smt. C.H.M. College</p>
+          <p id="profileDesc" class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">Second Year (S.Y. B.Sc. Data Science) • Class Size: 5 Students • Smt. C.H.M. College</p>
         </div>
       </div>
       <div class="flex items-center space-x-1.5 text-[11px] sm:text-xs font-mono text-slate-400 bg-stitch-surface/80 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-stitch-border w-fit shrink-0">
@@ -261,22 +260,22 @@
             <span class="bg-emerald-500/20 text-emerald-300 text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30">EXAM ELIGIBLE</span>
           </div>
           <div class="flex items-baseline justify-between mt-2">
-            <div class="text-3xl sm:text-4xl font-extrabold font-mono text-white">92.4%</div>
+            <div class="text-3xl sm:text-4xl font-extrabold font-mono text-white">93.6%</div>
             <span class="text-[11px] sm:text-xs text-slate-400 font-mono">Cutoff: 75.0%</span>
           </div>
           <div class="w-full bg-slate-800 h-1.5 sm:h-2 rounded-full mt-3 overflow-hidden">
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 92.4%"></div>
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 93.6%"></div>
           </div>
         </div>
 
         <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden neon-border">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] sm:text-xs font-mono text-purple-400 uppercase tracking-wider">Lectures Attended</span>
-            <span class="text-[11px] sm:text-xs font-mono text-purple-300">3 Subjects</span>
+            <span class="text-[11px] sm:text-xs font-mono text-purple-400 uppercase tracking-wider">Lectures & Labs</span>
+            <span class="text-[11px] sm:text-xs font-mono text-purple-300">8 Units</span>
           </div>
           <div class="flex items-baseline justify-between mt-2">
-            <div class="text-3xl sm:text-4xl font-extrabold font-mono text-white">68 <span class="text-base sm:text-lg text-slate-500 font-normal">/ 74</span></div>
-            <span class="text-[11px] sm:text-xs text-emerald-400 font-mono">+6 Safe Margin</span>
+            <div class="text-3xl sm:text-4xl font-extrabold font-mono text-white">88 <span class="text-base sm:text-lg text-slate-500 font-normal">/ 94</span></div>
+            <span class="text-[11px] sm:text-xs text-emerald-400 font-mono">+17 Safe Margin</span>
           </div>
           <p class="text-[11px] sm:text-xs text-slate-400 mt-2 sm:mt-3 font-mono truncate">Miss Razia, Mr. Anshul, Miss Kalyani</p>
         </div>
@@ -317,13 +316,27 @@
             <p class="text-[10px] sm:text-[11px] font-mono text-purple-300 mt-2 z-10">Point Camera at Projector Screen</p>
           </div>
 
-          <!-- Session Select -->
+          <!-- Second Year Lecture Session Dropdown -->
           <div class="space-y-1">
-            <label class="text-[11px] sm:text-xs font-mono text-slate-400">Active Lecture Session</label>
+            <label class="text-[11px] sm:text-xs font-mono text-slate-400">Active Second Year Lecture / Practical</label>
             <select id="studentCourseSelect" class="w-full bg-stitch-surface border border-stitch-border rounded-xl p-2 sm:p-2.5 text-xs text-white focus:outline-none focus:border-purple-500 truncate">
-              <option value="DS301-DM">DS301-DM: Data Mining — Miss Razia Khan (DS-LAB-1)</option>
-              <option value="DS302-DW">DS302-DW: Data Warehousing — Mr. Anshul Chimnani (LH-201)</option>
-              <option value="DS303-DAA">DS303-DAA: Design & Analysis of Algorithms — Miss Kalyani Patil (LH-202)</option>
+              <!-- Miss Razia Khan -->
+              <optgroup label="👩‍🏫 Miss Razia Khan">
+                <option value="DS201-DM-TH">📘 DS201-DM-TH: Data Mining (Theory) — LH-201</option>
+                <option value="DS201-DM-PR" selected>🔬 DS201-DM-PR: Data Mining (Practical) — DS-LAB-1</option>
+                <option value="DS202-LA">📘 DS202-LA: Linear Algebra — LH-201</option>
+                <option value="DS203-FOR-TH">📘 DS203-FOR-TH: FOR - Research Foundation (Theory) — LH-201</option>
+              </optgroup>
+              <!-- Mr. Anshul Chimnani -->
+              <optgroup label="👨‍🏫 Mr. Anshul Chimnani">
+                <option value="DS204-DW">📘 DS204-DW: Data Warehousing — LH-202</option>
+                <option value="DS203-FOR-PR">🔬 DS203-FOR-PR: FOR - Research Foundation (Practical) — DS-LAB-1</option>
+              </optgroup>
+              <!-- Miss Kalyani Patil -->
+              <optgroup label="👩‍🏫 Miss Kalyani Patil">
+                <option value="DS205-DAA-TH">📘 DS205-DAA-TH: Design & Analysis of Algorithms (Theory) — LH-202</option>
+                <option value="DS205-DAA-PR">🔬 DS205-DAA-PR: Design & Analysis of Algorithms (Practical) — DS-LAB-1</option>
+              </optgroup>
             </select>
           </div>
 
@@ -366,54 +379,129 @@
           <div class="flex items-center justify-between border-b border-stitch-border pb-2.5 sm:pb-3">
             <h3 class="font-bold text-white text-sm sm:text-base flex items-center">
               <i data-lucide="layers" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 mr-2"></i>
-              Subject Attendance & 'What-If' Engine
+              Second Year Subject Units (Theory & Practical)
             </h3>
-            <span class="text-[10px] sm:text-xs font-mono text-slate-400">Sem 5</span>
+            <span class="text-[10px] sm:text-xs font-mono text-purple-300 font-bold">S.Y. (Sem 3)</span>
           </div>
 
-          <!-- 3 Subject Cards -->
-          <div class="space-y-2.5 sm:space-y-3">
-            <div class="p-3 sm:p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+          <!-- Subject Cards -->
+          <div class="space-y-2 max-h-[290px] overflow-y-auto pr-1">
+            
+            <!-- Miss Razia Khan's 4 units -->
+            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="flex items-center space-x-1.5 flex-wrap">
                   <span class="font-bold text-white text-xs truncate">Data Mining</span>
-                  <span class="text-[10px] font-mono text-slate-400 truncate">Miss Razia Khan</span>
+                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
+                  <span class="text-[10px] font-mono text-slate-400">Miss Razia</span>
                 </div>
-                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">24 Held • 22 Attended • DS-LAB-1</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">24 Held • 23 Attended • LH-201</p>
               </div>
               <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-base sm:text-lg text-emerald-400">91.7%</span>
-                <div class="text-[9px] sm:text-[10px] font-mono text-emerald-300 font-bold">SAFE</div>
+                <span class="font-mono font-extrabold text-sm text-emerald-400">95.8%</span>
               </div>
             </div>
 
-            <div class="p-3 sm:p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5 flex-wrap">
+                  <span class="font-bold text-white text-xs truncate">Data Mining (Lab)</span>
+                  <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">PRACTICAL</span>
+                  <span class="text-[10px] font-mono text-slate-400">Miss Razia</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-0.5">12 Held • 12 Attended • DS-LAB-1</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="font-mono font-extrabold text-sm text-emerald-400">100.0%</span>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5 flex-wrap">
+                  <span class="font-bold text-white text-xs truncate">Linear Algebra</span>
+                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
+                  <span class="text-[10px] font-mono text-slate-400">Miss Razia</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-0.5">24 Held • 22 Attended • LH-201</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="font-mono font-extrabold text-sm text-emerald-400">91.7%</span>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5 flex-wrap">
+                  <span class="font-bold text-white text-xs truncate">FOR: Research Foundation</span>
+                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
+                  <span class="text-[10px] font-mono text-slate-400">Miss Razia</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-0.5">18 Held • 17 Attended • LH-201</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="font-mono font-extrabold text-sm text-emerald-400">94.4%</span>
+              </div>
+            </div>
+
+            <!-- Mr. Anshul Chimnani's 2 units -->
+            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="flex items-center space-x-1.5 flex-wrap">
                   <span class="font-bold text-white text-xs truncate">Data Warehousing</span>
-                  <span class="text-[10px] font-mono text-slate-400 truncate">Mr. Anshul Chimnani</span>
+                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
+                  <span class="text-[10px] font-mono text-slate-400">Mr. Anshul</span>
                 </div>
-                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">25 Held • 24 Attended • LH-201</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">25 Held • 24 Attended • LH-202</p>
               </div>
               <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-base sm:text-lg text-emerald-400">96.0%</span>
-                <div class="text-[9px] sm:text-[10px] font-mono text-emerald-300 font-bold">SAFE</div>
+                <span class="font-mono font-extrabold text-sm text-emerald-400">96.0%</span>
               </div>
             </div>
 
-            <div class="p-3 sm:p-3.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5 flex-wrap">
+                  <span class="font-bold text-white text-xs truncate">FOR: Research Lab</span>
+                  <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">PRACTICAL</span>
+                  <span class="text-[10px] font-mono text-slate-400">Mr. Anshul</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-0.5">12 Held • 11 Attended • DS-LAB-1</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="font-mono font-extrabold text-sm text-emerald-400">91.7%</span>
+              </div>
+            </div>
+
+            <!-- Miss Kalyani Patil's 2 units -->
+            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="flex items-center space-x-1.5 flex-wrap">
                   <span class="font-bold text-white text-xs truncate">Design & Analysis of Algo</span>
-                  <span class="text-[10px] font-mono text-slate-400 truncate">Miss Kalyani Patil</span>
+                  <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">THEORY</span>
+                  <span class="text-[10px] font-mono text-slate-400">Miss Kalyani</span>
                 </div>
-                <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">25 Held • 22 Attended • LH-202</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">25 Held • 22 Attended • LH-202</p>
               </div>
               <div class="text-right shrink-0">
-                <span class="font-mono font-extrabold text-base sm:text-lg text-emerald-400">88.0%</span>
-                <div class="text-[9px] sm:text-[10px] font-mono text-emerald-300 font-bold">SAFE</div>
+                <span class="font-mono font-extrabold text-sm text-emerald-400">88.0%</span>
               </div>
             </div>
+
+            <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5 flex-wrap">
+                  <span class="font-bold text-white text-xs truncate">DAA Lab</span>
+                  <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">PRACTICAL</span>
+                  <span class="text-[10px] font-mono text-slate-400">Miss Kalyani</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-0.5">12 Held • 11 Attended • DS-LAB-1</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="font-mono font-extrabold text-sm text-emerald-400">91.7%</span>
+              </div>
+            </div>
+
           </div>
 
           <!-- 'What-If' Attendance Simulator -->
@@ -430,7 +518,7 @@
 
             <div class="flex items-center justify-between pt-2 border-t border-purple-500/20">
               <span class="text-[11px] sm:text-xs font-mono text-slate-300">Projected Attendance:</span>
-              <span id="simResult" class="font-mono font-extrabold text-lg sm:text-xl text-emerald-400">92.8%</span>
+              <span id="simResult" class="font-mono font-extrabold text-lg sm:text-xl text-emerald-400">94.1%</span>
             </div>
           </div>
 
@@ -468,6 +556,13 @@
             <span class="text-[9px] sm:text-[10px] font-mono text-emerald-400/80">Refreshes every 8 seconds • 45m Geofence</span>
           </div>
 
+          <!-- Teacher Unit Switcher -->
+          <div class="space-y-1 text-left">
+            <label class="text-[10px] font-mono text-slate-400">Select Teaching Unit / Room:</label>
+            <select id="teacherUnitSelector" onchange="handleTeacherUnitChange(this.value)" class="w-full bg-stitch-surface border border-stitch-border rounded-xl p-2 text-xs text-white focus:outline-none focus:border-purple-500 truncate">
+            </select>
+          </div>
+
           <button onclick="simulateScan()" class="w-full bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-purple-200 text-xs font-mono font-bold py-2 rounded-xl">
             ⚡ Simulate Quick Student Check-Ins
           </button>
@@ -477,8 +572,8 @@
         <div class="glass-panel p-4 sm:p-6 rounded-2xl lg:col-span-2 space-y-3.5 sm:space-y-4 border border-stitch-border">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-stitch-border pb-3">
             <div>
-              <h3 id="teacherSubjectTitle" class="font-bold text-white text-sm sm:text-base">Data Mining (DS301-DM)</h3>
-              <p class="text-[11px] sm:text-xs font-mono text-slate-400">Instructor: Miss Razia Khan • Class: 5 Students</p>
+              <h3 id="teacherSubjectTitle" class="font-bold text-white text-sm sm:text-base">Data Mining (Theory)</h3>
+              <p id="teacherRosterSub" class="text-[11px] sm:text-xs font-mono text-slate-400">Instructor: Miss Razia Khan • Second Year Class: 5 Students</p>
             </div>
             <span class="bg-emerald-500/20 text-emerald-300 font-mono text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-500/30 w-fit">
               Verified: 4 / 5 Present
@@ -554,30 +649,169 @@
     <!-- VIEW 3: COURSE COORDINATOR (MRS. SHIJI JOHNSON) -->
     <!-- ============================================== -->
     <div id="viewCoordinator" class="space-y-4 sm:space-y-6 hidden">
+      
+      <!-- Metrics -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-purple-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Students</span>
-          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">5</h3>
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Second Year Enrolled</span>
+          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">5 Students</h3>
         </div>
         <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-emerald-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Avg Attendance</span>
-          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-emerald-400 mt-1">87.4%</h3>
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Dept Avg Attendance</span>
+          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-emerald-400 mt-1">88.5%</h3>
         </div>
         <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-rose-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Defaulters</span>
-          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-rose-400 mt-1">1</h3>
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Defaulters (<75%)</span>
+          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-rose-400 mt-1">1 (Rohan)</h3>
         </div>
         <div class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-indigo-500">
-          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Faculty</span>
-          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">3</h3>
+          <span class="text-[10px] sm:text-xs font-mono text-slate-400">Faculty Members</span>
+          <h3 class="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">3 Faculty</h3>
         </div>
       </div>
 
-      <!-- Coordinator Action Center -->
+      <!-- VISUAL ACADEMIC HIERARCHY TREE (Matches Handwritten Diagram) -->
+      <div class="glass-panel p-5 sm:p-6 rounded-2xl space-y-4 border border-purple-500/40 neon-border">
+        <div class="flex items-center justify-between border-b border-stitch-border pb-3">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="git-branch" class="w-5 h-5 text-purple-400"></i>
+            <h3 class="font-bold text-white text-base">Department Academic Curriculum Structure</h3>
+          </div>
+          <span class="bg-purple-500/20 text-purple-300 font-mono text-xs px-2.5 py-1 rounded-full border border-purple-500/30">
+            Smt. C.H.M. College
+          </span>
+        </div>
+
+        <p class="text-xs text-slate-300">
+          Complete faculty course teaching matrix for the <b>Department of Data Science</b>:
+        </p>
+
+        <!-- Department Tree Visual -->
+        <div class="space-y-4 pt-2">
+          
+          <!-- Root Level: Department -->
+          <div class="p-3 rounded-xl bg-purple-950/40 border border-purple-500/50 flex items-center space-x-2">
+            <span class="text-base">🏢</span>
+            <span class="font-bold font-mono text-purple-200 text-sm">Data Science Department</span>
+            <span class="text-[10px] font-mono text-slate-400 ml-auto">Coordinator: Mrs. Shiji Johnson</span>
+          </div>
+
+          <!-- Branch 1: Academic Years Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pl-2 sm:pl-4 border-l-2 border-dashed border-purple-500/40">
+            
+            <!-- First Year Card -->
+            <div class="p-3.5 rounded-xl bg-stitch-surface/60 border border-stitch-border opacity-70">
+              <span class="text-xs font-mono font-bold text-slate-400 uppercase">First Year (F.Y.)</span>
+              <p class="text-[11px] text-slate-500 mt-1">Foundation Computing & Math</p>
+            </div>
+
+            <!-- Second Year Card (ACTIVE) -->
+            <div class="p-3.5 rounded-xl bg-gradient-to-tr from-purple-950/60 to-slate-900 border-2 border-emerald-500/60 shadow-lg shadow-emerald-950/30">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold text-emerald-400 uppercase">Second Year (S.Y.)</span>
+                <span class="bg-emerald-500/20 text-emerald-300 text-[9px] font-mono font-bold px-2 py-0.5 rounded">ACTIVE COHORT</span>
+              </div>
+              <p class="text-[11px] text-slate-300 mt-1">3 Faculty Members • 8 Teaching Units</p>
+            </div>
+
+            <!-- Third Year Card -->
+            <div class="p-3.5 rounded-xl bg-stitch-surface/60 border border-stitch-border opacity-70">
+              <span class="text-xs font-mono font-bold text-slate-400 uppercase">Third Year (T.Y.)</span>
+              <p class="text-[11px] text-slate-500 mt-1">Advanced Deep Learning & Capstone</p>
+            </div>
+
+          </div>
+
+          <!-- Branch 2: Second Year 3 Faculty Details (Direct Breakdown from Diagram) -->
+          <div class="space-y-3 pl-2 sm:pl-4 border-l-2 border-dashed border-emerald-500/40">
+            <span class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">
+              📂 Second Year Faculty & Subject Allocation:
+            </span>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              
+              <!-- 1. Miss Razia Khan -->
+              <div class="p-4 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-2">
+                <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
+                  <span class="text-base">👩‍🏫</span>
+                  <div>
+                    <h4 class="font-bold text-white text-xs">Miss Razia Khan</h4>
+                    <span class="text-[10px] font-mono text-purple-300">4 Teaching Units</span>
+                  </div>
+                </div>
+                <ul class="text-[11px] font-mono space-y-1.5 text-slate-300">
+                  <li class="flex items-center justify-between">
+                    <span>• Data Mining (Theory)</span>
+                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded">LH-201</span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <span>• Data Mining (Practical)</span>
+                    <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded">DS-LAB-1</span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <span>• Linear Algebra</span>
+                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded">LH-201</span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <span>• FOR (Theory)</span>
+                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded">LH-201</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- 2. Mr. Anshul Chimnani -->
+              <div class="p-4 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-2">
+                <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
+                  <span class="text-base">👨‍🏫</span>
+                  <div>
+                    <h4 class="font-bold text-white text-xs">Mr. Anshul Chimnani</h4>
+                    <span class="text-[10px] font-mono text-emerald-300">2 Teaching Units</span>
+                  </div>
+                </div>
+                <ul class="text-[11px] font-mono space-y-1.5 text-slate-300">
+                  <li class="flex items-center justify-between">
+                    <span>• Data Warehousing</span>
+                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded">LH-202</span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <span>• FOR (Practical)</span>
+                    <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded">DS-LAB-1</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- 3. Miss Kalyani Patil -->
+              <div class="p-4 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-2">
+                <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
+                  <span class="text-base">👩‍🏫</span>
+                  <div>
+                    <h4 class="font-bold text-white text-xs">Miss Kalyani Patil</h4>
+                    <span class="text-[10px] font-mono text-purple-300">2 Teaching Units</span>
+                  </div>
+                </div>
+                <ul class="text-[11px] font-mono space-y-1.5 text-slate-300">
+                  <li class="flex items-center justify-between">
+                    <span>• DAA (Theory)</span>
+                    <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.2 rounded">LH-202</span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <span>• DAA (Practical)</span>
+                    <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded">DS-LAB-1</span>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Action Center -->
       <div class="glass-panel p-4 sm:p-6 rounded-2xl space-y-3.5 sm:space-y-4 border border-stitch-border">
         <h3 class="font-bold text-white text-sm sm:text-base flex items-center">
           <i data-lucide="mail-warning" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-400 mr-2"></i>
-          Shortage Warning Dispatcher
+          Official Shortage Warning Dispatcher
         </h3>
         <p class="text-xs text-slate-400">1-click automated batch generator to issue official attendance shortage warning letters for students below 75%.</p>
         <button class="w-full sm:w-auto bg-rose-600 hover:bg-rose-500 text-white font-mono font-bold px-4 py-2.5 rounded-xl text-xs shadow-lg shadow-rose-950/40">
@@ -617,7 +851,7 @@
 
   <!-- FOOTER -->
   <footer class="border-t border-stitch-border py-4 text-center text-[10px] sm:text-xs font-mono text-slate-500 px-3">
-    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Role-Based Authentication & Device Lock
+    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Department of Data Science (Second Year)
   </footer>
 
   <!-- ============================================== -->
@@ -637,7 +871,7 @@
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-001 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-001 • Smt. C.H.M. College"
       },
       "CHMC-DS-2024-002": {
         role: "STUDENT",
@@ -648,7 +882,7 @@
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-002 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-002 • Smt. C.H.M. College"
       },
       "CHMC-DS-2024-003": {
         role: "STUDENT",
@@ -659,7 +893,7 @@
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-003 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-003 • Smt. C.H.M. College"
       },
       "CHMC-DS-2024-004": {
         role: "STUDENT",
@@ -670,7 +904,7 @@
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-004 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-004 • Smt. C.H.M. College"
       },
       "CHMC-DS-2024-005": {
         role: "STUDENT",
@@ -681,46 +915,54 @@
         avatar: "🎓",
         badge: "STUDENT",
         badgeClass: "bg-purple-500 text-white",
-        desc: "B.Sc. Data Science (Sem 5) • Roll: CHMC-DS-2024-005 • Smt. C.H.M. College"
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Roll: CHMC-DS-2024-005 • Smt. C.H.M. College"
       },
       "faculty.razia": {
         role: "TEACHER_RAZIA",
         name: "Miss Razia Khan",
-        identifier: "Faculty (Data Mining)",
+        identifier: "Faculty (Data Science)",
         email: "razia.khan@chmc.edu",
         username: "razia.khan",
-        avatar: "👨‍🏫",
+        avatar: "👩‍🏫",
         badge: "FACULTY",
         badgeClass: "bg-emerald-500 text-white",
-        desc: "Classroom Projector Kiosk • Data Science Lab 1 (CHM Campus)",
-        subjectTitle: "Data Mining (DS301-DM)",
-        roomTag: "DS-LAB-1"
+        desc: "Second Year Faculty • Data Mining (Theory/Lab), Linear Algebra, FOR (Theory)",
+        units: [
+          { code: "DS201-DM-TH", title: "Data Mining (Theory)", room: "LH-201" },
+          { code: "DS201-DM-PR", title: "Data Mining (Practical)", room: "DS-LAB-1" },
+          { code: "DS202-LA", title: "Linear Algebra", room: "LH-201" },
+          { code: "DS203-FOR-TH", title: "FOR: Research Foundation (Theory)", room: "LH-201" }
+        ]
       },
       "faculty.anshul": {
         role: "TEACHER_ANSHUL",
         name: "Mr. Anshul Chimnani",
-        identifier: "Faculty (Data Warehousing)",
+        identifier: "Faculty (Data Science)",
         email: "anshul.chimnani@chmc.edu",
         username: "anshul.chimnani",
         avatar: "👨‍🏫",
         badge: "FACULTY",
         badgeClass: "bg-emerald-500 text-white",
-        desc: "Classroom Projector Kiosk • Degree College LH-201 (CHM Campus)",
-        subjectTitle: "Data Warehousing (DS302-DW)",
-        roomTag: "LH-201"
+        desc: "Second Year Faculty • Data Warehousing, FOR (Practical)",
+        units: [
+          { code: "DS204-DW", title: "Data Warehousing", room: "LH-202", isDefault: true },
+          { code: "DS203-FOR-PR", title: "FOR: Research Foundation (Practical)", room: "DS-LAB-1" }
+        ]
       },
       "faculty.kalyani": {
         role: "TEACHER_KALYANI",
         name: "Miss Kalyani Patil",
-        identifier: "Faculty (DAA)",
+        identifier: "Faculty (Data Science)",
         email: "kalyani.patil@chmc.edu",
         username: "kalyani.patil",
-        avatar: "👨‍🏫",
+        avatar: "👩‍🏫",
         badge: "FACULTY",
         badgeClass: "bg-emerald-500 text-white",
-        desc: "Classroom Projector Kiosk • Degree College LH-202 (CHM Campus)",
-        subjectTitle: "Design and Analysis of Algorithms (DS303-DAA)",
-        roomTag: "LH-202"
+        desc: "Second Year Faculty • Design & Analysis of Algorithms (Theory/Lab)",
+        units: [
+          { code: "DS205-DAA-TH", title: "Design & Analysis of Algorithms (Theory)", room: "LH-202", isDefault: true },
+          { code: "DS205-DAA-PR", title: "Design & Analysis of Algorithms (Practical)", room: "DS-LAB-1" }
+        ]
       },
       "coordinator.ds": {
         role: "COORDINATOR",
@@ -731,7 +973,7 @@
         avatar: "👔",
         badge: "COORDINATOR",
         badgeClass: "bg-indigo-500 text-white",
-        desc: "Academic & Department Coordinator • Department of Data Science"
+        desc: "Course Coordinator • Department of Data Science (Smt. C.H.M. College)"
       },
       "principal.chmc": {
         role: "PRINCIPAL",
@@ -778,7 +1020,6 @@
       const idInput = document.getElementById('loginIdentifier').value.trim().toLowerCase();
       const pwdInput = document.getElementById('loginPassword').value.trim();
       
-      // Robust lookup by email, roll number, username, or name
       const foundKey = Object.keys(REGISTERED_PROFILES).find(k => {
         const p = REGISTERED_PROFILES[k];
         return (
@@ -821,31 +1062,39 @@
     }
 
     function applySession(session) {
-      // Hide all views
       document.getElementById('viewStudent').classList.add('hidden');
       document.getElementById('viewTeacher').classList.add('hidden');
       document.getElementById('viewCoordinator').classList.add('hidden');
       document.getElementById('viewPrincipal').classList.add('hidden');
 
-      // Update Nav
       document.getElementById('navUserIcon').innerText = session.avatar;
       document.getElementById('navUserName').innerText = session.name;
       document.getElementById('navUserRole').innerText = session.badge;
 
-      // Update Profile Banner
       document.getElementById('roleAvatar').innerText = session.avatar;
       document.getElementById('profileName').innerText = session.name;
       document.getElementById('roleBadge').innerText = session.badge;
       document.getElementById('roleBadge').className = `${session.badgeClass} font-mono text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded shrink-0`;
       document.getElementById('profileDesc').innerText = session.desc;
 
-      // Activate Role View
       if (session.role === 'STUDENT') {
         document.getElementById('viewStudent').classList.remove('hidden');
       } else if (session.role.startsWith('TEACHER')) {
         document.getElementById('viewTeacher').classList.remove('hidden');
-        document.getElementById('teacherSubjectTitle').innerText = session.subjectTitle || "Lecture Session";
-        document.getElementById('kioskRoomTag').innerText = session.roomTag || "DS-LAB-1";
+        
+        // Populate Teacher's Units Dropdown
+        const unitSelector = document.getElementById('teacherUnitSelector');
+        unitSelector.innerHTML = '';
+        if (session.units && session.units.length > 0) {
+          session.units.forEach((u, i) => {
+            const opt = document.createElement('option');
+            opt.value = JSON.stringify(u);
+            opt.innerText = `${u.title} (${u.room})`;
+            if (u.isDefault || i === 0) opt.selected = true;
+            unitSelector.appendChild(opt);
+          });
+          handleTeacherUnitChange(unitSelector.value);
+        }
       } else if (session.role === 'COORDINATOR') {
         document.getElementById('viewCoordinator').classList.remove('hidden');
       } else if (session.role === 'PRINCIPAL') {
@@ -855,28 +1104,35 @@
       lucide.createIcons();
     }
 
-    function switchRole(roleKey) {
-      quickAuth(roleKey);
+    function handleTeacherUnitChange(val) {
+      if (!val) return;
+      try {
+        const unit = JSON.parse(val);
+        document.getElementById('teacherSubjectTitle').innerText = unit.title;
+        document.getElementById('kioskRoomTag').innerText = unit.room;
+        document.getElementById('teacherRosterSub').innerText = `Instructor: ${activeSession.name} • Room: ${unit.room} • Second Year: 5 Students`;
+      } catch (e) {}
     }
 
     function submitStudentCheckIn() {
       const loc = document.querySelector('input[name="studentLoc"]:checked').value;
       const resBox = document.getElementById('checkInResult');
+      const selectedCourse = document.getElementById('studentCourseSelect').value;
       resBox.classList.remove('hidden');
 
       if (loc === 'IN_CLASS') {
         resBox.className = "p-3 sm:p-4 rounded-xl text-xs font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/40";
-        resBox.innerHTML = "<b>✅ VERIFIED PRESENT!</b><br/>Tri-Factor checks passed: GPS Distance: 11.8m (DS-LAB-1) • Rolling PIN Valid • Device Unique.";
+        resBox.innerHTML = `<b>✅ VERIFIED PRESENT!</b><br/>Tri-Factor checks passed: Session [${selectedCourse}] • GPS Distance: 11.8m • Rolling PIN Valid • Device Unique.`;
       } else {
         resBox.className = "p-3 sm:p-4 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-300 border border-rose-500/40";
-        resBox.innerHTML = "<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>Shield 2 (GPS Geofence) Failed: Location is 1.8 km away from DS-LAB-1. Remote WhatsApp scan blocked.";
+        resBox.innerHTML = `<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>Shield 2 (GPS Geofence) Failed: Location is 1.8 km away from classroom. Remote scan blocked.`;
       }
     }
 
     function updateSimulator(val) {
       document.getElementById('sliderVal').innerText = `+${val} classes`;
-      const baseHeld = 74;
-      const baseAtt = 68;
+      const baseHeld = 94;
+      const baseAtt = 88;
       const nHeld = baseHeld + parseInt(val);
       const nAtt = baseAtt + parseInt(val);
       const pct = ((nAtt / nHeld) * 100).toFixed(1);
@@ -903,7 +1159,6 @@
       alert("⚡ Simulated real-time scan events for the 5 Data Science students!");
     }
 
-    // Initialize on load
     window.addEventListener('DOMContentLoaded', initAuth);
   </script>
 </body>

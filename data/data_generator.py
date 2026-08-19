@@ -1,19 +1,34 @@
 """
 Smt. C.H.M. College - Department of Data Science Synthetic Data Generator.
-Configured specifically for:
-  - College: Smt. C.H.M. College (Ulhasnagar, Mumbai University)
-  - Principal: Dr. Manju Lalwani Pathak
-  - Course Coordinator: Mrs. Shiji Johnson
-  - Faculty & Subjects:
-      1. Miss Razia Khan -> Data Mining
-      2. Mr. Anshul Chimnani -> Data Warehousing
-      3. Miss Kalyani Patil -> Design and Analysis of Algorithms
-  - Class: Exactly 5 Data Science Students
+Configured specifically for the Second Year (S.Y. B.Sc. Data Science) curriculum:
+  - Department: Department of Data Science
+  - Academic Years: First Year, Second Year, Third Year
+  - Active Class: Second Year (S.Y. B.Sc. Data Science)
+  - Faculty & Subject Mapping:
+      1. Miss Razia Khan:
+         - Data Mining (Theory)
+         - Data Mining (Practical)
+         - Linear Algebra
+         - FOR - Foundations of Research / Operations Research (Theory)
+      2. Mr. Anshul Chimnani:
+         - Data Warehousing
+         - FOR - Foundations of Research / Operations Research (Practical)
+      3. Miss Kalyani Patil:
+         - Design and Analysis of Algorithm (Theory)
+         - Design and Analysis of Algorithm (Practical)
+  - Students: Exactly 5 Data Science Students (Captain, Aarav, Priya, Rohan, Ananya)
 """
 
+import os
+import sys
 import random
 from datetime import datetime, date, time, timedelta
 from typing import List, Dict, Tuple
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 from sqlalchemy.orm import Session
 
 from database.models import (
@@ -24,7 +39,7 @@ from database.db_manager import get_db_session, init_db, drop_db
 
 random.seed(42)
 
-# Specific Configuration for Smt. C.H.M. College
+# Specific Configuration for Smt. C.H.M. College (Second Year Data Science)
 COLLEGE_CONFIG = {
     "university_name": "University of Mumbai",
     "university_code": "MU",
@@ -35,33 +50,114 @@ COLLEGE_CONFIG = {
     "coordinator": "Mrs. Shiji Johnson",
     "department_name": "Department of Data Science",
     "dept_code": "CHMC-DS",
-    "faculty_subjects": [
+    "academic_years": ["First Year", "Second Year", "Third Year"],
+    "active_class": "Second Year (S.Y. B.Sc. Data Science)",
+    "faculty_members": [
         {
+            "id_str": "FAC-CHMC-DS-01",
             "name": "Miss Razia Khan",
             "email": "razia.khan@chmc.edu",
-            "designation": "Assistant Professor",
-            "course_name": "Data Mining",
-            "course_code": "DS301-DM",
-            "credits": 4,
-            "semester": 5
+            "username": "razia.khan",
+            "designation": "Assistant Professor"
         },
         {
+            "id_str": "FAC-CHMC-DS-02",
             "name": "Mr. Anshul Chimnani",
             "email": "anshul.chimnani@chmc.edu",
-            "designation": "Assistant Professor",
-            "course_name": "Data Warehousing",
-            "course_code": "DS302-DW",
-            "credits": 4,
-            "semester": 5
+            "username": "anshul.chimnani",
+            "designation": "Assistant Professor"
         },
         {
+            "id_str": "FAC-CHMC-DS-03",
             "name": "Miss Kalyani Patil",
             "email": "kalyani.patil@chmc.edu",
-            "designation": "Assistant Professor",
-            "course_name": "Design and Analysis of Algorithms",
-            "course_code": "DS303-DAA",
-            "credits": 4,
-            "semester": 5
+            "username": "kalyani.patil",
+            "designation": "Assistant Professor"
+        }
+    ],
+    "sy_curriculum": [
+        # Miss Razia Khan's subjects
+        {
+            "faculty_name": "Miss Razia Khan",
+            "course_name": "Data Mining (Theory)",
+            "course_code": "DS201-DM-TH",
+            "type": "Theory",
+            "room": "LH-201",
+            "days": ["Monday", "Wednesday"],
+            "credits": 3,
+            "semester": 3
+        },
+        {
+            "faculty_name": "Miss Razia Khan",
+            "course_name": "Data Mining (Practical)",
+            "course_code": "DS201-DM-PR",
+            "type": "Practical",
+            "room": "DS-LAB-1",
+            "days": ["Friday"],
+            "credits": 2,
+            "semester": 3
+        },
+        {
+            "faculty_name": "Miss Razia Khan",
+            "course_name": "Linear Algebra",
+            "course_code": "DS202-LA",
+            "type": "Theory",
+            "room": "LH-201",
+            "days": ["Tuesday", "Thursday"],
+            "credits": 3,
+            "semester": 3
+        },
+        {
+            "faculty_name": "Miss Razia Khan",
+            "course_name": "FOR - Foundations of Research (Theory)",
+            "course_code": "DS203-FOR-TH",
+            "type": "Theory",
+            "room": "LH-201",
+            "days": ["Monday", "Thursday"],
+            "credits": 3,
+            "semester": 3
+        },
+        # Mr. Anshul Chimnani's subjects
+        {
+            "faculty_name": "Mr. Anshul Chimnani",
+            "course_name": "Data Warehousing",
+            "course_code": "DS204-DW",
+            "type": "Theory",
+            "room": "LH-202",
+            "days": ["Tuesday", "Thursday", "Friday"],
+            "credits": 3,
+            "semester": 3
+        },
+        {
+            "faculty_name": "Mr. Anshul Chimnani",
+            "course_name": "FOR - Foundations of Research (Practical)",
+            "course_code": "DS203-FOR-PR",
+            "type": "Practical",
+            "room": "DS-LAB-1",
+            "days": ["Wednesday"],
+            "credits": 2,
+            "semester": 3
+        },
+        # Miss Kalyani Patil's subjects
+        {
+            "faculty_name": "Miss Kalyani Patil",
+            "course_name": "Design and Analysis of Algorithms (Theory)",
+            "course_code": "DS205-DAA-TH",
+            "type": "Theory",
+            "room": "LH-202",
+            "days": ["Monday", "Wednesday"],
+            "credits": 3,
+            "semester": 3
+        },
+        {
+            "faculty_name": "Miss Kalyani Patil",
+            "course_name": "Design and Analysis of Algorithms (Practical)",
+            "course_code": "DS205-DAA-PR",
+            "type": "Practical",
+            "room": "DS-LAB-1",
+            "days": ["Thursday"],
+            "credits": 2,
+            "semester": 3
         }
     ],
     "students": [
@@ -73,18 +169,18 @@ COLLEGE_CONFIG = {
     ]
 }
 
-ROOMS = ["DS-LAB-1", "LH-201", "LH-202"]
-DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 TIME_SLOTS = [
     (time(9, 0), time(10, 0)),
     (time(10, 15), time(11, 15)),
     (time(11, 30), time(12, 30)),
+    (time(13, 0), time(14, 0)),
+    (time(14, 15), time(16, 15))  # Practical Slot (2 hrs)
 ]
 
 
 def seed_chmc_academics(session: Session) -> Dict[str, list]:
-    """Populates Smt. C.H.M. College hierarchy, faculty, courses, and 5 students."""
-    print("[DATA GEN] Seeding Smt. C.H.M. College (Data Science Department)...")
+    """Populates Smt. C.H.M. College hierarchy, Second Year curriculum, and 5 students."""
+    print("[DATA GEN] Seeding Smt. C.H.M. College (Second Year Data Science Department)...")
 
     # 1. University
     uni = session.query(University).filter_by(code=COLLEGE_CONFIG["university_code"]).first()
@@ -116,65 +212,66 @@ def seed_chmc_academics(session: Session) -> Dict[str, list]:
         session.add(dept)
         session.flush()
 
-    # 4. Faculty & Courses
+    # 4. Faculty Members
+    faculty_by_name = {}
     all_faculty = []
-    all_courses = []
-    all_sessions = []
-
-    for idx, f_info in enumerate(COLLEGE_CONFIG["faculty_subjects"]):
-        fac_id = f"FAC-CHMC-DS-{idx+1:02d}"
-        fac = session.query(Faculty).filter_by(faculty_id_str=fac_id).first()
+    for f_info in COLLEGE_CONFIG["faculty_members"]:
+        fac = session.query(Faculty).filter_by(faculty_id_str=f_info["id_str"]).first()
         if not fac:
             fac = Faculty(
                 department_id=dept.id,
-                faculty_id_str=fac_id,
+                faculty_id_str=f_info["id_str"],
                 full_name=f_info["name"],
                 email=f_info["email"],
                 designation=f_info["designation"]
             )
             session.add(fac)
             session.flush()
+        faculty_by_name[f_info["name"]] = fac
         all_faculty.append(fac)
 
-        # Course
-        course = session.query(Course).filter_by(course_code=f_info["course_code"]).first()
+    # 5. Courses & Timetable Sessions (Second Year Curriculum)
+    all_courses = []
+    all_sessions = []
+
+    for idx, c_info in enumerate(COLLEGE_CONFIG["sy_curriculum"]):
+        course = session.query(Course).filter_by(course_code=c_info["course_code"]).first()
         if not course:
             course = Course(
                 department_id=dept.id,
-                course_name=f_info["course_name"],
-                course_code=f_info["course_code"],
-                credits=f_info["credits"],
-                semester=f_info["semester"],
+                course_name=c_info["course_name"],
+                course_code=c_info["course_code"],
+                credits=c_info["credits"],
+                semester=c_info["semester"],
                 minimum_attendance_pct=75.0
             )
             session.add(course)
             session.flush()
         all_courses.append(course)
 
-        # Timetable Sessions (3 sessions per week per course)
-        assigned_days = ["Monday", "Wednesday", "Friday"] if idx == 0 else (["Tuesday", "Thursday", "Friday"] if idx == 1 else ["Monday", "Tuesday", "Thursday"])
-        room = ROOMS[idx % len(ROOMS)]
-        slot = TIME_SLOTS[idx % len(TIME_SLOTS)]
+        assigned_fac = faculty_by_name.get(c_info["faculty_name"])
+        room = c_info["room"]
+        slot = TIME_SLOTS[4] if c_info["type"] == "Practical" else TIME_SLOTS[idx % 4]
 
-        for day in assigned_days:
+        for day in c_info["days"]:
             session_obj = session.query(TimetableSession).filter_by(
                 course_id=course.id, day_of_week=day, start_time=slot[0]
             ).first()
             if not session_obj:
                 session_obj = TimetableSession(
                     course_id=course.id,
-                    faculty_id=fac.id,
+                    faculty_id=assigned_fac.id if assigned_fac else all_faculty[0].id,
                     room_number=room,
                     day_of_week=day,
                     start_time=slot[0],
                     end_time=slot[1],
-                    session_type="Lab" if "LAB" in room else "Lecture"
+                    session_type=c_info["type"]
                 )
                 session.add(session_obj)
                 session.flush()
             all_sessions.append(session_obj)
 
-    # 5. Exactly 5 Students
+    # 6. Exactly 5 Students (Preserving existing student accounts)
     all_students = []
     for s_info in COLLEGE_CONFIG["students"]:
         student = session.query(Student).filter_by(student_id_str=s_info["roll_no"]).first()
@@ -185,7 +282,7 @@ def seed_chmc_academics(session: Session) -> Dict[str, list]:
                 full_name=s_info["name"],
                 email=s_info["email"],
                 batch_year=2024,
-                semester=5,
+                semester=3,  # Second Year (Sem 3)
                 rfid_card_id=f"RFID-{s_info['roll_no'][-6:]}"
             )
             session.add(student)
@@ -193,7 +290,7 @@ def seed_chmc_academics(session: Session) -> Dict[str, list]:
         all_students.append(student)
 
     session.commit()
-    print(f"[DATA GEN] Successfully seeded Smt. C.H.M. College: {len(all_students)} students, {len(all_courses)} courses, {len(all_faculty)} faculty.")
+    print(f"[DATA GEN] Successfully seeded Second Year Data Science: {len(all_students)} students, {len(all_courses)} course units, {len(all_faculty)} faculty.")
     return {
         "students": all_students,
         "courses": all_courses,
@@ -206,8 +303,8 @@ def seed_chmc_academics(session: Session) -> Dict[str, list]:
 
 
 def seed_chmc_user_accounts(session: Session):
-    """Seeds official profiles for Principal Manju Lalwani Pathak, Coordinator Shiji Johnson, 3 Faculty, and 5 Students."""
-    print("[DATA GEN] Seeding Smt. C.H.M. College User Profiles (Principal, Coordinator, Faculty, Students)...")
+    """Seeds official profiles for Principal, Coordinator, 3 Faculty, and 5 Students."""
+    print("[DATA GEN] Seeding Smt. C.H.M. College User Profiles...")
 
     uni = session.query(University).filter_by(code=COLLEGE_CONFIG["university_code"]).first()
     dept = session.query(Department).filter_by(dept_code=COLLEGE_CONFIG["dept_code"]).first()
@@ -307,20 +404,18 @@ def generate_chmc_attendance_stream(session: Session, weeks: int = 8) -> int:
             for student in students:
                 base_prob = student_archetypes.get(student.student_id_str, 0.80)
 
-                # Friday slump effect
                 if day_name == "Friday":
                     base_prob -= 0.08
 
-                # Determine if student attends
                 if random.random() < base_prob:
-                    # 90% scan on time, 10% late
                     is_late = random.random() < 0.10
                     offset_min = random.randint(11, 20) if is_late else random.randint(-5, 8)
                     
-                    scan_dt = datetime.combine(
-                        current_date, 
-                        datetime.strptime(str(sess.start_time), "%H:%M:%S").time()
-                    ) + timedelta(minutes=offset_min)
+                    s_time = sess.start_time
+                    if isinstance(s_time, str):
+                        s_time = datetime.strptime(s_time.split(".")[0], "%H:%M:%S").time()
+
+                    scan_dt = datetime.combine(current_date, s_time) + timedelta(minutes=offset_min)
 
                     raw_log = RawAttendanceLog(
                         raw_device_id=f"DEV-{sess.room_number}",
@@ -349,14 +444,12 @@ def generate_chmc_attendance_stream(session: Session, weeks: int = 8) -> int:
     return total_raw_records
 
 
-# Aliases for pipeline compatibility
 seed_hierarchy_and_academics = seed_chmc_academics
 seed_user_accounts = seed_chmc_user_accounts
 generate_raw_attendance_stream = generate_chmc_attendance_stream
 
 
 def run_full_seed():
-    """Drops old data and seeds complete Smt. C.H.M. College environment."""
     drop_db()
     init_db()
     with get_db_session() as session:
