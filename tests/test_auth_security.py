@@ -70,15 +70,15 @@ def test_argon2id_password_hashing():
 
 
 def test_primary_login_success():
-    """Validates primary login for registered student (Captain)."""
+    """Validates primary login for registered student (Parth Salunke)."""
     response = client.post("/api/v1/auth/login", json={
-        "identifier": "captain.ds@chmc.edu",
+        "identifier": "parthsalunke2306@gmail.com",
         "password": "CHMC@2026!",
         "device_fingerprint": "DEV-TEST-001"
     })
     assert response.status_code == 200
     data = response.json()
-    assert data["email"] == "captain.ds@chmc.edu"
+    assert data["email"] == "parthsalunke2306@gmail.com"
     assert data["role"] == "STUDENT"
     assert "token" in data
     assert "session_token" in data
@@ -87,7 +87,7 @@ def test_primary_login_success():
 def test_primary_login_invalid_password():
     """Validates that invalid password returns 401 and does not expose internal errors."""
     response = client.post("/api/v1/auth/login", json={
-        "identifier": "captain.ds@chmc.edu",
+        "identifier": "parthsalunke2306@gmail.com",
         "password": "IncorrectPassword123!",
         "device_fingerprint": "DEV-TEST-001"
     })
@@ -286,7 +286,7 @@ def test_logout_all_devices():
 def test_student_forbidden_from_admin_audit_logs():
     """Ensures students cannot access administrative audit logs."""
     login_resp = client.post("/api/v1/auth/login", json={
-        "identifier": "captain.ds@chmc.edu",
+        "identifier": "parthsalunke2306@gmail.com",
         "password": "CHMC@2026!"
     })
     student_token = login_resp.json()["token"]
