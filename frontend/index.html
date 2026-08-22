@@ -1136,19 +1136,36 @@
             <span id="kioskRoomTag" class="text-[9px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.2 rounded">E-104</span>
           </div>
 
-          <!-- Rotating Dynamic QR Code -->
-          <div class="p-2.5 bg-white rounded-2xl inline-block shadow-xl">
-            <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CHMC-DS-Token-582914" class="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-lg" alt="Dynamic QR">
-            <div class="text-[10px] font-mono text-slate-700 mt-1 font-semibold">
-              ⏳ Rotates in: <span id="kioskTimer" class="text-purple-600 font-bold">8s</span>
+          <!-- Rotating Dynamic QR Code with Circular Progress Countdown Ring -->
+          <div class="p-3.5 bg-white rounded-3xl inline-block shadow-2xl border-4 border-slate-100/20 relative">
+            <div class="relative inline-block">
+              <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=CHMC-DS-Token-582914" class="w-36 h-36 sm:w-44 sm:h-44 mx-auto rounded-2xl" alt="Dynamic Dynamic QR">
+            </div>
+
+            <!-- Integrated SVG Circular Countdown HUD -->
+            <div class="flex items-center justify-center space-x-2 mt-2 pt-2 border-t border-slate-100">
+              <div class="relative flex items-center justify-center">
+                <svg class="w-7 h-7 transform -rotate-90">
+                  <circle cx="14" cy="14" r="11" stroke="#E2E8F0" stroke-width="2.5" fill="transparent" />
+                  <circle id="kioskTimerRing" cx="14" cy="14" r="11" stroke="#2563EB" stroke-width="2.5" stroke-dasharray="69.1" stroke-dashoffset="0" stroke-linecap="round" fill="transparent" class="transition-all duration-200 ease-linear" />
+                </svg>
+                <span id="kioskTimer" class="absolute text-[9px] font-mono font-extrabold text-blue-700">8s</span>
+              </div>
+              <span class="text-[10px] font-mono text-slate-700 font-semibold">Dynamic TOTP Stream</span>
             </div>
           </div>
 
-          <!-- Rolling PIN HUD -->
-          <div class="p-2.5 rounded-xl bg-gradient-to-tr from-purple-950 to-slate-900 border border-emerald-500/40">
-            <span class="text-[8px] font-mono text-slate-400 uppercase tracking-wider">Rolling 6-Digit TOTP Security PIN</span>
-            <div id="kioskPinDisplay" class="font-mono font-extrabold text-2xl sm:text-3xl text-emerald-400 tracking-[0.18em] my-0.5 pin-hud">582914</div>
-            <span class="text-[9px] font-mono text-emerald-400/80">Refreshes every 8s • <span id="kioskGeofenceTag">20m</span> Perimeter</span>
+          <!-- Rolling PIN HUD (High-Contrast Back-Row Legibility) -->
+          <div class="p-3 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-950 border-2 border-emerald-500/50 shadow-xl">
+            <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 uppercase tracking-wider mb-0.5">
+              <span>Back-Row Fallback PIN</span>
+              <span class="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/30">6-DIGIT TOTP</span>
+            </div>
+            <div id="kioskPinDisplay" class="font-mono font-black text-3xl sm:text-4xl text-emerald-400 tracking-[0.22em] my-1 pin-hud">582914</div>
+            <div class="flex items-center justify-between text-[9px] font-mono text-emerald-400/90 pt-0.5 border-t border-emerald-500/20">
+              <span>⏱️ Sync: 8s Window</span>
+              <span>📍 <span id="kioskGeofenceTag">20m</span> Perimeter Lock</span>
+            </div>
           </div>
 
           <!-- Dynamic Faculty-Centric Geofence Controller -->
@@ -3456,6 +3473,15 @@
       const timerEl = document.getElementById('kioskTimer');
       if (timerEl) timerEl.innerText = `${secondsRemaining}s`;
 
+      const timerRing = document.getElementById('kioskTimerRing');
+      if (timerRing) {
+        // Circumference for r=11 is 2 * PI * 11 = 69.115
+        const circumference = 69.1;
+        const progressFraction = (8000 - msIntoSlot) / 8000;
+        const offset = circumference * (1 - progressFraction);
+        timerRing.style.strokeDashoffset = offset.toFixed(1);
+      }
+
       const pinDisplay = document.getElementById('kioskPinDisplay');
       if (pinDisplay && pinDisplay.innerText !== currentPin) {
         pinDisplay.innerText = currentPin;
@@ -3463,7 +3489,7 @@
 
       const kioskQr = document.getElementById('kioskQrImage');
       if (kioskQr && !kioskQr.src.includes(`CHMC-DS-Token-${currentPin}`)) {
-        kioskQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CHMC-DS-Token-${currentPin}`;
+        kioskQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=CHMC-DS-Token-${currentPin}`;
       }
     }
 
