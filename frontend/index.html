@@ -11,6 +11,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- HTML5-QRCode Scanner Library -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <!-- Google Fonts: Inter & Geist Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,16 +68,43 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
     .scanner-laser {
-      background: linear-gradient(180deg, rgba(168, 85, 247, 0) 0%, rgba(16, 185, 129, 0.8) 50%, rgba(168, 85, 247, 0) 100%);
-      animation: scan 2.5s ease-in-out infinite;
+      background: linear-gradient(180deg, rgba(168, 85, 247, 0) 0%, rgba(16, 185, 129, 0.9) 50%, rgba(168, 85, 247, 0) 100%);
+      animation: scan 2.2s ease-in-out infinite;
     }
     @keyframes scan {
-      0%, 100% { top: 5%; }
-      50% { top: 90%; }
+      0%, 100% { top: 6%; }
+      50% { top: 88%; }
     }
     .pin-hud {
       text-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
     }
+    /* HTML5-QRCode Custom Viewport Styling */
+    #reader {
+      width: 100% !important;
+      border: none !important;
+      background: #000 !important;
+      position: relative !important;
+    }
+    #reader video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      border-radius: 0.75rem !important;
+    }
+    #reader img[alt="Info icon"], #reader img[alt="Camera based scan"] {
+      display: none !important;
+    }
+    #reader__scan_region {
+      border: none !important;
+      background: transparent !important;
+    }
+    #reader__dashboard {
+      display: none !important;
+    }
+    .scan-corner-tl { top: 8px; left: 8px; border-top: 3px solid #10B981; border-left: 3px solid #10B981; border-top-left-radius: 6px; }
+    .scan-corner-tr { top: 8px; right: 8px; border-top: 3px solid #10B981; border-right: 3px solid #10B981; border-top-right-radius: 6px; }
+    .scan-corner-bl { bottom: 8px; left: 8px; border-bottom: 3px solid #10B981; border-left: 3px solid #10B981; border-bottom-left-radius: 6px; }
+    .scan-corner-br { bottom: 8px; right: 8px; border-bottom: 3px solid #10B981; border-right: 3px solid #10B981; border-bottom-right-radius: 6px; }
     /* Mobile scrollbar smoothing */
     ::-webkit-scrollbar {
       width: 4px;
@@ -546,8 +575,10 @@
       <!-- Student Check-In & Scanner Layout -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-5">
         
-        <!-- Interactive Check-in Card -->
+        <!-- Interactive Check-in Card with Working Camera Scanner -->
         <div class="glass-panel p-3.5 sm:p-5 rounded-2xl space-y-3 neon-border">
+          
+          <!-- Header & Tri-Factor Shield Badge -->
           <div class="flex items-center justify-between border-b border-stitch-border pb-2">
             <h3 class="font-bold text-white text-xs sm:text-sm flex items-center">
               <i data-lucide="scan-face" class="w-4 h-4 text-purple-400 mr-1.5"></i>
@@ -556,13 +587,124 @@
             <span class="bg-purple-500/20 text-purple-300 text-[8px] sm:text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30">TRI-FACTOR SHIELD</span>
           </div>
 
-          <!-- Holographic Scanner Simulation (Compact Height on Mobile) -->
-          <div class="relative w-full h-28 sm:h-36 rounded-xl bg-slate-950/90 border border-purple-500/40 overflow-hidden flex flex-col items-center justify-center p-2">
-            <div class="absolute inset-0 scanner-laser pointer-events-none"></div>
-            <div class="w-20 h-20 sm:w-24 sm:h-24 border-2 border-dashed border-purple-400/60 rounded-xl flex items-center justify-center relative">
-              <i data-lucide="qr-code" class="w-10 h-10 sm:w-12 sm:h-12 text-purple-300/40 animate-pulse"></i>
+          <!-- Mode Toggle Tabs (Camera Live vs PIN Fallback) -->
+          <div class="flex items-center p-1 bg-stitch-surface rounded-xl border border-stitch-border gap-1">
+            <button id="tabScannerCamera" onclick="toggleCheckinMode('CAMERA')" class="flex-1 py-1.5 rounded-lg font-bold font-mono text-[10px] sm:text-xs transition duration-150 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-950/40 flex items-center justify-center space-x-1.5">
+              <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+              <span>📷 Camera Scanner</span>
+            </button>
+            <button id="tabScannerPin" onclick="toggleCheckinMode('PIN')" class="flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white font-mono font-bold text-[10px] sm:text-xs transition duration-150 flex items-center justify-center space-x-1.5">
+              <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
+              <span>🔢 Fallback PIN</span>
+            </button>
+          </div>
+
+          <!-- 1. LIVE CAMERA SCANNER VIEWPORT CONTAINER -->
+          <div id="studentScannerWrap" class="space-y-2.5">
+            
+            <!-- Secure Context Warning Banner (if non-HTTPS) -->
+            <div id="secureContextNotice" class="hidden p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-mono flex items-start space-x-1.5">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5"></i>
+              <span><b>Secure Context Notice:</b> WebRTC Camera APIs require HTTPS or localhost. If testing over LAN, ensure HTTPS or use Fallback PIN mode.</span>
             </div>
-            <p class="text-[9px] sm:text-[10px] font-mono text-purple-300 mt-1 z-10">Point Camera at Projector</p>
+
+            <!-- Scanner Status HUD Header -->
+            <div class="flex items-center justify-between text-[10px] font-mono">
+              <div id="scannerStatusBadge" class="bg-slate-800/80 text-slate-400 px-2 py-0.5 rounded border border-stitch-border flex items-center">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-500 mr-1.5"></span>
+                <span>● READY TO INITIALIZE</span>
+              </div>
+              <span class="text-slate-400 text-[9px]">Target: Projector QR Screen</span>
+            </div>
+
+            <!-- Permission Prompt Screen (shown if not started) -->
+            <div id="cameraPermPrompt" class="relative w-full h-36 sm:h-44 rounded-xl bg-slate-950/90 border border-purple-500/30 flex flex-col items-center justify-center p-3 text-center space-y-2">
+              <div class="h-10 w-10 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-inner">
+                <i data-lucide="camera" class="w-5 h-5 text-purple-400"></i>
+              </div>
+              <div class="space-y-0.5">
+                <p class="text-xs font-bold text-white">Enable Camera Access</p>
+                <p class="text-[9px] sm:text-[10px] text-slate-400 max-w-xs">Scan the live 8-second rotating QR code projected in classroom.</p>
+              </div>
+              <button onclick="startCameraScanner()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white font-bold font-mono px-3.5 py-1.5 rounded-xl text-[11px] shadow-lg shadow-purple-900/40 flex items-center space-x-1.5 transition">
+                <i data-lucide="scan" class="w-3.5 h-3.5"></i>
+                <span>OPEN CAMERA VIEWPORT</span>
+              </button>
+            </div>
+
+            <!-- Active Live Video Viewport (Hidden until camera starts) -->
+            <div id="scannerLiveView" class="hidden relative w-full rounded-xl bg-black overflow-hidden border border-purple-500/40 shadow-inner">
+              
+              <!-- Video Viewport Container for html5-qrcode -->
+              <div id="reader" class="w-full min-h-[160px] sm:min-h-[190px]"></div>
+
+              <!-- Overlaid HUD Targeting Reticle -->
+              <div class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+                <!-- Laser Scanning Line -->
+                <div class="absolute inset-x-4 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent scanner-laser"></div>
+                
+                <!-- 4 Corner Brackets -->
+                <div class="w-28 h-28 sm:w-36 sm:h-36 relative border border-emerald-400/20 rounded-xl">
+                  <div class="absolute w-4 h-4 scan-corner-tl"></div>
+                  <div class="absolute w-4 h-4 scan-corner-tr"></div>
+                  <div class="absolute w-4 h-4 scan-corner-bl"></div>
+                  <div class="absolute w-4 h-4 scan-corner-br"></div>
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-[8px] font-mono text-emerald-400/60 uppercase tracking-widest">AIM AT QR</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Scan Success Green Flash Overlay -->
+              <div id="scanSuccessFlash" class="absolute inset-0 bg-emerald-500/30 pointer-events-none z-20 opacity-0 transition-opacity duration-200 flex items-center justify-center">
+                <div class="bg-emerald-950/90 border border-emerald-400 text-emerald-300 font-mono font-bold text-xs px-3 py-1.5 rounded-xl shadow-xl flex items-center space-x-1.5">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+                  <span>QR DECODED INSTANTLY!</span>
+                </div>
+              </div>
+
+              <!-- Viewport Overlay Controls (Bottom Bar) -->
+              <div class="absolute bottom-2 inset-x-2 z-20 flex items-center justify-between pointer-events-auto">
+                <button type="button" onclick="switchCameraDevice()" title="Switch Camera" class="px-2 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-200 text-[10px] font-mono border border-slate-700/60 flex items-center space-x-1 backdrop-blur-sm shadow">
+                  <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                  <span>Flip</span>
+                </button>
+                <button type="button" id="torchBtn" onclick="toggleTorch()" title="Toggle Torch" class="px-2 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-200 text-[10px] font-mono border border-slate-700/60 flex items-center space-x-1 backdrop-blur-sm shadow">
+                  <i data-lucide="zap" class="w-3 h-3"></i>
+                  <span>Torch</span>
+                </button>
+                <button type="button" onclick="stopCameraScanner()" title="Pause Camera" class="px-2 py-1 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-300 text-[10px] font-mono border border-rose-800/60 flex items-center space-x-1 backdrop-blur-sm shadow">
+                  <i data-lucide="pause" class="w-3 h-3"></i>
+                  <span>Pause</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Error Banner -->
+            <div id="scannerErrorBanner" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[10px] font-mono flex items-start space-x-1.5">
+              <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5"></i>
+              <span id="scannerErrorMsg"></span>
+            </div>
+
+            <!-- Last Scanned Token Feed Indicator -->
+            <div id="scannedTokenFeed" class="hidden p-1.5 rounded-lg bg-stitch-surface border border-emerald-500/30 text-[10px] font-mono text-emerald-300 flex items-center justify-between">
+              <span class="flex items-center"><i data-lucide="qr-code" class="w-3.5 h-3.5 mr-1 text-emerald-400"></i> Scanned: <b id="scannedTokenVal" class="ml-1 text-white">CHMC-DS-Token-8492</b></span>
+              <span class="text-emerald-400 text-[9px] bg-emerald-500/20 px-1.5 py-0.2 rounded font-bold">AUTO-VERIFIED</span>
+            </div>
+
+          </div>
+
+          <!-- 2. MANUAL FALLBACK PIN CONTAINER (Hidden by default in Camera Mode) -->
+          <div id="studentManualPinWrap" class="space-y-2 hidden">
+            <div class="space-y-0.5">
+              <div class="flex justify-between items-center text-[10px] font-mono">
+                <span class="text-slate-400">Classroom 4-Digit PIN</span>
+                <span class="text-emerald-400">Syncs every 8s</span>
+              </div>
+              <input type="text" id="studentPinInput" value="8492" maxlength="4" placeholder="e.g. 8492" class="w-full bg-stitch-surface border border-emerald-500/40 rounded-xl py-2 px-3 text-center font-mono font-extrabold text-xl text-emerald-400 tracking-[0.35em] focus:outline-none focus:border-emerald-400">
+            </div>
+            <p class="text-[9px] font-mono text-slate-400">Enter the 4-digit PIN currently projected on the classroom screen if your camera is unavailable.</p>
           </div>
 
           <!-- Active Second Year Session Dropdown -->
@@ -601,17 +743,8 @@
             </div>
           </div>
 
-          <!-- Security PIN -->
-          <div class="space-y-0.5">
-            <div class="flex justify-between items-center text-[10px] font-mono">
-              <span class="text-slate-400">Rolling PIN</span>
-              <span class="text-emerald-400">Auto-Synced</span>
-            </div>
-            <input type="text" id="studentPinInput" value="8492" maxlength="4" class="w-full bg-stitch-surface border border-emerald-500/40 rounded-xl py-1.5 px-2 text-center font-mono font-extrabold text-lg sm:text-xl text-emerald-400 tracking-[0.3em] focus:outline-none">
-          </div>
-
-          <!-- Submit Button -->
-          <button onclick="submitStudentCheckIn()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-purple-900/40 flex items-center justify-center space-x-1.5 text-xs font-mono">
+          <!-- Submit Button (For Manual PIN or instant trigger) -->
+          <button id="btnSubmitCheckIn" onclick="submitStudentCheckIn()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-purple-900/40 flex items-center justify-center space-x-1.5 text-xs font-mono transition duration-150">
             <i data-lucide="shield-check" class="w-4 h-4"></i>
             <span>SUBMIT LIVE CHECK-IN</span>
           </button>
@@ -1390,6 +1523,7 @@
     }
 
     function handleLogout() {
+      stopCameraScanner();
       localStorage.removeItem('uniattend_360_session');
       activeSession = null;
       openLoginModal();
@@ -1492,25 +1626,33 @@
 
       if (session.role === 'STUDENT') {
         document.getElementById('viewStudent').classList.remove('hidden');
-      } else if (session.role.startsWith('TEACHER')) {
-        document.getElementById('viewTeacher').classList.remove('hidden');
-        
-        const unitSelector = document.getElementById('teacherUnitSelector');
-        unitSelector.innerHTML = '';
-        if (session.units && session.units.length > 0) {
-          session.units.forEach((u, i) => {
-            const opt = document.createElement('option');
-            opt.value = JSON.stringify(u);
-            opt.innerText = `${u.title} (${u.room})`;
-            if (u.isDefault || i === 0) opt.selected = true;
-            unitSelector.appendChild(opt);
-          });
-          handleTeacherUnitChange(unitSelector.value);
+        // Auto-initialize camera viewport when in Camera mode
+        const tabCam = document.getElementById('tabScannerCamera');
+        if (tabCam && !tabCam.classList.contains('text-slate-400')) {
+          startCameraScanner();
         }
-      } else if (session.role === 'COORDINATOR') {
-        document.getElementById('viewCoordinator').classList.remove('hidden');
-      } else if (session.role === 'PRINCIPAL' || session.role === 'ADMIN') {
-        document.getElementById('viewPrincipal').classList.remove('hidden');
+      } else {
+        stopCameraScanner();
+        if (session.role.startsWith('TEACHER')) {
+          document.getElementById('viewTeacher').classList.remove('hidden');
+          
+          const unitSelector = document.getElementById('teacherUnitSelector');
+          unitSelector.innerHTML = '';
+          if (session.units && session.units.length > 0) {
+            session.units.forEach((u, i) => {
+              const opt = document.createElement('option');
+              opt.value = JSON.stringify(u);
+              opt.innerText = `${u.title} (${u.room})`;
+              if (u.isDefault || i === 0) opt.selected = true;
+              unitSelector.appendChild(opt);
+            });
+            handleTeacherUnitChange(unitSelector.value);
+          }
+        } else if (session.role === 'COORDINATOR') {
+          document.getElementById('viewCoordinator').classList.remove('hidden');
+        } else if (session.role === 'PRINCIPAL' || session.role === 'ADMIN') {
+          document.getElementById('viewPrincipal').classList.remove('hidden');
+        }
       }
 
       renderDigitalRoster();
@@ -1544,19 +1686,278 @@
       handleTeacherRadiusChange(val);
     }
 
-    function submitStudentCheckIn() {
+    // ==============================================
+    // CAMERA SCANNER CONTROLLER (html5-qrcode integration)
+    // ==============================================
+    let html5QrCode = null;
+    let currentCameraFacingMode = "environment"; // rear camera default for scanning projector
+    let isScannerActive = false;
+    let isTorchActive = false;
+    let lastScannedTimestamp = 0;
+
+    function playScanChime() {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        const audioCtx = new AudioContextClass();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 tone
+        osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.12); // A6 chime
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      } catch (e) {}
+    }
+
+    async function startCameraScanner() {
+      const permPrompt = document.getElementById('cameraPermPrompt');
+      const liveView = document.getElementById('scannerLiveView');
+      const statusBadge = document.getElementById('scannerStatusBadge');
+      const errorBox = document.getElementById('scannerErrorBanner');
+
+      if (errorBox) errorBox.classList.add('hidden');
+
+      // Check Secure Context for WebRTC Camera Access
+      if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+        const secNotice = document.getElementById('secureContextNotice');
+        if (secNotice) secNotice.classList.remove('hidden');
+      }
+
+      // Check MediaDevices support
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showScannerError("MediaDevices / Camera API is not supported in this browser or insecure context. Please use the Fallback PIN mode.");
+        return;
+      }
+
+      try {
+        if (statusBadge) {
+          statusBadge.className = "bg-amber-500/20 text-amber-300 text-[8px] sm:text-[9px] font-mono font-bold px-2 py-0.5 rounded border border-amber-500/40 flex items-center";
+          statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping mr-1.5"></span> REQUESTING CAMERA...`;
+        }
+
+        if (html5QrCode) {
+          try { await html5QrCode.stop(); } catch (e) {}
+          html5QrCode = null;
+        }
+
+        if (typeof Html5Qrcode === 'undefined') {
+          showScannerError("Html5Qrcode scanner library is loading. Please check internet connection or switch to Fallback PIN.");
+          return;
+        }
+
+        html5QrCode = new Html5Qrcode("reader");
+
+        const config = {
+          fps: 15,
+          qrbox: (viewfinderWidth, viewfinderHeight) => {
+            const minDim = Math.min(viewfinderWidth, viewfinderHeight);
+            return { width: Math.max(140, Math.floor(minDim * 0.7)), height: Math.max(140, Math.floor(minDim * 0.7)) };
+          },
+          aspectRatio: 1.333333
+        };
+
+        await html5QrCode.start(
+          { facingMode: currentCameraFacingMode },
+          config,
+          onQrCodeSuccess,
+          onQrCodeScanProgress
+        );
+
+        isScannerActive = true;
+        if (permPrompt) permPrompt.classList.add('hidden');
+        if (liveView) liveView.classList.remove('hidden');
+        if (statusBadge) {
+          statusBadge.className = "bg-emerald-500/20 text-emerald-300 text-[8px] sm:text-[9px] font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/40 flex items-center";
+          statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> SCANNER ACTIVE (15 FPS)`;
+        }
+      } catch (err) {
+        console.error("Camera scanner initialization error:", err);
+        let errMsg = "Camera access failed: " + (err.message || err);
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+          errMsg = "🔒 Camera permission was denied. Please allow camera permissions in your browser address bar, or use Fallback PIN mode.";
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+          errMsg = "📷 No camera hardware found on this device. Please use Fallback PIN mode.";
+        } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+          errMsg = "⚠️ Camera is busy or in use by another application. Close other camera apps and retry.";
+        }
+        showScannerError(errMsg);
+        if (statusBadge) {
+          statusBadge.className = "bg-rose-500/20 text-rose-300 text-[8px] sm:text-[9px] font-mono font-bold px-2 py-0.5 rounded border border-rose-500/40 flex items-center";
+          statusBadge.innerHTML = `⚠️ CAMERA BLOCKED`;
+        }
+      }
+    }
+
+    function onQrCodeScanProgress(scanProgress) {
+      // Continuous frame scan hook
+    }
+
+    function onQrCodeSuccess(decodedText, decodedResult) {
+      const now = Date.now();
+      if (now - lastScannedTimestamp < 2500) {
+        return; // Debounce 2.5s
+      }
+      lastScannedTimestamp = now;
+
+      playScanChime();
+      if (navigator.vibrate) navigator.vibrate([40, 20, 60]);
+
+      // Flash viewfinder UI
+      const flash = document.getElementById('scanSuccessFlash');
+      if (flash) {
+        flash.classList.remove('opacity-0');
+        flash.classList.add('opacity-100');
+        setTimeout(() => {
+          flash.classList.remove('opacity-100');
+          flash.classList.add('opacity-0');
+        }, 400);
+      }
+
+      // Extract PIN from QR text payload
+      let pin = "";
+      if (decodedText.startsWith("CHMC-DS-Token-")) {
+        pin = decodedText.replace("CHMC-DS-Token-", "").trim();
+      } else {
+        const match = decodedText.match(/\b\d{4}\b/);
+        if (match) pin = match[0];
+      }
+
+      const pinInput = document.getElementById('studentPinInput');
+      if (pinInput && pin) {
+        pinInput.value = pin;
+      }
+
+      // Update feed badge
+      const feedBox = document.getElementById('scannedTokenFeed');
+      const tokenVal = document.getElementById('scannedTokenVal');
+      if (feedBox && tokenVal) {
+        feedBox.classList.remove('hidden');
+        tokenVal.innerText = decodedText;
+      }
+
+      // Auto-submit attendance check-in immediately (< 300ms)
+      submitStudentCheckIn({ autoScanned: true, rawToken: decodedText, pin: pin });
+    }
+
+    async function stopCameraScanner() {
+      if (html5QrCode && isScannerActive) {
+        try {
+          await html5QrCode.stop();
+        } catch (e) {
+          console.warn("Error stopping camera stream:", e);
+        }
+        isScannerActive = false;
+      }
+      const liveView = document.getElementById('scannerLiveView');
+      const permPrompt = document.getElementById('cameraPermPrompt');
+      const statusBadge = document.getElementById('scannerStatusBadge');
+      if (liveView) liveView.classList.add('hidden');
+      if (permPrompt) permPrompt.classList.remove('hidden');
+      if (statusBadge) {
+        statusBadge.className = "bg-slate-700/40 text-slate-400 text-[8px] sm:text-[9px] font-mono font-bold px-2 py-0.5 rounded border border-stitch-border flex items-center";
+        statusBadge.innerHTML = `● SCANNER PAUSED`;
+      }
+    }
+
+    function toggleCheckinMode(mode) {
+      const btnCam = document.getElementById('tabScannerCamera');
+      const btnPin = document.getElementById('tabScannerPin');
+      const boxCam = document.getElementById('studentScannerWrap');
+      const boxPin = document.getElementById('studentManualPinWrap');
+
+      if (mode === 'CAMERA') {
+        btnCam.className = "flex-1 py-1.5 rounded-lg font-bold font-mono text-[10px] sm:text-xs transition duration-150 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-950/40 flex items-center justify-center space-x-1.5";
+        btnPin.className = "flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white font-mono font-bold text-[10px] sm:text-xs transition duration-150 flex items-center justify-center space-x-1.5";
+        boxCam.classList.remove('hidden');
+        boxPin.classList.add('hidden');
+        startCameraScanner();
+      } else {
+        btnPin.className = "flex-1 py-1.5 rounded-lg font-bold font-mono text-[10px] sm:text-xs transition duration-150 bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-950/40 flex items-center justify-center space-x-1.5";
+        btnCam.className = "flex-1 py-1.5 rounded-lg text-slate-400 hover:text-white font-mono font-bold text-[10px] sm:text-xs transition duration-150 flex items-center justify-center space-x-1.5";
+        boxPin.classList.remove('hidden');
+        boxCam.classList.add('hidden');
+        stopCameraScanner();
+      }
+      lucide.createIcons();
+    }
+
+    async function switchCameraDevice() {
+      currentCameraFacingMode = (currentCameraFacingMode === "environment") ? "user" : "environment";
+      await startCameraScanner();
+    }
+
+    async function toggleTorch() {
+      if (!html5QrCode || !isScannerActive) return;
+      try {
+        isTorchActive = !isTorchActive;
+        await html5QrCode.applyVideoConstraints({
+          advanced: [{ torch: isTorchActive }]
+        });
+        const btn = document.getElementById('torchBtn');
+        if (btn) {
+          btn.className = isTorchActive 
+            ? "px-2 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-[10px] font-mono border border-amber-400 flex items-center space-x-1 backdrop-blur-sm shadow"
+            : "px-2 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-200 text-[10px] font-mono border border-slate-700/60 flex items-center space-x-1 backdrop-blur-sm shadow";
+        }
+      } catch (e) {
+        console.warn("Torch not supported on this device/camera.");
+      }
+    }
+
+    function showScannerError(msg) {
+      const errorBox = document.getElementById('scannerErrorBanner');
+      const errorMsg = document.getElementById('scannerErrorMsg');
+      if (errorBox && errorMsg) {
+        errorMsg.innerText = msg;
+        errorBox.classList.remove('hidden');
+      }
+    }
+
+    function submitStudentCheckIn(scanContext) {
       const loc = document.querySelector('input[name="studentLoc"]:checked').value;
       const resBox = document.getElementById('checkInResult');
       const selectedCourse = document.getElementById('studentCourseSelect').value;
+      const pinInput = document.getElementById('studentPinInput');
+      const currentPin = (pinInput ? pinInput.value : "8492");
       resBox.classList.remove('hidden');
 
+      const isAuto = scanContext && scanContext.autoScanned;
+      const rawTok = scanContext && scanContext.rawToken ? scanContext.rawToken : `CHMC-DS-Token-${currentPin}`;
+
       if (loc === 'IN_CLASS') {
-        resBox.className = "p-2.5 rounded-xl text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/40";
-        resBox.innerHTML = `<b>✅ VERIFIED PRESENT!</b><br/>Tri-Factor checks passed: [${selectedCourse}] • GPS Distance: 6.8m (Classroom Perimeter: ${activeGeofenceRadius}m) • PIN Valid.`;
+        resBox.className = "p-3 rounded-xl text-[11px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/50 shadow-lg";
+        resBox.innerHTML = `
+          <div class="flex items-center space-x-1.5 font-bold text-emerald-200 mb-1">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+            <span>${isAuto ? '✅ AUTO-VERIFIED VIA CAMERA QR SCAN!' : '✅ VERIFIED PRESENT!'}</span>
+          </div>
+          <div class="space-y-0.5 text-[10px] text-emerald-300/90">
+            <div>• <b>Subject:</b> [${selectedCourse}]</div>
+            <div>• <b>Token / PIN:</b> <code class="bg-emerald-950/60 px-1 py-0.2 rounded border border-emerald-500/30 text-white">${rawTok}</code> (Freshness Verified)</div>
+            <div>• <b>GPS Geofence:</b> 6.8m (Classroom Perimeter: ${activeGeofenceRadius}m — Valid)</div>
+            <div>• <b>Hardware:</b> Bound Device Verified (No Proxy Detected)</div>
+          </div>
+        `;
       } else {
-        resBox.className = "p-2.5 rounded-xl text-[11px] font-mono bg-rose-500/10 text-rose-300 border border-rose-500/40";
-        resBox.innerHTML = `<b>🚨 PROXY ATTEMPT INTERCEPTED!</b><br/>GPS Geofence Failed: Location is 1.8 km away (Allowed: ${activeGeofenceRadius}m). Remote scan blocked.`;
+        resBox.className = "p-3 rounded-xl text-[11px] font-mono bg-rose-500/15 text-rose-300 border border-rose-500/50 shadow-lg";
+        resBox.innerHTML = `
+          <div class="flex items-center space-x-1.5 font-bold text-rose-200 mb-1">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i>
+            <span>🚨 PROXY ATTEMPT INTERCEPTED!</span>
+          </div>
+          <div class="space-y-0.5 text-[10px] text-rose-300/90">
+            <div>• <b>Violation:</b> GPS Geofence Check Failed</div>
+            <div>• <b>Distance:</b> 1.8 km away (Classroom Perimeter: ${activeGeofenceRadius}m)</div>
+            <div>• <b>Policy:</b> Remote photo scan / WhatsApp QR sharing is blocked.</div>
+          </div>
+        `;
       }
+      lucide.createIcons();
     }
 
     function updateSimulator(val) {
@@ -1662,16 +2063,28 @@
       countdown -= 1;
       if (countdown <= 0) {
         countdown = 8;
-        const pins = ["8492", "3174", "9052", "6621", "4810"];
+        const pins = ["8492", "3174", "9052", "6621", "4810", "7239", "5168"];
         const randomPin = pins[Math.floor(Math.random() * pins.length)];
         const pinDisplay = document.getElementById('kioskPinDisplay');
         if (pinDisplay) pinDisplay.innerText = randomPin;
         const studentPin = document.getElementById('studentPinInput');
         if (studentPin) studentPin.value = randomPin;
+        const kioskQr = document.getElementById('kioskQrImage');
+        if (kioskQr) kioskQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CHMC-DS-Token-${randomPin}`;
       }
       const timerEl = document.getElementById('kioskTimer');
       if (timerEl) timerEl.innerText = `${countdown}s`;
     }, 1000);
+
+    // Lifecycle clean-up hooks on tab change / window unload
+    window.addEventListener('beforeunload', () => {
+      stopCameraScanner();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopCameraScanner();
+      }
+    });
 
     function simulateScan() {
       alert("⚡ Simulated real-time scan events for the Data Science cohort!");
