@@ -142,6 +142,45 @@ class TimetableSession(Base):
     attendance_facts = relationship("FactAttendance", back_populates="session")
 
 
+class LectureSession(Base):
+    """
+    Specific dated lecture instance with lecture index budgeting (X of N allotted)
+    and real-time attendance lifecycle state machine (SCHEDULED, ACTIVE, PAUSED, COMPLETED).
+    """
+    __tablename__ = "lecture_sessions"
+
+    id = Column(String(100), primary_key=True)  # e.g., "LEC-DS201-20260823-14"
+    faculty_id = Column(Integer, ForeignKey("faculty.id"), nullable=True)
+    faculty_name = Column(String(150), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id"), nullable=True)
+    course_code = Column(String(50), nullable=False)  # e.g. "DS201-DM"
+    course_name = Column(String(150), nullable=False)  # e.g. "Data Mining (Theory)"
+    room_code = Column(String(50), nullable=False, default="E-104")
+    
+    # Scheduling & Index metadata
+    scheduled_date = Column(Date, nullable=False, default=date.today)
+    start_time = Column(String(20), nullable=False, default="09:00 AM")
+    end_time = Column(String(20), nullable=False, default="10:00 AM")
+    lecture_index = Column(Integer, nullable=False, default=1)  # e.g. 14
+    total_allotted_lectures = Column(Integer, nullable=False, default=30)  # e.g. 30
+    topic = Column(String(255), nullable=True)  # e.g. "Apriori Algorithm & Association Mining"
+    
+    # State Machine: SCHEDULED, ACTIVE, PAUSED, COMPLETED
+    session_status = Column(String(30), nullable=False, default="SCHEDULED")
+    
+    # Metrics
+    present_count = Column(Integer, default=0, nullable=False)
+    total_enrolled = Column(Integer, default=5, nullable=False)
+    geofence_radius_m = Column(Float, default=10.0, nullable=False)
+    
+    # Lifecycle Timestamps
+    created_at = Column(DateTime, default=datetime.now)
+    started_at = Column(DateTime, nullable=True)
+    paused_at = Column(DateTime, nullable=True)
+    resumed_at = Column(DateTime, nullable=True)
+    ended_at = Column(DateTime, nullable=True)
+
+
 # ==========================================
 # 3. BRONZE LAYER (RAW DEVICE SWIPE LOGS)
 # ==========================================

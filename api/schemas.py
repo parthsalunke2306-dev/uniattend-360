@@ -67,3 +67,52 @@ class RiskPredictionRequest(BaseModel):
     late_ratio: float = Field(default=0.30, example=0.30)
     max_absent_streak: int = Field(default=4, example=4)
     course_credits: int = Field(default=4, example=4)
+
+
+# ==========================================
+# LECTURE & LIFECYCLE SCHEMAS
+# ==========================================
+
+class CreateLectureRequest(BaseModel):
+    faculty_name: str = Field(default="Miss Razia Khan", example="Miss Razia Khan")
+    course_name: str = Field(..., example="Data Mining (Theory)")
+    course_code: str = Field(default="DS201-DM", example="DS201-DM")
+    room_code: str = Field(default="E-104", example="E-104")
+    scheduled_date: str = Field(..., example="2026-08-23")
+    start_time: str = Field(default="09:00 AM", example="09:00 AM")
+    end_time: str = Field(default="10:00 AM", example="10:00 AM")
+    lecture_index: int = Field(..., ge=1, example=14)
+    total_allotted_lectures: int = Field(default=30, ge=1, example=30)
+    topic: Optional[str] = Field(None, example="Frequent Itemset Mining & Apriori Algorithm")
+    geofence_radius_m: float = Field(default=10.0, example=10.0)
+    total_enrolled: int = Field(default=5, example=5)
+
+
+class LectureResponse(BaseModel):
+    id: str
+    faculty_name: str
+    course_name: str
+    course_code: str
+    room_code: str
+    scheduled_date: str
+    start_time: str
+    end_time: str
+    lecture_index: int
+    total_allotted_lectures: int
+    topic: Optional[str] = None
+    session_status: str
+    present_count: int
+    total_enrolled: int
+    geofence_radius_m: float
+    syllabus_progress_pct: float
+    created_at: Optional[str] = None
+    started_at: Optional[str] = None
+    paused_at: Optional[str] = None
+    resumed_at: Optional[str] = None
+    ended_at: Optional[str] = None
+
+
+class LifecycleActionRequest(BaseModel):
+    user_name: Optional[str] = Field(default=None, example="Miss Razia Khan")
+    role: Optional[str] = Field(default="TEACHER", example="TEACHER")
+

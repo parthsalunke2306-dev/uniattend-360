@@ -25,6 +25,7 @@ from database.models import (
 from database.db_manager import get_db_session, init_db
 from pipeline.anti_proxy_engine import anti_proxy_engine, DEFAULT_CLASSROOM_GEO
 from pipeline.auth_manager import ProfileManager, ROLE_DEFINITIONS
+from pipeline.lecture_manager import lecture_manager, STATUS_ACTIVE, STATUS_PAUSED, STATUS_SCHEDULED, STATUS_COMPLETED
 from pipeline.etl_pipeline import AttendanceETLPipeline
 from ml_engine.risk_predictor import AttendanceRiskModel
 from ml_engine.proxy_detector import ProxyAnomalyDetector
@@ -34,7 +35,8 @@ from reporting.pdf_reporter import PDFReportGenerator
 from reporting.automated_job import AutomatedReportingScheduler
 from api.schemas import (
     HealthResponse, ActiveTokenResponse, StudentCheckInRequest,
-    StudentCheckInResponse, SimulationRequest, SimulationResponse, RiskPredictionRequest
+    StudentCheckInResponse, SimulationRequest, SimulationResponse, RiskPredictionRequest,
+    CreateLectureRequest, LectureResponse, LifecycleActionRequest
 )
 from api.auth import auth_router
 
@@ -138,7 +140,112 @@ def get_academic_hierarchy():
 
 
 # ==========================================
-# 4. SMART CLASSROOM & ANTI-PROXY KIOSK
+# 4. LECTURE SCHEDULING & LIFECYCLE STATE MACHINE
+# ==========================================
+
+@app.post("/api/v1/lectures/create", response_model=LectureResponse, tags=["Lecture Lifecycle"])
+def create_lecture_session(req: CreateLectureRequest):
+    """
+    Creates a new lecture session with syllabus index budgeting (Lecture X of N allotted).
+    Initial state: SCHEDULED.
+    """
+    try:
+        lec = lecture_manager.create_lecture(
+            faculty_name=req.faculty_name,
+            course_name=req.course_name,
+            course_code=req.course_code,
+            room_code=req.room_code,
+            scheduled_date_str=req.scheduled_date,
+            start_time=req.start_time,
+            end_time=req.end_time,
+            lecture_index=req.lecture_index,
+            total_allotted_lectures=req.total_allotted_lectures,
+            topic=req.topic,
+            geofence_radius_m=req.geofence_radius_m,
+            total_enrolled=req.total_enrolled
+        )
+        return lec
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/api/v1/lectures/faculty", response_model=List[LectureResponse], tags=["Lecture Lifecycle"])
+def get_faculty_lectures(faculty_name: Optional[str] = Query(default=None)):
+    """Lists all past and upcoming lecture sessions, optionally filtered by faculty member."""
+    return lecture_manager.list_faculty_lectures(faculty_name=faculty_name)
+
+
+@app.get("/api/v1/lectures/{lecture_id}", response_model=LectureResponse, tags=["Lecture Lifecycle"])
+def get_lecture_details(lecture_id: str):
+    """Retrieves lecture metadata, current state (ACTIVE/PAUSED/SCHEDULED/COMPLETED), and present count."""
+    lec = lecture_manager.get_lecture(lecture_id)
+    if not lec:
+        raise HTTPException(status_code=404, detail=f"Lecture session '{lecture_id}' not found.")
+    return lec
+
+
+@app.post("/api/v1/lectures/{lecture_id}/attendance/start", response_model=LectureResponse, tags=["Lecture Lifecycle"])
+def start_lecture_attendance(lecture_id: str, req: Optional[LifecycleActionRequest] = None):
+    """
+    Transitions lecture to ACTIVE state.
+    Starts 8-second dynamic QR streaming and rolling 6-digit TOTP broadcast.
+    """
+    try:
+        user = req.user_name if req else None
+        return lecture_manager.start_attendance(lecture_id, triggering_user=user)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Lecture session '{lecture_id}' not found.")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/v1/lectures/{lecture_id}/attendance/pause", response_model=LectureResponse, tags=["Lecture Lifecycle"])
+def pause_lecture_attendance(lecture_id: str, req: Optional[LifecycleActionRequest] = None):
+    """
+    Transitions lecture to PAUSED state.
+    Freezes QR/PIN rotation with paused overlay and blocks student check-in submissions.
+    """
+    try:
+        user = req.user_name if req else None
+        return lecture_manager.pause_attendance(lecture_id, triggering_user=user)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Lecture session '{lecture_id}' not found.")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/v1/lectures/{lecture_id}/attendance/resume", response_model=LectureResponse, tags=["Lecture Lifecycle"])
+def resume_lecture_attendance(lecture_id: str, req: Optional[LifecycleActionRequest] = None):
+    """
+    Transitions lecture from PAUSED back to ACTIVE state.
+    Resumes dynamic token rotation and student verification acceptance.
+    """
+    try:
+        user = req.user_name if req else None
+        return lecture_manager.resume_attendance(lecture_id, triggering_user=user)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Lecture session '{lecture_id}' not found.")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/v1/lectures/{lecture_id}/attendance/stop", response_model=LectureResponse, tags=["Lecture Lifecycle"])
+def stop_lecture_attendance(lecture_id: str, req: Optional[LifecycleActionRequest] = None):
+    """
+    Transitions lecture to COMPLETED state.
+    Terminates the attendance session, locks final attendance count, and freezes roster.
+    """
+    try:
+        user = req.user_name if req else None
+        return lecture_manager.stop_attendance(lecture_id, triggering_user=user)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Lecture session '{lecture_id}' not found.")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+# ==========================================
+# 5. SMART CLASSROOM & ANTI-PROXY KIOSK
 # ==========================================
 
 @app.get("/api/v1/kiosk/token", response_model=ActiveTokenResponse, tags=["Anti-Proxy Kiosk"])
@@ -147,7 +254,7 @@ def get_active_kiosk_token(
     room_code: str = Query(default="LH-101")
 ):
     """
-    Generates a micro-rotating cryptographic dynamic QR token and 4-digit security PIN.
+    Generates a micro-rotating cryptographic dynamic QR token and 6-digit security PIN.
     Refreshes every 8 seconds.
     """
     token_data = anti_proxy_engine.generate_active_token(session_id=session_id, room_code=room_code)
@@ -166,12 +273,46 @@ def get_active_kiosk_token(
 @app.post("/api/v1/attendance/verify", response_model=StudentCheckInResponse, tags=["Anti-Proxy Kiosk"])
 def verify_student_checkin(req: StudentCheckInRequest):
     """
-    Validates a student check-in through all 4 Anti-Proxy security shields:
-      1. Cryptographic Token / PIN Freshness (within 8s TTL)
-      2. High-Precision Mobile GPS Geofence (<= 50m radius)
+    Validates a student check-in through lifecycle state validation and all 4 Anti-Proxy security shields:
+      0. Lifecycle State Enforcement (must be ACTIVE; PAUSED/SCHEDULED/COMPLETED are blocked)
+      1. Cryptographic Token / PIN Freshness (within 8s TTL + drift tolerance)
+      2. High-Precision Mobile GPS Geofence (<= 10m radius)
       3. Single-Device Hardware Binding (1 Phone = 1 Student)
       4. Duplicate Scan Prevention
     """
+    # 0. Check session lifecycle status
+    lifecycle_status = lecture_manager.get_lifecycle_status(req.session_id)
+    if lifecycle_status == STATUS_PAUSED:
+        return {
+            "status": "SESSION_PAUSED",
+            "is_success": False,
+            "is_proxy_blocked": False,
+            "distance_meters": 0.0,
+            "message": "Attendance is temporarily paused by the instructor.",
+            "failure_reason": "Attendance session is currently PAUSED. Submissions are temporarily blocked.",
+            "attack_type": None
+        }
+    elif lifecycle_status == STATUS_SCHEDULED:
+        return {
+            "status": "SESSION_NOT_STARTED",
+            "is_success": False,
+            "is_proxy_blocked": False,
+            "distance_meters": 0.0,
+            "message": "Attendance session has not been started yet by the instructor.",
+            "failure_reason": "Lecture session is SCHEDULED and not yet ACTIVE.",
+            "attack_type": None
+        }
+    elif lifecycle_status == STATUS_COMPLETED:
+        return {
+            "status": "SESSION_COMPLETED",
+            "is_success": False,
+            "is_proxy_blocked": False,
+            "distance_meters": 0.0,
+            "message": "Attendance session has ended and locked.",
+            "failure_reason": "Attendance session is COMPLETED. No further check-ins accepted.",
+            "attack_type": None
+        }
+
     result = anti_proxy_engine.verify_student_checkin(
         session_id=req.session_id,
         student_id_str=req.student_id_str,
@@ -182,6 +323,9 @@ def verify_student_checkin(req: StudentCheckInRequest):
         device_fingerprint=req.device_fingerprint,
         room_code=req.room_code
     )
+
+    if result.get("is_success"):
+        lecture_manager.update_present_count(req.session_id, 1)
 
     return {
         "status": result["status"],

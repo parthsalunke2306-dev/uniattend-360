@@ -449,6 +449,113 @@
 
 
   <!-- ============================================== -->
+  <!-- LECTURE SCHEDULING & CREATION MODAL -->
+  <!-- ============================================== -->
+  <div id="createLectureModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-purple-500/40 shadow-2xl space-y-3.5 relative max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-stitch-border pb-2.5">
+        <div class="flex items-center space-x-2">
+          <div class="h-8 w-8 rounded-xl bg-purple-600/30 border border-purple-500/50 flex items-center justify-center text-purple-300">
+            <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white">Schedule New Lecture Session</h3>
+            <p class="text-[10px] text-slate-400 font-mono">Lecture Index Budgeting (X of N) & Attendance Provisioning</p>
+          </div>
+        </div>
+        <button onclick="closeCreateLectureModal()" class="p-1.5 rounded-lg bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleCreateLectureSubmit(event)" class="space-y-3 text-left">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <!-- Scheduled Date -->
+          <div class="space-y-0.5">
+            <label class="text-[10px] font-mono text-slate-400">Scheduled Date</label>
+            <input type="date" id="lecDate" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+
+          <!-- Room / Venue -->
+          <div class="space-y-0.5">
+            <label class="text-[10px] font-mono text-slate-400">Classroom / Room Code</label>
+            <select id="lecRoomCode" class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+              <option value="E-104">E-104 (Extension Building Theory)</option>
+              <option value="M-113">M-113 (Data Science Lab)</option>
+              <option value="M-103">M-103 (Main Building Lab)</option>
+              <option value="AUD-CHM">Auditorium (CHM Campus)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Course / Subject Selection -->
+        <div class="space-y-0.5">
+          <label class="text-[10px] font-mono text-slate-400">Subject / Teaching Unit</label>
+          <select id="lecSubjectSelect" onchange="handleLecSubjectChange(this.value)" class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500 truncate">
+            <option value="DS201-DM-TH|Data Mining (Theory)|E-104|30">DS201-DM • Data Mining (Theory) [E-104 • Allotted: 30]</option>
+            <option value="DS201-DM-PR|Data Mining (Practical)|M-113|15">DS201-DM-PR • Data Mining (Lab) [M-113 • Allotted: 15]</option>
+            <option value="DS202-LA|Linear Algebra|E-104|25">DS202-LA • Linear Algebra [E-104 • Allotted: 25]</option>
+            <option value="DS203-FOR-TH|FOR: Research Foundation|E-104|20">DS203-FOR • Research Foundation [E-104 • Allotted: 20]</option>
+            <option value="DS204-DW|Data Warehousing|E-104|30">DS204-DW • Data Warehousing [E-104 • Allotted: 30]</option>
+            <option value="DS203-FOR-PR|FOR: Research Lab|M-103|15">DS203-FOR-PR • FOR Practical Lab [M-103 • Allotted: 15]</option>
+          </select>
+        </div>
+
+        <!-- Lecture Index X of N Budgeting -->
+        <div class="p-3 rounded-2xl bg-purple-950/30 border border-purple-500/40 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono text-purple-300 font-bold uppercase tracking-wider flex items-center">
+              <i data-lucide="layers" class="w-3 h-3 mr-1 text-purple-400"></i>
+              Lecture Index Budgeting
+            </span>
+            <span id="lecSyllabusProgressPill" class="bg-purple-500/20 text-purple-300 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border border-purple-500/40">
+              Lecture 15 of 30 • 50.0% Syllabus
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div class="space-y-0.5">
+              <label class="text-[9px] font-mono text-slate-400">Lecture # [ X ]</label>
+              <input type="number" id="lecIndex" min="1" max="60" value="15" oninput="updateLectureProgressPill()" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white text-center font-mono font-bold focus:outline-none focus:border-purple-500">
+            </div>
+            <div class="space-y-0.5">
+              <label class="text-[9px] font-mono text-slate-400">Total Allotted Budget [ N ]</label>
+              <input type="number" id="lecTotalAllotted" min="1" max="60" value="30" oninput="updateLectureProgressPill()" required class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white text-center font-mono font-bold focus:outline-none focus:border-purple-500">
+            </div>
+          </div>
+        </div>
+
+        <!-- Time Window & Topic -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="space-y-0.5">
+            <label class="text-[10px] font-mono text-slate-400">Time Window</label>
+            <div class="flex space-x-1.5">
+              <input type="text" id="lecStartTime" value="09:00 AM" placeholder="Start" class="w-1/2 bg-stitch-surface border border-stitch-border rounded-xl px-2 py-1.5 text-xs text-white text-center font-mono focus:outline-none focus:border-purple-500">
+              <input type="text" id="lecEndTime" value="10:00 AM" placeholder="End" class="w-1/2 bg-stitch-surface border border-stitch-border rounded-xl px-2 py-1.5 text-xs text-white text-center font-mono focus:outline-none focus:border-purple-500">
+            </div>
+          </div>
+
+          <div class="space-y-0.5">
+            <label class="text-[10px] font-mono text-slate-400">Topic / Syllabus Module</label>
+            <input type="text" id="lecTopic" placeholder="e.g. Decision Tree Induction & ID3" class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+        </div>
+
+        <div class="flex space-x-2 pt-2">
+          <button type="button" onclick="closeCreateLectureModal()" class="flex-1 bg-stitch-surface hover:bg-slate-800 text-slate-300 font-mono py-2 rounded-xl text-xs">
+            Cancel
+          </button>
+          <button type="submit" class="flex-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white font-bold py-2 rounded-xl text-xs font-mono shadow-lg flex items-center justify-center space-x-1.5">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            <span>📅 SCHEDULE LECTURE</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ============================================== -->
   <!-- ULTRA-RESPONSIVE TOP NAVIGATION BAR -->
   <!-- ============================================== -->
   <header class="glass-panel sticky top-0 z-40 border-b border-stitch-border shadow-md">
@@ -928,10 +1035,102 @@
     <!-- VIEW 2: TEACHER / PROFESSOR CLASSROOM KIOSK -->
     <!-- ============================================== -->
     <div id="viewTeacher" class="space-y-3 sm:space-y-5 hidden">
+      
+      <!-- 1. LECTURE SCHEDULING & CONTEXT HEADER DECK -->
+      <div class="glass-panel p-3.5 sm:p-4 rounded-2xl border border-purple-500/40 neon-border flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-lg">
+        <div class="space-y-1 min-w-0">
+          <div class="flex items-center space-x-2 flex-wrap">
+            <span id="activeLectureIndexPill" class="bg-purple-500/20 text-purple-300 font-mono text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border border-purple-500/40">
+              📖 Lecture 14 of 30 • 46.7% Syllabus
+            </span>
+            <span id="activeLectureRoomBadge" class="bg-slate-800 text-slate-300 font-mono text-[10px] px-2 py-0.5 rounded-full border border-stitch-border">
+              Room E-104 (Extension)
+            </span>
+            <span id="activeLectureTimeBadge" class="text-[10px] font-mono text-slate-400">
+              Today • 09:00 AM - 10:00 AM
+            </span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <h2 id="activeLectureCourseTitle" class="text-sm sm:text-base font-bold text-white truncate">
+              Data Mining (Theory)
+            </h2>
+            <span class="text-slate-500">•</span>
+            <p id="activeLectureTopic" class="text-[11px] sm:text-xs text-purple-300 font-mono truncate">
+              Topic: Frequent Itemset Mining & Apriori Algorithm
+            </p>
+          </div>
+        </div>
+
+        <!-- Schedule New Lecture / Switch Session Actions -->
+        <div class="flex items-center space-x-2 shrink-0 self-start md:self-auto">
+          <select id="facultyLectureDropdown" onchange="switchFacultyActiveLecture(this.value)" class="bg-stitch-surface border border-stitch-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500 max-w-[180px] sm:max-w-xs truncate">
+          </select>
+          <button onclick="openCreateLectureModal()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white text-xs font-mono font-bold shadow-md flex items-center space-x-1.5 transition">
+            <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+            <span>+ Schedule Lecture</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. ATTENDANCE LIFECYCLE CONTROL STRIP (START / PAUSE / RESUME / STOP) -->
+      <div class="glass-panel p-3 sm:p-4 rounded-2xl border border-stitch-border bg-gradient-to-r from-slate-950/80 via-slate-900/90 to-purple-950/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider font-semibold">Lifecycle Status:</span>
+            <span id="lifecycleStatusBadge" class="bg-emerald-500/20 text-emerald-300 font-mono text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center shadow">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+              <span>LIVE SCANNING (ACTIVE)</span>
+            </span>
+          </div>
+          <span id="lifecycleSubtext" class="hidden md:inline text-[10px] font-mono text-slate-400">
+            Broadcasting 8s QR & 6-digit TOTP
+          </span>
+        </div>
+
+        <!-- Action Control Buttons -->
+        <div class="flex items-center space-x-2 flex-wrap sm:flex-nowrap">
+          <!-- Start Button -->
+          <button id="btnStartAttendance" onclick="startLectureAttendance()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition disabled:opacity-40 disabled:cursor-not-allowed">
+            <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+            <span>Start</span>
+          </button>
+          
+          <!-- Pause / Resume Button -->
+          <button id="btnPauseResumeAttendance" onclick="togglePauseResumeAttendance()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition disabled:opacity-40 disabled:cursor-not-allowed">
+            <i id="pauseResumeIcon" data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>
+            <span id="pauseResumeText">Pause</span>
+          </button>
+          
+          <!-- End & Lock Button -->
+          <button id="btnStopAttendance" onclick="stopLectureAttendance()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition disabled:opacity-40 disabled:cursor-not-allowed">
+            <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
+            <span>End & Lock</span>
+          </button>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-5">
         
-        <!-- Live Rotating Projector Display -->
-        <div class="glass-panel p-3.5 sm:p-5 rounded-2xl lg:col-span-1 text-center space-y-3 neon-border">
+        <!-- Live Rotating Projector Display Card -->
+        <div class="glass-panel p-3.5 sm:p-5 rounded-2xl lg:col-span-1 text-center space-y-3 neon-border relative overflow-hidden" id="kioskDisplayCard">
+          
+          <!-- KIOSK STATE OVERLAY (FOR PAUSED / SCHEDULED / COMPLETED) -->
+          <div id="kioskStateOverlay" class="absolute inset-0 z-20 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center space-y-2 hidden transition-all duration-300">
+            <div id="kioskOverlayIcon" class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-2xl mb-1 shadow-inner">
+              ⏸️
+            </div>
+            <h3 id="kioskOverlayTitle" class="text-sm sm:text-base font-bold text-white font-mono">
+              ATTENDANCE PAUSED
+            </h3>
+            <p id="kioskOverlayDesc" class="text-[10px] text-slate-300 font-mono max-w-xs">
+              Instructor has temporarily paused check-ins. QR code and PIN entry are frozen.
+            </p>
+            <button id="kioskOverlayActionBtn" onclick="togglePauseResumeAttendance()" class="mt-2 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold shadow-lg flex items-center space-x-1">
+              <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+              <span>Resume Attendance</span>
+            </button>
+          </div>
+
           <div class="flex items-center justify-between border-b border-stitch-border pb-1.5">
             <span class="text-[11px] font-mono text-purple-400 font-bold">PROJECTOR KIOSK</span>
             <span id="kioskRoomTag" class="text-[9px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.2 rounded">E-104</span>
@@ -1016,7 +1215,7 @@
           </div>
 
           <div class="flex flex-col sm:flex-row space-y-1.5 sm:space-y-0 sm:space-x-2 pt-2">
-            <button class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl text-xs font-mono shadow-md">
+            <button onclick="stopLectureAttendance()" class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl text-xs font-mono shadow-md">
               💾 LOCK & COMMIT ATTENDANCE
             </button>
             <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="w-full sm:w-auto bg-stitch-surface hover:bg-slate-800 text-purple-300 font-bold px-3 py-2 rounded-xl text-xs font-mono border border-purple-500/40">
@@ -2253,9 +2452,379 @@
     }
 
     // ==============================================
+    // 7. LECTURE SCHEDULING & LIFECYCLE CONTROLLER
+    // ==============================================
+    const DEFAULT_LECTURES = [
+      {
+        id: "LEC-DS201-20260823-14",
+        faculty_name: "Miss Razia Khan",
+        course_name: "Data Mining (Theory)",
+        course_code: "DS201-DM-TH",
+        room_code: "E-104",
+        scheduled_date: "2026-08-23",
+        start_time: "09:00 AM",
+        end_time: "10:00 AM",
+        lecture_index: 14,
+        total_allotted_lectures: 30,
+        topic: "Frequent Itemset Mining & Apriori Algorithm",
+        session_status: "ACTIVE",
+        present_count: 4,
+        total_enrolled: 5,
+        geofence_radius_m: 10.0
+      },
+      {
+        id: "LEC-DS201-20260823-12",
+        faculty_name: "Miss Razia Khan",
+        course_name: "Data Mining (Practical)",
+        course_code: "DS201-DM-PR",
+        room_code: "M-113",
+        scheduled_date: "2026-08-23",
+        start_time: "11:00 AM",
+        end_time: "01:00 PM",
+        lecture_index: 12,
+        total_allotted_lectures: 15,
+        topic: "Hands-on WEKA Classification & Clustering",
+        session_status: "SCHEDULED",
+        present_count: 0,
+        total_enrolled: 5,
+        geofence_radius_m: 10.0
+      },
+      {
+        id: "LEC-DS204-20260824-25",
+        faculty_name: "Mr. Anshul Chimnani",
+        course_name: "Data Warehousing",
+        course_code: "DS204-DW",
+        room_code: "E-104",
+        scheduled_date: "2026-08-24",
+        start_time: "02:00 PM",
+        end_time: "03:00 PM",
+        lecture_index: 25,
+        total_allotted_lectures: 30,
+        topic: "Star vs Snowflake Schemas in ETL",
+        session_status: "SCHEDULED",
+        present_count: 0,
+        total_enrolled: 5,
+        geofence_radius_m: 10.0
+      }
+    ];
+
+    function getStoredLectures() {
+      const stored = localStorage.getItem('uniattend_360_lectures');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      return DEFAULT_LECTURES;
+    }
+
+    function saveLectures(lectures) {
+      localStorage.setItem('uniattend_360_lectures', JSON.stringify(lectures));
+    }
+
+    let FACULTY_LECTURES = getStoredLectures();
+    let currentActiveLectureId = FACULTY_LECTURES[0].id;
+
+    function getActiveLecture() {
+      return FACULTY_LECTURES.find(l => l.id === currentActiveLectureId) || FACULTY_LECTURES[0];
+    }
+
+    function openCreateLectureModal() {
+      const modal = document.getElementById('createLectureModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('lecDate');
+        if (dateInput && !dateInput.value) dateInput.value = today;
+        updateLectureProgressPill();
+        lucide.createIcons();
+      }
+    }
+
+    function closeCreateLectureModal() {
+      const modal = document.getElementById('createLectureModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function handleLecSubjectChange(val) {
+      if (!val) return;
+      const parts = val.split('|');
+      if (parts.length >= 4) {
+        const roomCode = parts[2];
+        const allotted = parseInt(parts[3]) || 30;
+        const roomSelect = document.getElementById('lecRoomCode');
+        if (roomSelect) roomSelect.value = roomCode;
+        const totalInput = document.getElementById('lecTotalAllotted');
+        if (totalInput) totalInput.value = allotted;
+        updateLectureProgressPill();
+      }
+    }
+
+    function updateLectureProgressPill() {
+      const idx = parseInt(document.getElementById('lecIndex').value) || 1;
+      const total = parseInt(document.getElementById('lecTotalAllotted').value) || 30;
+      const pct = total > 0 ? ((idx / total) * 100).toFixed(1) : 0.0;
+      const pill = document.getElementById('lecSyllabusProgressPill');
+      if (pill) {
+        pill.innerText = `Lecture ${idx} of ${total} • ${pct}% Syllabus`;
+      }
+    }
+
+    function handleCreateLectureSubmit(e) {
+      e.preventDefault();
+      const scheduledDate = document.getElementById('lecDate').value;
+      const roomCode = document.getElementById('lecRoomCode').value;
+      const subjectVal = document.getElementById('lecSubjectSelect').value.split('|');
+      const courseCode = subjectVal[0] || "DS201-DM";
+      const courseName = subjectVal[1] || "Data Mining (Theory)";
+      const lectureIndex = parseInt(document.getElementById('lecIndex').value) || 1;
+      const totalAllotted = parseInt(document.getElementById('lecTotalAllotted').value) || 30;
+      const startTime = document.getElementById('lecStartTime').value || "09:00 AM";
+      const endTime = document.getElementById('lecEndTime').value || "10:00 AM";
+      const topic = document.getElementById('lecTopic').value.trim() || `Lecture #${lectureIndex} Syllabus Delivery`;
+
+      if (lectureIndex > totalAllotted) {
+        alert(`⚠️ Lecture Index (${lectureIndex}) cannot exceed total allotted lectures (${totalAllotted}).`);
+        return;
+      }
+
+      const facultyName = activeSession ? activeSession.name : "Miss Razia Khan";
+      const cleanCode = courseCode.replace(/[^A-Za-z0-9]/g, '');
+      const newId = `LEC-${cleanCode}-${scheduledDate.replace(/-/g, '')}-${lectureIndex < 10 ? '0' + lectureIndex : lectureIndex}`;
+
+      const newLecture = {
+        id: newId,
+        faculty_name: facultyName,
+        course_name: courseName,
+        course_code: courseCode,
+        room_code: roomCode,
+        scheduled_date: scheduledDate,
+        start_time: startTime,
+        end_time: endTime,
+        lecture_index: lectureIndex,
+        total_allotted_lectures: totalAllotted,
+        topic: topic,
+        session_status: "SCHEDULED",
+        present_count: 0,
+        total_enrolled: 5,
+        geofence_radius_m: 10.0
+      };
+
+      FACULTY_LECTURES.unshift(newLecture);
+      saveLectures(FACULTY_LECTURES);
+      currentActiveLectureId = newId;
+      closeCreateLectureModal();
+      renderFacultyLectureUI();
+      alert(`🎉 Successfully scheduled Lecture #${lectureIndex} for ${courseName} (${startTime} - ${endTime})!`);
+    }
+
+    function renderFacultyLectureUI() {
+      const active = getActiveLecture();
+      if (!active) return;
+
+      // Update Header Badges
+      const indexPill = document.getElementById('activeLectureIndexPill');
+      if (indexPill) {
+        const pct = active.total_allotted_lectures > 0 ? ((active.lecture_index / active.total_allotted_lectures) * 100).toFixed(1) : 0.0;
+        indexPill.innerText = `📖 Lecture ${active.lecture_index} of ${active.total_allotted_lectures} • ${pct}% Syllabus`;
+      }
+
+      const roomBadge = document.getElementById('activeLectureRoomBadge');
+      if (roomBadge) roomBadge.innerText = `Room ${active.room_code}`;
+
+      const timeBadge = document.getElementById('activeLectureTimeBadge');
+      if (timeBadge) timeBadge.innerText = `${active.scheduled_date} • ${active.start_time} - ${active.end_time}`;
+
+      const titleEl = document.getElementById('activeLectureCourseTitle');
+      if (titleEl) titleEl.innerText = active.course_name;
+
+      const topicEl = document.getElementById('activeLectureTopic');
+      if (topicEl) topicEl.innerText = `Topic: ${active.topic || 'Syllabus Delivery'}`;
+
+      // Update Lecture Dropdown
+      const dropdown = document.getElementById('facultyLectureDropdown');
+      if (dropdown) {
+        dropdown.innerHTML = FACULTY_LECTURES.map(l => `
+          <option value="${l.id}" ${l.id === currentActiveLectureId ? 'selected' : ''}>
+            [#${l.lecture_index}] ${l.course_name} (${l.session_status})
+          </option>
+        `).join('');
+      }
+
+      // Update Student Venue Dropdown
+      const studentSelect = document.getElementById('studentCourseSelect');
+      if (studentSelect) {
+        studentSelect.innerHTML = FACULTY_LECTURES.map(l => `
+          <option value="${l.course_code}: ${l.course_name} — ${l.room_code}">
+            [Lec #${l.lecture_index}] ${l.course_code}: ${l.course_name} — ${l.room_code} (${l.session_status})
+          </option>
+        `).join('');
+      }
+
+      updateLifecycleUI();
+    }
+
+    function switchFacultyActiveLecture(id) {
+      currentActiveLectureId = id;
+      renderFacultyLectureUI();
+    }
+
+    // ==============================================
+    // LIFECYCLE STATE MACHINE CONTROLLER
+    // ==============================================
+    function updateLifecycleUI() {
+      const active = getActiveLecture();
+      if (!active) return;
+
+      const status = active.session_status;
+      const statusBadge = document.getElementById('lifecycleStatusBadge');
+      const subtext = document.getElementById('lifecycleSubtext');
+      const btnStart = document.getElementById('btnStartAttendance');
+      const btnPauseResume = document.getElementById('btnPauseResumeAttendance');
+      const btnStop = document.getElementById('btnStopAttendance');
+      const pauseIcon = document.getElementById('pauseResumeIcon');
+      const pauseText = document.getElementById('pauseResumeText');
+      const overlay = document.getElementById('kioskStateOverlay');
+      const overlayIcon = document.getElementById('kioskOverlayIcon');
+      const overlayTitle = document.getElementById('kioskOverlayTitle');
+      const overlayDesc = document.getElementById('kioskOverlayDesc');
+      const overlayBtn = document.getElementById('kioskOverlayActionBtn');
+
+      if (status === 'ACTIVE') {
+        if (statusBadge) {
+          statusBadge.className = "bg-emerald-500/20 text-emerald-300 font-mono text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center shadow";
+          statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span><span>LIVE SCANNING (ACTIVE)</span>';
+        }
+        if (subtext) subtext.innerText = "Broadcasting 8s dynamic QR & 6-digit TOTP";
+        if (btnStart) { btnStart.disabled = true; btnStart.classList.add('opacity-40'); }
+        if (btnPauseResume) {
+          btnPauseResume.disabled = false;
+          btnPauseResume.classList.remove('opacity-40');
+          btnPauseResume.className = "px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition";
+          if (pauseText) pauseText.innerText = "Pause";
+        }
+        if (btnStop) { btnStop.disabled = false; btnStop.classList.remove('opacity-40'); }
+        if (overlay) overlay.classList.add('hidden');
+
+      } else if (status === 'PAUSED') {
+        if (statusBadge) {
+          statusBadge.className = "bg-amber-500/20 text-amber-300 font-mono text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full border border-amber-500/40 flex items-center shadow";
+          statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 mr-1.5"></span><span>ATTENDANCE PAUSED</span>';
+        }
+        if (subtext) subtext.innerText = "QR & PIN frozen • Submissions blocked";
+        if (btnStart) { btnStart.disabled = true; btnStart.classList.add('opacity-40'); }
+        if (btnPauseResume) {
+          btnPauseResume.disabled = false;
+          btnPauseResume.classList.remove('opacity-40');
+          btnPauseResume.className = "px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition";
+          if (pauseText) pauseText.innerText = "Resume";
+        }
+        if (btnStop) { btnStop.disabled = false; btnStop.classList.remove('opacity-40'); }
+        
+        if (overlay) {
+          overlay.classList.remove('hidden');
+          if (overlayIcon) overlayIcon.innerText = "⏸️";
+          if (overlayTitle) overlayTitle.innerText = "ATTENDANCE PAUSED";
+          if (overlayDesc) overlayDesc.innerText = "The instructor has temporarily paused check-ins. QR scanning and PIN entry are frozen.";
+          if (overlayBtn) {
+            overlayBtn.classList.remove('hidden');
+            overlayBtn.innerHTML = '<i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i><span>Resume Attendance</span>';
+          }
+        }
+
+      } else if (status === 'SCHEDULED') {
+        if (statusBadge) {
+          statusBadge.className = "bg-slate-700/40 text-slate-300 font-mono text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full border border-slate-600 flex items-center shadow";
+          statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-400 mr-1.5"></span><span>READY TO START (SCHEDULED)</span>';
+        }
+        if (subtext) subtext.innerText = "Click 'Start' when ready to open attendance in class";
+        if (btnStart) { btnStart.disabled = false; btnStart.classList.remove('opacity-40'); }
+        if (btnPauseResume) { btnPauseResume.disabled = true; btnPauseResume.classList.add('opacity-40'); }
+        if (btnStop) { btnStop.disabled = true; btnStop.classList.add('opacity-40'); }
+
+        if (overlay) {
+          overlay.classList.remove('hidden');
+          if (overlayIcon) overlayIcon.innerText = "⚪";
+          if (overlayTitle) overlayTitle.innerText = "ATTENDANCE NOT STARTED";
+          if (overlayDesc) overlayDesc.innerText = "Lecture is scheduled. Click 'Start' in the faculty controls to open the 8-second dynamic QR check-in.";
+          if (overlayBtn) {
+            overlayBtn.classList.remove('hidden');
+            overlayBtn.innerHTML = '<i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i><span>Start Attendance</span>';
+          }
+        }
+
+      } else if (status === 'COMPLETED') {
+        if (statusBadge) {
+          statusBadge.className = "bg-rose-500/20 text-rose-300 font-mono text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full border border-rose-500/40 flex items-center shadow";
+          statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-400 mr-1.5"></span><span>LOCKED & COMMITTED (COMPLETED)</span>';
+        }
+        if (subtext) subtext.innerText = "Attendance records finalized and locked";
+        if (btnStart) { btnStart.disabled = true; btnStart.classList.add('opacity-40'); }
+        if (btnPauseResume) { btnPauseResume.disabled = true; btnPauseResume.classList.add('opacity-40'); }
+        if (btnStop) { btnStop.disabled = true; btnStop.classList.add('opacity-40'); }
+
+        if (overlay) {
+          overlay.classList.remove('hidden');
+          if (overlayIcon) overlayIcon.innerText = "🔒";
+          if (overlayTitle) overlayTitle.innerText = "ATTENDANCE LOCKED";
+          if (overlayDesc) overlayDesc.innerText = "This lecture session has ended. All present marks have been committed to the database.";
+          if (overlayBtn) overlayBtn.classList.add('hidden');
+        }
+      }
+
+      lucide.createIcons();
+    }
+
+    function startLectureAttendance() {
+      const active = getActiveLecture();
+      if (!active) return;
+      active.session_status = "ACTIVE";
+      saveLectures(FACULTY_LECTURES);
+      renderFacultyLectureUI();
+      alert(`🟢 Live Attendance Session STARTED for ${active.course_name} (Lecture #${active.lecture_index})! Dynamic QR and 6-digit TOTP are now broadcasting.`);
+    }
+
+    function pauseLectureAttendance() {
+      const active = getActiveLecture();
+      if (!active) return;
+      active.session_status = "PAUSED";
+      saveLectures(FACULTY_LECTURES);
+      renderFacultyLectureUI();
+      alert(`⏸️ Attendance PAUSED for ${active.course_name}. QR and PIN are frozen; student check-ins will be temporarily blocked.`);
+    }
+
+    function resumeLectureAttendance() {
+      const active = getActiveLecture();
+      if (!active) return;
+      active.session_status = "ACTIVE";
+      saveLectures(FACULTY_LECTURES);
+      renderFacultyLectureUI();
+      alert(`▶️ Attendance RESUMED for ${active.course_name}. Check-in verification is open.`);
+    }
+
+    function togglePauseResumeAttendance() {
+      const active = getActiveLecture();
+      if (!active) return;
+      if (active.session_status === 'ACTIVE') {
+        pauseLectureAttendance();
+      } else if (active.session_status === 'PAUSED' || active.session_status === 'SCHEDULED') {
+        resumeLectureAttendance();
+      }
+    }
+
+    function stopLectureAttendance() {
+      const active = getActiveLecture();
+      if (!active) return;
+      const conf = confirm(`⚠️ Are you sure you want to LOCK & FINALIZE attendance for ${active.course_name} (Lecture #${active.lecture_index})?\n\nThis will stop QR generation and commit present counts.`);
+      if (conf) {
+        active.session_status = "COMPLETED";
+        saveLectures(FACULTY_LECTURES);
+        renderFacultyLectureUI();
+        alert(`💾 Attendance successfully LOCKED & COMMITTED for Lecture #${active.lecture_index}!`);
+      }
+    }
+
+    // ==============================================
     // TIME-SYNCHRONIZED CRYPTOGRAPHIC TOTP ENGINE
     // ==============================================
-    // Synchronized globally across all devices & browsers via 8-second Epoch slots
     const TOTP_PIN_CATALOG = [
       "582914", "849203", "317495", "905281", 
       "662140", "481072", "723916", "516842",
@@ -2275,7 +2844,6 @@
       return getPinForSlot(getSynchronizedSlot(0));
     }
 
-    // Returns array of valid PINs spanning active slot, previous 3 cycles (24s buffer), and next cycle
     function getValidPinWindow() {
       const currentSlot = getSynchronizedSlot(0);
       const validPins = new Set([
@@ -2294,15 +2862,65 @@
       const clean = submittedPin.toString().trim();
       if (clean.length !== 6) return false;
       const validPins = getValidPinWindow();
-      // Also accept ANY 6-digit number in the catalog if typed during demo
       return validPins.includes(clean) || TOTP_PIN_CATALOG.includes(clean);
     }
 
     function submitStudentCheckIn(scanContext) {
-      const loc = document.querySelector('input[name="studentLoc"]:checked').value;
+      const activeLec = getActiveLecture();
       const resBox = document.getElementById('checkInResult');
-      const selectedCourse = document.getElementById('studentCourseSelect').value;
       resBox.classList.remove('hidden');
+
+      // Check Lifecycle State Machine: PAUSED, SCHEDULED, COMPLETED, ACTIVE
+      if (activeLec) {
+        if (activeLec.session_status === 'PAUSED') {
+          resBox.className = "p-3.5 rounded-2xl text-[11px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/50 shadow-lg animate-shake";
+          resBox.innerHTML = `
+            <div class="flex items-center space-x-1.5 font-bold text-amber-200 mb-1">
+              <i data-lucide="pause-circle" class="w-4 h-4 text-amber-400"></i>
+              <span>⏸️ ATTENDANCE TEMPORARILY PAUSED</span>
+            </div>
+            <div class="space-y-0.5 text-[10px] text-amber-300/90">
+              <div>• <b>Lecture:</b> ${activeLec.course_name} (Lecture #${activeLec.lecture_index})</div>
+              <div>• <b>Status:</b> The instructor has temporarily paused check-in submissions.</div>
+              <div>• <b>Action:</b> Please wait until the instructor resumes the session.</div>
+            </div>
+          `;
+          shakePinBoxes();
+          lucide.createIcons();
+          return;
+        } else if (activeLec.session_status === 'SCHEDULED') {
+          resBox.className = "p-3.5 rounded-2xl text-[11px] font-mono bg-slate-500/15 text-slate-300 border border-slate-500/50 shadow-lg";
+          resBox.innerHTML = `
+            <div class="flex items-center space-x-1.5 font-bold text-slate-200 mb-1">
+              <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+              <span>⚪ ATTENDANCE NOT STARTED YET</span>
+            </div>
+            <div class="space-y-0.5 text-[10px] text-slate-300/90">
+              <div>• <b>Lecture:</b> ${activeLec.course_name} (Lecture #${activeLec.lecture_index})</div>
+              <div>• <b>Status:</b> Scheduled for ${activeLec.start_time}. Check-ins are not yet open.</div>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        } else if (activeLec.session_status === 'COMPLETED') {
+          resBox.className = "p-3.5 rounded-2xl text-[11px] font-mono bg-rose-500/15 text-rose-300 border border-rose-500/50 shadow-lg";
+          resBox.innerHTML = `
+            <div class="flex items-center space-x-1.5 font-bold text-rose-200 mb-1">
+              <i data-lucide="lock" class="w-4 h-4 text-rose-400"></i>
+              <span>🔒 ATTENDANCE SESSION LOCKED & COMPLETED</span>
+            </div>
+            <div class="space-y-0.5 text-[10px] text-rose-300/90">
+              <div>• <b>Lecture:</b> ${activeLec.course_name} (Lecture #${activeLec.lecture_index}) has concluded.</div>
+              <div>• <b>Policy:</b> Attendance records are finalized and locked.</div>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+      }
+
+      const loc = document.querySelector('input[name="studentLoc"]:checked').value;
+      const selectedCourse = document.getElementById('studentCourseSelect').value;
 
       const isAuto = scanContext && scanContext.autoScanned;
       let pin = (scanContext && scanContext.pin) ? scanContext.pin : getEnteredStudentPin();
@@ -2353,7 +2971,7 @@
             <span>${isAuto ? '✅ AUTO-VERIFIED VIA CAMERA QR SCAN!' : '✅ VERIFIED PRESENT VIA CLASSROOM PIN!'}</span>
           </div>
           <div class="space-y-0.5 text-[10px] text-emerald-300/90">
-            <div>• <b>Subject:</b> [${selectedCourse}]</div>
+            <div>• <b>Lecture:</b> [${selectedCourse}]</div>
             <div>• <b>Token / PIN:</b> <code class="bg-emerald-950/60 px-1 py-0.2 rounded border border-emerald-500/30 text-white">${rawTok}</code> (Freshness Verified)</div>
             <div>• <b>GPS Geofence:</b> 6.8m (Classroom Perimeter: ${activeGeofenceRadius}m — Valid)</div>
             <div>• <b>Hardware:</b> Bound Device Verified (No Proxy Detected)</div>
@@ -2476,6 +3094,11 @@
 
     // High-Precision Synchronized Epoch Clock Loop (Updates every 250ms)
     function updateKioskClockAndPin() {
+      const activeLec = getActiveLecture();
+      if (!activeLec || activeLec.session_status !== 'ACTIVE') {
+        return;
+      }
+
       const now = Date.now();
       const currentSlot = Math.floor(now / 8000);
       const msIntoSlot = now % 8000;
@@ -2526,6 +3149,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       initAuth();
       initOtpBoxes();
+      renderFacultyLectureUI();
       updateKioskClockAndPin();
     });
   </script>
