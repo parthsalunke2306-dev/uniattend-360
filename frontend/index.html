@@ -544,7 +544,7 @@
               Lecture Index Budgeting
             </span>
             <span id="lecSyllabusProgressPill" class="bg-purple-500/20 text-purple-300 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border border-purple-500/40">
-              Lecture 15 of 30
+              50% Syllabus Completed
             </span>
           </div>
 
@@ -1107,7 +1107,7 @@
         <div class="space-y-1 min-w-0">
           <div class="flex items-center space-x-2 flex-wrap">
             <span id="activeLectureIndexPill" class="bg-purple-500/20 text-purple-300 font-mono text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border border-purple-500/40">
-              📖 Lecture 14 of 30
+              📖 47% Syllabus Completed (Lecture 14 of 30)
             </span>
             <span id="activeLectureRoomBadge" class="bg-slate-800 text-slate-300 font-mono text-[10px] px-2 py-0.5 rounded-full border border-stitch-border">
               Room E-104 (Extension)
@@ -2725,9 +2725,10 @@
     function updateLectureProgressPill() {
       const idx = parseInt(document.getElementById('lecIndex').value) || 1;
       const total = parseInt(document.getElementById('lecTotalAllotted').value) || 30;
+      const pct = total > 0 ? Math.round((idx / total) * 100) : 0;
       const pill = document.getElementById('lecSyllabusProgressPill');
       if (pill) {
-        pill.innerText = `Lecture ${idx} of ${total}`;
+        pill.innerText = `${pct}% Syllabus Completed`;
       }
     }
 
@@ -2786,7 +2787,8 @@
       // Update Header Badges
       const indexPill = document.getElementById('activeLectureIndexPill');
       if (indexPill) {
-        indexPill.innerText = `📖 Lecture ${active.lecture_index} of ${active.total_allotted_lectures}`;
+        const pct = active.total_allotted_lectures > 0 ? Math.round((active.lecture_index / active.total_allotted_lectures) * 100) : 0;
+        indexPill.innerText = `📖 ${pct}% Syllabus Completed (Lecture ${active.lecture_index} of ${active.total_allotted_lectures})`;
       }
 
       const roomBadge = document.getElementById('activeLectureRoomBadge');
