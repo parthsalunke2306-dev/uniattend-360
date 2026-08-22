@@ -280,6 +280,53 @@ class LectureManager:
         self._update_db_status(lecture_id, STATUS_COMPLETED, ended_at=lecture["ended_at"])
         return self._format_lecture_dict(lecture)
 
+    def update_faculty_anchor(
+        self,
+        lecture_id: str,
+        lat: float,
+        lon: float,
+        accuracy_m: float = 3.0,
+        radius_m: float = 10.0,
+        anchor_source: str = "DEVICE_GPS"
+    ) -> Dict[str, Any]:
+        """
+        Dynamically updates the faculty device anchor coordinates and perimeter radius
+        in the live session cache, database, and AntiProxyEngine.
+        """
+        from pipeline.anti_proxy_engine import anti_proxy_engine
+
+        lecture = self._get_or_404(lecture_id)
+        lecture["faculty_lat"] = round(float(lat), 6)
+        lecture["faculty_lon"] = round(float(lon), 6)
+        lecture["faculty_accuracy_m"] = round(float(accuracy_m), 1)
+        lecture["geofence_radius_m"] = round(float(radius_m), 1)
+        lecture["anchor_source"] = anchor_source
+
+        # Register in AntiProxyEngine
+        anchor = anti_proxy_engine.set_faculty_anchor(
+            session_id=lecture_id,
+            lat=lat,
+            lon=lon,
+            accuracy_m=accuracy_m,
+            radius_m=radius_m,
+            anchor_source=anchor_source
+        )
+
+        try:
+            with get_db_session() as db:
+                db_lec = db.query(LectureSession).filter_by(id=lecture_id).first()
+                if db_lec:
+                    db_lec.faculty_lat = lecture["faculty_lat"]
+                    db_lec.faculty_lon = lecture["faculty_lon"]
+                    db_lec.faculty_accuracy_m = lecture["faculty_accuracy_m"]
+                    db_lec.geofence_radius_m = lecture["geofence_radius_m"]
+                    db_lec.anchor_source = anchor_source
+                    db.commit()
+        except Exception:
+            pass
+
+        return self._format_lecture_dict(lecture)
+
     def update_present_count(self, lecture_id: str, increment: int = 1) -> int:
         """Increments present count during active check-in."""
         if lecture_id in self._live_sessions:

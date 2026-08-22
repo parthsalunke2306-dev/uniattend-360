@@ -168,10 +168,14 @@ class LectureSession(Base):
     # State Machine: SCHEDULED, ACTIVE, PAUSED, COMPLETED
     session_status = Column(String(30), nullable=False, default="SCHEDULED")
     
-    # Metrics
+    # Metrics & Dynamic Geofence
     present_count = Column(Integer, default=0, nullable=False)
     total_enrolled = Column(Integer, default=5, nullable=False)
     geofence_radius_m = Column(Float, default=10.0, nullable=False)
+    faculty_lat = Column(Float, nullable=True, default=19.22170)
+    faculty_lon = Column(Float, nullable=True, default=73.16460)
+    faculty_accuracy_m = Column(Float, nullable=True, default=3.0)
+    anchor_source = Column(String(50), default="DEVICE_GPS")  # DEVICE_GPS, ROOM_PRESET, MANUAL
     
     # Lifecycle Timestamps
     created_at = Column(DateTime, default=datetime.now)
@@ -179,6 +183,30 @@ class LectureSession(Base):
     paused_at = Column(DateTime, nullable=True)
     resumed_at = Column(DateTime, nullable=True)
     ended_at = Column(DateTime, nullable=True)
+
+
+class ProxyAttemptLog(Base):
+    """
+    Real-time security incident log capturing out-of-perimeter geofence breaches,
+    device hardware sharing, replay attacks, and expired QR tokens.
+    """
+    __tablename__ = "proxy_attempt_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    session_id = Column(String(100), nullable=False, index=True)
+    student_id_str = Column(String(50), nullable=False, index=True)
+    student_name = Column(String(150), nullable=False)
+    attack_type = Column(String(50), nullable=False, index=True)  # GEOFENCE_BREACH_OUT_OF_RANGE, DEVICE_SHARING_PROXY, EXPIRED_QR_PROXY
+    student_lat = Column(Float, nullable=True)
+    student_lon = Column(Float, nullable=True)
+    faculty_anchor_lat = Column(Float, nullable=True)
+    faculty_anchor_lon = Column(Float, nullable=True)
+    distance_meters = Column(Float, nullable=True)
+    max_allowed_radius_m = Column(Float, nullable=True)
+    device_fingerprint = Column(String(150), nullable=True)
+    failure_reason = Column(String(255), nullable=False)
+    is_acknowledged = Column(Boolean, default=False, nullable=False)
+    created_at = Column(DateTime, default=datetime.now, index=True)
 
 
 # ==========================================

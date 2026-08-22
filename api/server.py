@@ -36,7 +36,8 @@ from reporting.automated_job import AutomatedReportingScheduler
 from api.schemas import (
     HealthResponse, ActiveTokenResponse, StudentCheckInRequest,
     StudentCheckInResponse, SimulationRequest, SimulationResponse, RiskPredictionRequest,
-    CreateLectureRequest, LectureResponse, LifecycleActionRequest
+    CreateLectureRequest, LectureResponse, LifecycleActionRequest,
+    UpdateFacultyAnchorRequest, ProxyAttemptResponse
 )
 from api.auth import auth_router
 
@@ -270,13 +271,55 @@ def get_active_kiosk_token(
     }
 
 
+@app.post("/api/v1/attendance/geofence/update-faculty-anchor", tags=["Anti-Proxy Kiosk"])
+def update_faculty_geofence_anchor(req: UpdateFacultyAnchorRequest):
+    """
+    Dynamically establishes the center of the geofence using the faculty device's active GPS coordinates.
+    Updates the perimeter radius and accuracy lock in the active lecture session.
+    """
+    anchor = lecture_manager.update_faculty_anchor(
+        lecture_id=req.session_id,
+        lat=req.faculty_lat,
+        lon=req.faculty_lon,
+        accuracy_m=req.accuracy_m,
+        radius_m=req.radius_m,
+        anchor_source=req.anchor_source
+    )
+    return {
+        "status": "ANCHOR_UPDATED",
+        "message": f"Dynamic geofence anchor established at {req.faculty_lat:.5f}, {req.faculty_lon:.5f} (Radius: {req.radius_m}m).",
+        "anchor": anchor
+    }
+
+
+@app.get("/api/v1/attendance/proxy-attempts", response_model=List[ProxyAttemptResponse], tags=["Anti-Proxy Kiosk"])
+def list_all_proxy_attempts():
+    """Returns global history of intercepted and blocked proxy attempts across all classrooms."""
+    return anti_proxy_engine.get_proxy_attempts()
+
+
+@app.get("/api/v1/attendance/proxy-attempts/{session_id}", response_model=List[ProxyAttemptResponse], tags=["Anti-Proxy Kiosk"])
+def get_session_proxy_attempts(session_id: str):
+    """Returns real-time intercepted proxy attempts and geofence breaches for a specific active lecture session."""
+    return anti_proxy_engine.get_proxy_attempts(session_id=session_id)
+
+
+@app.post("/api/v1/attendance/proxy-attempts/{attempt_id}/acknowledge", tags=["Anti-Proxy Kiosk"])
+def acknowledge_proxy_attempt(attempt_id: str):
+    """Marks a flagged proxy attempt as acknowledged/reviewed by the instructor."""
+    success = anti_proxy_engine.acknowledge_proxy_attempt(attempt_id)
+    if not success:
+        raise HTTPException(status_code=404, detail=f"Proxy attempt incident '{attempt_id}' not found.")
+    return {"status": "ACKNOWLEDGED", "incident_id": attempt_id}
+
+
 @app.post("/api/v1/attendance/verify", response_model=StudentCheckInResponse, tags=["Anti-Proxy Kiosk"])
 def verify_student_checkin(req: StudentCheckInRequest):
     """
     Validates a student check-in through lifecycle state validation and all 4 Anti-Proxy security shields:
       0. Lifecycle State Enforcement (must be ACTIVE; PAUSED/SCHEDULED/COMPLETED are blocked)
       1. Cryptographic Token / PIN Freshness (within 8s TTL + drift tolerance)
-      2. High-Precision Mobile GPS Geofence (<= 10m radius)
+      2. Dynamic Haversine Geofence to Faculty Device Anchor (<= radius_m)
       3. Single-Device Hardware Binding (1 Phone = 1 Student)
       4. Duplicate Scan Prevention
     """
@@ -332,9 +375,12 @@ def verify_student_checkin(req: StudentCheckInRequest):
         "is_success": result["is_success"],
         "is_proxy_blocked": result.get("is_proxy_blocked", False),
         "distance_meters": result.get("distance_meters", 0.0),
+        "max_allowed_radius_m": result.get("max_allowed_radius_m", 10.0),
+        "faculty_anchor": result.get("faculty_anchor"),
         "message": result.get("message"),
         "failure_reason": result.get("failure_reason"),
-        "attack_type": result.get("attack_type")
+        "attack_type": result.get("attack_type"),
+        "incident_id": result.get("incident_id")
     }
 
 

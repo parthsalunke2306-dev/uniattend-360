@@ -37,9 +37,40 @@ class StudentCheckInResponse(BaseModel):
     is_success: bool
     is_proxy_blocked: bool
     distance_meters: float
+    max_allowed_radius_m: Optional[float] = 10.0
+    faculty_anchor: Optional[Dict[str, Any]] = None
     message: Optional[str] = None
     failure_reason: Optional[str] = None
     attack_type: Optional[str] = None
+    incident_id: Optional[str] = None
+
+
+class UpdateFacultyAnchorRequest(BaseModel):
+    session_id: str = Field(..., example="LEC-DS201-20260823-14")
+    faculty_lat: float = Field(..., example=19.22170)
+    faculty_lon: float = Field(..., example=73.16460)
+    accuracy_m: float = Field(default=3.0, example=3.0)
+    radius_m: float = Field(default=10.0, example=10.0)
+    anchor_source: str = Field(default="DEVICE_GPS", example="DEVICE_GPS")
+
+
+class ProxyAttemptResponse(BaseModel):
+    id: str
+    session_id: str
+    student_id_str: str
+    student_name: str
+    attack_type: str
+    student_lat: Optional[float] = None
+    student_lon: Optional[float] = None
+    faculty_anchor_lat: Optional[float] = None
+    faculty_anchor_lon: Optional[float] = None
+    distance_meters: Optional[float] = None
+    max_allowed_radius_m: Optional[float] = 10.0
+    device_fingerprint: Optional[str] = None
+    failure_reason: str
+    is_acknowledged: bool = False
+    timestamp: str
+    created_at: Optional[str] = None
 
 
 class SimulationRequest(BaseModel):
@@ -104,6 +135,10 @@ class LectureResponse(BaseModel):
     present_count: int
     total_enrolled: int
     geofence_radius_m: float
+    faculty_lat: Optional[float] = 19.22170
+    faculty_lon: Optional[float] = 73.16460
+    faculty_accuracy_m: Optional[float] = 3.0
+    anchor_source: Optional[str] = "DEVICE_GPS"
     syllabus_progress_pct: float
     created_at: Optional[str] = None
     started_at: Optional[str] = None

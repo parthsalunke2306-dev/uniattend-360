@@ -38,7 +38,7 @@ DEFAULT_CLASSROOM_GEO = {
 
 
 class AntiProxyEngine:
-    """Core cryptographic and spatial engine for proxy-proof classroom attendance."""
+    """Core cryptographic and spatial engine for dynamic device-centric proxy-proof classroom attendance."""
 
     def __init__(self, token_ttl_seconds: int = 8, secret_key: str = SECRET_SALT):
         self.token_ttl_seconds = token_ttl_seconds
@@ -47,14 +47,67 @@ class AntiProxyEngine:
         self.session_device_registry: Dict[str, Dict[str, str]] = {}
         # Tracks {session_id: {student_id_str: checkin_record}}
         self.session_attendance_registry: Dict[str, Dict[str, Dict[str, Any]]] = {}
+        # Tracks dynamic faculty device coordinates: {session_id: {"lat": float, "lon": float, "accuracy_m": float, "radius_m": float, "anchor_source": str, "updated_at": str}}
+        self.session_faculty_anchors: Dict[str, Dict[str, Any]] = {}
+        # Real-time incident logs of intercepted proxy attempts
+        self.proxy_attempt_logs: List[Dict[str, Any]] = []
+        self._incident_counter: int = 0
 
     # ----------------------------------------------------
-    # 1. DYNAMIC ROTATING QR & TOKEN GENERATION
+    # 1. DYNAMIC FACULTY GEOFENCE ANCHOR MANAGEMENT
+    # ----------------------------------------------------
+
+    def set_faculty_anchor(
+        self,
+        session_id: str,
+        lat: float,
+        lon: float,
+        accuracy_m: float = 3.0,
+        radius_m: float = 10.0,
+        anchor_source: str = "DEVICE_GPS"
+    ) -> Dict[str, Any]:
+        """
+        Dynamically sets or updates the center of the geofence using the faculty device's active GPS coordinates.
+        """
+        anchor = {
+            "session_id": session_id,
+            "lat": round(float(lat), 6),
+            "lon": round(float(lon), 6),
+            "accuracy_m": round(float(accuracy_m), 1),
+            "radius_m": round(float(radius_m), 1),
+            "anchor_source": anchor_source,
+            "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.session_faculty_anchors[session_id] = anchor
+        return anchor
+
+    def get_faculty_anchor(self, session_id: str, fallback_room_code: str = "E-104") -> Dict[str, Any]:
+        """
+        Retrieves the active faculty anchor for the session.
+        If no dynamic anchor has been registered yet, falls back to the classroom's preset coordinates.
+        """
+        if session_id in self.session_faculty_anchors:
+            return self.session_faculty_anchors[session_id]
+        
+        # Fallback to classroom preset
+        room_preset = DEFAULT_CLASSROOM_GEO.get(fallback_room_code, DEFAULT_CLASSROOM_GEO["E-104"])
+        return {
+            "session_id": session_id,
+            "lat": room_preset["lat"],
+            "lon": room_preset["lon"],
+            "accuracy_m": 2.5,
+            "radius_m": room_preset.get("radius_m", 10.0),
+            "anchor_source": "ROOM_PRESET",
+            "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+    # ----------------------------------------------------
+    # 2. DYNAMIC ROTATING QR & TOKEN GENERATION
     # ----------------------------------------------------
 
     def generate_active_token(self, session_id: str, room_code: str, custom_time: Optional[float] = None) -> Dict[str, Any]:
         """
-        Generates a time-bound cryptographic token and 4-digit PIN for the current window.
+        Generates a time-bound cryptographic token and 6-digit PIN for the current window.
         Refreshes every `token_ttl_seconds` (e.g. 8 seconds).
         """
         now = custom_time if custom_time is not None else time.time()
@@ -106,7 +159,7 @@ class AntiProxyEngine:
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
     # ----------------------------------------------------
-    # 2. HAVERSINE GPS DISTANCE CALCULATOR
+    # 3. HAVERSINE GPS DISTANCE CALCULATOR
     # ----------------------------------------------------
 
     @staticmethod
@@ -126,7 +179,74 @@ class AntiProxyEngine:
         return round(distance, 2)
 
     # ----------------------------------------------------
-    # 3. TRI-FACTOR ANTI-PROXY VERIFICATION ENGINE
+    # 4. PROXY INCIDENT LOGGING & NOTIFICATIONS
+    # ----------------------------------------------------
+
+    def log_proxy_attempt(
+        self,
+        session_id: str,
+        student_id_str: str,
+        student_name: str,
+        attack_type: str,
+        student_lat: float,
+        student_lon: float,
+        faculty_anchor_lat: float,
+        faculty_anchor_lon: float,
+        distance_meters: float,
+        max_allowed_radius_m: float,
+        device_fingerprint: str,
+        failure_reason: str
+    ) -> Dict[str, Any]:
+        """Records an intercepted proxy attempt in memory and returns the incident descriptor."""
+        self._incident_counter += 1
+        incident = {
+            "id": f"INC-{self._incident_counter:04d}",
+            "session_id": session_id,
+            "student_id_str": student_id_str,
+            "student_name": student_name,
+            "attack_type": attack_type,
+            "student_lat": round(float(student_lat), 6) if student_lat else None,
+            "student_lon": round(float(student_lon), 6) if student_lon else None,
+            "faculty_anchor_lat": round(float(faculty_anchor_lat), 6) if faculty_anchor_lat else None,
+            "faculty_anchor_lon": round(float(faculty_anchor_lon), 6) if faculty_anchor_lon else None,
+            "distance_meters": round(float(distance_meters), 2) if distance_meters is not None else None,
+            "max_allowed_radius_m": round(float(max_allowed_radius_m), 1),
+            "device_fingerprint": (device_fingerprint[:8] + "...") if device_fingerprint else "UNKNOWN",
+            "failure_reason": failure_reason,
+            "is_acknowledged": False,
+            "timestamp": datetime.now().strftime("%H:%M:%S"),
+            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.proxy_attempt_logs.insert(0, incident)
+        return incident
+
+    def get_proxy_attempts(self, session_id: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Retrieves flagged proxy attempts, optionally filtered by lecture session ID."""
+        if session_id:
+            return [log for log in self.proxy_attempt_logs if log["session_id"] == session_id]
+        return self.proxy_attempt_logs
+
+    def acknowledge_proxy_attempt(self, attempt_id: str) -> bool:
+        """Marks a proxy attempt as acknowledged by the instructor."""
+        for log in self.proxy_attempt_logs:
+            if log["id"] == attempt_id:
+                log["is_acknowledged"] = True
+                return True
+        return False
+
+    def clear_proxy_attempts(self, session_id: Optional[str] = None) -> int:
+        """Clears proxy attempts for a session or globally."""
+        if session_id:
+            before_len = len(self.proxy_attempt_logs)
+            self.proxy_attempt_logs = [log for log in self.proxy_attempt_logs if log["session_id"] != session_id]
+            return before_len - len(self.proxy_attempt_logs)
+        else:
+            cleared = len(self.proxy_attempt_logs)
+            self.proxy_attempt_logs = []
+            return cleared
+
+    # ----------------------------------------------------
+    # 5. TRI-FACTOR ANTI-PROXY VERIFICATION ENGINE
     # ----------------------------------------------------
 
     def verify_student_checkin(
@@ -143,20 +263,20 @@ class AntiProxyEngine:
         custom_radius_m: Optional[float] = None
     ) -> Dict[str, Any]:
         """
-        Validates student check-in through all 4 Anti-Proxy security shields:
+        Validates student check-in relative to the DYNAMIC FACULTY DEVICE GEOFENCE:
           1. Cryptographic Token / PIN freshness (within TTL window)
-          2. GPS Classroom Geofence radius check (< custom_radius_m or default 10m)
-          3. Single-Device Hardware Binding (prevents marking for multiple friends)
+          2. Dynamic Haversine distance check to faculty device anchor (<= radius_m)
+          3. Single-Device Hardware Binding (1 phone = 1 student lock)
           4. Duplicate check (preventing double scans)
         """
         now = custom_time if custom_time is not None else time.time()
         current_slot = int(now // self.token_ttl_seconds)
 
-        # Get Classroom GPS Coordinates
-        class_geo = DEFAULT_CLASSROOM_GEO.get(room_code, DEFAULT_CLASSROOM_GEO["LH-101"])
-        class_lat = class_geo["lat"]
-        class_lon = class_geo["lon"]
-        max_radius = custom_radius_m if custom_radius_m is not None else class_geo.get("radius_m", 10.0)
+        # Retrieve dynamic faculty device anchor
+        anchor = self.get_faculty_anchor(session_id, fallback_room_code=room_code)
+        faculty_lat = anchor["lat"]
+        faculty_lon = anchor["lon"]
+        max_radius = custom_radius_m if custom_radius_m is not None else anchor.get("radius_m", 10.0)
 
         # ------------------------------------------------
         # SHIELD 1: TOKEN / PIN FRESHNESS CHECK
@@ -198,11 +318,11 @@ class AntiProxyEngine:
                 token_failure_reason = "Invalid or expired 6-Digit Security PIN."
 
         # ------------------------------------------------
-        # SHIELD 2: GPS GEOFENCE CHECK
+        # SHIELD 2: DYNAMIC DEVICE-CENTRIC GEOFENCE CHECK
         # ------------------------------------------------
-        distance_meters = self.calculate_haversine_distance_meters(student_lat, student_lon, class_lat, class_lon)
+        distance_meters = self.calculate_haversine_distance_meters(student_lat, student_lon, faculty_lat, faculty_lon)
         geo_valid = distance_meters <= max_radius
-        geo_failure_reason = None if geo_valid else f"Outside Classroom Geofence: {distance_meters:.1f}m away (Max allowed: {max_radius}m)."
+        geo_failure_reason = None if geo_valid else f"Outside Faculty Perimeter: {distance_meters:.1f}m away (Max allowed: {max_radius:.1f}m from lecturer)."
 
         # ------------------------------------------------
         # SHIELD 3: DEVICE HARDWARE FINGERPRINT LOCK
@@ -229,6 +349,8 @@ class AntiProxyEngine:
                 "student_id_str": student_id_str,
                 "student_name": student_name,
                 "distance_meters": distance_meters,
+                "max_allowed_radius_m": max_radius,
+                "faculty_anchor": anchor,
                 "failure_reason": f"Student {student_id_str} is already marked Present in this active session.",
                 "timestamp": datetime.now().strftime("%H:%M:%S")
             }
@@ -246,9 +368,10 @@ class AntiProxyEngine:
                 "student_name": student_name,
                 "status": "PRESENT",
                 "distance_meters": distance_meters,
+                "max_allowed_radius_m": max_radius,
                 "device_fingerprint": device_fingerprint[:8] + "...",
                 "checkin_time": datetime.now().strftime("%H:%M:%S"),
-                "verification_method": "ANTI_PROXY_TRI_FACTOR",
+                "verification_method": "ANTI_PROXY_DYNAMIC_GEOFENCE",
                 "is_proxy": False
             }
             session_attendance[student_id_str] = record
@@ -258,21 +381,49 @@ class AntiProxyEngine:
                 "is_proxy_blocked": False,
                 "record": record,
                 "distance_meters": distance_meters,
+                "max_allowed_radius_m": max_radius,
+                "faculty_anchor": anchor,
                 "message": f"✅ Attendance Verified for {student_name} ({distance_meters:.1f}m from lecturer)."
             }
         else:
-            # Identify exact Proxy Attack Type
-            primary_reason = geo_failure_reason or device_failure_reason or token_failure_reason
-            attack_type = "REMOTE_WHATSAPP_PROXY" if not geo_valid else ("DEVICE_SHARING_PROXY" if not device_valid else "EXPIRED_QR_PROXY")
+            # Classify exact Attack Pattern
+            if not geo_valid:
+                attack_type = "REMOTE_WHATSAPP_PROXY"
+                primary_reason = geo_failure_reason
+            elif not device_valid:
+                attack_type = "DEVICE_SHARING_PROXY"
+                primary_reason = device_failure_reason
+            else:
+                attack_type = "EXPIRED_QR_PROXY"
+                primary_reason = token_failure_reason
             
+            # Automatically record incident in real-time proxy log
+            incident = self.log_proxy_attempt(
+                session_id=session_id,
+                student_id_str=student_id_str,
+                student_name=student_name,
+                attack_type=attack_type,
+                student_lat=student_lat,
+                student_lon=student_lon,
+                faculty_anchor_lat=faculty_lat,
+                faculty_anchor_lon=faculty_lon,
+                distance_meters=distance_meters,
+                max_allowed_radius_m=max_radius,
+                device_fingerprint=device_fingerprint,
+                failure_reason=primary_reason
+            )
+
             return {
                 "status": "PROXY_ATTEMPT_BLOCKED",
                 "is_success": False,
                 "is_proxy_blocked": True,
                 "attack_type": attack_type,
+                "incident_id": incident["id"],
                 "student_id_str": student_id_str,
                 "student_name": student_name,
                 "distance_meters": distance_meters,
+                "max_allowed_radius_m": max_radius,
+                "faculty_anchor": anchor,
                 "failure_reason": primary_reason,
                 "shields": {
                     "token_valid": token_valid,

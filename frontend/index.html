@@ -1148,26 +1148,61 @@
           <div class="p-2.5 rounded-xl bg-gradient-to-tr from-purple-950 to-slate-900 border border-emerald-500/40">
             <span class="text-[8px] font-mono text-slate-400 uppercase tracking-wider">Rolling 6-Digit TOTP Security PIN</span>
             <div id="kioskPinDisplay" class="font-mono font-extrabold text-2xl sm:text-3xl text-emerald-400 tracking-[0.18em] my-0.5 pin-hud">582914</div>
-            <span class="text-[9px] font-mono text-emerald-400/80">Refreshes every 8s • <span id="kioskGeofenceTag">10m</span> Range</span>
+            <span class="text-[9px] font-mono text-emerald-400/80">Refreshes every 8s • <span id="kioskGeofenceTag">20m</span> Perimeter</span>
           </div>
 
-          <!-- Dynamic Geofence Range Controller -->
-          <div class="p-2.5 rounded-xl bg-stitch-surface border border-emerald-500/40 space-y-2 text-left">
+          <!-- Dynamic Faculty-Centric Geofence Controller -->
+          <div class="p-3 rounded-2xl bg-stitch-surface border border-emerald-500/40 space-y-2.5 text-left shadow-lg">
             <div class="flex items-center justify-between">
-              <span class="text-[9px] font-mono text-emerald-400 font-bold uppercase tracking-wider">Geofence Range Control</span>
-              <span id="teacherRadiusBadge" class="bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold px-1.5 py-0.2 rounded border border-emerald-500/40">10m</span>
+              <span class="text-[9px] font-mono text-emerald-400 font-bold uppercase tracking-wider flex items-center">
+                <i data-lucide="crosshair" class="w-3.5 h-3.5 mr-1 text-emerald-400"></i>
+                Faculty Dynamic Anchor
+              </span>
+              <span id="teacherRadiusBadge" class="bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold px-1.5 py-0.2 rounded border border-emerald-500/40">20m</span>
             </div>
-            
+
+            <!-- Anchor Source Selector -->
             <div class="space-y-0.5">
-              <input type="range" min="5" max="50" value="10" step="1" id="teacherGeofenceSlider" oninput="handleTeacherRadiusChange(this.value)" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
+              <label class="text-[8px] font-mono text-slate-400">Geofence Center Reference:</label>
+              <select id="facultyAnchorSelect" onchange="handleFacultyAnchorSelect(this.value)" class="w-full bg-slate-900 border border-stitch-border rounded-xl p-1.5 text-[11px] text-white font-mono focus:outline-none focus:border-emerald-500 truncate">
+                <option value="19.22170,73.16460|DEVICE_GPS">📍 Live Faculty Device GPS (This Laptop/Phone)</option>
+                <option value="19.22170,73.16460|ROOM_E104">🏢 Room E-104 (Extension Building Theory • 19.22170, 73.16460)</option>
+                <option value="19.22150,73.16440|ROOM_M113">🔬 Room M-113 (Data Science Lab • 19.22150, 73.16440)</option>
+                <option value="19.22140,73.16430|ROOM_M103">🧪 Room M-103 (Main Building Lab • 19.22140, 73.16430)</option>
+                <option value="19.22130,73.16420|ROOM_AUD">🏛️ Smt. CHM Auditorium (Large Venue • 19.22130, 73.16420)</option>
+              </select>
+            </div>
+
+            <!-- Real-Time Anchor Coordinates HUD -->
+            <div id="facultyAnchorCoordinatesHUD" class="p-1.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 flex items-center justify-between text-[9px] font-mono text-emerald-300">
+              <div class="flex items-center space-x-1 truncate">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="facultyAnchorCoordsText">19.22170° N, 73.16460° E</span>
+              </div>
+              <span id="facultyAnchorAccuracyBadge" class="text-slate-400 text-[8px] bg-slate-800 px-1 py-0.2 rounded shrink-0">±3.0m Lock</span>
+            </div>
+
+            <!-- Sync Real GPS Button -->
+            <button type="button" onclick="acquireRealFacultyDeviceGPS()" class="w-full py-1 px-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold flex items-center justify-center space-x-1 transition">
+              <i data-lucide="locate-fixed" class="w-3 h-3 text-emerald-400"></i>
+              <span>🛰️ Sync Device GPS (High Accuracy)</span>
+            </button>
+            
+            <!-- Radius Slider -->
+            <div class="space-y-0.5 pt-1">
+              <div class="flex justify-between text-[8px] font-mono text-slate-400">
+                <span>Perimeter Radius:</span>
+                <span id="facultyPerimeterSliderVal" class="text-emerald-300 font-bold">20 meters</span>
+              </div>
+              <input type="range" min="5" max="50" value="20" step="1" id="teacherGeofenceSlider" oninput="handleTeacherRadiusChange(this.value)" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
             </div>
 
             <!-- Quick Presets -->
             <div class="grid grid-cols-4 gap-1 text-[9px] font-mono">
-              <button type="button" onclick="setGeofencePreset(8)" class="p-1 rounded bg-slate-800 text-slate-300 text-center truncate">8m</button>
-              <button type="button" onclick="setGeofencePreset(10)" class="p-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-center font-bold truncate">10m</button>
-              <button type="button" onclick="setGeofencePreset(20)" class="p-1 rounded bg-slate-800 text-slate-300 text-center truncate">20m</button>
-              <button type="button" onclick="setGeofencePreset(40)" class="p-1 rounded bg-slate-800 text-slate-300 text-center truncate">40m</button>
+              <button type="button" onclick="setGeofencePreset(10)" class="p-1 rounded bg-slate-800 text-slate-300 text-center truncate">10m</button>
+              <button type="button" onclick="setGeofencePreset(20)" class="p-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-center font-bold truncate">20m</button>
+              <button type="button" onclick="setGeofencePreset(35)" class="p-1 rounded bg-slate-800 text-slate-300 text-center truncate">35m</button>
+              <button type="button" onclick="setGeofencePreset(50)" class="p-1 rounded bg-slate-800 text-slate-300 text-center truncate">50m</button>
             </div>
           </div>
 
@@ -1177,15 +1212,13 @@
             <select id="teacherUnitSelector" onchange="handleTeacherUnitChange(this.value)" class="w-full bg-stitch-surface border border-stitch-border rounded-xl p-1.5 text-xs text-white focus:outline-none focus:border-purple-500 truncate">
             </select>
           </div>
-
-          <button onclick="simulateScan()" class="w-full bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-purple-200 text-[11px] font-mono font-bold py-1.5 rounded-xl">
-            ⚡ Simulate Quick Student Check-Ins
-          </button>
         </div>
 
-        <!-- Live Digital Attendance Roster -->
-        <div class="glass-panel p-3.5 sm:p-5 rounded-2xl lg:col-span-2 space-y-3 border border-stitch-border flex flex-col justify-between">
-          <div>
+        <!-- Right Column: Digital Roster & Real-Time Proxy Incident Feed -->
+        <div class="lg:col-span-2 space-y-3.5 flex flex-col justify-between">
+          
+          <!-- 1. Live Digital Attendance Roster -->
+          <div class="glass-panel p-3.5 sm:p-5 rounded-2xl border border-stitch-border space-y-3">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-stitch-border pb-2">
               <div>
                 <h3 id="teacherSubjectTitle" class="font-bold text-white text-xs sm:text-sm">Data Mining (Theory)</h3>
@@ -1197,7 +1230,7 @@
             </div>
 
             <!-- Table of Students -->
-            <div class="overflow-x-auto border border-stitch-border rounded-xl mt-2 max-h-72 overflow-y-auto">
+            <div class="overflow-x-auto border border-stitch-border rounded-xl mt-2 max-h-52 overflow-y-auto">
               <table class="w-full text-left text-xs font-mono whitespace-nowrap">
                 <thead class="bg-stitch-surface text-slate-300 uppercase sticky top-0">
                   <tr>
@@ -1212,16 +1245,64 @@
                 </tbody>
               </table>
             </div>
+
+            <div class="flex flex-col sm:flex-row space-y-1.5 sm:space-y-0 sm:space-x-2 pt-1">
+              <button onclick="stopLectureAttendance()" class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl text-xs font-mono shadow-md">
+                💾 LOCK & COMMIT ATTENDANCE
+              </button>
+              <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="w-full sm:w-auto bg-stitch-surface hover:bg-slate-800 text-purple-300 font-bold px-3 py-2 rounded-xl text-xs font-mono border border-purple-500/40">
+                + Enroll Student
+              </button>
+            </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row space-y-1.5 sm:space-y-0 sm:space-x-2 pt-2">
-            <button onclick="stopLectureAttendance()" class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl text-xs font-mono shadow-md">
-              💾 LOCK & COMMIT ATTENDANCE
-            </button>
-            <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="w-full sm:w-auto bg-stitch-surface hover:bg-slate-800 text-purple-300 font-bold px-3 py-2 rounded-xl text-xs font-mono border border-purple-500/40">
-              + Enroll Student
-            </button>
+          <!-- 2. Real-Time Proxy & Security Incident Feed HUD -->
+          <div class="glass-panel p-3.5 sm:p-5 rounded-2xl border border-rose-500/40 neon-border-rose space-y-3 bg-gradient-to-r from-rose-950/20 to-slate-900/40">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-stitch-border pb-2">
+              <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 text-sm">
+                  🚨
+                </div>
+                <div>
+                  <h3 class="font-bold text-white text-xs sm:text-sm flex items-center">
+                    <span>Real-Time Proxy & Security Breach Feed</span>
+                  </h3>
+                  <p class="text-[10px] font-mono text-slate-400">Live hardware & GPS geofence anomaly interception</p>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <span id="proxyIncidentCounterBadge" class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full flex items-center">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1 animate-ping"></span>
+                  <span id="proxyIncidentCountText">0 Interceptions</span>
+                </span>
+                <button onclick="clearProxyIncidentsFeed()" class="text-[10px] font-mono text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700">
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <!-- Simulation Trigger Controls -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 text-[10px] font-mono">
+              <button onclick="simulateScan()" class="p-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-left truncate font-semibold">
+                ⚡ In-Class Scan (&lt;10m)
+              </button>
+              <button onclick="simulateRemoteProxyBreach()" class="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 text-left truncate font-semibold">
+                🚨 Remote Proxy (1.8km Away)
+              </button>
+              <button onclick="simulateDeviceSharingProxy()" class="p-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-left truncate font-semibold">
+                📱 Device Sharing Proxy
+              </button>
+            </div>
+
+            <!-- Incident Stream -->
+            <div class="space-y-1.5 max-h-44 overflow-y-auto pr-1" id="proxyIncidentFeedList">
+              <div class="p-3 rounded-xl bg-slate-900/60 border border-stitch-border text-center text-slate-400 text-[11px] font-mono">
+                🟢 No proxy attempts detected in this active session. System running with zero security breaches.
+              </div>
+            </div>
           </div>
+
         </div>
 
       </div>
@@ -2865,6 +2946,238 @@
       return validPins.includes(clean) || TOTP_PIN_CATALOG.includes(clean);
     }
 
+    // ==============================================
+    // 8. DYNAMIC FACULTY GEOFENCE ANCHOR & INCIDENT LOGGER
+    // ==============================================
+    let activeFacultyAnchor = {
+      lat: 19.22170,
+      lon: 73.16460,
+      accuracy_m: 3.0,
+      radius_m: 20.0,
+      source: "DEVICE_GPS"
+    };
+
+    let PROXY_INCIDENTS = [
+      {
+        id: "INC-0001",
+        session_id: "LEC-DS201-20260823-14",
+        student_id_str: "CHMC-DS-2024-004",
+        student_name: "Rohan Gupta",
+        attack_type: "REMOTE_WHATSAPP_PROXY",
+        student_lat: 19.23800,
+        student_lon: 73.17200,
+        distance_meters: 1820.5,
+        max_allowed_radius_m: 20.0,
+        device_fingerprint: "DEV-ROH-992...",
+        failure_reason: "Outside Faculty Perimeter: 1.82 km away (Max allowed: 20.0m from instructor).",
+        is_acknowledged: false,
+        timestamp: "09:04:12"
+      }
+    ];
+
+    function calculateHaversineMeters(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return Math.round(R * c * 10) / 10;
+    }
+
+    function handleFacultyAnchorSelect(val) {
+      if (!val) return;
+      const [coords, src] = val.split('|');
+      const [latStr, lonStr] = coords.split(',');
+      const lat = parseFloat(latStr);
+      const lon = parseFloat(lonStr);
+
+      activeFacultyAnchor.lat = lat;
+      activeFacultyAnchor.lon = lon;
+      activeFacultyAnchor.source = src;
+
+      updateFacultyAnchorDisplay();
+    }
+
+    function acquireRealFacultyDeviceGPS() {
+      if (!navigator.geolocation) {
+        alert("⚠️ Geolocation API not supported by this browser. Using high-precision campus coordinates.");
+        return;
+      }
+
+      const hudText = document.getElementById('facultyAnchorCoordsText');
+      const accBadge = document.getElementById('facultyAnchorAccuracyBadge');
+      if (hudText) hudText.innerText = "🛰️ Acquiring Real-Time Satellite Lock...";
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          activeFacultyAnchor.lat = Math.round(pos.coords.latitude * 100000) / 100000;
+          activeFacultyAnchor.lon = Math.round(pos.coords.longitude * 100000) / 100000;
+          activeFacultyAnchor.accuracy_m = Math.round(pos.coords.accuracy * 10) / 10;
+          activeFacultyAnchor.source = "REAL_DEVICE_GPS";
+          updateFacultyAnchorDisplay();
+          alert(`🛰️ High-Accuracy Dynamic Anchor Locked!\n\n• Latitude: ${activeFacultyAnchor.lat}° N\n• Longitude: ${activeFacultyAnchor.lon}° E\n• Accuracy: ±${activeFacultyAnchor.accuracy_m}m\n• Active Perimeter: ${activeFacultyAnchor.radius_m} meters`);
+        },
+        (err) => {
+          // Fallback gracefully to default campus coordinate
+          activeFacultyAnchor.lat = 19.22170;
+          activeFacultyAnchor.lon = 73.16460;
+          activeFacultyAnchor.accuracy_m = 3.0;
+          updateFacultyAnchorDisplay();
+          alert(`ℹ️ GPS Permission Not Granted or Indoor Weak Signal (${err.message}). Using Smt. C.H.M. College verified classroom geofence anchor (19.22170° N, 73.16460° E).`);
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      );
+    }
+
+    function updateFacultyAnchorDisplay() {
+      const coordsText = document.getElementById('facultyAnchorCoordsText');
+      const accBadge = document.getElementById('facultyAnchorAccuracyBadge');
+      const kioskGeoTag = document.getElementById('kioskGeofenceTag');
+      const studentCutoff = document.getElementById('studentGeofenceCutoff');
+
+      if (coordsText) coordsText.innerText = `${activeFacultyAnchor.lat.toFixed(5)}° N, ${activeFacultyAnchor.lon.toFixed(5)}° E`;
+      if (accBadge) accBadge.innerText = `±${activeFacultyAnchor.accuracy_m}m Lock`;
+      if (kioskGeoTag) kioskGeoTag.innerText = `${activeFacultyAnchor.radius_m}m`;
+      if (studentCutoff) studentCutoff.innerText = `${activeFacultyAnchor.radius_m}.0m`;
+    }
+
+    function handleTeacherRadiusChange(val) {
+      const radius = parseFloat(val) || 20;
+      activeFacultyAnchor.radius_m = radius;
+      activeGeofenceRadius = radius;
+
+      const badge = document.getElementById('teacherRadiusBadge');
+      const sliderVal = document.getElementById('facultyPerimeterSliderVal');
+      const slider = document.getElementById('teacherGeofenceSlider');
+      if (badge) badge.innerText = `${radius}m`;
+      if (sliderVal) sliderVal.innerText = `${radius} meters`;
+      if (slider) slider.value = radius;
+
+      updateFacultyAnchorDisplay();
+    }
+
+    function setGeofencePreset(radius) {
+      handleTeacherRadiusChange(radius);
+    }
+
+    function logProxyIncident(incident) {
+      PROXY_INCIDENTS.unshift(incident);
+      renderProxyIncidentsFeed();
+
+      // Pulse the incident counter badge
+      const countBadge = document.getElementById('proxyIncidentCounterBadge');
+      if (countBadge) {
+        countBadge.classList.add('animate-ping');
+        setTimeout(() => countBadge.classList.remove('animate-ping'), 1200);
+      }
+    }
+
+    function acknowledgeProxyIncident(incidentId) {
+      const inc = PROXY_INCIDENTS.find(i => i.id === incidentId);
+      if (inc) {
+        inc.is_acknowledged = true;
+        renderProxyIncidentsFeed();
+      }
+    }
+
+    function clearProxyIncidentsFeed() {
+      PROXY_INCIDENTS = [];
+      renderProxyIncidentsFeed();
+    }
+
+    function renderProxyIncidentsFeed() {
+      const list = document.getElementById('proxyIncidentFeedList');
+      const countEl = document.getElementById('proxyIncidentCountText');
+      if (countEl) countEl.innerText = `${PROXY_INCIDENTS.length} Interception${PROXY_INCIDENTS.length === 1 ? '' : 's'}`;
+
+      if (!list) return;
+
+      if (PROXY_INCIDENTS.length === 0) {
+        list.innerHTML = `
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-stitch-border text-center text-slate-400 text-[11px] font-mono">
+            🟢 No proxy attempts detected in this active session. System running with zero security breaches.
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = PROXY_INCIDENTS.map(inc => `
+        <div class="p-2.5 rounded-xl ${inc.is_acknowledged ? 'bg-slate-900/50 border-slate-800 opacity-60' : 'bg-rose-950/40 border-rose-500/50 shadow-md'} border text-[10px] font-mono space-y-1 transition duration-150">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-rose-300 flex items-center">
+              <span class="mr-1">🚨</span> ${inc.student_name} (${inc.student_id_str})
+            </span>
+            <span class="text-[9px] ${inc.is_acknowledged ? 'bg-slate-800 text-slate-400' : 'bg-rose-500/20 text-rose-300'} px-1.5 py-0.2 rounded border border-rose-500/30">
+              ${inc.timestamp}
+            </span>
+          </div>
+
+          <div class="text-slate-300 text-[10px] flex items-center justify-between">
+            <div>
+              <span class="text-rose-400 font-bold">• Violation:</span> 
+              <span>${inc.attack_type === 'REMOTE_WHATSAPP_PROXY' ? 'Out-of-Perimeter Breach' : (inc.attack_type === 'DEVICE_SHARING_PROXY' ? 'Hardware Re-use Attack' : 'Expired QR Scan')}</span>
+              <span class="text-slate-400">(${inc.distance_meters ? inc.distance_meters + 'm away vs ' + inc.max_allowed_radius_m + 'm limit' : 'Hardware Lock'})</span>
+            </div>
+            ${!inc.is_acknowledged ? `
+              <button onclick="acknowledgeProxyIncident('${inc.id}')" class="px-2 py-0.5 rounded bg-rose-500/20 hover:bg-rose-500/40 text-rose-200 border border-rose-500/40 text-[9px] font-bold shrink-0 ml-2">
+                ✓ Ack
+              </button>
+            ` : '<span class="text-slate-500 text-[9px]">Acknowledged</span>'}
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function simulateRemoteProxyBreach() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const incident = {
+        id: `INC-${Math.floor(Math.random() * 9000 + 1000)}`,
+        session_id: currentActiveLectureId,
+        student_id_str: "CHMC-DS-2024-003",
+        student_name: "Priya Patel",
+        attack_type: "REMOTE_WHATSAPP_PROXY",
+        student_lat: 19.23950,
+        student_lon: 73.17400,
+        distance_meters: 1850.4,
+        max_allowed_radius_m: activeFacultyAnchor.radius_m,
+        device_fingerprint: "DEV-PRI-774...",
+        failure_reason: `Outside Faculty Perimeter: 1.85 km away (Max allowed: ${activeFacultyAnchor.radius_m}m from instructor).`,
+        is_acknowledged: false,
+        timestamp: timeStr
+      };
+
+      logProxyIncident(incident);
+      alert(`🚨 [PROXY INTERCEPTED at ${timeStr}]\n\n• Student: Priya Patel (CHMC-DS-2024-003)\n• Detected Distance: 1.85 km away (Hostel/Remote)\n• Faculty Geofence Perimeter: ${activeFacultyAnchor.radius_m} meters\n• Action: Attendance BLOCKED & Incident Logged on Faculty Console.`);
+    }
+
+    function simulateDeviceSharingProxy() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const incident = {
+        id: `INC-${Math.floor(Math.random() * 9000 + 1000)}`,
+        session_id: currentActiveLectureId,
+        student_id_str: "CHMC-DS-2024-005",
+        student_name: "Ananya Verma",
+        attack_type: "DEVICE_SHARING_PROXY",
+        student_lat: 19.22171,
+        student_lon: 73.16462,
+        distance_meters: 2.1,
+        max_allowed_radius_m: activeFacultyAnchor.radius_m,
+        device_fingerprint: "DEV-SHARED-IPHONE",
+        failure_reason: "Device Hardware Re-use Detected! Phone already marked attendance for Aarav Sharma (002).",
+        is_acknowledged: false,
+        timestamp: timeStr
+      };
+
+      logProxyIncident(incident);
+      alert(`🚨 [HARDWARE PROXY INTERCEPTED at ${timeStr}]\n\n• Student: Ananya Verma (CHMC-DS-2024-005)\n• Violation: Same physical smartphone tried marking attendance for a second student.\n• Action: Attendance BLOCKED & Flagged as Device Sharing Proxy.`);
+    }
+
     function submitStudentCheckIn(scanContext) {
       const activeLec = getActiveLecture();
       const resBox = document.getElementById('checkInResult');
@@ -2963,31 +3276,66 @@
         return;
       }
 
-      if (loc === 'IN_CLASS') {
+      // Compute precise Haversine distance relative to dynamic faculty anchor
+      let studentLat = activeFacultyAnchor.lat + 0.00005;
+      let studentLon = activeFacultyAnchor.lon + 0.00003;
+      if (loc === 'REMOTE_HOSTEL') {
+        studentLat = activeFacultyAnchor.lat + 0.01630; // ~1.82 km away
+        studentLon = activeFacultyAnchor.lon + 0.00800;
+      }
+
+      const calculatedDistance = calculateHaversineMeters(studentLat, studentLon, activeFacultyAnchor.lat, activeFacultyAnchor.lon);
+      const isWithinPerimeter = calculatedDistance <= activeFacultyAnchor.radius_m;
+
+      if (isWithinPerimeter) {
         resBox.className = "p-3 rounded-xl text-[11px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/50 shadow-lg";
         resBox.innerHTML = `
           <div class="flex items-center space-x-1.5 font-bold text-emerald-200 mb-1">
             <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
-            <span>${isAuto ? '✅ AUTO-VERIFIED VIA CAMERA QR SCAN!' : '✅ VERIFIED PRESENT VIA CLASSROOM PIN!'}</span>
+            <span>${isAuto ? '✅ AUTO-VERIFIED VIA CAMERA QR SCAN!' : '✅ VERIFIED PRESENT VIA DYNAMIC PIN!'}</span>
           </div>
           <div class="space-y-0.5 text-[10px] text-emerald-300/90">
             <div>• <b>Lecture:</b> [${selectedCourse}]</div>
             <div>• <b>Token / PIN:</b> <code class="bg-emerald-950/60 px-1 py-0.2 rounded border border-emerald-500/30 text-white">${rawTok}</code> (Freshness Verified)</div>
-            <div>• <b>GPS Geofence:</b> 6.8m (Classroom Perimeter: ${activeGeofenceRadius}m — Valid)</div>
+            <div>• <b>Dynamic Distance:</b> ${calculatedDistance}m to lecturer device (Perimeter: ${activeFacultyAnchor.radius_m}m — In Range)</div>
             <div>• <b>Hardware:</b> Bound Device Verified (No Proxy Detected)</div>
           </div>
         `;
       } else {
-        resBox.className = "p-3 rounded-xl text-[11px] font-mono bg-rose-500/15 text-rose-300 border border-rose-500/50 shadow-lg";
+        // Out of perimeter breach!
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const studentName = activeSession ? activeSession.name : "Alex Chen";
+        const studentRoll = activeSession ? activeSession.identifier : "CHMC-DS-2024-001";
+
+        const incident = {
+          id: `INC-${Math.floor(Math.random() * 9000 + 1000)}`,
+          session_id: currentActiveLectureId,
+          student_id_str: studentRoll,
+          student_name: studentName,
+          attack_type: "REMOTE_WHATSAPP_PROXY",
+          student_lat: studentLat,
+          student_lon: studentLon,
+          distance_meters: calculatedDistance,
+          max_allowed_radius_m: activeFacultyAnchor.radius_m,
+          device_fingerprint: "DEV-CLIENT-MOBILE",
+          failure_reason: `Outside Faculty Perimeter: ${(calculatedDistance / 1000).toFixed(2)} km away (Max allowed: ${activeFacultyAnchor.radius_m}m).`,
+          is_acknowledged: false,
+          timestamp: timeStr
+        };
+        logProxyIncident(incident);
+
+        resBox.className = "p-3.5 rounded-2xl text-[11px] font-mono bg-rose-500/15 text-rose-300 border border-rose-500/50 shadow-lg animate-shake";
         resBox.innerHTML = `
           <div class="flex items-center space-x-1.5 font-bold text-rose-200 mb-1">
             <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i>
-            <span>🚨 PROXY ATTEMPT INTERCEPTED!</span>
+            <span>🚨 OUT-OF-RANGE PROXY ATTEMPT INTERCEPTED!</span>
           </div>
           <div class="space-y-0.5 text-[10px] text-rose-300/90">
-            <div>• <b>Violation:</b> GPS Geofence Check Failed</div>
-            <div>• <b>Distance:</b> 1.8 km away (Classroom Perimeter: ${activeGeofenceRadius}m)</div>
-            <div>• <b>Policy:</b> Remote photo scan / WhatsApp QR sharing is blocked.</div>
+            <div>• <b>Violation:</b> Dynamic Faculty Geofence Breach</div>
+            <div>• <b>Measured Distance:</b> ${(calculatedDistance / 1000).toFixed(2)} km away from instructor's device</div>
+            <div>• <b>Allowed Perimeter:</b> Maximum ${activeFacultyAnchor.radius_m} meters</div>
+            <div>• <b>Security Notice:</b> Remote scan / WhatsApp QR photo sharing is blocked and logged on faculty console.</div>
           </div>
         `;
       }
@@ -3143,13 +3491,15 @@
         setTimeout(() => countBadge.classList.remove('animate-pulse'), 1500);
       }
 
-      alert(`⚡ [Live Simulation Triggered at ${timeStr}]\n\n• Streamed 5 student check-in packets.\n• 4 Legitimate In-Class scans verified (<10m geofence).\n• 1 Remote WhatsApp proxy attempt intercepted & blocked (1.8km away).\n• Live Digital Roster updated.`);
+      alert(`⚡ [Live Simulation Triggered at ${timeStr}]\n\n• Streamed 5 student check-in packets.\n• 4 Legitimate In-Class scans verified (<${activeFacultyAnchor.radius_m}m geofence).\n• 1 Remote WhatsApp proxy attempt intercepted & blocked (1.8km away).\n• Live Digital Roster updated.`);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       initAuth();
       initOtpBoxes();
       renderFacultyLectureUI();
+      updateFacultyAnchorDisplay();
+      renderProxyIncidentsFeed();
       updateKioskClockAndPin();
     });
   </script>
