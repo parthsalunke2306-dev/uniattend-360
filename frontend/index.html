@@ -543,9 +543,6 @@
               <i data-lucide="layers" class="w-3 h-3 mr-1 text-purple-400"></i>
               Lecture Index Budgeting
             </span>
-            <span id="lecSyllabusProgressPill" class="bg-purple-500/20 text-purple-300 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border border-purple-500/40">
-              Lecture 15 of 30 • 50.0% Syllabus
-            </span>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
@@ -1107,7 +1104,7 @@
         <div class="space-y-1 min-w-0">
           <div class="flex items-center space-x-2 flex-wrap">
             <span id="activeLectureIndexPill" class="bg-purple-500/20 text-purple-300 font-mono text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border border-purple-500/40">
-              📖 Lecture 14 of 30 • 46.7% Syllabus
+              📖 Lecture 14 of 30
             </span>
             <span id="activeLectureRoomBadge" class="bg-slate-800 text-slate-300 font-mono text-[10px] px-2 py-0.5 rounded-full border border-stitch-border">
               Room E-104 (Extension)
@@ -2787,8 +2784,7 @@
       // Update Header Badges
       const indexPill = document.getElementById('activeLectureIndexPill');
       if (indexPill) {
-        const pct = active.total_allotted_lectures > 0 ? ((active.lecture_index / active.total_allotted_lectures) * 100).toFixed(1) : 0.0;
-        indexPill.innerText = `📖 Lecture ${active.lecture_index} of ${active.total_allotted_lectures} • ${pct}% Syllabus`;
+        indexPill.innerText = `📖 Lecture ${active.lecture_index} of ${active.total_allotted_lectures}`;
       }
 
       const roomBadge = document.getElementById('activeLectureRoomBadge');
