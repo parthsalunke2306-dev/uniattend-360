@@ -24,31 +24,35 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
             mono: ['"SF Mono"', '"Geist Mono"', 'monospace'],
           },
           colors: {
-            liquid: {
-              canvas: '#0B0D13',
-              glass: 'rgba(23, 27, 38, 0.72)',
-              glassBorder: 'rgba(255, 255, 255, 0.14)',
-              glassHighlight: 'rgba(255, 255, 255, 0.25)',
-              accent: '#0A84FF',
-              emerald: '#30D158',
-              amber: '#FFD60A',
-              rose: '#FF453A',
+            ios: {
+              bg: '#000000',               // True Pitch Black OLED Background
+              card: '#1C1C1E',             // Secondary System Background (Grouped Card)
+              cardTertiary: '#2C2C2E',     // Tertiary System Background (Input / Pill)
+              separator: '#38383A',        // Apple Hairline Divider
+              blue: '#007AFF',             // Apple System Blue
+              green: '#34C759',            // Apple System Green
+              orange: '#FF9500',           // Apple System Orange
+              red: '#FF3B30',              // Apple System Red
+              purple: '#AF52DE',           // Apple System Purple
+              yellow: '#FFCC00',           // Apple System Yellow
+              gray: '#8E8E93',             // Apple System Gray
+              glass: 'rgba(28, 28, 30, 0.82)',
             },
             stitch: {
-              bg: '#0B0D13',
-              surface: 'rgba(28, 32, 45, 0.75)',
-              card: 'rgba(24, 28, 40, 0.82)',
-              border: 'rgba(255, 255, 255, 0.12)',
-              primary: '#0A84FF',
-              primaryGlow: 'rgba(10, 132, 255, 0.3)',
-              emerald: '#30D158',
-              emeraldGlow: 'rgba(48, 209, 88, 0.25)',
-              amber: '#FF9F0A',
-              rose: '#FF453A',
+              bg: '#000000',
+              surface: '#1C1C1E',
+              card: '#1C1C1E',
+              border: '#38383A',
+              primary: '#007AFF',
+              primaryGlow: 'rgba(0, 122, 255, 0.25)',
+              emerald: '#34C759',
+              emeraldGlow: 'rgba(52, 199, 89, 0.25)',
+              amber: '#FF9500',
+              rose: '#FF3B30',
             }
           }
         }
@@ -58,36 +62,40 @@
 
   <style>
     body {
-      background: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.12) 0%, transparent 45%),
-                  radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
-                  #0B0D13;
-      color: #F5F5F7;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", Inter, sans-serif;
+      background-color: #000000;
+      color: #F2F2F7;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
+    /* iOS Spring Micro-Interaction Scale on Tap */
+    button, [role="button"], .ios-tap {
+      transition: transform 140ms cubic-bezier(0.32, 0.72, 0, 1), opacity 140ms ease;
+    }
+    button:active, [role="button"]:active, .ios-tap:active {
+      transform: scale(0.97);
+    }
     .neon-border {
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.28), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+      border: 1px solid #38383A;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     }
     .neon-border-emerald {
-      border: 1px solid rgba(48, 209, 88, 0.35);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.28), inset 0 1px 1px 0 rgba(48, 209, 88, 0.2);
+      border: 1px solid rgba(52, 199, 89, 0.35);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     }
     .neon-border-rose {
-      border: 1px solid rgba(255, 69, 58, 0.35);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.28), inset 0 1px 1px 0 rgba(255, 69, 58, 0.2);
+      border: 1px solid rgba(255, 59, 48, 0.35);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     }
     .glass-panel {
-      background: rgba(22, 26, 38, 0.72);
-      backdrop-filter: blur(28px) saturate(190%);
-      -webkit-backdrop-filter: blur(28px) saturate(190%);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.24), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
-      will-change: transform;
+      background: rgba(28, 28, 30, 0.82);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid #38383A;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
     }
     .scanner-laser {
-      background: linear-gradient(180deg, transparent 0%, rgba(10, 132, 255, 0.85) 50%, transparent 100%);
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 122, 255, 0.85) 50%, transparent 100%);
       animation: scan 2.2s ease-in-out infinite;
     }
     @keyframes scan {
@@ -96,11 +104,14 @@
     }
     .pin-hud {
       letter-spacing: 0.22em;
-      text-shadow: 0 2px 12px rgba(48, 209, 88, 0.3);
     }
-    /* Dynamic Island Top Capsule Animation */
-    .dynamic-island {
-      transition: all 400ms cubic-bezier(0.32, 0.72, 0, 1);
+    /* iOS Grab Handle */
+    .ios-grab-handle {
+      width: 36px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 9999px;
+      margin: 0 auto 12px auto;
     }
     /* HTML5-QRCode Custom Viewport Styling */
     #reader {
