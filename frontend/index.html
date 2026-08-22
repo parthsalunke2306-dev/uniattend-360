@@ -2509,7 +2509,18 @@
     });
 
     function simulateScan() {
-      alert("⚡ Simulated real-time scan events for the Data Science cohort!");
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      
+      renderDigitalRoster();
+      
+      const countBadge = document.getElementById('rosterCountBadge');
+      if (countBadge) {
+        countBadge.classList.add('animate-pulse');
+        setTimeout(() => countBadge.classList.remove('animate-pulse'), 1500);
+      }
+
+      alert(`⚡ [Live Simulation Triggered at ${timeStr}]\n\n• Streamed 5 student check-in packets.\n• 4 Legitimate In-Class scans verified (<10m geofence).\n• 1 Remote WhatsApp proxy attempt intercepted & blocked (1.8km away).\n• Live Digital Roster updated.`);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
