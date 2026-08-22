@@ -24,21 +24,21 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['Geist Mono', 'monospace'],
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            mono: ['"Geist Mono"', 'monospace'],
           },
           colors: {
             stitch: {
-              bg: '#0B1326',
-              surface: '#131B2E',
-              card: '#171F33',
+              bg: '#0F172A',
+              surface: '#1E293B',
+              card: '#1E293B',
               border: 'rgba(255, 255, 255, 0.08)',
-              primary: '#A855F7',
-              primaryGlow: 'rgba(168, 85, 247, 0.4)',
-              emerald: '#10B981',
-              emeraldGlow: 'rgba(16, 185, 129, 0.4)',
-              amber: '#F59E0B',
-              rose: '#EF4444',
+              primary: '#2563EB',
+              primaryGlow: 'rgba(37, 99, 235, 0.2)',
+              emerald: '#2D6A4F',
+              emeraldGlow: 'rgba(45, 106, 79, 0.2)',
+              amber: '#9A6735',
+              rose: '#991B1B',
             }
           }
         }
@@ -48,35 +48,38 @@
 
   <style>
     body {
-      background-color: #0B1326;
-      color: #DAE2FD;
-      font-family: 'Inter', sans-serif;
+      background-color: #0F172A;
+      color: #E2E8F0;
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
       overflow-x: hidden;
     }
     .neon-border {
-      border: 1px solid rgba(168, 85, 247, 0.3);
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     .neon-border-emerald {
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(45, 106, 79, 0.4);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .neon-border-rose {
+      border: 1px solid rgba(153, 27, 27, 0.4);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     .glass-panel {
-      background: rgba(23, 31, 51, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: #1E293B;
       border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
     .scanner-laser {
-      background: linear-gradient(180deg, rgba(168, 85, 247, 0) 0%, rgba(16, 185, 129, 0.9) 50%, rgba(168, 85, 247, 0) 100%);
+      background: linear-gradient(180deg, transparent 0%, rgba(37, 99, 235, 0.8) 50%, transparent 100%);
       animation: scan 2.2s ease-in-out infinite;
     }
     @keyframes scan {
-      0%, 100% { top: 6%; }
-      50% { top: 88%; }
+      0%, 100% { top: 8%; }
+      50% { top: 86%; }
     }
     .pin-hud {
-      text-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+      letter-spacing: 0.22em;
     }
     /* HTML5-QRCode Custom Viewport Styling */
     #reader {
