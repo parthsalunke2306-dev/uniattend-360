@@ -25,15 +25,81 @@ def engine():
 
 
 def test_token_and_qr_generation(engine):
-    """Verifies HMAC token and rolling 4-digit PIN generation."""
+    """Verifies HMAC token and rolling 6-digit PIN generation."""
     token_data = engine.generate_active_token(session_id="SESS-101", room_code="LH-101")
     assert "token" in token_data
     assert "rolling_pin" in token_data
-    assert len(token_data["rolling_pin"]) == 4
+    assert len(token_data["rolling_pin"]) == 6
+    assert token_data["rolling_pin"].isdigit()
 
     # Generate QR Base64
     qr_b64 = engine.generate_qr_image_base64(token_data)
     assert len(qr_b64) > 100
+
+
+def test_manual_6digit_pin_verification_success(engine):
+    """Verifies student manual submission of active 6-digit PIN."""
+    class_geo = DEFAULT_CLASSROOM_GEO["LH-101"]
+    token_data = engine.generate_active_token(session_id="SESS-101", room_code="LH-101")
+    pin = token_data["rolling_pin"]
+
+    result = engine.verify_student_checkin(
+        session_id="SESS-101",
+        student_id_str="CSE-2024-001",
+        student_name="Alex Chen",
+        input_token_or_pin=pin,
+        student_lat=class_geo["lat"],
+        student_lon=class_geo["lon"],
+        device_fingerprint="DEVICE-PHONE-ALPHA-99",
+        room_code="LH-101"
+    )
+
+    assert result["is_success"] is True
+    assert result["status"] == "VERIFIED_PRESENT"
+
+
+def test_manual_6digit_pin_drift_tolerance(engine):
+    """Verifies student submission of 6-digit PIN from previous 8s cycle (T-1) succeeds."""
+    class_geo = DEFAULT_CLASSROOM_GEO["LH-101"]
+    now = time.time()
+    prev_time = now - 7.0  # Previous window
+    prev_token_data = engine.generate_active_token(session_id="SESS-101", room_code="LH-101", custom_time=prev_time)
+    prev_pin = prev_token_data["rolling_pin"]
+
+    result = engine.verify_student_checkin(
+        session_id="SESS-101",
+        student_id_str="CSE-2024-001",
+        student_name="Alex Chen",
+        input_token_or_pin=prev_pin,
+        student_lat=class_geo["lat"],
+        student_lon=class_geo["lon"],
+        device_fingerprint="DEVICE-PHONE-ALPHA-99",
+        room_code="LH-101",
+        custom_time=now + 2.0
+    )
+
+    assert result["is_success"] is True
+    assert result["status"] == "VERIFIED_PRESENT"
+
+
+def test_manual_6digit_pin_invalid_rejected(engine):
+    """Verifies invalid or guessed 6-digit PIN is strictly rejected."""
+    class_geo = DEFAULT_CLASSROOM_GEO["LH-101"]
+    
+    result = engine.verify_student_checkin(
+        session_id="SESS-101",
+        student_id_str="CSE-2024-001",
+        student_name="Alex Chen",
+        input_token_or_pin="000000",  # Fake PIN
+        student_lat=class_geo["lat"],
+        student_lon=class_geo["lon"],
+        device_fingerprint="DEVICE-PHONE-ALPHA-99",
+        room_code="LH-101"
+    )
+
+    assert result["is_success"] is False
+    assert result["status"] == "PROXY_ATTEMPT_BLOCKED"
+    assert result["shields"]["token_valid"] is False
 
 
 def test_legitimate_in_class_checkin(engine):

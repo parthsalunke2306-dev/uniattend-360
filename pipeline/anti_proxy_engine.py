@@ -65,9 +65,9 @@ class AntiProxyEngine:
         message = f"{session_id}:{room_code}:{time_slot}".encode("utf-8")
         signature = hmac.new(self.secret_key.encode("utf-8"), message, hashlib.sha256).hexdigest()
 
-        # 4-Digit Rolling PIN from numeric slice of hash
-        pin_seed = int(signature[:8], 16) % 10000
-        rolling_pin = f"{pin_seed:04d}"
+        # 6-Digit Rolling PIN from numeric slice of hash (RFC 6238 TOTP style % 1,000,000)
+        pin_seed = int(signature[:8], 16) % 1000000
+        rolling_pin = f"{pin_seed:06d}"
         
         # Token payload to embed in QR
         token_payload = {
@@ -185,17 +185,17 @@ class AntiProxyEngine:
             else:
                 token_failure_reason = f"Expired QR Token. Generated for slot {token_slot}, current slot is {current_slot}."
         except Exception:
-            # Try evaluating as 4-digit Rolling PIN
+            # Try evaluating as 6-digit Rolling PIN
             cleaned_pin = input_token_or_pin.strip()
             for s in valid_slots:
                 msg = f"{session_id}:{room_code}:{s}".encode("utf-8")
                 sig = hmac.new(self.secret_key.encode("utf-8"), msg, hashlib.sha256).hexdigest()
-                pin = f"{int(sig[:8], 16) % 10000:04d}"
+                pin = f"{int(sig[:8], 16) % 1000000:06d}"
                 if cleaned_pin == pin:
                     token_valid = True
                     break
             if not token_valid:
-                token_failure_reason = "Invalid or expired 4-Digit Security PIN."
+                token_failure_reason = "Invalid or expired 6-Digit Security PIN."
 
         # ------------------------------------------------
         # SHIELD 2: GPS GEOFENCE CHECK

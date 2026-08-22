@@ -749,21 +749,23 @@
               <div class="flex justify-between items-center text-[10px] font-mono">
                 <span class="text-slate-300 font-bold flex items-center">
                   <i data-lucide="key-round" class="w-3 h-3 text-emerald-400 mr-1"></i>
-                  Classroom 4-Digit PIN
+                  Classroom 6-Digit PIN (TOTP)
                 </span>
                 <span class="text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20 font-mono text-[9px]">Rotates every 8s</span>
               </div>
               
-              <!-- 4-Digit Segmented OTP Input Grid (Starts Completely Empty) -->
-              <div class="flex items-center justify-center space-x-2 sm:space-x-3 my-2" id="pinBoxesContainer">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-11 h-13 sm:w-14 sm:h-16 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="0" value="">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-11 h-13 sm:w-14 sm:h-16 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="1" value="">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-11 h-13 sm:w-14 sm:h-16 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="2" value="">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-11 h-13 sm:w-14 sm:h-16 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="3" value="">
+              <!-- 6-Digit Segmented OTP Input Grid (Starts Completely Empty) -->
+              <div class="grid grid-cols-6 gap-1.5 sm:gap-2 my-2 max-w-sm mx-auto" id="pinBoxesContainer">
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-full h-11 sm:h-13 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-xl sm:text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="0" value="">
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-full h-11 sm:h-13 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-xl sm:text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="1" value="">
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-full h-11 sm:h-13 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-xl sm:text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="2" value="">
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-full h-11 sm:h-13 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-xl sm:text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="3" value="">
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-full h-11 sm:h-13 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-xl sm:text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="4" value="">
+                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="student-otp-box w-full h-11 sm:h-13 rounded-xl bg-stitch-surface border-2 border-stitch-border text-center font-mono font-black text-xl sm:text-2xl text-emerald-400 focus:outline-none transition-all shadow-inner" data-index="5" value="">
               </div>
 
               <div class="flex items-center justify-between text-[9px] font-mono text-slate-400">
-                <span>Read the 4 digits from the instructor's screen.</span>
+                <span>Read the 6 digits from the instructor's screen.</span>
                 <button type="button" onclick="clearStudentPinBoxes()" class="text-slate-400 hover:text-rose-300 transition">Clear</button>
               </div>
             </div>
@@ -937,7 +939,7 @@
 
           <!-- Rotating Dynamic QR Code -->
           <div class="p-2.5 bg-white rounded-2xl inline-block shadow-xl">
-            <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CHMC-DS-Token-8492" class="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-lg" alt="Dynamic QR">
+            <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CHMC-DS-Token-582914" class="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-lg" alt="Dynamic QR">
             <div class="text-[10px] font-mono text-slate-700 mt-1 font-semibold">
               ⏳ Rotates in: <span id="kioskTimer" class="text-purple-600 font-bold">8s</span>
             </div>
@@ -945,8 +947,8 @@
 
           <!-- Rolling PIN HUD -->
           <div class="p-2.5 rounded-xl bg-gradient-to-tr from-purple-950 to-slate-900 border border-emerald-500/40">
-            <span class="text-[8px] font-mono text-slate-400 uppercase tracking-wider">Rolling Security PIN</span>
-            <div id="kioskPinDisplay" class="font-mono font-extrabold text-2xl sm:text-3xl text-emerald-400 tracking-[0.2em] my-0.5 pin-hud">8492</div>
+            <span class="text-[8px] font-mono text-slate-400 uppercase tracking-wider">Rolling 6-Digit TOTP Security PIN</span>
+            <div id="kioskPinDisplay" class="font-mono font-extrabold text-2xl sm:text-3xl text-emerald-400 tracking-[0.18em] my-0.5 pin-hud">582914</div>
             <span class="text-[9px] font-mono text-emerald-400/80">Refreshes every 8s • <span id="kioskGeofenceTag">10m</span> Range</span>
           </div>
 
@@ -1890,7 +1892,7 @@
       if (decodedText.startsWith("CHMC-DS-Token-")) {
         pin = decodedText.replace("CHMC-DS-Token-", "").trim();
       } else {
-        const match = decodedText.match(/\b\d{4}\b/);
+        const match = decodedText.match(/\b\d{6}\b/) || decodedText.match(/\b\d{4}\b/);
         if (match) pin = match[0];
       }
 
@@ -2141,7 +2143,7 @@
     }
 
     // ==============================================
-    // 4-DIGIT PIN OTP CONTROLLER & AUTO-ADVANCE
+    // 6-DIGIT PIN OTP CONTROLLER & AUTO-ADVANCE
     // ==============================================
     function getEnteredStudentPin() {
       const boxes = document.querySelectorAll('.student-otp-box');
@@ -2152,7 +2154,7 @@
 
     function setStudentPinBoxes(pinStr) {
       if (!pinStr) return;
-      const clean = pinStr.replace(/\D/g, '').slice(0, 4);
+      const clean = pinStr.replace(/\D/g, '').slice(0, 6);
       const boxes = document.querySelectorAll('.student-otp-box');
       boxes.forEach((b, i) => {
         b.value = clean[i] || '';
@@ -2201,9 +2203,9 @@
             boxes[idx + 1].select();
           }
 
-          // Auto-submit when 4th digit is entered
+          // Auto-submit when all 6 digits are entered
           const fullPin = getEnteredStudentPin();
-          if (fullPin.length === 4) {
+          if (fullPin.length === 6) {
             submitStudentCheckIn();
           }
         });
@@ -2226,18 +2228,18 @@
           }
         });
 
-        // Handle pasting 4-digit PIN
+        // Handle pasting 6-digit PIN
         box.addEventListener('paste', (e) => {
           e.preventDefault();
           const pastedData = (e.clipboardData || window.clipboardData).getData('text');
-          const clean = pastedData.replace(/\D/g, '').slice(0, 4);
+          const clean = pastedData.replace(/\D/g, '').slice(0, 6);
           if (clean) {
             clean.split('').forEach((char, i) => {
               if (boxes[i]) boxes[i].value = char;
             });
             const nextIdx = Math.min(clean.length, boxes.length - 1);
             boxes[nextIdx].focus();
-            if (clean.length === 4) {
+            if (clean.length === 6) {
               submitStudentCheckIn();
             }
           }
@@ -2260,16 +2262,16 @@
       let pin = (scanContext && scanContext.pin) ? scanContext.pin : getEnteredStudentPin();
       const rawTok = scanContext && scanContext.rawToken ? scanContext.rawToken : `CHMC-DS-Token-${pin}`;
 
-      // In manual PIN mode, ensure all 4 digits are present
-      if (!isAuto && (!pin || pin.length < 4)) {
+      // In manual PIN mode, ensure all 6 digits are present
+      if (!isAuto && (!pin || pin.length < 6)) {
         resBox.className = "p-3 rounded-xl text-[11px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/50 shadow-lg";
         resBox.innerHTML = `
           <div class="flex items-center space-x-1.5 font-bold text-amber-200 mb-1">
             <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
-            <span>⚠️ INCOMPLETE PIN (4 DIGITS REQUIRED)</span>
+            <span>⚠️ INCOMPLETE PIN (6 DIGITS REQUIRED)</span>
           </div>
           <div class="text-[10px] text-amber-300/90">
-            Please enter all 4 digits of the PIN currently projected on the classroom board.
+            Please enter all 6 digits of the PIN currently projected on the classroom board.
           </div>
         `;
         shakePinBoxes();
@@ -2427,13 +2429,13 @@
     }
 
     let countdown = 8;
-    let currentActiveKioskPin = "8492";
+    let currentActiveKioskPin = "582914";
 
     setInterval(() => {
       countdown -= 1;
       if (countdown <= 0) {
         countdown = 8;
-        const pins = ["8492", "3174", "9052", "6621", "4810", "7239", "5168"];
+        const pins = ["582914", "849203", "317495", "905281", "662140", "481072", "723916", "516842"];
         currentActiveKioskPin = pins[Math.floor(Math.random() * pins.length)];
         const pinDisplay = document.getElementById('kioskPinDisplay');
         if (pinDisplay) pinDisplay.innerText = currentActiveKioskPin;
