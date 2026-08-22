@@ -6,18 +6,24 @@ Handles database initialization, engine management, session pooling, and utility
 import os
 from contextlib import contextmanager
 from typing import Generator
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from database.models import Base
+
+# Automatically load .env file if present
+load_dotenv()
 
 # Default SQLite database path
 DEFAULT_DB_PATH = os.path.join(os.path.dirname(__file__), "uniattend.db")
 DEFAULT_DB_URL = f"sqlite:///{DEFAULT_DB_PATH}"
 
-# Connection string can be overridden by environment variable for PostgreSQL / MySQL
+# Connection string can be overridden by environment variable for PostgreSQL / Supabase / Neon
 DATABASE_URL = os.environ.get("UNIATTEND_DATABASE_URL", DEFAULT_DB_URL)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Configure engine (SQLite requires check_same_thread=False for multi-threaded apps like Streamlit)
+# Configure engine (SQLite requires check_same_thread=False for multi-threaded apps)
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 engine = create_engine(
     DATABASE_URL,
