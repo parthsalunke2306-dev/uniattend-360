@@ -151,3 +151,25 @@ class LifecycleActionRequest(BaseModel):
     user_name: Optional[str] = Field(default=None, example="Miss Razia Khan")
     role: Optional[str] = Field(default="TEACHER", example="TEACHER")
 
+
+# ==========================================
+# HARDWARE WEBAUTHN & 1-DEVICE LOCK SCHEMAS
+# ==========================================
+
+class ResetStudentDeviceRequest(BaseModel):
+    student_id_str: str = Field(..., example="CHMC-DS-2024-001")
+    authorized_by: str = Field(default="Miss Razia Khan", example="Miss Razia Khan")
+    reason: Optional[str] = Field(default="Phone upgraded / Hardware lost", example="Phone upgraded")
+
+
+class BindStudentDeviceRequest(BaseModel):
+    student_id_str: str = Field(..., example="CHMC-DS-2024-001")
+    device_uuid: str = Field(..., example="DEV-IPHONE15PRO-SECURE-ENCLAVE")
+    device_name: Optional[str] = Field(default="Apple iPhone 15 Pro", example="Apple iPhone 15 Pro")
+
+
+class StudentDeviceStatusResponse(BaseModel):
+    student_id_str: str
+    is_locked: bool
+    device_info: Optional[Dict[str, Any]] = None
+

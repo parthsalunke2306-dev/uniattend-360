@@ -47,6 +47,8 @@ class AntiProxyEngine:
         self.session_device_registry: Dict[str, Dict[str, str]] = {}
         # Tracks {session_id: {student_id_str: checkin_record}}
         self.session_attendance_registry: Dict[str, Dict[str, Dict[str, Any]]] = {}
+        # Tracks persistent 1-Device-Per-Student hardware locks: {student_id_str: {"device_uuid": str, "device_name": str, "enrolled_at": str, "last_used_at": str}}
+        self.student_hardware_locks: Dict[str, Dict[str, Any]] = {}
         # Tracks dynamic faculty device coordinates: {session_id: {"lat": float, "lon": float, "accuracy_m": float, "radius_m": float, "anchor_source": str, "updated_at": str}}
         self.session_faculty_anchors: Dict[str, Dict[str, Any]] = {}
         # Real-time incident logs of intercepted proxy attempts
@@ -284,8 +286,8 @@ class AntiProxyEngine:
         token_valid = False
         token_failure_reason = None
         
-        # Check current slot and immediately adjacent slot (-1 slot for network lag buffer)
-        valid_slots = [current_slot, current_slot - 1]
+        # Check current slot and immediately adjacent slots (-1, -2 slots for network lag buffer)
+        valid_slots = [current_slot, current_slot - 1, current_slot - 2]
 
         # Try decoding as Base64 QR Token
         try:
@@ -325,16 +327,38 @@ class AntiProxyEngine:
         geo_failure_reason = None if geo_valid else f"Outside Faculty Perimeter: {distance_meters:.1f}m away (Max allowed: {max_radius:.1f}m from lecturer)."
 
         # ------------------------------------------------
-        # SHIELD 3: DEVICE HARDWARE FINGERPRINT LOCK
+        # ------------------------------------------------
+        # SHIELD 3: 1-DEVICE-PER-STUDENT & ANTI-CYCLING HARDWARE LOCK
         # ------------------------------------------------
         session_devices = self.session_device_registry.setdefault(session_id, {})
         device_valid = True
         device_failure_reason = None
+        device_attack_type = "DEVICE_SHARING_PROXY"
 
-        if device_fingerprint in session_devices:
+        # 3A: Student-to-Device Hardware Binding Check
+        if student_id_str in self.student_hardware_locks:
+            bound_device = self.student_hardware_locks[student_id_str]
+            if bound_device.get("device_uuid") != device_fingerprint:
+                device_valid = False
+                device_attack_type = "DEVICE_MISMATCH_UNAUTHORIZED_HARDWARE"
+                device_failure_reason = f"Unauthorized Handset! Student {student_id_str} is cryptographically locked to a different primary device."
+            else:
+                bound_device["last_used_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            # Automatic first-time hardware binding
+            self.student_hardware_locks[student_id_str] = {
+                "device_uuid": device_fingerprint,
+                "device_name": "Primary Mobile Device",
+                "enrolled_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "last_used_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+
+        # 3B: Device-to-Student Anti-Cycling Multi-Account Check (1 Phone cannot mark for 2 students in same lecture)
+        if device_valid and device_fingerprint in session_devices:
             registered_student = session_devices[device_fingerprint]
             if registered_student != student_id_str:
                 device_valid = False
+                device_attack_type = "DEVICE_SHARING_PROXY"
                 device_failure_reason = f"Device Hardware Re-use Detected! This phone already marked attendance for {registered_student}."
 
         # ------------------------------------------------
@@ -391,7 +415,7 @@ class AntiProxyEngine:
                 attack_type = "REMOTE_WHATSAPP_PROXY"
                 primary_reason = geo_failure_reason
             elif not device_valid:
-                attack_type = "DEVICE_SHARING_PROXY"
+                attack_type = device_attack_type
                 primary_reason = device_failure_reason
             else:
                 attack_type = "EXPIRED_QR_PROXY"
@@ -432,6 +456,50 @@ class AntiProxyEngine:
                 },
                 "timestamp": datetime.now().strftime("%H:%M:%S")
             }
+
+    # ----------------------------------------------------
+    # 6. HARDWARE DEVICE MANAGEMENT & EMERGENCY RESET
+    # ----------------------------------------------------
+
+    def bind_student_device(self, student_id_str: str, device_uuid: str, device_name: str = "Primary Mobile Handset") -> Dict[str, Any]:
+        """Explicitly binds or re-binds a primary hardware device to a student account."""
+        lock = {
+            "device_uuid": device_uuid,
+            "device_name": device_name,
+            "enrolled_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "last_used_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.student_hardware_locks[student_id_str] = lock
+        return lock
+
+    def get_student_device_status(self, student_id_str: str) -> Dict[str, Any]:
+        """Returns the hardware lock and binding status for a student account."""
+        if student_id_str in self.student_hardware_locks:
+            return {
+                "student_id_str": student_id_str,
+                "is_locked": True,
+                "device_info": self.student_hardware_locks[student_id_str]
+            }
+        return {
+            "student_id_str": student_id_str,
+            "is_locked": False,
+            "device_info": None
+        }
+
+    def reset_student_device(self, student_id_str: str, authorized_by: str = "Faculty Admin") -> Dict[str, Any]:
+        """
+        Emergency Administrative Reset:
+        Unlinks a student's prior hardware device, allowing legitimate re-enrollment of a new handset.
+        """
+        prior = self.student_hardware_locks.pop(student_id_str, None)
+        return {
+            "student_id_str": student_id_str,
+            "status": "RESET_SUCCESSFUL",
+            "unlinked_device": prior,
+            "authorized_by": authorized_by,
+            "reset_timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "message": f"Successfully unlinked hardware lock for {student_id_str}. Student may now bind their new phone on next check-in."
+        }
 
 
 # Singleton engine instance for live application

@@ -37,7 +37,8 @@ from api.schemas import (
     HealthResponse, ActiveTokenResponse, StudentCheckInRequest,
     StudentCheckInResponse, SimulationRequest, SimulationResponse, RiskPredictionRequest,
     CreateLectureRequest, LectureResponse, LifecycleActionRequest,
-    UpdateFacultyAnchorRequest, ProxyAttemptResponse
+    UpdateFacultyAnchorRequest, ProxyAttemptResponse,
+    ResetStudentDeviceRequest, BindStudentDeviceRequest, StudentDeviceStatusResponse
 )
 from api.auth import auth_router
 
@@ -381,6 +382,45 @@ def verify_student_checkin(req: StudentCheckInRequest):
         "failure_reason": result.get("failure_reason"),
         "attack_type": result.get("attack_type"),
         "incident_id": result.get("incident_id")
+    }
+
+
+# ==========================================
+# 5A. 1-DEVICE HARDWARE LOCK & EMERGENCY RESET
+# ==========================================
+
+@app.post("/api/v1/attendance/device/reset", tags=["Hardware Device Security"])
+def reset_student_device_lock(req: ResetStudentDeviceRequest):
+    """
+    Emergency Administrative Reset:
+    Allows Faculty, HOD, or Admin to reset a student's hardware device lock (e.g. phone lost or upgraded).
+    """
+    result = anti_proxy_engine.reset_student_device(
+        student_id_str=req.student_id_str,
+        authorized_by=req.authorized_by
+    )
+    return result
+
+
+@app.get("/api/v1/attendance/device/status/{student_id_str}", response_model=StudentDeviceStatusResponse, tags=["Hardware Device Security"])
+def get_student_device_status(student_id_str: str):
+    """Retrieves current 1-device hardware lock binding status for a student."""
+    return anti_proxy_engine.get_student_device_status(student_id_str)
+
+
+@app.post("/api/v1/attendance/device/bind", tags=["Hardware Device Security"])
+def bind_student_device(req: BindStudentDeviceRequest):
+    """Binds a student's primary physical smartphone to their attendance profile."""
+    result = anti_proxy_engine.bind_student_device(
+        student_id_str=req.student_id_str,
+        device_uuid=req.device_uuid,
+        device_name=req.device_name or "Primary Smartphone"
+    )
+    return {
+        "status": "DEVICE_BOUND",
+        "student_id_str": req.student_id_str,
+        "device_info": result,
+        "message": f"Successfully locked account {req.student_id_str} to device {req.device_uuid[:12]}..."
     }
 
 
