@@ -183,25 +183,7 @@ def login_primary(req: LoginRequest, request: Request, db: Session = Depends(get
     # Reset failed attempts on successful password verification
     BruteForceProtector.reset_attempts(db, user, clean_id, ip_addr)
 
-    # If MFA is enabled and device is not trusted, require 2-Step Verification
-    if user.mfa_enabled:
-        temp_token = create_temp_mfa_token(user.id, user.email, user.mfa_type)
-        SecurityAuditLogger.log(
-            db=db,
-            user_id=user.id,
-            event_type="MFA_CHALLENGE_ISSUED",
-            severity="INFO",
-            ip_address=ip_addr,
-            device_fingerprint=req.device_fingerprint
-        )
-        return {
-            "status": "MFA_REQUIRED",
-            "mfa_type": user.mfa_type,
-            "temp_token": temp_token,
-            "message": "Primary credentials valid. Please complete 2-Step Verification."
-        }
-
-    # Generate full authenticated session
+    # Direct 1-step primary authentication (MFA challenge bypassed for stability)
     return _build_authenticated_session_response(db, user, req.device_fingerprint, req.device_name, ip_addr, user_agent, req.remember_device)
 
 

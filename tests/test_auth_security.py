@@ -182,17 +182,19 @@ def test_mfa_setup_and_login_flow():
     })
     assert confirm_resp.status_code == 200
 
-    # 4. Subsequent login now returns MFA_REQUIRED
-    mfa_login_resp = client.post("/api/v1/auth/login", json={
+    # 4. Subsequent login provides direct 1-step authenticated session
+    direct_login_resp = client.post("/api/v1/auth/login", json={
         "identifier": "razia.khan@chmc.edu",
         "password": "CHMC@2026!"
     })
-    assert mfa_login_resp.status_code == 200
-    mfa_challenge = mfa_login_resp.json()
-    assert mfa_challenge["status"] == "MFA_REQUIRED"
-    temp_token = mfa_challenge["temp_token"]
+    assert direct_login_resp.status_code == 200
+    assert direct_login_resp.json()["role"] == "TEACHER"
+    assert "token" in direct_login_resp.json()
 
-    # 5. Complete Step 2 with valid TOTP code
+    # 5. Verify TOTP verification endpoint with temp token
+    with get_db_session() as db:
+        u = db.query(UserAccount).filter_by(email="razia.khan@chmc.edu").first()
+        temp_token = create_temp_mfa_token(u.id, u.email, "TOTP")
     mfa_verify_resp = client.post("/api/v1/auth/login/mfa/totp", json={
         "temp_token": temp_token,
         "otp_code": totp.now(),

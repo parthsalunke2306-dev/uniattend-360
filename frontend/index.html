@@ -189,46 +189,6 @@
           </div>
         </div>
 
-        <!-- STEP 2: TWO-STEP VERIFICATION (TOTP / BIOMETRICS / RECOVERY) -->
-        <div id="authStep2" class="space-y-3.5 hidden">
-          <div class="p-2.5 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-center space-y-0.5">
-            <span class="text-[11px] font-mono text-purple-300 font-bold uppercase tracking-wider flex items-center justify-center">
-              <i data-lucide="key-round" class="w-3.5 h-3.5 mr-1 text-purple-400"></i>
-              2-Step Verification
-            </span>
-            <p class="text-[10px] text-slate-300">Enter 6-digit code or use device passkey.</p>
-          </div>
-
-          <form onsubmit="handleStep2TOTPSubmit(event)" class="space-y-2.5">
-            <input type="text" id="mfaCodeInput" placeholder="• • • • • •" maxlength="6" autofocus class="w-full bg-stitch-surface border border-emerald-500/50 rounded-xl p-2.5 text-center font-mono font-extrabold text-xl text-emerald-400 tracking-[0.3em] focus:outline-none">
-            <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold py-2 rounded-xl text-xs font-mono shadow-md">
-              VERIFY & COMPLETE LOGIN
-            </button>
-          </form>
-
-          <button onclick="handleWebAuthnBiometricLogin()" type="button" class="w-full bg-stitch-surface hover:bg-slate-800 border border-purple-500/40 text-purple-300 font-mono font-bold py-2 rounded-xl text-[11px] flex items-center justify-center space-x-1.5">
-            <i data-lucide="fingerprint" class="w-3.5 h-3.5 text-purple-400"></i>
-            <span>Use Passkey (Windows Hello / Touch ID)</span>
-          </button>
-
-          <button onclick="toggleRecoveryCodeInput()" type="button" class="w-full text-[10px] font-mono text-slate-400 hover:text-purple-300 underline text-center">
-            Use Emergency Recovery Code
-          </button>
-
-          <div id="recoveryCodeBox" class="hidden p-2.5 rounded-xl bg-slate-900 border border-amber-500/40 space-y-1.5">
-            <div class="flex space-x-1.5">
-              <input type="text" id="recoveryCodeInput" placeholder="XXXX-XXXX" class="flex-1 bg-stitch-surface border border-stitch-border rounded-lg p-1.5 text-xs font-mono text-white text-center uppercase">
-              <button onclick="handleRecoveryCodeSubmit()" class="px-2.5 py-1.5 bg-amber-600 text-white rounded-lg text-[11px] font-mono font-bold">RECOVER</button>
-            </div>
-          </div>
-
-          <button onclick="backToStep1()" type="button" class="w-full text-center text-[10px] font-mono text-slate-500 hover:text-slate-300">
-            ← Back to sign in
-          </button>
-
-          <div id="mfaError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[10px] font-mono text-center"></div>
-        </div>
-
       </div>
 
       <!-- 2. CREATE ACCOUNT FORM (DYNAMIC ONBOARDING) -->
@@ -403,38 +363,27 @@
         </button>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
         <div class="p-3 rounded-2xl bg-stitch-surface border border-stitch-border space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono text-purple-400 font-bold uppercase">2-Step MFA</span>
-            <span id="hubMfaStatus" class="bg-emerald-500/20 text-emerald-300 font-mono text-[8px] font-bold px-1.5 py-0.2 rounded">ACTIVE</span>
+            <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase">Password Security</span>
+            <span class="text-[8px] font-mono text-emerald-400 bg-emerald-500/20 px-1.5 py-0.2 rounded font-bold">ARGON2ID</span>
           </div>
-          <p class="text-[10px] text-slate-300">Authenticator OTP.</p>
-          <button onclick="openMFASetupModal()" class="w-full bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500 text-purple-300 text-[10px] font-mono font-bold py-1.5 rounded-lg">
-            ⚙️ Configure App
-          </button>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-stitch-surface border border-stitch-border space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase">Passkeys</span>
-            <span class="bg-purple-500/20 text-purple-300 font-mono text-[8px] font-bold px-1.5 py-0.2 rounded">FIDO2</span>
-          </div>
-          <p class="text-[10px] text-slate-300">Windows Hello / Face ID.</p>
-          <button onclick="handleWebAuthnRegister()" class="w-full bg-emerald-600/20 hover:bg-emerald-600/40 border border-emerald-500 text-emerald-300 text-[10px] font-mono font-bold py-1.5 rounded-lg">
-            🔑 Register Passkey
-          </button>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-stitch-surface border border-stitch-border space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono text-slate-400 font-bold uppercase">Password</span>
-            <span class="text-[8px] font-mono text-emerald-400 font-bold">Argon2id</span>
-          </div>
-          <p class="text-[10px] text-slate-300">Update password.</p>
-          <button onclick="promptPasswordChange()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono font-bold py-1.5 rounded-lg border border-stitch-border">
+          <p class="text-[10px] text-slate-300">Salted & hashed cryptographic protection.</p>
+          <button onclick="promptPasswordChange()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white text-[10px] font-mono font-bold py-1.5 rounded-lg shadow">
             🔒 Change Password
           </button>
+        </div>
+
+        <div class="p-3 rounded-2xl bg-stitch-surface border border-stitch-border space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono text-cyan-400 font-bold uppercase">Database Storage</span>
+            <span class="bg-cyan-500/20 text-cyan-300 font-mono text-[8px] font-bold px-1.5 py-0.2 rounded">SUPABASE CLOUD</span>
+          </div>
+          <p class="text-[10px] text-slate-300">Live PostgreSQL 17.6 (Mumbai).</p>
+          <div class="w-full bg-slate-800 text-cyan-300 text-center text-[10px] font-mono font-bold py-1.5 rounded-lg border border-stitch-border">
+            🟢 Active & Synchronized
+          </div>
         </div>
       </div>
 
@@ -1439,50 +1388,8 @@
         return;
       }
 
-      pendingMFATarget = foundKey;
-      document.getElementById('authStep1').classList.add('hidden');
-      document.getElementById('authStep2').classList.remove('hidden');
-      document.getElementById('mfaCodeInput').focus();
-    }
-
-    function handleStep2TOTPSubmit(e) {
-      e.preventDefault();
-      const otp = document.getElementById('mfaCodeInput').value.trim();
-      if (otp.length !== 6) {
-        const errEl = document.getElementById('mfaError');
-        errEl.innerText = "Please enter a valid 6-digit code.";
-        errEl.classList.remove('hidden');
-        return;
-      }
-      quickAuth(pendingMFATarget);
-    }
-
-    async function handleWebAuthnBiometricLogin() {
-      if (window.PublicKeyCredential) {
-        alert("🔐 Activating Windows Hello / Native Device Biometrics...\nVerify fingerprint or facial recognition on your device.");
-        setTimeout(() => { quickAuth(pendingMFATarget || 'CHMC-DS-2024-001'); }, 800);
-      } else {
-        alert("WebAuthn is not supported in this browser. Use 6-digit TOTP code.");
-      }
-    }
-
-    function toggleRecoveryCodeInput() {
-      document.getElementById('recoveryCodeBox').classList.toggle('hidden');
-    }
-
-    function handleRecoveryCodeSubmit() {
-      const code = document.getElementById('recoveryCodeInput').value.trim();
-      if (code.length < 6) {
-        alert("Please enter a valid 8-character recovery code.");
-        return;
-      }
-      alert("✅ Emergency Recovery Code validated! Single-use code consumed.");
-      quickAuth(pendingMFATarget || 'CHMC-DS-2024-001');
-    }
-
-    function backToStep1() {
-      document.getElementById('authStep1').classList.remove('hidden');
-      document.getElementById('authStep2').classList.add('hidden');
+      // Direct, fast 1-step primary login (Password / Argon2id authenticated)
+      quickAuth(foundKey);
     }
 
     function quickAuth(key) {
