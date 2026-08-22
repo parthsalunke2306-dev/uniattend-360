@@ -161,7 +161,6 @@ COLLEGE_CONFIG = {
         }
     ],
     "students": [
-        {"roll_no": "CHMC-DS-2024-001", "name": "Parth Salunke (Lead Data Science)", "email": "parthsalunke2306@gmail.com", "archetype": "exemplary"},
         {"roll_no": "CHMC-DS-2024-002", "name": "Aarav Sharma", "email": "aarav.sharma@chmc.edu", "archetype": "consistent"},
         {"roll_no": "CHMC-DS-2024-003", "name": "Priya Patel", "email": "priya.patel@chmc.edu", "archetype": "slacker"},
         {"roll_no": "CHMC-DS-2024-004", "name": "Rohan Gupta", "email": "rohan.gupta@chmc.edu", "archetype": "chronic_defaulter"},

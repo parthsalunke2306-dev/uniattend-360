@@ -132,7 +132,7 @@
               <label class="text-[11px] font-mono text-slate-400">Roll No / Faculty ID / Email</label>
               <div class="relative">
                 <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
-                <input type="text" id="loginIdentifier" placeholder="e.g. parthsalunke2306@gmail.com or CHMC-DS-2024-001" required value="parthsalunke2306@gmail.com" class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
+                <input type="text" id="loginIdentifier" placeholder="e.g. aarav.sharma@chmc.edu or CHMC-DS-2024-002" required value="aarav.sharma@chmc.edu" class="w-full bg-stitch-surface border border-stitch-border rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500">
               </div>
             </div>
 
@@ -157,7 +157,7 @@
 
             <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-purple-900/40 text-xs font-mono flex items-center justify-center space-x-1.5 transition duration-150">
               <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
-              <span>AUTHENTICATE (STEP 1)</span>
+              <span>SECURE SIGN IN</span>
             </button>
 
             <div id="loginError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[11px] font-mono text-center"></div>
@@ -167,8 +167,8 @@
           <div class="space-y-1.5 pt-2 border-t border-stitch-border">
             <span class="text-[9px] font-mono text-slate-400 uppercase tracking-wider block text-center">⚡ 1-Click Demo Profiles:</span>
             <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-              <button onclick="quickAuth('CHMC-DS-2024-001')" class="p-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-left truncate">
-                🎓 Parth (Lead DS)
+              <button onclick="quickAuth('CHMC-DS-2024-002')" class="p-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-left truncate">
+                🎓 Aarav (Student 002)
               </button>
               <button onclick="quickAuth('faculty.razia')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-left truncate">
                 👩‍🏫 Miss Razia (4 Units)
@@ -1030,14 +1030,6 @@
                 <td class="p-2.5 text-right text-emerald-400 font-bold">● ACTIVE</td>
               </tr>
               <tr class="hover:bg-stitch-surface/30">
-                <td class="p-2.5 font-bold text-white">🎓 Parth Salunke (Lead DS)</td>
-                <td class="p-2.5 text-purple-300">parthsalunke2306@gmail.com</td>
-                <td class="p-2.5"><span class="bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold text-[9px]">STUDENT (001)</span></td>
-                <td class="p-2.5 text-emerald-400">Argon2id Salted</td>
-                <td class="p-2.5 text-purple-300">WebAuthn Ready</td>
-                <td class="p-2.5 text-right text-emerald-400 font-bold">● ACTIVE</td>
-              </tr>
-              <tr class="hover:bg-stitch-surface/30">
                 <td class="p-2.5 font-bold text-white">🎓 Aarav Sharma</td>
                 <td class="p-2.5 text-slate-300">aarav.sharma@chmc.edu</td>
                 <td class="p-2.5"><span class="bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold text-[9px]">STUDENT (002)</span></td>
@@ -1104,17 +1096,6 @@
 
     // Default Seed Profiles
     const DEFAULT_PROFILES = {
-      "CHMC-DS-2024-001": {
-        role: "STUDENT",
-        name: "Parth Salunke (Lead DS)",
-        identifier: "CHMC-DS-2024-001",
-        email: "parthsalunke2306@gmail.com",
-        username: "parthsalunke2306",
-        avatar: "🎓",
-        badge: "STUDENT",
-        badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
-      },
       "CHMC-DS-2024-002": {
         role: "STUDENT",
         name: "Aarav Sharma",
@@ -1255,7 +1236,7 @@
           handleLogout();
         }
       } else {
-        quickAuth('CHMC-DS-2024-001');
+        quickAuth('CHMC-DS-2024-002');
       }
       renderDigitalRoster();
     }
