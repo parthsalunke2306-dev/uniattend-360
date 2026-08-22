@@ -13,19 +13,40 @@ from database.models import UserAccount, Department, Course, Faculty, Student, U
 
 
 ROLE_DEFINITIONS = {
-    "PRINCIPAL": {
-        "title": "Principal & Vice Chancellor",
-        "icon": "🏛️",
-        "badge_color": "#1E3A8A",
-        "description": "Executive oversight across all colleges, departments, faculty performance, and university-wide defaulter audits.",
+    "ADMIN": {
+        "title": "Principal & Institutional Super Administrator",
+        "icon": "👑",
+        "badge_color": "#4F46E5",
+        "description": "Full administrative control: user management, global audit logs, curriculum assignment, attendance overrides, and institutional compliance.",
         "permissions": {
             "view_all_departments": True,
             "view_campus_kpis": True,
             "manage_departments": True,
+            "manage_users": True,
+            "manage_security_logs": True,
             "export_university_reports": True,
             "open_kiosk": True,
             "view_student_simulator": True,
-            "audit_proxy_radar": True
+            "audit_proxy_radar": True,
+            "override_attendance": True
+        }
+    },
+    "PRINCIPAL": {
+        "title": "Principal & Institutional Head",
+        "icon": "🏛️",
+        "badge_color": "#1E3A8A",
+        "description": "Executive oversight across all colleges, departments, faculty performance, and university-wide defaulter audits with full administrative privileges.",
+        "permissions": {
+            "view_all_departments": True,
+            "view_campus_kpis": True,
+            "manage_departments": True,
+            "manage_users": True,
+            "manage_security_logs": True,
+            "export_university_reports": True,
+            "open_kiosk": True,
+            "view_student_simulator": True,
+            "audit_proxy_radar": True,
+            "override_attendance": True
         }
     },
     "HOD": {

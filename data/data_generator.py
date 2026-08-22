@@ -312,19 +312,23 @@ def seed_chmc_user_accounts(session: Session):
     from api.security import PasswordHasherService
     default_pw_hash = PasswordHasherService.hash("CHMC@2026!")
 
-    # 1. Principal: Dr. Manju Lalwani Pathak
+    # 1. Principal & Super Admin: Dr. Manju Lalwani Pathak
     p_user = session.query(UserAccount).filter_by(username="principal.chmc").first()
     if not p_user:
         p_user = UserAccount(
             username="principal.chmc",
             email="principal@chmc.edu",
             password_hash=default_pw_hash,
-            full_name=f"{COLLEGE_CONFIG['principal']} (Principal, Smt. C.H.M. College)",
-            role="PRINCIPAL",
+            full_name=f"{COLLEGE_CONFIG['principal']} (Principal & Institutional Super Admin)",
+            role="ADMIN",
             university_id=uni.id,
-            avatar_icon="🏛️"
+            avatar_icon="👑"
         )
         session.add(p_user)
+    else:
+        p_user.role = "ADMIN"
+        p_user.full_name = f"{COLLEGE_CONFIG['principal']} (Principal & Institutional Super Admin)"
+        p_user.avatar_icon = "👑"
 
     # 2. Course Coordinator: Mrs. Shiji Johnson
     c_user = session.query(UserAccount).filter_by(username="coordinator.ds").first()

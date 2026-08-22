@@ -441,12 +441,13 @@ def get_current_user(
 
 
 def require_role(allowed_roles: List[str]):
-    """Strict server-side RBAC dependency factory."""
+    """Strict server-side RBAC dependency factory with universal Admin & Principal privileges."""
     def role_checker(current_user: UserAccount = Depends(get_current_user)) -> UserAccount:
-        if current_user.role not in allowed_roles:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Access denied. Role '{current_user.role}' is not authorized to access this resource."
-            )
-        return current_user
+        # ADMIN and PRINCIPAL have global superuser access across all endpoints
+        if current_user.role in ["ADMIN", "PRINCIPAL"] or current_user.role in allowed_roles:
+            return current_user
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Access denied. Role '{current_user.role}' is not authorized to access this resource."
+        )
     return role_checker
