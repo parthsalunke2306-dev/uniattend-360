@@ -36,13 +36,8 @@ client = TestClient(app)
 
 @pytest.fixture(scope="module", autouse=True)
 def setup_test_db():
-    drop_db()
-    init_db()
-    with get_db_session() as session:
-        seed_chmc_academics(session)
-        seed_chmc_user_accounts(session)
+    # Database is managed session-wide by conftest.py
     yield
-    drop_db()
 
 
 # ==========================================
