@@ -830,7 +830,7 @@
       </div>
 
       <!-- Student Check-In & Scanner Layout -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 items-start">
         
         <!-- Interactive Check-in Card with Working Camera Scanner -->
         <div class="glass-panel p-3.5 sm:p-5 rounded-2xl space-y-3 neon-border">
@@ -1086,105 +1086,233 @@
           <div id="checkInResult" class="hidden p-2.5 rounded-xl text-[11px] font-mono"></div>
         </div>
 
-        <!-- Subject 360 & Simulator -->
-        <div class="glass-panel p-3.5 sm:p-5 rounded-2xl space-y-3 border border-stitch-border flex flex-col justify-between">
-          <div class="flex items-center justify-between border-b border-stitch-border pb-2">
-            <h3 class="font-bold text-white text-xs sm:text-sm flex items-center">
-              <i data-lucide="layers" class="w-4 h-4 text-emerald-400 mr-1.5"></i>
-              Second Year Subject Units (Sem 3)
-            </h3>
-            <span class="text-[9px] font-mono text-purple-300 font-bold">8 Units</span>
+        <!-- RIGHT COLUMN: Subject 360 Breakdown, Calculator, and Check-in History -->
+        <div class="space-y-4 sm:space-y-5">
+          
+          <!-- 1. All 8 Subject Units Card -->
+          <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-stitch-border">
+            <div class="flex items-center justify-between border-b border-stitch-border pb-2.5">
+              <div class="flex items-center space-x-2">
+                <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
+                <h3 class="font-bold text-white text-xs sm:text-sm">Second Year Subject Units (Sem 3)</h3>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-[9px] font-mono text-purple-300 font-bold bg-purple-500/20 px-2 py-0.5 rounded border border-purple-500/30">8 Units</span>
+                <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30">≥75% Cutoff</span>
+              </div>
+            </div>
+
+            <!-- 8 Subject Units Grid (2 columns on sm/md/lg) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              
+              <!-- 1. Data Mining (Theory) -->
+              <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-white text-xs truncate">Data Mining</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-emerald-400">95.8%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>👩‍🏫 Miss Razia</span>
+                  <span>24 Held • E-104</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 95.8%"></div>
+                </div>
+              </div>
+
+              <!-- 2. Data Mining (Practical) -->
+              <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-white text-xs truncate">Data Mining (Lab)</span>
+                    <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">PR</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-emerald-400">100.0%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>👩‍🏫 Miss Razia</span>
+                  <span>12 Held • M-113</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 100%"></div>
+                </div>
+              </div>
+
+              <!-- 3. Linear Algebra -->
+              <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-white text-xs truncate">Linear Algebra</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-emerald-400">91.7%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>👩‍🏫 Miss Razia</span>
+                  <span>24 Held • E-104</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 91.7%"></div>
+                </div>
+              </div>
+
+              <!-- 4. FOR: Foundation of Research (TH) -->
+              <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-white text-xs truncate">FOR: Foundation</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-emerald-400">94.4%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>👩‍🏫 Miss Razia</span>
+                  <span>18 Held • E-104</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 94.4%"></div>
+                </div>
+              </div>
+
+              <!-- 5. Data Warehousing -->
+              <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-white text-xs truncate">Data Warehousing</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-emerald-400">96.0%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>👨‍🏫 Mr. Anshul</span>
+                  <span>25 Held • E-104</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 96.0%"></div>
+                </div>
+              </div>
+
+              <!-- 6. FOR Lab -->
+              <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-white text-xs truncate">FOR Lab</span>
+                    <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">PR</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-emerald-400">91.7%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>👨‍🏫 Mr. Anshul</span>
+                  <span>12 Held • M-103</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 91.7%"></div>
+                </div>
+              </div>
+
+              <!-- 7. DAA (Theory) -->
+              <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-white text-xs truncate">Algorithms (DAA)</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-emerald-400">90.9%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>👩‍🏫 Miss Kalyani</span>
+                  <span>22 Held • E-104</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 90.9%"></div>
+                </div>
+              </div>
+
+              <!-- 8. DAA (Practical) -->
+              <div class="p-2.5 rounded-xl bg-stitch-surface border border-stitch-border space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-white text-xs truncate">DAA Practical</span>
+                    <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">PR</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-emerald-400">90.0%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>👩‍🏫 Miss Kalyani</span>
+                  <span>10 Held • M-113</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 90.0%"></div>
+                </div>
+              </div>
+
+            </div>
           </div>
 
-          <!-- Scrollable Subject Cards -->
-          <div class="space-y-1.5 max-h-48 sm:max-h-56 overflow-y-auto pr-1">
-            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
-              <div class="min-w-0">
-                <div class="flex items-center space-x-1">
-                  <span class="font-bold text-white text-[11px] truncate">Data Mining</span>
-                  <span class="bg-blue-500/20 text-blue-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">TH</span>
-                  <span class="text-[9px] font-mono text-slate-400">Miss Razia</span>
-                </div>
-                <p class="text-[9px] text-slate-400">24 Held • E-104</p>
+          <!-- 2. 'What-If' Attendance Simulator Card -->
+          <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-purple-500/30 space-y-3 bg-gradient-to-tr from-purple-950/20 to-slate-900/60 shadow-md">
+            <div class="flex items-center justify-between border-b border-stitch-border pb-2">
+              <span class="text-[11px] font-mono text-purple-300 font-bold uppercase tracking-wider flex items-center">
+                <i data-lucide="calculator" class="w-3.5 h-3.5 mr-1.5 text-purple-400"></i>
+                'What-If' Attendance Cutoff Simulator
+              </span>
+              <span class="bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold px-2 py-0.5 rounded border border-emerald-500/30">
+                Safe: +17 Classes
+              </span>
+            </div>
+            
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-[11px] font-mono">
+                <span class="text-slate-300">Simulate Attending Next:</span>
+                <span id="sliderVal" class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">+4 classes</span>
               </div>
-              <span class="font-mono font-extrabold text-xs text-emerald-400">95.8%</span>
+              <input type="range" min="0" max="15" value="4" id="simSlider" oninput="updateSimulator(this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500">
+              <div class="flex justify-between text-[9px] font-mono text-slate-400">
+                <span>0 classes</span>
+                <span>+8 classes</span>
+                <span>+15 classes</span>
+              </div>
             </div>
 
-            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
-              <div class="min-w-0">
-                <div class="flex items-center space-x-1">
-                  <span class="font-bold text-white text-[11px] truncate">Data Mining (Lab)</span>
-                  <span class="bg-emerald-500/20 text-emerald-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">PR</span>
-                  <span class="text-[9px] font-mono text-slate-400">Miss Razia</span>
-                </div>
-                <p class="text-[9px] text-slate-400">12 Held • M-113</p>
-              </div>
-              <span class="font-mono font-extrabold text-xs text-emerald-400">100%</span>
-            </div>
-
-            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
-              <div class="min-w-0">
-                <div class="flex items-center space-x-1">
-                  <span class="font-bold text-white text-[11px] truncate">Linear Algebra</span>
-                  <span class="bg-blue-500/20 text-blue-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">TH</span>
-                  <span class="text-[9px] font-mono text-slate-400">Miss Razia</span>
-                </div>
-                <p class="text-[9px] text-slate-400">24 Held • E-104</p>
-              </div>
-              <span class="font-mono font-extrabold text-xs text-emerald-400">91.7%</span>
-            </div>
-
-            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
-              <div class="min-w-0">
-                <div class="flex items-center space-x-1">
-                  <span class="font-bold text-white text-[11px] truncate">FOR: Foundation</span>
-                  <span class="bg-blue-500/20 text-blue-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">TH</span>
-                  <span class="text-[9px] font-mono text-slate-400">Miss Razia</span>
-                </div>
-                <p class="text-[9px] text-slate-400">18 Held • E-104</p>
-              </div>
-              <span class="font-mono font-extrabold text-xs text-emerald-400">94.4%</span>
-            </div>
-
-            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
-              <div class="min-w-0">
-                <div class="flex items-center space-x-1">
-                  <span class="font-bold text-white text-[11px] truncate">Data Warehousing</span>
-                  <span class="bg-blue-500/20 text-blue-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">TH</span>
-                  <span class="text-[9px] font-mono text-slate-400">Mr. Anshul</span>
-                </div>
-                <p class="text-[9px] text-slate-400">25 Held • E-104</p>
-              </div>
-              <span class="font-mono font-extrabold text-xs text-emerald-400">96.0%</span>
-            </div>
-
-            <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between gap-1.5">
-              <div class="min-w-0">
-                <div class="flex items-center space-x-1">
-                  <span class="font-bold text-white text-[11px] truncate">FOR Lab</span>
-                  <span class="bg-emerald-500/20 text-emerald-300 text-[7px] font-mono font-bold px-1 py-0.2 rounded">PR</span>
-                  <span class="text-[9px] font-mono text-slate-400">Mr. Anshul</span>
-                </div>
-                <p class="text-[9px] text-slate-400">12 Held • M-103</p>
-              </div>
-              <span class="font-mono font-extrabold text-xs text-emerald-400">91.7%</span>
+            <div class="flex items-center justify-between pt-2 border-t border-purple-500/20 text-[11px] font-mono">
+              <span class="text-slate-300">Projected Cohort Attendance:</span>
+              <span id="simResult" class="font-mono font-extrabold text-base sm:text-lg text-emerald-400">94.1%</span>
             </div>
           </div>
 
-          <!-- 'What-If' Attendance Simulator (Compact) -->
-          <div class="p-2.5 rounded-xl bg-gradient-to-tr from-purple-950/40 to-slate-900 border border-purple-500/30 space-y-1.5">
-            <span class="text-[9px] font-mono text-purple-300 font-bold uppercase tracking-wider">🧮 'What-If' Attendance Calculator</span>
-            <div class="space-y-0.5">
-              <div class="flex justify-between text-[10px] font-mono">
-                <span class="text-slate-400">Attend next:</span>
-                <span id="sliderVal" class="text-emerald-400 font-bold">+4 classes</span>
-              </div>
-              <input type="range" min="0" max="15" value="4" id="simSlider" oninput="updateSimulator(this.value)" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500">
+          <!-- 3. Recent Attendance Verification Log Card -->
+          <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-stitch-border space-y-3 shadow-md">
+            <div class="flex items-center justify-between border-b border-stitch-border pb-2">
+              <h3 class="font-bold text-white text-xs sm:text-sm flex items-center">
+                <i data-lucide="history" class="w-4 h-4 text-emerald-400 mr-1.5"></i>
+                Recent Verification Timeline
+              </h3>
+              <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30 font-bold">LIVE SYNCED</span>
             </div>
-
-            <div class="flex items-center justify-between pt-1 border-t border-purple-500/20">
-              <span class="text-[10px] font-mono text-slate-300">Projected Attendance:</span>
-              <span id="simResult" class="font-mono font-extrabold text-sm sm:text-base text-emerald-400">94.1%</span>
+            <div class="space-y-2 text-[10px] font-mono text-slate-300">
+              <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-emerald-400">●</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Data Mining (Theory)</div>
+                    <div class="text-[9px] text-slate-400">Miss Razia • Room E-104 • 6.8m In-Class</div>
+                  </div>
+                </div>
+                <span class="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30">PRESENT</span>
+              </div>
+              <div class="p-2 rounded-xl bg-stitch-surface border border-stitch-border flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-emerald-400">●</span>
+                  <div>
+                    <div class="font-bold text-white text-[11px]">Linear Algebra (Theory)</div>
+                    <div class="text-[9px] text-slate-400">Miss Razia • Room E-104 • 7.2m In-Class</div>
+                  </div>
+                </div>
+                <span class="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30">PRESENT</span>
+              </div>
             </div>
           </div>
 
