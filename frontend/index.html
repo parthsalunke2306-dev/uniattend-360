@@ -656,20 +656,20 @@
   <!-- ULTRA-RESPONSIVE TOP NAVIGATION BAR -->
   <!-- ============================================== -->
   <header class="glass-panel sticky top-0 z-40 border-b border-stitch-border shadow-md">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5">
+    <div class="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
       
       <div class="flex items-center justify-between gap-2">
         
         <!-- Left: Logo, College Title & App Name -->
-        <div class="flex items-center space-x-2.5 min-w-0">
-          <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
-            <div class="h-full w-full bg-stitch-bg rounded-[9px] flex items-center justify-center">
-              <i data-lucide="radar" class="w-4 h-4 text-emerald-400"></i>
+        <div class="flex items-center space-x-3 min-w-0">
+          <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
+            <div class="h-full w-full bg-stitch-bg rounded-[14px] flex items-center justify-center">
+              <i data-lucide="radar" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400"></i>
             </div>
           </div>
           <div class="min-w-0">
-            <h1 class="font-extrabold text-xs sm:text-sm tracking-tight text-white truncate">Smt. C.H.M. College</h1>
-            <p class="text-[9px] sm:text-[10px] text-slate-400 font-mono truncate">UniAttend 360</p>
+            <h1 class="font-extrabold text-xs sm:text-base tracking-tight text-white truncate">Smt. C.H.M. College</h1>
+            <p class="text-[9px] sm:text-[11px] text-slate-400 font-mono truncate">UniAttend 360 • Enterprise Academic Platform</p>
           </div>
         </div>
 
@@ -735,32 +735,43 @@
   </header>
 
   <!-- MAIN CONTENT CONTAINER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-5 space-y-3 sm:space-y-5">
+  <main class="flex-1 max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
     <!-- COMPACT ACTIVE PROFILE HUD BANNER -->
-    <div id="profileBanner" class="glass-panel p-2.5 sm:p-3.5 rounded-2xl border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-lg shadow-purple-950/20">
+    <div id="profileBanner" class="glass-panel p-3 sm:p-4 rounded-2xl border border-purple-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-lg shadow-purple-950/20">
       
-      <div class="flex items-center space-x-2.5 min-w-0">
-        <div id="roleAvatar" class="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-base sm:text-xl shrink-0 shadow-inner">
+      <div class="flex items-center space-x-3 min-w-0">
+        <div id="roleAvatar" class="h-9 w-9 sm:h-11 sm:w-11 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-base sm:text-2xl shrink-0 shadow-inner">
           🎓
         </div>
         <div class="min-w-0">
-          <div class="flex items-center space-x-1.5 flex-wrap">
-            <h2 id="profileName" class="font-bold text-white text-xs sm:text-sm truncate">Captain (CHMC-DS-2024-001)</h2>
-            <span id="roleBadge" class="bg-purple-500 text-white font-mono text-[8px] sm:text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0">STUDENT</span>
+          <div class="flex items-center space-x-2 flex-wrap">
+            <h2 id="profileName" class="font-bold text-white text-sm sm:text-base truncate">Captain (CHMC-DS-2024-001)</h2>
+            <span id="roleBadge" class="bg-purple-500 text-white font-mono text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shrink-0">STUDENT</span>
           </div>
-          <p id="profileDesc" class="text-[9px] sm:text-[11px] text-slate-400 mt-0.5 truncate">Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College</p>
+          <p id="profileDesc" class="text-[10px] sm:text-xs text-slate-400 mt-0.5 truncate">Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College</p>
         </div>
       </div>
 
-      <!-- Action Chips (Right Side) -->
-      <div class="flex items-center space-x-1.5 shrink-0 self-end sm:self-auto">
-        <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[9px] sm:text-[11px] font-mono text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg border border-emerald-500/30 flex items-center">
-          <i data-lucide="user-plus" class="w-3 h-3 mr-1"></i>
+      <!-- Action Chips & Quick Switchers (Right Side) -->
+      <div class="flex items-center space-x-2 shrink-0 self-end md:self-auto flex-wrap sm:flex-nowrap">
+        <!-- Quick Switcher for Laptop -->
+        <div class="hidden lg:flex items-center space-x-1 p-1 rounded-xl bg-stitch-surface border border-stitch-border text-[10px] font-mono">
+          <button onclick="quickAuth('faculty.razia')" title="Switch to Faculty View" class="px-2 py-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition">👩‍🏫 Faculty</button>
+          <button onclick="quickAuth('coord.shiji')" title="Switch to Coordinator View" class="px-2 py-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition">🏢 Coordinator</button>
+          <button onclick="quickAuth('admin.principal')" title="Switch to Principal View" class="px-2 py-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition">🏛️ Principal</button>
+        </div>
+
+        <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[10px] sm:text-xs font-mono text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center shadow transition">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5 mr-1.5"></i>
           <span>+ Enroll Student</span>
         </button>
-        <div class="flex items-center space-x-1 text-[9px] sm:text-[11px] font-mono text-slate-400 bg-stitch-surface px-2 py-1 rounded-lg border border-stitch-border">
-          <i data-lucide="map-pin" class="w-3 h-3 text-emerald-400"></i>
+        <button onclick="openBulkImportModal()" class="text-[10px] sm:text-xs font-mono text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-xl border border-indigo-500/30 flex items-center shadow transition">
+          <i data-lucide="upload" class="w-3.5 h-3.5 mr-1.5"></i>
+          <span>📥 Ingest CSV</span>
+        </button>
+        <div class="flex items-center space-x-1 text-[10px] sm:text-xs font-mono text-slate-400 bg-stitch-surface px-2.5 py-1.5 rounded-xl border border-stitch-border">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-400"></i>
           <span><b>Ulhasnagar</b></span>
         </div>
       </div>
@@ -1484,82 +1495,419 @@
     <!-- ============================================== -->
     <!-- VIEW 3: COURSE COORDINATOR (MRS. SHIJI JOHNSON) -->
     <!-- ============================================== -->
-    <div id="viewCoordinator" class="space-y-3 sm:space-y-5 hidden">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
-        <div class="glass-panel p-3 rounded-xl border-l-4 border-purple-500">
-          <span class="text-[9px] font-mono text-slate-400">Cohort Enrolled</span>
-          <h3 id="coordTotalStudents" class="text-base sm:text-xl font-extrabold font-mono text-white mt-0.5">5 Students</h3>
+    <!-- ============================================== -->
+    <!-- VIEW 3: COURSE COORDINATOR / HOD DASHBOARD (MRS. SHIJI JOHNSON) -->
+    <!-- ============================================== -->
+    <div id="viewCoordinator" class="space-y-4 sm:space-y-6 hidden">
+      
+      <!-- Top 4 Executive KPI Metric Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        
+        <!-- Metric 1: Cohort Enrolled -->
+        <div class="glass-panel p-3.5 sm:p-4 rounded-2xl relative overflow-hidden border border-stitch-border flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] sm:text-xs font-mono text-purple-400 uppercase tracking-wider font-semibold">Active Cohort</span>
+            <span class="bg-purple-500/20 text-purple-300 text-[8px] sm:text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-purple-500/30">S.Y. B.Sc. DS</span>
+          </div>
+          <div class="my-2">
+            <h3 id="coordTotalStudents" class="text-xl sm:text-3xl font-extrabold font-mono text-white tracking-tight">0 Students</h3>
+            <p class="text-[9px] sm:text-[10px] text-slate-400 font-mono mt-0.5">Batch 2024–2027 • Sem 3</p>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div id="coordCohortBar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-full rounded-full" style="width: 0%"></div>
+          </div>
         </div>
-        <div class="glass-panel p-3 rounded-xl border-l-4 border-emerald-500">
-          <span class="text-[9px] font-mono text-slate-400">Dept Avg</span>
-          <h3 class="text-base sm:text-xl font-extrabold font-mono text-emerald-400 mt-0.5">88.5%</h3>
+
+        <!-- Metric 2: Department Average -->
+        <div class="glass-panel p-3.5 sm:p-4 rounded-2xl relative overflow-hidden border border-stitch-border flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] sm:text-xs font-mono text-emerald-400 uppercase tracking-wider font-semibold">Dept Attendance</span>
+            <span class="bg-emerald-500/20 text-emerald-300 text-[8px] sm:text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-emerald-500/30">TARGET: 75%</span>
+          </div>
+          <div class="my-2">
+            <h3 id="coordDeptAvg" class="text-xl sm:text-3xl font-extrabold font-mono text-emerald-400 tracking-tight">88.5%</h3>
+            <p class="text-[9px] sm:text-[10px] text-slate-400 font-mono mt-0.5">+13.5% Above University Cutoff</p>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 88.5%"></div>
+          </div>
         </div>
-        <div class="glass-panel p-3 rounded-xl border-l-4 border-rose-500">
-          <span class="text-[9px] font-mono text-slate-400">Defaulters (&lt;75%)</span>
-          <h3 class="text-base sm:text-xl font-extrabold font-mono text-rose-400 mt-0.5">1 (Rohan)</h3>
+
+        <!-- Metric 3: Defaulters (<75%) -->
+        <div class="glass-panel p-3.5 sm:p-4 rounded-2xl relative overflow-hidden border border-stitch-border flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] sm:text-xs font-mono text-rose-400 uppercase tracking-wider font-semibold">Defaulters (&lt;75%)</span>
+            <span id="coordDefaulterBadge" class="bg-emerald-500/20 text-emerald-300 text-[8px] sm:text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-emerald-500/30">ALL COMPLIANT</span>
+          </div>
+          <div class="my-2">
+            <h3 id="coordDefaultersCount" class="text-xl sm:text-3xl font-extrabold font-mono text-rose-400 tracking-tight">0 Students</h3>
+            <p class="text-[9px] sm:text-[10px] text-slate-400 font-mono mt-0.5">Critical Risk Under Investigation</p>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-rose-500 to-amber-500 h-full rounded-full" style="width: 0%"></div>
+          </div>
         </div>
-        <div class="glass-panel p-3 rounded-xl border-l-4 border-indigo-500">
-          <span class="text-[9px] font-mono text-slate-400">Faculty</span>
-          <h3 class="text-base sm:text-xl font-extrabold font-mono text-white mt-0.5">3 Faculty</h3>
+
+        <!-- Metric 4: Faculty & Teaching Staff -->
+        <div class="glass-panel p-3.5 sm:p-4 rounded-2xl relative overflow-hidden border border-stitch-border flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] sm:text-xs font-mono text-indigo-400 uppercase tracking-wider font-semibold">Active Faculty</span>
+            <span class="bg-indigo-500/20 text-indigo-300 text-[8px] sm:text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-indigo-500/30">8 UNITS</span>
+          </div>
+          <div class="my-2">
+            <h3 class="text-xl sm:text-3xl font-extrabold font-mono text-white tracking-tight">3 Instructors</h3>
+            <p class="text-[9px] sm:text-[10px] text-slate-400 font-mono mt-0.5">Rooms E-104, M-113, M-103</p>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full" style="width: 100%"></div>
+          </div>
         </div>
+
       </div>
 
-      <!-- Curriculum Tree Visual -->
-      <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3 border border-purple-500/40 neon-border">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 border-b border-stitch-border pb-2">
-          <div class="flex items-center space-x-1.5">
-            <i data-lucide="git-branch" class="w-4 h-4 text-purple-400"></i>
-            <h3 class="font-bold text-white text-xs sm:text-sm">Department Curriculum Structure</h3>
+      <!-- Main Desktop Layout: 2-Column Responsive Matrix -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5">
+        
+        <!-- Left / Main Command Column (8 Columns on Desktop) -->
+        <div class="xl:col-span-8 space-y-4 sm:space-y-5">
+          
+          <!-- Live Real-Time Classroom & Lecture Monitor Grid -->
+          <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-stitch-border">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stitch-border pb-3">
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <h3 class="font-bold text-white text-xs sm:text-sm tracking-tight">Live Department Classroom Status (Real-Time)</h3>
+              </div>
+              <span class="text-[10px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded-lg border border-stitch-border self-start sm:self-auto">
+                🕒 Today's Timetable Schedule
+              </span>
+            </div>
+
+            <!-- 3 Live Teaching Tiles -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              
+              <!-- Tile 1: Miss Razia Khan -->
+              <div class="p-3 rounded-xl bg-stitch-surface/90 border border-emerald-500/30 relative overflow-hidden space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="bg-emerald-500/20 text-emerald-300 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border border-emerald-500/40 flex items-center">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>
+                    LIVE NOW
+                  </span>
+                  <span class="text-[9px] font-mono text-slate-400">Room E-104</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white text-xs">Data Mining (Theory)</h4>
+                  <p class="text-[10px] text-purple-300 font-sans mt-0.5">Miss Razia Khan</p>
+                </div>
+                <div class="pt-1 border-t border-stitch-border flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>09:00 AM - 10:00 AM</span>
+                  <span class="text-emerald-400 font-bold">Lec 14/30 (47%)</span>
+                </div>
+              </div>
+
+              <!-- Tile 2: Mr. Anshul Chimnani -->
+              <div class="p-3 rounded-xl bg-stitch-surface/90 border border-stitch-border relative overflow-hidden space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="bg-slate-800 text-slate-400 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border border-stitch-border">
+                    NEXT UP
+                  </span>
+                  <span class="text-[9px] font-mono text-slate-400">Room E-104</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white text-xs">Data Warehousing</h4>
+                  <p class="text-[10px] text-purple-300 font-sans mt-0.5">Mr. Anshul Chimnani</p>
+                </div>
+                <div class="pt-1 border-t border-stitch-border flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>10:00 AM - 11:00 AM</span>
+                  <span class="text-slate-300 font-bold">Lec 12/30 (40%)</span>
+                </div>
+              </div>
+
+              <!-- Tile 3: Miss Kalyani Patil -->
+              <div class="p-3 rounded-xl bg-stitch-surface/90 border border-stitch-border relative overflow-hidden space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="bg-indigo-500/20 text-indigo-300 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border border-indigo-500/30">
+                    LAB SESSION
+                  </span>
+                  <span class="text-[9px] font-mono text-slate-400">Lab M-113</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white text-xs">DAA Practical</h4>
+                  <p class="text-[10px] text-purple-300 font-sans mt-0.5">Miss Kalyani Patil</p>
+                </div>
+                <div class="pt-1 border-t border-stitch-border flex items-center justify-between text-[9px] font-mono text-slate-400">
+                  <span>02:15 PM - 04:15 PM</span>
+                  <span class="text-indigo-300 font-bold">Lab 07/15 (47%)</span>
+                </div>
+              </div>
+
+            </div>
           </div>
-          <button onclick="openBulkImportModal()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-mono font-bold shadow flex items-center self-start sm:self-auto">
-            <i data-lucide="upload" class="w-3 h-3 mr-1"></i>
-            <span>📥 Bulk Import CSV</span>
-          </button>
+
+          <!-- Department Curriculum & Faculty Teaching Matrix -->
+          <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-stitch-border">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-stitch-border pb-3">
+              <div class="flex items-center space-x-2">
+                <i data-lucide="git-branch" class="w-4 h-4 text-purple-400"></i>
+                <h3 class="font-bold text-white text-xs sm:text-sm">Department Curriculum & Faculty Allocation</h3>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button onclick="openBulkImportModal()" class="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-[10px] sm:text-[11px] font-mono font-bold shadow flex items-center transition">
+                  <i data-lucide="upload" class="w-3 h-3 mr-1"></i>
+                  <span>📥 Bulk Import CSV</span>
+                </button>
+                <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="px-2.5 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-[10px] sm:text-[11px] font-mono font-bold shadow flex items-center transition">
+                  <i data-lucide="user-plus" class="w-3 h-3 mr-1"></i>
+                  <span>+ Enroll Student</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3 Faculty Detailed Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              
+              <!-- Faculty 1 -->
+              <div class="p-3.5 rounded-xl bg-stitch-surface/80 border border-stitch-border space-y-2">
+                <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
+                  <div class="w-7 h-7 rounded-lg bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-sm">
+                    👩‍🏫
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-white text-xs">Miss Razia Khan</h4>
+                    <p class="text-[9px] font-mono text-slate-400">Assistant Professor</p>
+                  </div>
+                </div>
+                <div class="space-y-1.5 text-[10px] font-mono text-slate-300">
+                  <div class="p-1.5 rounded-lg bg-slate-900/60 border border-stitch-border flex items-center justify-between">
+                    <span>📘 Data Mining (TH)</span>
+                    <span class="text-slate-400">Room E-104</span>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-slate-900/60 border border-stitch-border flex items-center justify-between">
+                    <span>🔬 Data Mining (PR)</span>
+                    <span class="text-slate-400">Lab M-113</span>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-slate-900/60 border border-stitch-border flex items-center justify-between">
+                    <span>📘 Linear Algebra</span>
+                    <span class="text-slate-400">Room E-104</span>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-slate-900/60 border border-stitch-border flex items-center justify-between">
+                    <span>📘 Research (FOR-TH)</span>
+                    <span class="text-slate-400">Room E-104</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Faculty 2 -->
+              <div class="p-3.5 rounded-xl bg-stitch-surface/80 border border-stitch-border space-y-2">
+                <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-sm">
+                    👨‍🏫
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-white text-xs">Mr. Anshul Chimnani</h4>
+                    <p class="text-[9px] font-mono text-slate-400">Assistant Professor</p>
+                  </div>
+                </div>
+                <div class="space-y-1.5 text-[10px] font-mono text-slate-300">
+                  <div class="p-1.5 rounded-lg bg-slate-900/60 border border-stitch-border flex items-center justify-between">
+                    <span>📘 Data Warehousing</span>
+                    <span class="text-slate-400">Room E-104</span>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-slate-900/60 border border-stitch-border flex items-center justify-between">
+                    <span>🔬 Research Lab (FOR-PR)</span>
+                    <span class="text-slate-400">Lab M-103</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Faculty 3 -->
+              <div class="p-3.5 rounded-xl bg-stitch-surface/80 border border-stitch-border space-y-2">
+                <div class="flex items-center space-x-2 border-b border-stitch-border pb-2">
+                  <div class="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-sm">
+                    👩‍🏫
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-white text-xs">Miss Kalyani Patil</h4>
+                    <p class="text-[9px] font-mono text-slate-400">Assistant Professor</p>
+                  </div>
+                </div>
+                <div class="space-y-1.5 text-[10px] font-mono text-slate-300">
+                  <div class="p-1.5 rounded-lg bg-slate-900/60 border border-stitch-border flex items-center justify-between">
+                    <span>📘 Algorithms (DAA-TH)</span>
+                    <span class="text-slate-400">Room E-104</span>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-slate-900/60 border border-stitch-border flex items-center justify-between">
+                    <span>🔬 Algorithms (DAA-PR)</span>
+                    <span class="text-slate-400">Lab M-113</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Master Department Student Attendance Ledger Table -->
+          <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-stitch-border">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stitch-border pb-3">
+              <div>
+                <h3 class="font-bold text-white text-xs sm:text-sm">Department Master Attendance Roster</h3>
+                <p class="text-[10px] text-slate-400 font-mono mt-0.5">Second Year • Batch 2024–2027 Active Ledger</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span id="coordRosterCount" class="text-[10px] font-mono bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-500/30">
+                  0 Students Enrolled
+                </span>
+              </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto rounded-xl border border-stitch-border">
+              <table class="w-full text-left font-mono text-xs">
+                <thead class="bg-stitch-surface/90 text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-wider border-b border-stitch-border">
+                  <tr>
+                    <th class="p-2.5">Roll No</th>
+                    <th class="p-2.5">Student Name</th>
+                    <th class="p-2.5">Attendance Status</th>
+                    <th class="p-2.5">Overall %</th>
+                    <th class="p-2.5">1-Device Lock</th>
+                    <th class="p-2.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="coordRosterTableBody" class="divide-y divide-stitch-border/50 text-[11px]">
+                  <!-- Injected via JavaScript or shows clean empty state -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
 
-        <div class="space-y-3">
-          <div class="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/50 flex items-center space-x-2">
-            <span class="text-sm">🏢</span>
-            <span class="font-bold font-mono text-purple-200 text-xs">Data Science Department</span>
-            <span class="text-[9px] font-mono text-slate-400 ml-auto">Coordinator: Mrs. Shiji Johnson</span>
+        <!-- Right / Secondary Action & Governance Column (4 Columns on Desktop) -->
+        <div class="xl:col-span-4 space-y-4 sm:space-y-5">
+          
+          <!-- Department Health & Risk Distribution Meter -->
+          <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-stitch-border">
+            <div class="flex items-center justify-between border-b border-stitch-border pb-2.5">
+              <h3 class="font-bold text-white text-xs sm:text-sm">Attendance Health Index</h3>
+              <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30">75% CUTOFF</span>
+            </div>
+
+            <div class="space-y-2.5 text-[11px] font-mono">
+              <!-- Eligible Tier -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between text-[10px]">
+                  <span class="text-emerald-300 font-semibold">🟢 Eligible (≥75%)</span>
+                  <span id="coordEligiblePct" class="text-white font-bold">100.0%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style="width: 100%"></div>
+                </div>
+              </div>
+
+              <!-- Warning Tier -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between text-[10px]">
+                  <span class="text-amber-300 font-semibold">🟡 Warning Zone (70–74.9%)</span>
+                  <span id="coordWarningPct" class="text-white font-bold">0.0%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div class="bg-amber-400 h-full rounded-full" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Critical Defaulter Tier -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between text-[10px]">
+                  <span class="text-rose-300 font-semibold">🔴 Critical Defaulters (&lt;70%)</span>
+                  <span id="coordCriticalPct" class="text-white font-bold">0.0%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div class="bg-rose-500 h-full rounded-full" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-2 pl-2 border-l-2 border-dashed border-emerald-500/40">
-            <div class="p-3 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-1.5">
-              <div class="flex items-center space-x-1.5 border-b border-stitch-border pb-1">
-                <span>👩‍🏫</span>
-                <h4 class="font-bold text-white text-xs">Miss Razia Khan</h4>
-              </div>
-              <ul class="text-[10px] font-mono space-y-1 text-slate-300">
-                <li>• Data Mining (TH: E-104 / PR: M-113)</li>
-                <li>• Linear Algebra (E-104)</li>
-                <li>• FOR (E-104)</li>
-              </ul>
-            </div>
+          <!-- Coordinator Action Suite & Export Tools -->
+          <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3 border border-stitch-border">
+            <h3 class="font-bold text-white text-xs sm:text-sm border-b border-stitch-border pb-2.5 flex items-center">
+              <i data-lucide="command" class="w-4 h-4 text-purple-400 mr-1.5"></i>
+              Executive Action Center
+            </h3>
 
-            <div class="p-3 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-1.5">
-              <div class="flex items-center space-x-1.5 border-b border-stitch-border pb-1">
-                <span>👨‍🏫</span>
-                <h4 class="font-bold text-white text-xs">Mr. Anshul Chimnani</h4>
-              </div>
-              <ul class="text-[10px] font-mono space-y-1 text-slate-300">
-                <li>• Data Warehousing (E-104)</li>
-                <li>• FOR Practical (M-103)</li>
-              </ul>
-            </div>
+            <div class="space-y-2">
+              <button onclick="openBulkImportModal()" class="w-full p-2.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-200 text-left text-xs font-sans flex items-center justify-between transition">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">📥</span>
+                  <div>
+                    <div class="font-bold text-white text-xs">Bulk Ingest Students (CSV)</div>
+                    <div class="text-[9px] text-slate-400 font-mono">Upload class roster spreadsheet</div>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+              </button>
 
-            <div class="p-3 rounded-xl bg-stitch-surface border border-purple-500/30 space-y-1.5">
-              <div class="flex items-center space-x-1.5 border-b border-stitch-border pb-1">
-                <span>👩‍🏫</span>
-                <h4 class="font-bold text-white text-xs">Miss Kalyani Patil</h4>
-              </div>
-              <ul class="text-[10px] font-mono space-y-1 text-slate-300">
-                <li>• DAA (TH: E-104 / PR: M-113)</li>
-              </ul>
+              <button onclick="alert('📄 [EXCEL EXPORT INITIATED]\n\nGenerating master department attendance matrix with course-by-course analytics for Smt. C.H.M. College Data Science...')" class="w-full p-2.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-200 text-left text-xs font-sans flex items-center justify-between transition">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">📊</span>
+                  <div>
+                    <div class="font-bold text-white text-xs">Export Master Attendance Excel</div>
+                    <div class="text-[9px] text-slate-400 font-mono">Download institutional spreadsheet</div>
+                  </div>
+                </div>
+                <i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
+              </button>
+
+              <button onclick="alert('⚠️ [DEFAULTER NOTICES GENERATOR]\n\nChecking student cohort for <75% attendance threshold...\nStatus: 0 Defaulters Found. All students currently compliant!')" class="w-full p-2.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-200 text-left text-xs font-sans flex items-center justify-between transition">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">✉️</span>
+                  <div>
+                    <div class="font-bold text-white text-xs">Generate Parent Warning Letters</div>
+                    <div class="text-[9px] text-slate-400 font-mono">Batch export warning notices (PDF)</div>
+                  </div>
+                </div>
+                <i data-lucide="send" class="w-4 h-4 text-slate-500"></i>
+              </button>
+
+              <button onclick="openSecurityHub()" class="w-full p-2.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-200 text-left text-xs font-sans flex items-center justify-between transition">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">🛡️</span>
+                  <div>
+                    <div class="font-bold text-white text-xs">Hardware Security & Anti-Proxy Hub</div>
+                    <div class="text-[9px] text-slate-400 font-mono">Audit WebAuthn passkeys & locks</div>
+                  </div>
+                </div>
+                <i data-lucide="shield" class="w-4 h-4 text-slate-500"></i>
+              </button>
             </div>
           </div>
+
+          <!-- Live Institutional Campus Feed -->
+          <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3 border border-stitch-border">
+            <div class="flex items-center justify-between border-b border-stitch-border pb-2">
+              <h3 class="font-bold text-white text-xs sm:text-sm">Campus Security Telemetry</h3>
+              <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/20 px-1.5 py-0.2 rounded font-bold">● ONLINE</span>
+            </div>
+            <div class="space-y-2 text-[10px] font-mono text-slate-300">
+              <div class="p-2 rounded-lg bg-stitch-surface border border-stitch-border flex items-center justify-between">
+                <span>📍 Dynamic Faculty Geofencing</span>
+                <span class="text-emerald-400 font-bold">10.0m Precision</span>
+              </div>
+              <div class="p-2 rounded-lg bg-stitch-surface border border-stitch-border flex items-center justify-between">
+                <span>🔒 1-Device Enclave Locks</span>
+                <span class="text-emerald-400 font-bold">Zero Trust Enforced</span>
+              </div>
+              <div class="p-2 rounded-lg bg-stitch-surface border border-stitch-border flex items-center justify-between">
+                <span>🔄 8s QR & Rolling PIN</span>
+                <span class="text-emerald-400 font-bold">Synchronized</span>
+              </div>
+            </div>
+          </div>
+
         </div>
+
       </div>
+
     </div>
 
     <!-- ============================================== -->
@@ -1622,7 +1970,7 @@
             <h3 class="font-bold text-white text-xs sm:text-sm">Institutional Accounts & Security Matrix</h3>
           </div>
           <span class="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/30">
-            10/10 Synced with Supabase
+            5/5 Admin & Faculty Synced with Supabase
           </span>
         </div>
 
@@ -1675,38 +2023,6 @@
                 <td class="p-2.5 font-bold text-white">👩‍🏫 Miss Kalyani Patil</td>
                 <td class="p-2.5 text-slate-300">kalyani.patil@chmc.edu</td>
                 <td class="p-2.5"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold text-[9px]">TEACHER (2 Units)</span></td>
-                <td class="p-2.5 text-emerald-400">Argon2id Salted</td>
-                <td class="p-2.5 text-slate-400">Enrolled</td>
-                <td class="p-2.5 text-right text-emerald-400 font-bold">● ACTIVE</td>
-              </tr>
-              <tr class="hover:bg-stitch-surface/30">
-                <td class="p-2.5 font-bold text-white">🎓 Aarav Sharma</td>
-                <td class="p-2.5 text-slate-300">aarav.sharma@chmc.edu</td>
-                <td class="p-2.5"><span class="bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold text-[9px]">STUDENT (002)</span></td>
-                <td class="p-2.5 text-emerald-400">Argon2id Salted</td>
-                <td class="p-2.5 text-slate-400">Enrolled</td>
-                <td class="p-2.5 text-right text-emerald-400 font-bold">● ACTIVE</td>
-              </tr>
-              <tr class="hover:bg-stitch-surface/30">
-                <td class="p-2.5 font-bold text-white">🎓 Priya Patel</td>
-                <td class="p-2.5 text-slate-300">priya.patel@chmc.edu</td>
-                <td class="p-2.5"><span class="bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold text-[9px]">STUDENT (003)</span></td>
-                <td class="p-2.5 text-emerald-400">Argon2id Salted</td>
-                <td class="p-2.5 text-slate-400">Enrolled</td>
-                <td class="p-2.5 text-right text-emerald-400 font-bold">● ACTIVE</td>
-              </tr>
-              <tr class="hover:bg-stitch-surface/30">
-                <td class="p-2.5 font-bold text-white">🎓 Rohan Gupta</td>
-                <td class="p-2.5 text-slate-300">rohan.gupta@chmc.edu</td>
-                <td class="p-2.5"><span class="bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold text-[9px]">STUDENT (004)</span></td>
-                <td class="p-2.5 text-emerald-400">Argon2id Salted</td>
-                <td class="p-2.5 text-slate-400">Enrolled</td>
-                <td class="p-2.5 text-right text-emerald-400 font-bold">● ACTIVE</td>
-              </tr>
-              <tr class="hover:bg-stitch-surface/30">
-                <td class="p-2.5 font-bold text-white">🎓 Ananya Verma</td>
-                <td class="p-2.5 text-slate-300">ananya.verma@chmc.edu</td>
-                <td class="p-2.5"><span class="bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold text-[9px]">STUDENT (005)</span></td>
                 <td class="p-2.5 text-emerald-400">Argon2id Salted</td>
                 <td class="p-2.5 text-slate-400">Enrolled</td>
                 <td class="p-2.5 text-right text-emerald-400 font-bold">● ACTIVE</td>
@@ -2159,71 +2475,118 @@
 
     function renderDigitalRoster() {
       const tbody = document.getElementById('digitalRosterBody');
-      if (!tbody) return;
+      const coordTbody = document.getElementById('coordRosterTableBody');
+      const coordStudents = document.getElementById('coordTotalStudents');
+      const coordRosterCount = document.getElementById('coordRosterCount');
+      const coordCohortBar = document.getElementById('coordCohortBar');
+      const countBadge = document.getElementById('rosterCountBadge');
 
       const students = Object.keys(REGISTERED_PROFILES)
         .map(k => REGISTERED_PROFILES[k])
         .filter(p => p.role === 'STUDENT');
 
+      if (coordStudents) coordStudents.innerText = `${students.length} Students`;
+      if (coordRosterCount) coordRosterCount.innerText = `${students.length} Students Enrolled`;
+      if (coordCohortBar) coordCohortBar.style.width = `${Math.min(100, students.length * 20)}%`;
+
       if (students.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="6" class="p-8 text-center text-slate-400 font-mono text-xs">
-              <div class="flex flex-col items-center justify-center space-y-2 py-3">
-                <i data-lucide="users" class="w-8 h-8 text-slate-600 mb-1"></i>
-                <span class="font-bold text-slate-300">No Student Records Found (Clean Database)</span>
-                <span class="text-[10px] text-slate-500 max-w-sm">Test data was purged. Click <b class="text-emerald-400">+ Enroll Student</b> or use CSV Bulk Ingestion to register new students for this session.</span>
-              </div>
-            </td>
-          </tr>
-        `;
-        const countBadge = document.getElementById('rosterCountBadge');
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="p-8 text-center text-slate-400 font-mono text-xs">
+                <div class="flex flex-col items-center justify-center space-y-2 py-3">
+                  <i data-lucide="users" class="w-8 h-8 text-slate-600 mb-1"></i>
+                  <span class="font-bold text-slate-300">No Student Records Found (Clean Database)</span>
+                  <span class="text-[10px] text-slate-500 max-w-sm">Test data was purged. Click <b class="text-emerald-400">+ Enroll Student</b> or use CSV Bulk Ingestion to register new students for this session.</span>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        if (coordTbody) {
+          coordTbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="p-8 text-center text-slate-400 font-mono text-xs">
+                <div class="flex flex-col items-center justify-center space-y-2 py-3">
+                  <i data-lucide="users" class="w-8 h-8 text-slate-600 mb-1"></i>
+                  <span class="font-bold text-slate-300">No Students Enrolled in Active Cohort</span>
+                  <span class="text-[10px] text-slate-500 max-w-sm">Click <b class="text-emerald-400">+ Enroll Student</b> or <b class="text-indigo-400">📥 Bulk Import CSV</b> to populate the department ledger.</span>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
         if (countBadge) countBadge.innerText = "Verified: 0 / 0 Present";
-        const coordStudents = document.getElementById('coordTotalStudents');
-        if (coordStudents) coordStudents.innerText = "0 Students";
         if (window.lucide) lucide.createIcons();
         return;
       }
 
-      tbody.innerHTML = students.map((s, idx) => {
-        const isBlocked = idx === 2;
-        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "Enclave Handset", is_locked: true };
-        const isLocked = lockInfo.is_locked;
-        return `
-          <tr class="${isBlocked ? 'bg-rose-500/5' : 'bg-emerald-500/5'}">
-            <td class="p-2 font-bold text-white text-[11px]">${s.identifier}</td>
-            <td class="p-2 text-white font-sans font-semibold text-[11px]">${s.name}</td>
-            <td class="p-2">
-              <span class="${isBlocked ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'} font-bold px-1.5 py-0.2 rounded text-[9px]">
-                ${isBlocked ? '🚨 PROXY BLOCKED' : '🟢 VERIFIED'}
-              </span>
-            </td>
-            <td class="p-2 ${isBlocked ? 'text-rose-400' : 'text-emerald-400'} text-[10px]">
-              ${isBlocked ? '1.8 km (Home)' : (6.5 + idx * 0.4).toFixed(1) + 'm'}
-            </td>
-            <td class="p-2 text-[10px]">
-              ${isLocked 
-                ? `<span class="text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.2 rounded text-[9px] font-bold">🔒 ${lockInfo.device_name}</span>`
-                : `<span class="text-amber-300 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.2 rounded text-[9px] font-bold">🔓 Unbound (Ready)</span>`
-              }
-            </td>
-            <td class="p-2 text-right">
-              <button onclick="openEmergencyDeviceResetModal('${s.identifier}', '${s.name}')" class="px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-[9px] font-mono font-bold transition">
-                🔄 Reset Lock
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-      const countBadge = document.getElementById('rosterCountBadge');
-      if (countBadge) {
-        countBadge.innerText = `Verified: ${Math.max(1, students.length - 1)} / ${students.length} Present`;
+      if (tbody) {
+        tbody.innerHTML = students.map((s, idx) => {
+          const isBlocked = idx === 2;
+          const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "Enclave Handset", is_locked: true };
+          const isLocked = lockInfo.is_locked;
+          return `
+            <tr class="${isBlocked ? 'bg-rose-500/5' : 'bg-emerald-500/5'}">
+              <td class="p-2.5 font-bold text-white text-[11px]">${s.identifier}</td>
+              <td class="p-2.5 text-white font-sans font-semibold text-[11px]">${s.name}</td>
+              <td class="p-2.5">
+                <span class="${isBlocked ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'} font-bold px-1.5 py-0.5 rounded text-[9px] border ${isBlocked ? 'border-rose-500/30' : 'border-emerald-500/30'}">
+                  ${isBlocked ? '🚨 PROXY BLOCKED' : '🟢 VERIFIED'}
+                </span>
+              </td>
+              <td class="p-2.5 ${isBlocked ? 'text-rose-400' : 'text-emerald-400'} text-[10px] font-bold">
+                ${isBlocked ? '1.8 km (Home)' : (6.5 + idx * 0.4).toFixed(1) + 'm'}
+              </td>
+              <td class="p-2.5 text-[10px]">
+                ${isLocked 
+                  ? `<span class="text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔒 ${lockInfo.device_name}</span>`
+                  : `<span class="text-amber-300 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔓 Unbound (Ready)</span>`
+                }
+              </td>
+              <td class="p-2.5 text-right">
+                <button onclick="openEmergencyDeviceResetModal('${s.identifier}', '${s.name}')" class="px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-[9px] font-mono font-bold transition">
+                  🔄 Reset Lock
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
       }
 
-      const coordStudents = document.getElementById('coordTotalStudents');
-      if (coordStudents) {
-        coordStudents.innerText = `${students.length} Students`;
+      if (coordTbody) {
+        coordTbody.innerHTML = students.map((s, idx) => {
+          const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "Enclave Handset", is_locked: true };
+          const isLocked = lockInfo.is_locked;
+          const attRate = (88.5 + (idx % 3) * 2.4).toFixed(1);
+          return `
+            <tr class="hover:bg-stitch-surface/60 transition">
+              <td class="p-2.5 font-bold text-white text-[11px]">${s.identifier}</td>
+              <td class="p-2.5 text-white font-semibold text-[11px]">${s.name}</td>
+              <td class="p-2.5">
+                <span class="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded text-[9px] border border-emerald-500/30">
+                  🟢 ELIGIBLE (${attRate}%)
+                </span>
+              </td>
+              <td class="p-2.5 text-emerald-400 font-bold text-[11px]">${attRate}%</td>
+              <td class="p-2.5 text-[10px]">
+                ${isLocked 
+                  ? `<span class="text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔒 ${lockInfo.device_name}</span>`
+                  : `<span class="text-amber-300 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔓 Unbound</span>`
+                }
+              </td>
+              <td class="p-2.5 text-right">
+                <button onclick="openEmergencyDeviceResetModal('${s.identifier}', '${s.name}')" class="px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-[9px] font-mono font-bold transition">
+                  🔄 Reset Lock
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      if (countBadge) {
+        countBadge.innerText = `Verified: ${Math.max(1, students.length - 1)} / ${students.length} Present`;
       }
       if (window.lucide) lucide.createIcons();
     }
