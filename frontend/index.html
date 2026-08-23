@@ -1744,52 +1744,8 @@
   <script>
     lucide.createIcons();
 
-    // Default Seed Profiles
+    // Default Seed Profiles (Faculty, Coordinator & Administrative Infrastructure Preserved)
     const DEFAULT_PROFILES = {
-      "CHMC-DS-2024-002": {
-        role: "STUDENT",
-        name: "Aarav Sharma",
-        identifier: "CHMC-DS-2024-002",
-        email: "aarav.sharma@chmc.edu",
-        username: "chmc.ds.2024.002",
-        avatar: "🎓",
-        badge: "STUDENT",
-        badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
-      },
-      "CHMC-DS-2024-003": {
-        role: "STUDENT",
-        name: "Priya Patel",
-        identifier: "CHMC-DS-2024-003",
-        email: "priya.patel@chmc.edu",
-        username: "chmc.ds.2024.003",
-        avatar: "🎓",
-        badge: "STUDENT",
-        badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
-      },
-      "CHMC-DS-2024-004": {
-        role: "STUDENT",
-        name: "Rohan Gupta",
-        identifier: "CHMC-DS-2024-004",
-        email: "rohan.gupta@chmc.edu",
-        username: "chmc.ds.2024.004",
-        avatar: "🎓",
-        badge: "STUDENT",
-        badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
-      },
-      "CHMC-DS-2024-005": {
-        role: "STUDENT",
-        name: "Ananya Verma",
-        identifier: "CHMC-DS-2024-005",
-        email: "ananya.verma@chmc.edu",
-        username: "chmc.ds.2024.005",
-        avatar: "🎓",
-        badge: "STUDENT",
-        badgeClass: "bg-purple-500 text-white",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College"
-      },
       "faculty.razia": {
         role: "TEACHER_RAZIA",
         name: "Miss Razia Khan",
@@ -1864,7 +1820,17 @@
     function getStoredProfiles() {
       const stored = localStorage.getItem('uniattend_360_profiles');
       if (stored) {
-        try { return { ...DEFAULT_PROFILES, ...JSON.parse(stored) }; } catch (e) {}
+        try {
+          const parsed = JSON.parse(stored);
+          const cleanCustom = {};
+          Object.keys(parsed).forEach(k => {
+            // Exclude legacy purged test students
+            if (!k.startsWith('CHMC-DS-2024-00')) {
+              cleanCustom[k] = parsed[k];
+            }
+          });
+          return { ...DEFAULT_PROFILES, ...cleanCustom };
+        } catch (e) {}
       }
       return { ...DEFAULT_PROFILES };
     }
@@ -1880,13 +1846,20 @@
       const saved = localStorage.getItem('uniattend_360_session');
       if (saved) {
         try {
-          activeSession = JSON.parse(saved);
-          applySession(activeSession);
+          const parsedSession = JSON.parse(saved);
+          // If saved session was a purged test student, redirect to faculty
+          if (parsedSession && parsedSession.identifier && parsedSession.identifier.startsWith('CHMC-DS-2024-00')) {
+            localStorage.removeItem('uniattend_360_session');
+            quickAuth('faculty.razia');
+          } else {
+            activeSession = parsedSession;
+            applySession(activeSession);
+          }
         } catch (e) {
           handleLogout();
         }
       } else {
-        quickAuth('CHMC-DS-2024-002');
+        quickAuth('faculty.razia');
       }
       renderDigitalRoster();
     }
@@ -2074,13 +2047,7 @@
       }
     }
 
-    const STUDENT_DEVICE_LOCKS = {
-      "CHMC-DS-2024-001": { device_uuid: "DEV-IPHONE15PRO-001", device_name: "iPhone 15 Pro", is_locked: true, enrolled_at: "2026-08-20 09:00" },
-      "CHMC-DS-2024-002": { device_uuid: "DEV-SAMSUNGS24-002", device_name: "Galaxy S24", is_locked: true, enrolled_at: "2026-08-21 09:15" },
-      "CHMC-DS-2024-003": { device_uuid: "DEV-PIXEL8-003", device_name: "Pixel 8", is_locked: true, enrolled_at: "2026-08-21 10:30" },
-      "CHMC-DS-2024-004": { device_uuid: "DEV-ONEPLUS12-004", device_name: "OnePlus 12", is_locked: true, enrolled_at: "2026-08-22 08:45" },
-      "CHMC-DS-2024-005": { device_uuid: "DEV-XIAOMI14-005", device_name: "Xiaomi 14 Pro", is_locked: true, enrolled_at: "2026-08-22 11:00" },
-    };
+    const STUDENT_DEVICE_LOCKS = {};
 
     let selectedStudentForReset = null;
 
@@ -2092,7 +2059,7 @@
       
       if (rollEl) rollEl.innerText = rollNo;
       if (nameEl) nameEl.innerText = name;
-      const lockInfo = STUDENT_DEVICE_LOCKS[rollNo] || { device_uuid: "DEV-IPHONE15-PRO-ENCLAVE", is_locked: true };
+      const lockInfo = STUDENT_DEVICE_LOCKS[rollNo] || { device_uuid: "DEV-ENCLAVE-BOUND", is_locked: true };
       if (devEl) devEl.innerText = lockInfo.is_locked ? (lockInfo.device_uuid || "DEV-LOCKED-ENCLAVE") : "UNBOUND / READY";
       
       const modal = document.getElementById('emergencyDeviceResetModal');
@@ -2142,7 +2109,7 @@
         if (window.PublicKeyCredential) {
           alert("🔑 [WEBAUTHN HARDWARE ENCLAVE ENROLLMENT]\n\nInitiating secure biometric handshake with your device's Apple Secure Enclave / Android Keystore...");
           
-          const rollNo = activeSession ? activeSession.identifier : "CHMC-DS-2024-001";
+          const rollNo = activeSession ? activeSession.identifier : "STUDENT-ID";
           STUDENT_DEVICE_LOCKS[rollNo] = {
             device_uuid: "DEV-WEBAUTHN-PASSKEY-SECURE-ENCLAVE",
             device_name: "Apple iPhone 15 Pro (Secure Enclave)",
@@ -2173,21 +2140,21 @@
       const incident = {
         id: `INC-${Math.floor(Math.random() * 9000 + 1000)}`,
         session_id: currentActiveLectureId,
-        student_id_str: "CHMC-DS-2024-001",
-        student_name: "Alex Chen",
+        student_id_str: "STUDENT-SIM",
+        student_name: "Simulated Student",
         attack_type: "DEVICE_MISMATCH_UNAUTHORIZED_HARDWARE",
         student_lat: 19.22171,
         student_lon: 73.16462,
         distance_meters: 1.8,
         max_allowed_radius_m: activeFacultyAnchor.radius_m,
         device_fingerprint: "DEV-UNAUTHORIZED-SAMSUNG-S24",
-        failure_reason: "Unauthorized Handset! Account CHMC-DS-2024-001 is cryptographically locked to iPhone 15 Pro.",
+        failure_reason: "Unauthorized Handset! Account is cryptographically locked to registered hardware.",
         is_acknowledged: false,
         timestamp: timeStr
       };
 
       logProxyIncident(incident);
-      alert(`🚨 [UNAUTHORIZED HARDWARE INTERCEPTED at ${timeStr}]\n\n• Student: Alex Chen (CHMC-DS-2024-001)\n• Hardware Violation: Attempted check-in from an unauthorized secondary handset (Samsung Galaxy S24).\n• Action: Attendance BLOCKED. Account is locked to registered iPhone 15 Pro.`);
+      alert(`🚨 [UNAUTHORIZED HARDWARE INTERCEPTED at ${timeStr}]\n\n• Hardware Violation: Attempted check-in from an unauthorized secondary handset.\n• Action: Attendance BLOCKED. Account is locked to registered primary handset.`);
     }
 
     function renderDigitalRoster() {
@@ -2198,9 +2165,29 @@
         .map(k => REGISTERED_PROFILES[k])
         .filter(p => p.role === 'STUDENT');
 
+      if (students.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-8 text-center text-slate-400 font-mono text-xs">
+              <div class="flex flex-col items-center justify-center space-y-2 py-3">
+                <i data-lucide="users" class="w-8 h-8 text-slate-600 mb-1"></i>
+                <span class="font-bold text-slate-300">No Student Records Found (Clean Database)</span>
+                <span class="text-[10px] text-slate-500 max-w-sm">Test data was purged. Click <b class="text-emerald-400">+ Enroll Student</b> or use CSV Bulk Ingestion to register new students for this session.</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        const countBadge = document.getElementById('rosterCountBadge');
+        if (countBadge) countBadge.innerText = "Verified: 0 / 0 Present";
+        const coordStudents = document.getElementById('coordTotalStudents');
+        if (coordStudents) coordStudents.innerText = "0 Students";
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
       tbody.innerHTML = students.map((s, idx) => {
         const isBlocked = idx === 2;
-        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "iPhone 15 Pro", is_locked: true };
+        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "Enclave Handset", is_locked: true };
         const isLocked = lockInfo.is_locked;
         return `
           <tr class="${isBlocked ? 'bg-rose-500/5' : 'bg-emerald-500/5'}">
@@ -2238,6 +2225,7 @@
       if (coordStudents) {
         coordStudents.innerText = `${students.length} Students`;
       }
+      if (window.lucide) lucide.createIcons();
     }
 
     function renderActiveSessions() {
