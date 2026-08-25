@@ -35,7 +35,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const id = Math.random().toString(36).substring(2, 9);
       const newToast: ToastOptions = { id, title, subtitle, type, duration };
 
-      setToasts((prev) => [...prev.slice(-3), newToast]); // Keep max 4 toasts
+      setToasts((prev) => [...prev.slice(-3), newToast]);
 
       setTimeout(() => {
         removeToast(id);
@@ -55,46 +55,46 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      {/* Floating Modern Toast Stack Container */}
-      <div className="fixed top-4 right-4 sm:top-5 sm:right-5 z-[9999] flex flex-col space-y-2 pointer-events-none max-w-sm w-full">
+      {/* Floating Organic Toast Stack Container */}
+      <div className="fixed top-4 right-4 sm:top-5 sm:right-5 z-[99999] flex flex-col space-y-2 pointer-events-none max-w-sm w-full">
         {toasts.map((t) => (
           <div
             key={t.id}
-            className="pointer-events-auto flex items-center justify-between p-3 rounded-2xl bg-surface/95 border border-white/10 backdrop-blur-xl shadow-soft-glow text-xs font-sans transition-all duration-300 transform translate-y-0 opacity-100 animate-in fade-in slide-in-from-top-2"
+            className="pointer-events-auto flex items-center justify-between p-3.5 rounded-2xl bg-white/95 border border-[#E8E3DA] backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] text-xs font-sans transition-all duration-300 transform translate-y-0 opacity-100"
           >
             <div className="flex items-center space-x-3 min-w-0">
               <div className="shrink-0">
                 {t.type === 'success' && (
-                  <div className="p-1.5 rounded-xl bg-accent-mint/15 text-accent-mint border border-accent-mint/30">
+                  <div className="p-1.5 rounded-xl bg-[#EAF2EB] text-[#2F5238] border border-[#D5E4D8]">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
                 )}
                 {t.type === 'error' && (
-                  <div className="p-1.5 rounded-xl bg-accent-rose/15 text-accent-rose border border-accent-rose/30">
+                  <div className="p-1.5 rounded-xl bg-[#FCE4DA] text-[#8D3F30] border border-[#F5C7B6]">
                     <AlertCircle className="w-4 h-4" />
                   </div>
                 )}
                 {t.type === 'warning' && (
-                  <div className="p-1.5 rounded-xl bg-accent-amber/15 text-accent-amber border border-accent-amber/30">
+                  <div className="p-1.5 rounded-xl bg-[#FEF3DD] text-[#C28222] border border-[#F9E2B5]">
                     <AlertTriangle className="w-4 h-4" />
                   </div>
                 )}
                 {t.type === 'info' && (
-                  <div className="p-1.5 rounded-xl bg-accent-blue/15 text-accent-blue-light border border-accent-blue/30">
+                  <div className="p-1.5 rounded-xl bg-[#F4F0E8] text-[#5A655C] border border-[#E8E3DA]">
                     <Info className="w-4 h-4" />
                   </div>
                 )}
               </div>
               <div className="min-w-0">
-                <p className="font-semibold text-text-primary text-[12px] truncate">{t.title}</p>
+                <p className="font-semibold text-[#1C241E] text-[12px] truncate">{t.title}</p>
                 {t.subtitle && (
-                  <p className="text-[10px] text-text-muted font-mono truncate">{t.subtitle}</p>
+                  <p className="text-[10px] text-[#5A655C] font-mono truncate">{t.subtitle}</p>
                 )}
               </div>
             </div>
             <button
               onClick={() => t.id && removeToast(t.id)}
-              className="p-1 text-text-muted hover:text-text-primary transition shrink-0 ml-2"
+              className="p-1 text-[#869288] hover:text-[#1C241E] transition shrink-0 ml-2"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -112,5 +112,3 @@ export const useToast = () => {
   }
   return context.toast;
 };
-
-export default ToastProvider;

@@ -2,127 +2,154 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ==========================================================================
-   SOOTHING, LUMINOUS & LOW-FATIGUE AMBIENT THEME VARIABLES (WCAG AA)
-   ========================================================================== */
+@layer base {
+  :root {
+    --canvas: #FBF9F5;
+    --canvas-subtle: #F4F0E8;
+    --surface: #FFFFFF;
+    --surface-hover: #F8F6F0;
+    --elevated: #F5F2EB;
+    
+    --border: #E8E3DA;
+    --border-subtle: rgba(90, 80, 60, 0.10);
+    --border-hairline: #DFD8CC;
 
-:root {
-  /* Surface & Canvas Tokens (Soft Deep Slate / Obsidian - No Pitch Black) */
-  --bg-canvas: #181B22;
-  --bg-canvas-subtle: #1E222B;
-  --bg-surface: #252A36;
-  --bg-surface-translucent: rgba(37, 42, 54, 0.78);
-  --bg-elevated: #313746;
-  --bg-elevated-subtle: #373E4E;
+    --text-primary: #1C241E;
+    --text-secondary: #5A655C;
+    --text-muted: #869288;
 
-  /* Low-Contrast Subtle Hairline Borders */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-hairline: #373E4E;
-  --border-focus: #4F86F7;
+    --forest: #2F5238;
+    --forest-hover: #25422D;
+    
+    --sage: #4A6B53;
+    --sage-bg: #EAF2EB;
+    --sage-text: #2D4F38;
+    
+    --clay: #8D3F30;
+    --clay-bg: #FCE4DA;
+    --clay-text: #8D3F30;
 
-  /* Typography Hierarchy (Relaxed & Anti-Glare) */
-  --text-primary: #F1F5F9;     /* Crisp Alabaster Pearl */
-  --text-secondary: #CBD5E1;   /* Muted Light Slate */
-  --text-muted: #7C8BA1;       /* Soft Cool Gray */
+    --ochre: #C28222;
+    --ochre-bg: #FEF3DD;
+    --ochre-text: #8C5B14;
+  }
 
-  /* Eye-Friendly Soft Pastel & Glow Accents */
-  --accent-primary: #4F86F7;   /* Electric Cornflower Blue */
-  --accent-primary-glow: rgba(79, 134, 247, 0.15);
-  --accent-success: #34D399;   /* Soft Mint / Sage Green */
-  --accent-success-glow: rgba(52, 211, 153, 0.12);
-  --accent-warning: #FBBF24;   /* Warm Amber Gold */
-  --accent-warning-glow: rgba(251, 191, 36, 0.12);
-  --accent-error: #F87171;     /* Coral Rose */
-  --accent-error-glow: rgba(248, 113, 113, 0.12);
-  --accent-purple: #A78BFA;    /* Soft Lavender Indigo */
-  --accent-purple-glow: rgba(167, 139, 250, 0.15);
+  body {
+    background-color: #FBF9F5;
+    background-image: 
+      radial-gradient(circle at 10% 0%, rgba(47, 82, 56, 0.03) 0%, transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(204, 130, 34, 0.02) 0%, transparent 45%);
+    background-attachment: fixed;
+    color: #1C241E;
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 
-  /* Shadows & Ambient Glows */
-  --shadow-card: 0 8px 32px rgba(10, 13, 18, 0.35);
-  --shadow-glow-blue: 0 0 24px rgba(79, 134, 247, 0.18);
-  --shadow-glow-mint: 0 0 24px rgba(52, 211, 153, 0.18);
-  --shadow-glow-amber: 0 0 24px rgba(251, 191, 36, 0.18);
+  h1, h2, h3, .font-serif-heading {
+    font-family: "Lora", "Playfair Display", Georgia, serif;
+  }
 }
 
-/* Base Body Styles with Ambient Lighting Gradient */
-body {
-  background-color: var(--bg-canvas);
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(79, 134, 247, 0.06) 0%, transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(52, 211, 153, 0.04) 0%, transparent 45%);
-  background-attachment: fixed;
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Inter", sans-serif;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Organic Editorial Card Styles */
+.organic-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E8E3DA;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(60, 70, 60, 0.05), 0 2px 6px -1px rgba(60, 70, 60, 0.03);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Luminous Frosted Glass Card */
-.glass-panel {
-  background: var(--bg-surface-translucent);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-card);
+.organic-card-blob-good {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle at top right, #EAF2EB 0%, rgba(234, 242, 235, 0) 70%);
+  pointer-events: none;
+  border-radius: 0 1.5rem 0 100%;
 }
 
-/* Elevated Sub-card / Inner Container */
-.card-elevated {
-  background-color: var(--bg-elevated);
-  border: 1px solid var(--border-hairline);
-  border-radius: 1rem;
+.organic-card-blob-care {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle at top right, #FDF0EB 0%, rgba(253, 240, 235, 0) 70%);
+  pointer-events: none;
+  border-radius: 0 1.5rem 0 100%;
 }
 
-/* Soft Ambient Status Pills */
-.pill-mint {
-  background-color: var(--accent-success-glow);
-  color: var(--accent-success);
-  border: 1px solid rgba(52, 211, 153, 0.3);
+/* Status Badges */
+.pill-good {
+  background-color: #4A6B53;
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0.25rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(74, 107, 83, 0.25);
 }
 
-.pill-blue {
-  background-color: var(--accent-primary-glow);
-  color: var(--accent-primary);
-  border: 1px solid rgba(79, 134, 247, 0.3);
+.pill-needs-care {
+  background-color: #FCE4DA;
+  color: #8D3F30;
+  font-weight: 600;
+  padding: 0.25rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
 }
 
-.pill-amber {
-  background-color: var(--accent-warning-glow);
-  color: var(--accent-warning);
-  border: 1px solid rgba(251, 191, 36, 0.3);
+.pill-neutral {
+  background-color: #F4F0E8;
+  color: #5A655C;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
 }
 
-.pill-rose {
-  background-color: var(--accent-error-glow);
-  color: var(--accent-error);
-  border: 1px solid rgba(248, 113, 113, 0.3);
+/* Progress Bars */
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background-color: #ECE7DF;
+  border-radius: 9999px;
+  overflow: hidden;
 }
 
-/* Low-Fatigue Form Controls */
+.progress-fill-good {
+  height: 100%;
+  background-color: #47664B;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.progress-fill-care {
+  height: 100%;
+  background-color: #945749;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Input Styles */
 input, select, textarea {
-  background-color: var(--bg-elevated) !important;
-  color: var(--text-primary) !important;
-  border: 1px solid var(--border-hairline) !important;
+  background-color: #FFFFFF;
+  border: 1px solid #E8E3DA;
+  color: #1C241E;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input:focus, select:focus, textarea:focus {
-  border-color: var(--accent-primary) !important;
-  box-shadow: 0 0 0 2px var(--accent-primary-glow) !important;
-}
-
-/* Soothing Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: rgba(24, 27, 34, 0.6);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--bg-elevated-subtle);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  outline: none;
+  border-color: #2F5238;
+  box-shadow: 0 0 0 3px rgba(47, 82, 56, 0.12);
 }
