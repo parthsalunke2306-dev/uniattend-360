@@ -1264,16 +1264,6 @@
                 </div>
               </button>
 
-              <button onclick="triggerManualAppLock(); closeHeaderMenu();" class="w-full px-3.5 py-2.5 text-left text-xs font-sans text-[#2F5238] hover:bg-emerald-500/10 flex items-center space-x-2.5 transition font-semibold">
-                <div class="w-7 h-7 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-[#2F5238] shrink-0">
-                  <i data-lucide="lock" class="w-4 h-4"></i>
-                </div>
-                <div class="min-w-0">
-                  <div class="font-semibold text-[#2F5238] truncate">Lock Application</div>
-                  <div class="text-[10px] text-[#869288] font-mono truncate">Biometric shield</div>
-                </div>
-              </button>
-
               <button onclick="openLoginModal(); closeHeaderMenu();" class="w-full px-3.5 py-2.5 text-left text-xs font-sans text-[#1C241E] hover:bg-[#F5F2EB] flex items-center space-x-2.5 transition">
                 <div class="w-7 h-7 rounded-xl bg-ios-blue/15 border border-ios-blue/30 flex items-center justify-center text-ios-blue shrink-0">
                   <i data-lucide="users" class="w-4 h-4"></i>
@@ -3246,6 +3236,7 @@
     function handleLogout() {
       stopCameraScanner();
       localStorage.removeItem('uniattend_360_session');
+      sessionStorage.removeItem('uniattend_session_unlocked');
       activeSession = null;
       openLoginModal();
     }
@@ -6071,7 +6062,7 @@
       const lockScreen = document.getElementById('appBiometricLockScreen');
       if (lockScreen) lockScreen.classList.add('hidden');
       isAppBiometricLocked = false;
-      sessionStorage.setItem('uniattend_app_unlocked', 'true');
+      sessionStorage.setItem('uniattend_session_unlocked', 'true');
 
       const btn = document.getElementById('btnBiometricUnlock');
       if (btn) {
@@ -6108,29 +6099,12 @@
       }
     }
 
-    function triggerManualAppLock() {
-      showAppLock();
-      showToast({ title: 'App Locked', subtitle: 'Biometric scan required to re-enter.', type: 'info' });
-    }
-
     function switchLockAccount() {
       const lockScreen = document.getElementById('appBiometricLockScreen');
       if (lockScreen) lockScreen.classList.add('hidden');
       isAppBiometricLocked = false;
       openLoginModal();
     }
-
-    // Auto-Lock when switching away from the tab or returning after background idle
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        sessionStorage.setItem('uniattend_bg_timestamp', Date.now().toString());
-      } else {
-        const bgTime = parseInt(sessionStorage.getItem('uniattend_bg_timestamp') || '0', 10);
-        if (bgTime && (Date.now() - bgTime > 5000)) {
-          showAppLock();
-        }
-      }
-    });
 
     // 3-Dot Header Actions Dropdown Controller
     function toggleHeaderMenu(e) {
@@ -6170,8 +6144,9 @@
         lucide.createIcons();
       }
 
-      // App-Launch Biometric Gate Challenge
-      if (sessionStorage.getItem('uniattend_app_unlocked') !== 'true') {
+      // Automatic Browser-Close Session Biometric Lock Gate:
+      // When browser or tab is closed, sessionStorage is destroyed. Re-opening the app automatically challenges biometric unlock.
+      if (sessionStorage.getItem('uniattend_session_unlocked') !== 'true') {
         showAppLock();
       }
     });

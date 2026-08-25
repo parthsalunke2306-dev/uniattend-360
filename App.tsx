@@ -40,32 +40,24 @@ const INITIAL_SESSIONS: Record<UserRole, UserSession> = {
 
 const MainContent: React.FC = () => {
   const [currentRole, setCurrentRole] = useState<UserRole>('STUDENT');
-  const [isAppLocked, setIsAppLocked] = useState<boolean>(true); // App-launch biometric lock
+  
+  // Automatic Browser-Close Session Biometric Lock:
+  // Evaluates sessionStorage on initial app launch. If browser/tab was closed, sessionStorage is empty, triggering biometric gate.
+  const [isAppLocked, setIsAppLocked] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return sessionStorage.getItem('uniattend_session_unlocked') !== 'true';
+  });
+
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isQuickTourOpen, setIsQuickTourOpen] = useState(false);
   const toast = useToast();
 
   const userSession = INITIAL_SESSIONS[currentRole];
 
-  // Auto-Lock Lifecycle: Re-authenticate on background return or inactivity
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        // Tab went to background
-        sessionStorage.setItem('uniattend_background_time', Date.now().toString());
-      } else {
-        // Tab restored from background: prompt re-authentication if away > 5s
-        const bgTime = parseInt(sessionStorage.getItem('uniattend_background_time') || '0', 10);
-        if (bgTime && Date.now() - bgTime > 5000) {
-          setIsAppLocked(true);
-          toast.info('Session Locked', 'Biometric re-verification required.');
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [toast]);
+  const handleUnlock = () => {
+    setIsAppLocked(false);
+    sessionStorage.setItem('uniattend_session_unlocked', 'true');
+  };
 
   const handleRoleChange = (role: UserRole) => {
     setCurrentRole(role);
@@ -73,13 +65,9 @@ const MainContent: React.FC = () => {
   };
 
   const handleLogout = () => {
+    sessionStorage.removeItem('uniattend_session_unlocked');
     setIsAppLocked(true);
-    toast.info('Signed Out', 'App locked. Authenticate to enter.');
-  };
-
-  const handleManualLock = () => {
-    setIsAppLocked(true);
-    toast.info('Application Locked', 'Biometric scan required.');
+    toast.info('Signed Out', 'Session expired. Biometric unlock required to re-enter.');
   };
 
   const appLockUserData: AppLockUser = {
@@ -92,11 +80,11 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-canvas text-text-primary flex flex-col font-sans pb-20 md:pb-8">
-      {/* 1. MANDATORY APP-LAUNCH BIOMETRIC LOCK GATE */}
+      {/* 1. MANDATORY BROWSER-SESSION BIOMETRIC LOCK GATE */}
       <AppLockGate
         isLocked={isAppLocked}
         user={appLockUserData}
-        onUnlock={() => setIsAppLocked(false)}
+        onUnlock={handleUnlock}
         onSwitchAccount={() => {
           setIsAppLocked(false);
           setIsProfileOpen(true);
@@ -110,7 +98,6 @@ const MainContent: React.FC = () => {
         onRoleChange={handleRoleChange}
         onOpenProfile={() => setIsProfileOpen(true)}
         onOpenQuickTour={() => setIsQuickTourOpen(true)}
-        onLockApp={handleManualLock}
         onLogout={handleLogout}
       />
 
