@@ -1236,11 +1236,12 @@
 
       <!-- Action Chips & Quick Switchers (Right Side) -->
       <div class="flex items-center space-x-2 shrink-0 self-end md:self-auto flex-wrap sm:flex-nowrap">
-        <!-- Quick Switcher for Laptop -->
-        <div class="hidden lg:flex items-center space-x-1 p-1 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-[10px] font-mono">
-          <button onclick="quickAuth('faculty.razia')" title="Switch to Faculty View" class="px-2 py-1 rounded-lg hover:bg-[#F5F2EB] text-[#5A655C] hover:text-white transition">👩‍🏫 Faculty</button>
-          <button onclick="quickAuth('coord.shiji')" title="Switch to Coordinator View" class="px-2 py-1 rounded-lg hover:bg-[#F5F2EB] text-[#5A655C] hover:text-white transition">🏢 Coordinator</button>
-          <button onclick="quickAuth('admin.principal')" title="Switch to Principal View" class="px-2 py-1 rounded-lg hover:bg-[#F5F2EB] text-[#5A655C] hover:text-white transition">🏛️ Principal</button>
+        <!-- Quick View Switcher (All Roles) -->
+        <div class="flex items-center space-x-1 p-1 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-[10px] font-sans">
+          <button onclick="quickAuth('student.captain')" title="Switch to Student Portal" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#EAF2EB] text-[#1C241E] font-semibold border border-[#E8E3DA] transition shadow-xs">🎓 Student</button>
+          <button onclick="quickAuth('faculty.razia')" title="Switch to Faculty View" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#EAF2EB] text-[#1C241E] font-semibold border border-[#E8E3DA] transition shadow-xs">👩‍🏫 Faculty</button>
+          <button onclick="quickAuth('coordinator.ds')" title="Switch to Coordinator View" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#EAF2EB] text-[#1C241E] font-semibold border border-[#E8E3DA] transition shadow-xs">🏢 Coordinator</button>
+          <button onclick="quickAuth('principal.chmc')" title="Switch to Principal Super Admin" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#EAF2EB] text-[#1C241E] font-semibold border border-[#E8E3DA] transition shadow-xs">👑 Principal</button>
         </div>
 
         <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[10px] sm:text-xs font-mono text-[#2F5238] bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center shadow transition">
@@ -2876,6 +2877,21 @@
 
     // Default Seed Profiles (Faculty, Coordinator & Administrative Infrastructure Preserved)
     const DEFAULT_PROFILES = {
+      "student.captain": {
+        role: "STUDENT",
+        name: "Captain (CHMC-DS-2024-001)",
+        identifier: "CHMC-DS-2024-001",
+        email: "captain.ds@chmc.edu",
+        username: "student.captain",
+        avatar: "🎓",
+        badge: "STUDENT",
+        badgeClass: "bg-[#2F5238] text-white font-bold",
+        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College",
+        department_code: "DS",
+        department: "Dept. of Data Science",
+        semester: 3,
+        batch_year: 2024
+      },
       "faculty.razia": {
         role: "TEACHER_RAZIA",
         name: "Miss Razia Khan",
@@ -2884,7 +2900,7 @@
         username: "razia.khan",
         avatar: "👩‍🏫",
         badge: "FACULTY",
-        badgeClass: "bg-emerald-500 text-white",
+        badgeClass: "bg-[#4A6B53] text-white font-bold",
         desc: "Second Year Faculty • Data Mining (E-104 / M-113), Linear Algebra, FOR",
         units: [
           { code: "DS201-DM-TH", title: "Data Mining (Theory)", room: "E-104" },
@@ -2901,7 +2917,7 @@
         username: "anshul.chimnani",
         avatar: "👨‍🏫",
         badge: "FACULTY",
-        badgeClass: "bg-emerald-500 text-white",
+        badgeClass: "bg-[#4A6B53] text-white font-bold",
         desc: "Second Year Faculty • Data Warehousing (E-104), FOR Practical (M-103)",
         units: [
           { code: "DS204-DW", title: "Data Warehousing", room: "E-104", isDefault: true },
@@ -2916,7 +2932,7 @@
         username: "kalyani.patil",
         avatar: "👩‍🏫",
         badge: "FACULTY",
-        badgeClass: "bg-emerald-500 text-white",
+        badgeClass: "bg-[#4A6B53] text-white font-bold",
         desc: "Second Year Faculty • DAA (Theory: E-104 / Lab: M-113)",
         units: [
           { code: "DS205-DAA-TH", title: "DAA (Theory)", room: "E-104", isDefault: true },
@@ -2931,7 +2947,7 @@
         username: "coordinator.ds",
         avatar: "👔",
         badge: "COORDINATOR",
-        badgeClass: "bg-indigo-500 text-white",
+        badgeClass: "bg-[#2F5238] text-white font-bold",
         desc: "Course Coordinator • Department of Data Science (Smt. C.H.M. College)"
       },
       "principal.chmc": {
@@ -2942,7 +2958,7 @@
         username: "principal.chmc",
         avatar: "👑",
         badge: "SUPER ADMIN",
-        badgeClass: "bg-gradient-to-r from-indigo-600 to-purple-600 text-[#1C241E] font-bold",
+        badgeClass: "bg-[#2F5238] text-white font-bold",
         desc: "Principal & Institutional Super Administrator • Full Access • Smt. C.H.M. College"
       }
     };
@@ -2952,14 +2968,7 @@
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          const cleanCustom = {};
-          Object.keys(parsed).forEach(k => {
-            // Exclude legacy purged test students
-            if (!k.startsWith('CHMC-DS-2024-00')) {
-              cleanCustom[k] = parsed[k];
-            }
-          });
-          return { ...DEFAULT_PROFILES, ...cleanCustom };
+          return { ...DEFAULT_PROFILES, ...parsed };
         } catch (e) {}
       }
       return { ...DEFAULT_PROFILES };
@@ -2977,19 +2986,13 @@
       if (saved) {
         try {
           const parsedSession = JSON.parse(saved);
-          // If saved session was a purged test student, redirect to faculty
-          if (parsedSession && parsedSession.identifier && parsedSession.identifier.startsWith('CHMC-DS-2024-00')) {
-            localStorage.removeItem('uniattend_360_session');
-            quickAuth('faculty.razia');
-          } else {
-            activeSession = parsedSession;
-            applySession(activeSession);
-          }
+          activeSession = parsedSession;
+          applySession(activeSession);
         } catch (e) {
-          handleLogout();
+          quickAuth('student.captain');
         }
       } else {
-        quickAuth('faculty.razia');
+        quickAuth('student.captain');
       }
       renderDigitalRoster();
     }
@@ -3127,8 +3130,22 @@
     }
 
     function quickAuth(key) {
-      const profile = REGISTERED_PROFILES[key];
-      if (!profile) return;
+      if (key === 'coord.shiji' || key === 'coordinator') key = 'coordinator.ds';
+      if (key === 'admin.principal' || key === 'principal' || key === 'principal.chmc') key = 'principal.chmc';
+      if (key === 'student' || key === 'captain' || key === 'CHMC-DS-2024-001' || key === 'CHMC-DS-2024-002') key = 'student.captain';
+
+      let profile = REGISTERED_PROFILES[key] || DEFAULT_PROFILES[key];
+      if (!profile) {
+        const found = Object.keys(REGISTERED_PROFILES).find(k => {
+          const p = REGISTERED_PROFILES[k];
+          return k.toLowerCase() === String(key).toLowerCase() || 
+                 (p.username && p.username.toLowerCase() === String(key).toLowerCase()) || 
+                 (p.identifier && p.identifier.toLowerCase() === String(key).toLowerCase()) ||
+                 (p.email && p.email.toLowerCase() === String(key).toLowerCase());
+        });
+        if (found) profile = REGISTERED_PROFILES[found];
+      }
+      if (!profile) profile = DEFAULT_PROFILES["student.captain"];
 
       activeSession = {
         key: key,
@@ -4329,51 +4346,74 @@
     }
 
     function applySession(session) {
-      document.getElementById('viewStudent').classList.add('hidden');
-      document.getElementById('viewTeacher').classList.add('hidden');
-      document.getElementById('viewCoordinator').classList.add('hidden');
-      document.getElementById('viewPrincipal').classList.add('hidden');
+      if (!session) return;
+      
+      const vStudent = document.getElementById('viewStudent');
+      const vTeacher = document.getElementById('viewTeacher');
+      const vCoord = document.getElementById('viewCoordinator');
+      const vPrinc = document.getElementById('viewPrincipal');
 
-      document.getElementById('roleAvatar').innerText = session.avatar;
-      document.getElementById('profileName').innerText = session.name;
-      document.getElementById('roleBadge').innerText = session.badge;
-      document.getElementById('roleBadge').className = `${session.badgeClass} font-mono text-[8px] sm:text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0`;
-      document.getElementById('profileDesc').innerText = session.desc;
+      if (vStudent) vStudent.classList.add('hidden');
+      if (vTeacher) vTeacher.classList.add('hidden');
+      if (vCoord) vCoord.classList.add('hidden');
+      if (vPrinc) vPrinc.classList.add('hidden');
 
-      if (session.role === 'STUDENT') {
-        document.getElementById('viewStudent').classList.remove('hidden');
-        // Auto-initialize camera viewport when in Camera mode
+      const rawRole = String(session.role || session.badge || '').trim().toUpperCase();
+      
+      const elAvatar = document.getElementById('roleAvatar');
+      const elName = document.getElementById('profileName');
+      const elBadge = document.getElementById('roleBadge');
+      const elDesc = document.getElementById('profileDesc');
+
+      if (elAvatar) elAvatar.innerText = session.avatar || '👤';
+      if (elName) elName.innerText = session.name || 'User';
+      if (elBadge) {
+        elBadge.innerText = session.badge || rawRole;
+        elBadge.className = `${session.badgeClass || 'bg-[#2F5238] text-white'} font-mono text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0`;
+      }
+      if (elDesc) elDesc.innerText = session.desc || '';
+
+      if (rawRole === 'STUDENT' || rawRole.includes('STUDENT')) {
+        if (vStudent) vStudent.classList.remove('hidden');
         const tabCam = document.getElementById('tabScannerCamera');
         if (tabCam && !tabCam.classList.contains('text-[#869288]')) {
           startCameraScanner();
         }
       } else {
         stopCameraScanner();
-        if (session.role.startsWith('TEACHER')) {
-          document.getElementById('viewTeacher').classList.remove('hidden');
+        if (rawRole.includes('TEACHER') || rawRole.includes('FACULTY')) {
+          if (vTeacher) vTeacher.classList.remove('hidden');
           
           const unitSelector = document.getElementById('teacherUnitSelector');
-          unitSelector.innerHTML = '';
-          if (session.units && session.units.length > 0) {
-            session.units.forEach((u, i) => {
-              const opt = document.createElement('option');
-              opt.value = JSON.stringify(u);
-              opt.innerText = `${u.title} (${u.room})`;
-              if (u.isDefault || i === 0) opt.selected = true;
-              unitSelector.appendChild(opt);
-            });
-            handleTeacherUnitChange(unitSelector.value);
+          if (unitSelector) {
+            unitSelector.innerHTML = '';
+            const units = session.units || (DEFAULT_PROFILES['faculty.razia'] ? DEFAULT_PROFILES['faculty.razia'].units : []);
+            if (units && units.length > 0) {
+              units.forEach((u, i) => {
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify(u);
+                opt.innerText = `${u.title} (${u.room})`;
+                if (u.isDefault || i === 0) opt.selected = true;
+                unitSelector.appendChild(opt);
+              });
+              handleTeacherUnitChange(unitSelector.value);
+            }
           }
-        } else if (session.role === 'COORDINATOR') {
-          document.getElementById('viewCoordinator').classList.remove('hidden');
-        } else if (session.role === 'PRINCIPAL' || session.role === 'ADMIN') {
-          document.getElementById('viewPrincipal').classList.remove('hidden');
+        } else if (rawRole.includes('COORD') || rawRole.includes('HOD')) {
+          if (vCoord) vCoord.classList.remove('hidden');
+        } else if (rawRole.includes('PRINCIPAL') || rawRole.includes('ADMIN') || rawRole.includes('SUPER')) {
+          if (vPrinc) vPrinc.classList.remove('hidden');
+        } else {
+          // Safe fallback
+          if (vStudent) vStudent.classList.remove('hidden');
         }
       }
 
-      updateProfileBadgeIndicators(session);
-      renderDigitalRoster();
-      lucide.createIcons();
+      try { updateProfileBadgeIndicators(session); } catch (e) { console.warn(e); }
+      try { renderDigitalRoster(); } catch (e) { console.warn(e); }
+      try { renderPrincipalStudentLedger(); } catch (e) { console.warn(e); }
+      try { renderPrincipalAuditLedger(); } catch (e) { console.warn(e); }
+      if (window.lucide) lucide.createIcons();
     }
 
     function handleTeacherUnitChange(val) {
