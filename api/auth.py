@@ -10,6 +10,8 @@ Implements:
 
 import os
 import json
+import base64
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, List
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Header
@@ -31,6 +33,7 @@ from api.security import (
 from api.webauthn_service import WebAuthnService
 
 auth_router = APIRouter(prefix="/api/v1/auth", tags=["Authentication & Security"])
+passkey_router = APIRouter(prefix="/api/auth/passkey", tags=["WebAuthn Hardware Passkeys"])
 
 
 # ==========================================
@@ -580,6 +583,47 @@ def webauthn_register_verify(
         return {"status": "SUCCESS", "message": f"Biometric passkey '{passkey.device_name}' registered successfully."}
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@passkey_router.get("/register-challenge")
+@auth_router.get("/passkey/register-challenge")
+def get_passkey_register_challenge(identifier: Optional[str] = None):
+    """
+    Returns a fresh cryptographic 32-byte registration challenge for navigator.credentials.create().
+    Supports hardware-level WebAuthn sensor registration (Face ID / Fingerprint / Windows Hello).
+    """
+    challenge_bytes = secrets.token_bytes(32)
+    challenge_b64 = base64.urlsafe_b64encode(challenge_bytes).decode('utf-8').rstrip('=')
+    challenge_str = secrets.token_urlsafe(32)
+    return {
+        "status": "SUCCESS",
+        "challenge": challenge_str,
+        "challenge_b64": challenge_b64,
+        "rp": {
+            "name": "UniAttend 360",
+            "id": os.getenv("WEBAUTHN_RP_ID", "uniattend-360.vercel.app")
+        },
+        "timeout": 60000
+    }
+
+
+@passkey_router.get("/login-challenge")
+@auth_router.get("/passkey/login-challenge")
+def get_passkey_login_challenge(identifier: Optional[str] = None):
+    """
+    Returns a fresh cryptographic 32-byte assertion challenge for navigator.credentials.get().
+    Supports real-time biometric verification tests on native OS biometric authenticators.
+    """
+    challenge_bytes = secrets.token_bytes(32)
+    challenge_b64 = base64.urlsafe_b64encode(challenge_bytes).decode('utf-8').rstrip('=')
+    challenge_str = secrets.token_urlsafe(32)
+    return {
+        "status": "SUCCESS",
+        "challenge": challenge_str,
+        "challenge_b64": challenge_b64,
+        "rp_id": os.getenv("WEBAUTHN_RP_ID", "uniattend-360.vercel.app"),
+        "timeout": 60000
+    }
 
 
 # ==========================================

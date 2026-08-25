@@ -420,3 +420,27 @@ def test_student_profile_update():
     assert data["profile"]["avatar_icon"] == "🚀"
 
 
+def test_passkey_hardware_challenge_endpoints():
+    """Verifies that the server returns cryptographic challenge options for WebAuthn hardware sensors."""
+    # Test passkey registration challenge
+    reg_resp = client.get("/api/auth/passkey/register-challenge?identifier=CHMC-DS-2024-001")
+    assert reg_resp.status_code == 200
+    reg_data = reg_resp.json()
+    assert reg_data["status"] == "SUCCESS"
+    assert "challenge" in reg_data
+    assert "challenge_b64" in reg_data
+    assert len(reg_data["challenge"]) >= 32
+    assert "rp" in reg_data
+
+    # Test passkey login assertion challenge
+    login_resp = client.get("/api/auth/passkey/login-challenge?identifier=CHMC-DS-2024-001")
+    assert login_resp.status_code == 200
+    login_data = login_resp.json()
+    assert login_data["status"] == "SUCCESS"
+    assert "challenge" in login_data
+    assert "challenge_b64" in login_data
+    assert len(login_data["challenge"]) >= 32
+    assert "rp_id" in login_data
+
+
+

@@ -40,7 +40,7 @@ from api.schemas import (
     UpdateFacultyAnchorRequest, ProxyAttemptResponse,
     ResetStudentDeviceRequest, BindStudentDeviceRequest, StudentDeviceStatusResponse
 )
-from api.auth import auth_router
+from api.auth import auth_router, passkey_router
 from api.admin import admin_router
 
 app = FastAPI(
@@ -51,8 +51,9 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Register Authentication, RBAC & Principal Super-Admin Routers
+# Register Authentication, RBAC, Passkey & Principal Super-Admin Routers
 app.include_router(auth_router)
+app.include_router(passkey_router)
 app.include_router(admin_router)
 
 # Enable CORS for frontend integration (Vercel, Localhost, Mobile)
