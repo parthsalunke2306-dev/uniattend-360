@@ -12,6 +12,8 @@ import {
   Smartphone,
   Cpu
 } from 'lucide-react';
+import { useToast, ToastProvider } from './Toast';
+import { useWebAuthn, WebAuthnDeviceState } from './useWebAuthn';
 
 interface StudentProfile {
   rollNo: string;
@@ -25,16 +27,13 @@ interface StudentProfile {
   bio: string;
   avatarIcon: string;
   customAvatarUrl?: string;
-  deviceLock: {
-    isBound: boolean;
-    deviceName: string;
-    credentialId: string;
-    enclaveLevel: string;
-    lastVerified: string;
-  };
+  deviceLock: WebAuthnDeviceState;
 }
 
-export const StudentProfileEdit: React.FC = () => {
+export const StudentProfileEditContent: React.FC = () => {
+  const toast = useToast();
+  const { registerPasskey, testBiometricAuth, isProcessing } = useWebAuthn();
+
   const [profile, setProfile] = useState<StudentProfile>({
     rollNo: 'CHMC-DS-2024-007',
     fullName: 'Kavita Nair',
@@ -55,27 +54,32 @@ export const StudentProfileEdit: React.FC = () => {
     }
   });
 
-  const [isLinking, setIsLinking] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleBiometricReLink = async () => {
-    setIsLinking(true);
-    try {
-      // Hardware-level WebAuthn trigger simulation
-      setTimeout(() => {
-        setProfile(prev => ({
-          ...prev,
-          deviceLock: {
-            ...prev.deviceLock,
-            isBound: true,
-            lastVerified: 'Just now'
-          }
-        }));
-        setIsLinking(false);
-      }, 900);
-    } catch (err) {
-      setIsLinking(false);
+    const updatedState = await registerPasskey(
+      profile.rollNo,
+      profile.fullName,
+      profile.alternateEmail || `${profile.rollNo.toLowerCase()}@chmc.edu`
+    );
+
+    if (updatedState) {
+      setProfile((prev) => ({
+        ...prev,
+        deviceLock: updatedState,
+      }));
     }
+  };
+
+  const handleTestAuth = async () => {
+    await testBiometricAuth(profile.deviceLock);
+  };
+
+  const handleSaveProfile = () => {
+    setIsSaved(true);
+    // Trigger ultra-concise toast notification
+    toast.success('Profile Saved', 'Personal information updated.');
+    setTimeout(() => setIsSaved(false), 2000);
   };
 
   return (
@@ -86,7 +90,7 @@ export const StudentProfileEdit: React.FC = () => {
         <div className="absolute -bottom-40 right-10 w-[450px] h-[300px] bg-accent-mint/5 rounded-full blur-3xl" />
       </div>
 
-      {/* Main Profile Modal Card (Luminous Frosted Charcoal) */}
+      {/* Main Profile Modal Card */}
       <div className="relative w-full max-w-xl bg-surface/90 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-soft-glow overflow-hidden p-6 sm:p-8 space-y-6">
         
         {/* Header Section */}
@@ -115,7 +119,7 @@ export const StudentProfileEdit: React.FC = () => {
           </div>
         </div>
 
-        {/* 1. Verified Institutional Records (Warm Milled Slate) */}
+        {/* 1. Verified Institutional Records */}
         <div className="bg-elevated/70 border border-slate-700/50 rounded-2xl p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
@@ -141,7 +145,7 @@ export const StudentProfileEdit: React.FC = () => {
           </div>
         </div>
 
-        {/* 2. Device Biometric & Passkey Anchor (Soothing Mint Glow & High Security) */}
+        {/* 2. Device Biometric & Passkey Anchor */}
         <div className="bg-elevated/70 border border-slate-700/50 rounded-2xl p-4 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -156,10 +160,10 @@ export const StudentProfileEdit: React.FC = () => {
               </div>
             </div>
 
-            {/* Soft Mint Status Pill */}
+            {/* Instant Visual Badge Feedback */}
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-accent-mint/15 text-accent-mint border border-accent-mint/30 shadow-mint-glow">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-mint animate-pulse" />
-              BOUND & VERIFIED
+              BOUND & ACTIVE
             </span>
           </div>
 
@@ -186,14 +190,16 @@ export const StudentProfileEdit: React.FC = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={handleBiometricReLink}
-              disabled={isLinking}
+              disabled={isProcessing}
               className="flex-1 py-2 px-3 rounded-xl bg-accent-blue/15 hover:bg-accent-blue/25 text-accent-blue-light text-xs font-semibold font-mono border border-accent-blue/30 transition flex items-center justify-center gap-1.5 shadow-blue-glow"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isLinking ? 'animate-spin' : ''}`} />
-              <span>{isLinking ? 'Verifying Sensor...' : 'Re-Link Device'}</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${isProcessing ? 'animate-spin' : ''}`} />
+              <span>{isProcessing ? 'Verifying Sensor...' : 'Re-Link Device'}</span>
             </button>
             <button
               type="button"
+              onClick={handleTestAuth}
+              disabled={isProcessing}
               className="py-2 px-4 rounded-xl bg-elevated hover:bg-slate-600/50 text-text-secondary text-xs font-mono border border-border-hairline transition"
             >
               Test Biometric Auth
@@ -260,10 +266,7 @@ export const StudentProfileEdit: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => {
-              setIsSaved(true);
-              setTimeout(() => setIsSaved(false), 2000);
-            }}
+            onClick={handleSaveProfile}
             className="px-5 py-2 rounded-xl bg-accent-blue hover:bg-accent-blue-light text-white text-xs font-semibold shadow-blue-glow transition flex items-center gap-1.5"
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -273,6 +276,14 @@ export const StudentProfileEdit: React.FC = () => {
 
       </div>
     </div>
+  );
+};
+
+export const StudentProfileEdit: React.FC = () => {
+  return (
+    <ToastProvider>
+      <StudentProfileEditContent />
+    </ToastProvider>
   );
 };
 

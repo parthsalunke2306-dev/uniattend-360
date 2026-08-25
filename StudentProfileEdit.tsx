@@ -1,1 +1,1 @@
-export { default, StudentProfileEdit } from './frontend/StudentProfileEdit';
+export { default, StudentProfileEdit, StudentProfileEditContent } from './frontend/StudentProfileEdit';

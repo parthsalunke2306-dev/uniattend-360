@@ -221,6 +221,9 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-purple-600 selection:text-white text-slate-100">
 
+  <!-- Modern Lightweight Toast Notification Stack -->
+  <div id="toastContainer" class="fixed top-4 right-4 sm:top-5 sm:right-5 z-[99999] flex flex-col space-y-2 pointer-events-none max-w-sm w-full"></div>
+
   <!-- ============================================== -->
   <!-- MULTI-TIER AUTHENTICATION & ONBOARDING MODAL -->
   <!-- ============================================== -->
@@ -2411,7 +2414,7 @@
                 <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
               </button>
 
-              <button onclick="alert('📄 [EXCEL EXPORT INITIATED]\n\nGenerating master department attendance matrix with course-by-course analytics for Smt. C.H.M. College Data Science...')" class="w-full p-2.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-200 text-left text-xs font-sans flex items-center justify-between transition">
+              <button onclick="showToast({ title: 'Export Started', subtitle: 'Generating master department spreadsheet...', type: 'info' })" class="w-full p-2.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-200 text-left text-xs font-sans flex items-center justify-between transition">
                 <div class="flex items-center space-x-2">
                   <span class="text-base">📊</span>
                   <div>
@@ -2422,7 +2425,7 @@
                 <i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
               </button>
 
-              <button onclick="alert('⚠️ [DEFAULTER NOTICES GENERATOR]\n\nChecking student cohort for <75% attendance threshold...\nStatus: 0 Defaulters Found. All students currently compliant!')" class="w-full p-2.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-200 text-left text-xs font-sans flex items-center justify-between transition">
+              <button onclick="showToast({ title: 'Cohort Compliant', subtitle: '0 defaulters found (<75% threshold).', type: 'success' })" class="w-full p-2.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-200 text-left text-xs font-sans flex items-center justify-between transition">
                 <div class="flex items-center space-x-2">
                   <span class="text-base">✉️</span>
                   <div>
@@ -2766,6 +2769,66 @@
   <script>
     lucide.createIcons();
 
+    // ==============================================
+    // MODERN LIGHTWEIGHT TOAST NOTIFICATION CONTROLLER
+    // ==============================================
+    function showToast({ title, subtitle = '', type = 'info', duration = 3000 }) {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const id = 'toast_' + Math.random().toString(36).substring(2, 9);
+      const toastEl = document.createElement('div');
+      toastEl.id = id;
+      toastEl.className = 'pointer-events-auto flex items-center justify-between p-3 rounded-2xl bg-surface/95 border border-white/10 backdrop-blur-xl shadow-soft-glow text-xs font-sans transition-all duration-300 transform translate-y-0 opacity-100 animate-slide-in';
+
+      let iconHtml = '';
+      if (type === 'success') {
+        iconHtml = `<div class="p-1.5 rounded-xl bg-accent-mint/15 text-accent-mint border border-accent-mint/30 shrink-0"><i data-lucide="check-circle-2" class="w-4 h-4"></i></div>`;
+      } else if (type === 'error') {
+        iconHtml = `<div class="p-1.5 rounded-xl bg-accent-rose/15 text-accent-rose border border-accent-rose/30 shrink-0"><i data-lucide="alert-circle" class="w-4 h-4"></i></div>`;
+      } else if (type === 'warning') {
+        iconHtml = `<div class="p-1.5 rounded-xl bg-accent-amber/15 text-accent-amber border border-accent-amber/30 shrink-0"><i data-lucide="alert-triangle" class="w-4 h-4"></i></div>`;
+      } else {
+        iconHtml = `<div class="p-1.5 rounded-xl bg-accent-blue/15 text-accent-blue-light border border-accent-blue/30 shrink-0"><i data-lucide="sparkles" class="w-4 h-4"></i></div>`;
+      }
+
+      toastEl.innerHTML = `
+        <div class="flex items-center space-x-3 min-w-0">
+          ${iconHtml}
+          <div class="min-w-0">
+            <p class="font-bold text-text-primary text-[12px] truncate">${title}</p>
+            ${subtitle ? `<p class="text-[10px] text-text-muted font-mono truncate">${subtitle}</p>` : ''}
+          </div>
+        </div>
+        <button onclick="dismissToast('${id}')" class="p-1 text-text-muted hover:text-text-primary transition shrink-0 ml-2">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      `;
+
+      container.appendChild(toastEl);
+      if (window.lucide) lucide.createIcons({ root: toastEl });
+
+      setTimeout(() => {
+        dismissToast(id);
+      }, duration);
+    }
+
+    function dismissToast(id) {
+      const toastEl = document.getElementById(id);
+      if (toastEl) {
+        toastEl.style.opacity = '0';
+        toastEl.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+          if (toastEl.parentNode) toastEl.parentNode.removeChild(toastEl);
+        }, 300);
+      }
+    }
+
+    // Purge and override native blocking window.alert
+    window.alert = function(msg) {
+      showToast({ title: String(msg).replace(/[\r\n]+/g, ' ').substring(0, 60), type: 'info' });
+    };
+
     // Default Seed Profiles (Faculty, Coordinator & Administrative Infrastructure Preserved)
     const DEFAULT_PROFILES = {
       "faculty.razia": {
@@ -2951,7 +3014,7 @@
       stored[key] = newProfile;
       localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
 
-      alert(`🎉 Account created successfully for ${fullName} (${idStr})!\nLogged in immediately.`);
+      showToast({ title: "Account Created", subtitle: `Welcome, ${fullName}!`, type: "success" });
       quickAuth(key);
       renderDigitalRoster();
     }
@@ -3042,19 +3105,19 @@
     }
 
     function handleRevokeAllSessions() {
-      alert("🚨 Logged out of all devices! All active session tokens have been invalidated.");
+      showToast({ title: "Sessions Terminated", subtitle: "Logged out from all devices.", type: "info" });
       handleLogout();
     }
 
     function openMFASetupModal() {
-      alert("📲 Authenticator Setup:\n1. Open Google Authenticator or Microsoft Authenticator.\n2. Scan the secure college QR code.\n3. Save your 8 backup recovery codes in a safe place.");
+      showToast({ title: "Authenticator Setup", subtitle: "Scan QR code in your authenticator app.", type: "info" });
     }
 
     function handleWebAuthnRegister() {
       if (window.PublicKeyCredential) {
-        alert("🔑 Registering Native Device Passkey...\nTouch fingerprint sensor or look at camera for Windows Hello / Face ID registration.");
+        showToast({ title: "Passkey Registration", subtitle: "Scanning biometric sensor...", type: "info" });
       } else {
-        alert("WebAuthn / Passkeys not supported on this platform.");
+        showToast({ title: "Passkeys Not Supported", subtitle: "Use a modern browser over HTTPS.", type: "warning" });
       }
     }
 
@@ -3063,9 +3126,9 @@
       if (!current) return;
       const newPw = prompt("Enter new complex password (min 8 chars, 1 uppercase, 1 digit, 1 symbol):");
       if (newPw && newPw.length >= 8) {
-        alert("✅ Password changed successfully with Argon2id hash! All other active sessions have been revoked.");
+        showToast({ title: "Password Updated", subtitle: "Other sessions revoked.", type: "success" });
       } else {
-        alert("Password did not meet complexity requirements.");
+        showToast({ title: "Password Too Weak", subtitle: "Must meet complexity rules.", type: "error" });
       }
     }
 
@@ -3123,7 +3186,7 @@
       closeEmergencyDeviceResetModal();
       renderDigitalRoster();
 
-      alert(`✅ [EMERGENCY DEVICE RECOVERY SUCCESSFUL]\n\n• Student: ${rollNo}\n• Action: Hardware device lock cleared.\n• Reason: ${reason}\n\nThe student may now bind their new phone on their next in-class check-in.`);
+      showToast({ title: "Device Lock Cleared", subtitle: `${rollNo} may re-bind phone.`, type: "success" });
     }
 
     async function triggerWebAuthnEnrollment() {
@@ -3150,7 +3213,7 @@
       };
 
       logProxyIncident(incident);
-      alert(`🚨 [UNAUTHORIZED HARDWARE INTERCEPTED at ${timeStr}]\n\n• Hardware Violation: Attempted check-in from an unauthorized secondary handset.\n• Action: Attendance BLOCKED. Account is locked to registered primary handset.`);
+      showToast({ title: "Hardware Mismatch Blocked", subtitle: "Unauthorized handset rejected.", type: "error" });
     }
 
     // ==========================================
@@ -3230,7 +3293,7 @@
       const semester = parseInt(document.getElementById('pEnrollSemester').value) || 3;
 
       if (!fullName || !rollNo || !email) {
-        alert("Please complete all required fields.");
+        showToast({ title: "Missing Fields", subtitle: "Please complete all required fields.", type: "warning" });
         return;
       }
 
@@ -3309,7 +3372,7 @@
       closePrincipalDirectEnrollModal();
       renderDigitalRoster();
 
-      alert(`✅ [SUPER-ADMIN PROVISIONING SUCCESSFUL]\n\n• Student: ${fullName}\n• Roll No: ${rollNo}\n• Department: ${deptName} (Sem ${semester})\n• Email: ${email}\n• Password: ${password}\n\nThe student profile has been directly activated in the institutional database with an initial password.`);
+      showToast({ title: "Student Enrolled", subtitle: `${fullName} (${rollNo}) provisioned.`, type: "success" });
     }
 
     let targetExpelStudent = null;
@@ -3414,7 +3477,7 @@
       closePrincipalExpelModal();
       renderDigitalRoster();
 
-      alert(`🚨 [STUDENT EXPULSION & CASCADE PURGE COMPLETED]\n\n• Student: ${studentName}\n• Roll No: ${rollNo}\n• Department: ${deptName}\n• Reason: ${reason}\n\nAll student credentials, sessions, biometric locks, and attendance records have been atomically expunged.`);
+      showToast({ title: "Student Expelled", subtitle: `${studentName} records expunged.`, type: "error" });
     }
 
     function renderPrincipalStudentLedger() {
@@ -3812,7 +3875,7 @@
       const detectedDevName = detectPlatformAuthenticatorName();
 
       if (!window.PublicKeyCredential) {
-        alert("⚠️ [WEBAUTHN NOT SUPPORTED]\n\nYour browser or device does not support W3C WebAuthn hardware credentials. Please test on a modern browser (Safari, Chrome, Edge) over HTTPS.");
+        showToast({ title: "Passkeys Not Supported", subtitle: "Use a modern browser over HTTPS.", type: "warning" });
         return;
       }
 
@@ -3934,11 +3997,11 @@
           badgeEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>🔒 ENCLAVE BOUND`;
         }
 
-        alert(`🎉 [NATIVE BIOMETRIC PASSKEY REGISTERED]\n\n• Biometric Authenticator: ${detectedDevName}\n• Cryptographic Credential: ${credId.substring(0, 20)}...\n• Hardware Security: Platform Secure Enclave (User Verification: Required)\n\nYour physical handset is now cryptographically locked for 1-device smart attendance.`);
+        showToast({ title: "Device Biometrics Linked", subtitle: "Your handset is verified.", type: "success" });
       } catch (err) {
         console.warn("[WEBAUTHN REGISTRATION ERROR]", err);
         if (err.name === 'NotAllowedError') {
-          alert("ℹ️ [BIOMETRIC PROMPT DISMISSED]\nThe native biometric prompt was cancelled or timed out. Tap 'Re-Link Device' when ready to scan your Face ID / Fingerprint.");
+          showToast({ title: "Biometric Prompt Dismissed", subtitle: "Tap Re-Link when ready.", type: "info" });
         } else {
           // Graceful fallback for non-HTTPS or test sandbox environments
           const mockCredId = "cred_pk_" + Math.random().toString(36).substring(2, 12);
@@ -3952,7 +4015,7 @@
           };
           loadStudentProfileIntoModal();
           renderDigitalRoster();
-          alert(`🔒 [PASSKEY ENROLLED (ENCLAVE EMULATION)]\n\n• Device: ${detectedDevName}\n• Credential ID: ${mockCredId}\n• Notice: ${err.message || 'Platform Authenticator Linked'}\n\nYour physical device slot has been locked for this student account.`);
+          showToast({ title: "Device Bound", subtitle: "Handset slot locked.", type: "success" });
         }
       }
     }
@@ -3962,12 +4025,12 @@
       const lockInfo = STUDENT_DEVICE_LOCKS[rollNo];
 
       if (!lockInfo || !lockInfo.is_locked) {
-        alert("⚠️ [PASSKEY REQUIRED]\nPlease link your device's biometric passkey first by tapping 'Link This Device'.");
+        showToast({ title: "Biometrics Required", subtitle: "Link device first.", type: "warning" });
         return;
       }
 
       if (!window.PublicKeyCredential) {
-        alert("⚠️ [WEBAUTHN NOT SUPPORTED]\nWebAuthn API is not available on this browser.");
+        showToast({ title: "Passkeys Not Supported", subtitle: "WebAuthn API unavailable.", type: "warning" });
         return;
       }
 
@@ -4016,14 +4079,13 @@
         }
 
         // Step 3: Biometric handshake verified
-        const credId = assertion.id || lockInfo.credential_id || "cred_pk_verified";
-        alert(`✅ [BIOMETRIC HANDSHAKE SUCCESSFUL]\n\n• Hardware Authenticator: ${lockInfo.device_name}\n• Credential ID: ${credId.substring(0, 20)}...\n• User Presence (UP): 1 (Verified)\n• User Verification (UV): 1 (Biometric Match Confirmed)\n• Zero-Knowledge Security: Cryptographic signature validated (Zero raw fingerprints transmitted)\n\nYour hardware biometric sensor is working properly.`);
+        showToast({ title: "Biometrics Verified", subtitle: "Sensor handshake confirmed.", type: "success" });
       } catch (err) {
         console.warn("[WEBAUTHN TEST ERROR]", err);
         if (err.name === 'NotAllowedError') {
-          alert("ℹ️ [BIOMETRIC TEST CANCELLED]\nThe native biometric prompt was dismissed or failed sensor verification.");
+          showToast({ title: "Verification Cancelled", subtitle: "Biometric prompt dismissed.", type: "info" });
         } else {
-          alert(`🔐 [BIOMETRIC AUTHENTICATION HANDSHAKE]\n\n• Device: ${lockInfo.device_name}\n• Credential ID: ${lockInfo.credential_id || 'cred_pk_2026'}\n• Result: ✅ Biometric Signature Verified!\n• Notice: ${err.message}`);
+          showToast({ title: "Biometrics Verified", subtitle: "Signature confirmed.", type: "success" });
         }
       }
     }
@@ -4077,7 +4139,7 @@
       } catch (err) {}
 
       closeStudentProfileModal();
-      alert("✅ [PROFILE UPDATED SUCCESSFULLY]\n\nYour personal contact information and bio have been saved.");
+      showToast({ title: "Profile Saved", subtitle: "Contact info & bio updated.", type: "success" });
     }
 
     function renderDigitalRoster() {
@@ -4929,7 +4991,7 @@
       const topic = document.getElementById('lecTopic').value.trim() || `Lecture #${lectureIndex} Syllabus Delivery`;
 
       if (lectureIndex > totalAllotted) {
-        alert(`⚠️ Lecture Index (${lectureIndex}) cannot exceed total allotted lectures (${totalAllotted}).`);
+        showToast({ title: "Invalid Lecture Index", subtitle: `Max allotted is ${totalAllotted}.`, type: "error" });
         return;
       }
 
@@ -4960,7 +5022,7 @@
       currentActiveLectureId = newId;
       closeCreateLectureModal();
       renderFacultyLectureUI();
-      alert(`🎉 Successfully scheduled Lecture #${lectureIndex} for ${courseName} (${startTime} - ${endTime})!`);
+      showToast({ title: "Lecture Scheduled", subtitle: `Lecture #${lectureIndex} for ${courseName}.`, type: "success" });
     }
 
     function renderFacultyLectureUI() {
@@ -5126,7 +5188,7 @@
       active.session_status = "ACTIVE";
       saveLectures(FACULTY_LECTURES);
       renderFacultyLectureUI();
-      alert(`🟢 Live Attendance Session STARTED for ${active.course_name} (Lecture #${active.lecture_index})! Dynamic QR and 6-digit TOTP are now broadcasting.`);
+      showToast({ title: "Attendance Live", subtitle: "Broadcasting dynamic QR & PIN.", type: "success" });
     }
 
     function pauseLectureAttendance() {
@@ -5135,7 +5197,7 @@
       active.session_status = "PAUSED";
       saveLectures(FACULTY_LECTURES);
       renderFacultyLectureUI();
-      alert(`⏸️ Attendance PAUSED for ${active.course_name}. QR and PIN are frozen; student check-ins will be temporarily blocked.`);
+      showToast({ title: "Attendance Paused", subtitle: "Check-ins temporarily frozen.", type: "warning" });
     }
 
     function resumeLectureAttendance() {
@@ -5144,7 +5206,7 @@
       active.session_status = "ACTIVE";
       saveLectures(FACULTY_LECTURES);
       renderFacultyLectureUI();
-      alert(`▶️ Attendance RESUMED for ${active.course_name}. Check-in verification is open.`);
+      showToast({ title: "Attendance Resumed", subtitle: "Check-in verification open.", type: "success" });
     }
 
     function togglePauseResumeAttendance() {
@@ -5165,7 +5227,7 @@
         active.session_status = "COMPLETED";
         saveLectures(FACULTY_LECTURES);
         renderFacultyLectureUI();
-        alert(`💾 Attendance successfully LOCKED & COMMITTED for Lecture #${active.lecture_index}!`);
+        showToast({ title: "Attendance Committed", subtitle: `Lecture #${active.lecture_index} finalized.`, type: "info" });
       }
     }
 
@@ -5268,7 +5330,7 @@
 
     function acquireRealFacultyDeviceGPS() {
       if (!navigator.geolocation) {
-        alert("⚠️ Geolocation API not supported by this browser. Using high-precision campus coordinates.");
+        showToast({ title: "Using Campus Coordinates", subtitle: "Geolocation unavailable in browser.", type: "info" });
         return;
       }
 
@@ -5283,7 +5345,7 @@
           activeFacultyAnchor.accuracy_m = Math.round(pos.coords.accuracy * 10) / 10;
           activeFacultyAnchor.source = "REAL_DEVICE_GPS";
           updateFacultyAnchorDisplay();
-          alert(`🛰️ High-Accuracy Dynamic Anchor Locked!\n\n• Latitude: ${activeFacultyAnchor.lat}° N\n• Longitude: ${activeFacultyAnchor.lon}° E\n• Accuracy: ±${activeFacultyAnchor.accuracy_m}m\n• Active Perimeter: ${activeFacultyAnchor.radius_m} meters`);
+          showToast({ title: "Dynamic Anchor Locked", subtitle: `±${activeFacultyAnchor.accuracy_m}m accuracy verified.`, type: "success" });
         },
         (err) => {
           // Fallback gracefully to default campus coordinate
@@ -5291,7 +5353,7 @@
           activeFacultyAnchor.lon = 73.16460;
           activeFacultyAnchor.accuracy_m = 3.0;
           updateFacultyAnchorDisplay();
-          alert(`ℹ️ GPS Permission Not Granted or Indoor Weak Signal (${err.message}). Using Smt. C.H.M. College verified classroom geofence anchor (19.22170° N, 73.16460° E).`);
+          showToast({ title: "Using Campus Coordinates", subtitle: "Weak indoor GPS signal.", type: "info" });
         },
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
@@ -5418,7 +5480,7 @@
       };
 
       logProxyIncident(incident);
-      alert(`🚨 [PROXY INTERCEPTED at ${timeStr}]\n\n• Student: Priya Patel (CHMC-DS-2024-003)\n• Detected Distance: 1.85 km away (Hostel/Remote)\n• Faculty Geofence Perimeter: ${activeFacultyAnchor.radius_m} meters\n• Action: Attendance BLOCKED & Incident Logged on Faculty Console.`);
+      showToast({ title: "Remote Proxy Intercepted", subtitle: "1.85 km away (outside classroom).", type: "error" });
     }
 
     function simulateDeviceSharingProxy() {
@@ -5441,7 +5503,7 @@
       };
 
       logProxyIncident(incident);
-      alert(`🚨 [HARDWARE PROXY INTERCEPTED at ${timeStr}]\n\n• Student: Ananya Verma (CHMC-DS-2024-005)\n• Violation: Same physical smartphone tried marking attendance for a second student.\n• Action: Attendance BLOCKED & Flagged as Device Sharing Proxy.`);
+      showToast({ title: "Device Sharing Blocked", subtitle: "Secondary check-in rejected.", type: "error" });
     }
 
     function submitStudentCheckIn(scanContext) {
@@ -5621,7 +5683,7 @@
     }
 
     function showRecoveryNotice() {
-      alert("🔒 Account Recovery Protocol:\nContact Course Coordinator (Mrs. Shiji Johnson) or use Emergency Recovery Code.");
+      showToast({ title: "Account Recovery", subtitle: "Contact Course Coordinator for assistance.", type: "info" });
     }
 
     function handleCSVFileSelected(event) {
@@ -5662,7 +5724,7 @@
           </div>
         `).join('');
       } else {
-        alert("No valid student rows found in CSV.");
+        showToast({ title: "Invalid CSV", subtitle: "No valid student rows found.", type: "error" });
       }
     }
 
@@ -5688,7 +5750,7 @@
       });
 
       localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
-      alert(`🎉 Enrolled ${parsedCSVStudents.length} students into the active cohort!`);
+      showToast({ title: "Roster Imported", subtitle: `${parsedCSVStudents.length} students enrolled.`, type: "success" });
       closeBulkImportModal();
       renderDigitalRoster();
     }
@@ -5768,7 +5830,7 @@
         setTimeout(() => countBadge.classList.remove('animate-pulse'), 1500);
       }
 
-      alert(`⚡ [Live Simulation Triggered at ${timeStr}]\n\n• Streamed 5 student check-in packets.\n• 4 Legitimate In-Class scans verified (<${activeFacultyAnchor.radius_m}m geofence).\n• 1 Remote WhatsApp proxy attempt intercepted & blocked (1.8km away).\n• Live Digital Roster updated.`);
+      showToast({ title: "Simulation Complete", subtitle: "Streamed 5 check-ins (1 proxy blocked).", type: "success" });
     }
 
     // 3-Dot Header Actions Dropdown Controller
