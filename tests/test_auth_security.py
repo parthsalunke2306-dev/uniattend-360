@@ -395,3 +395,28 @@ def test_bulk_student_roster_import():
     assert s_login.status_code == 200
     assert s_login.json()["email"] == "kavita.nair@gmail.com"
 
+
+def test_student_profile_update():
+    """Verifies that an authenticated student can update their contact info, bio, and avatar."""
+    login_resp = client.post("/api/v1/auth/login", json={
+        "identifier": "CHMC-DS-2024-007",
+        "password": "CHMC@2026!"
+    })
+    token = login_resp.json()["token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    update_resp = client.put("/api/v1/auth/student/profile", headers=headers, json={
+        "phone_number": "9876543210",
+        "alternate_email": "kavita.personal@gmail.com",
+        "bio": "S.Y. Data Science enthusiast working on Python & ML algorithms.",
+        "avatar_icon": "🚀"
+    })
+    assert update_resp.status_code == 200
+    data = update_resp.json()
+    assert data["status"] == "SUCCESS"
+    assert data["profile"]["phone_number"] == "9876543210"
+    assert data["profile"]["alternate_email"] == "kavita.personal@gmail.com"
+    assert data["profile"]["bio"] == "S.Y. Data Science enthusiast working on Python & ML algorithms."
+    assert data["profile"]["avatar_icon"] == "🚀"
+
+

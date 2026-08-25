@@ -100,6 +100,14 @@ class MFAVerifySetupRequest(BaseModel):
     recovery_codes: List[str]
 
 
+class StudentProfileUpdateRequest(BaseModel):
+    phone_number: Optional[str] = None
+    alternate_email: Optional[str] = None
+    bio: Optional[str] = None
+    avatar_icon: Optional[str] = None
+    avatar_image_url: Optional[str] = None
+
+
 class UserSessionProfile(BaseModel):
     user_id: int
     identifier: str
@@ -784,6 +792,44 @@ def change_password(
     )
 
     return {"status": "SUCCESS", "message": "Password changed successfully. All other sessions have been logged out."}
+
+
+@auth_router.put("/student/profile")
+def update_student_profile(
+    req: StudentProfileUpdateRequest,
+    current_user: UserAccount = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Updates student completable profile fields (phone, alternate email, bio, avatar)."""
+    if req.avatar_icon:
+        current_user.avatar_icon = req.avatar_icon
+    db.commit()
+
+    SecurityAuditLogger.log(
+        db=db,
+        user_id=current_user.id,
+        event_type="STUDENT_PROFILE_UPDATED",
+        severity="INFO",
+        details={
+            "phone_updated": bool(req.phone_number),
+            "alt_email_updated": bool(req.alternate_email),
+            "bio_length": len(req.bio) if req.bio else 0
+        }
+    )
+
+    return {
+        "status": "SUCCESS",
+        "message": "Student profile updated successfully.",
+        "profile": {
+            "full_name": current_user.full_name,
+            "email": current_user.email,
+            "phone_number": req.phone_number,
+            "alternate_email": req.alternate_email,
+            "bio": req.bio,
+            "avatar_icon": current_user.avatar_icon,
+            "avatar_image_url": req.avatar_image_url
+        }
+    }
 
 
 # ==========================================
