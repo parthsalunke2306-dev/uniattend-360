@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   SOOTHING, LUMINOUS & LOW-FATIGUE AMBIENT THEME VARIABLES (WCAG AA)
+   ========================================================================== */
+
+:root {
+  /* Surface & Canvas Tokens (Soft Deep Slate / Obsidian - No Pitch Black) */
+  --bg-canvas: #181B22;
+  --bg-canvas-subtle: #1E222B;
+  --bg-surface: #252A36;
+  --bg-surface-translucent: rgba(37, 42, 54, 0.78);
+  --bg-elevated: #313746;
+  --bg-elevated-subtle: #373E4E;
+
+  /* Low-Contrast Subtle Hairline Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-hairline: #373E4E;
+  --border-focus: #4F86F7;
+
+  /* Typography Hierarchy (Relaxed & Anti-Glare) */
+  --text-primary: #F1F5F9;     /* Crisp Alabaster Pearl */
+  --text-secondary: #CBD5E1;   /* Muted Light Slate */
+  --text-muted: #7C8BA1;       /* Soft Cool Gray */
+
+  /* Eye-Friendly Soft Pastel & Glow Accents */
+  --accent-primary: #4F86F7;   /* Electric Cornflower Blue */
+  --accent-primary-glow: rgba(79, 134, 247, 0.15);
+  --accent-success: #34D399;   /* Soft Mint / Sage Green */
+  --accent-success-glow: rgba(52, 211, 153, 0.12);
+  --accent-warning: #FBBF24;   /* Warm Amber Gold */
+  --accent-warning-glow: rgba(251, 191, 36, 0.12);
+  --accent-error: #F87171;     /* Coral Rose */
+  --accent-error-glow: rgba(248, 113, 113, 0.12);
+  --accent-purple: #A78BFA;    /* Soft Lavender Indigo */
+  --accent-purple-glow: rgba(167, 139, 250, 0.15);
+
+  /* Shadows & Ambient Glows */
+  --shadow-card: 0 8px 32px rgba(10, 13, 18, 0.35);
+  --shadow-glow-blue: 0 0 24px rgba(79, 134, 247, 0.18);
+  --shadow-glow-mint: 0 0 24px rgba(52, 211, 153, 0.18);
+  --shadow-glow-amber: 0 0 24px rgba(251, 191, 36, 0.18);
+}
+
+/* Base Body Styles with Ambient Lighting Gradient */
+body {
+  background-color: var(--bg-canvas);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(79, 134, 247, 0.06) 0%, transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(52, 211, 153, 0.04) 0%, transparent 45%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Inter", sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Luminous Frosted Glass Card */
+.glass-panel {
+  background: var(--bg-surface-translucent);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+/* Elevated Sub-card / Inner Container */
+.card-elevated {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-hairline);
+  border-radius: 1rem;
+}
+
+/* Soft Ambient Status Pills */
+.pill-mint {
+  background-color: var(--accent-success-glow);
+  color: var(--accent-success);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.pill-blue {
+  background-color: var(--accent-primary-glow);
+  color: var(--accent-primary);
+  border: 1px solid rgba(79, 134, 247, 0.3);
+}
+
+.pill-amber {
+  background-color: var(--accent-warning-glow);
+  color: var(--accent-warning);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.pill-rose {
+  background-color: var(--accent-error-glow);
+  color: var(--accent-error);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+/* Low-Fatigue Form Controls */
+input, select, textarea {
+  background-color: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-hairline) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px var(--accent-primary-glow) !important;
+}
+
+/* Soothing Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(24, 27, 34, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-elevated-subtle);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

@@ -24,36 +24,83 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
-            mono: ['"SF Mono"', '"Geist Mono"', 'monospace'],
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
+            mono: ['"Geist Mono"', '"SF Mono"', 'monospace'],
           },
           colors: {
-            ios: {
-              bg: '#000000',               // True Pitch Black OLED Background
-              card: '#1C1C1E',             // Secondary System Background (Grouped Card)
-              cardTertiary: '#2C2C2E',     // Tertiary System Background (Input / Pill)
-              separator: '#38383A',        // Apple Hairline Divider
-              blue: '#007AFF',             // Apple System Blue
-              green: '#34C759',            // Apple System Green
-              orange: '#FF9500',           // Apple System Orange
-              red: '#FF3B30',              // Apple System Red
-              purple: '#AF52DE',           // Apple System Purple
-              yellow: '#FFCC00',           // Apple System Yellow
-              gray: '#8E8E93',             // Apple System Gray
-              glass: 'rgba(28, 28, 30, 0.82)',
+            canvas: {
+              DEFAULT: '#181B22',       // Atmospheric Deep Slate Canvas
+              subtle: '#1E222B',
+            },
+            surface: {
+              DEFAULT: '#252A36',       // Luminous Charcoal Surface Card
+              translucent: 'rgba(37, 42, 54, 0.78)',
+              hover: '#2A303E',
+            },
+            elevated: {
+              DEFAULT: '#313746',       // Warm Milled Slate (Inner Cards / Modals)
+              subtle: '#373E4E',
             },
             stitch: {
-              bg: '#000000',
-              surface: '#1C1C1E',
-              card: '#1C1C1E',
-              border: '#38383A',
-              primary: '#007AFF',
-              primaryGlow: 'rgba(0, 122, 255, 0.25)',
-              emerald: '#34C759',
-              emeraldGlow: 'rgba(52, 199, 89, 0.25)',
-              amber: '#FF9500',
-              rose: '#FF3B30',
+              bg: '#181B22',
+              surface: '#252A36',
+              card: '#252A36',
+              border: '#373E4E',
+              primary: '#4F86F7',
+              primaryGlow: 'rgba(79, 134, 247, 0.15)',
+              emerald: '#34D399',
+              emeraldGlow: 'rgba(52, 211, 153, 0.12)',
+              amber: '#FBBF24',
+              rose: '#F87171',
+            },
+            ios: {
+              bg: '#181B22',
+              card: '#252A36',
+              cardTertiary: '#313746',
+              separator: '#373E4E',
+              blue: '#4F86F7',
+              green: '#34D399',
+              orange: '#FBBF24',
+              red: '#F87171',
+              purple: '#A78BFA',
+              yellow: '#FCD34D',
+              gray: '#7C8BA1',
+              glass: 'rgba(37, 42, 54, 0.78)',
+            },
+            accent: {
+              blue: {
+                DEFAULT: '#4F86F7',
+                glow: 'rgba(79, 134, 247, 0.15)',
+                light: '#60A5FA',
+              },
+              mint: {
+                DEFAULT: '#34D399',
+                glow: 'rgba(52, 211, 153, 0.12)',
+                light: '#4ADE80',
+              },
+              amber: {
+                DEFAULT: '#FBBF24',
+                glow: 'rgba(251, 191, 36, 0.12)',
+                light: '#FCD34D',
+              },
+              rose: {
+                DEFAULT: '#F87171',
+                glow: 'rgba(248, 113, 113, 0.12)',
+                light: '#FB7185',
+              },
+              purple: {
+                DEFAULT: '#A78BFA',
+                glow: 'rgba(167, 139, 250, 0.15)',
+                light: '#C084FC',
+              }
             }
+          },
+          boxShadow: {
+            'soft-glow': '0 8px 32px rgba(10, 13, 18, 0.35)',
+            'blue-glow': '0 0 20px rgba(79, 134, 247, 0.15)',
+            'mint-glow': '0 0 20px rgba(52, 211, 153, 0.15)',
+            'amber-glow': '0 0 20px rgba(251, 191, 36, 0.15)',
+            'rose-glow': '0 0 20px rgba(248, 113, 113, 0.15)',
           }
         }
       }
@@ -62,9 +109,13 @@
 
   <style>
     body {
-      background-color: #000000;
-      color: #F2F2F7;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+      background-color: #181B22;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(79, 134, 247, 0.07) 0%, transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(52, 211, 153, 0.04) 0%, transparent 45%);
+      background-attachment: fixed;
+      color: #F1F5F9;
+      font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Inter", sans-serif;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
@@ -76,26 +127,26 @@
       transform: scale(0.97);
     }
     .neon-border {
-      border: 1px solid #38383A;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      border: 1px solid #373E4E;
+      box-shadow: 0 4px 20px rgba(10, 13, 18, 0.25);
     }
     .neon-border-emerald {
-      border: 1px solid rgba(52, 199, 89, 0.35);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      box-shadow: 0 4px 20px rgba(52, 211, 153, 0.12);
     }
     .neon-border-rose {
-      border: 1px solid rgba(255, 59, 48, 0.35);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      box-shadow: 0 4px 20px rgba(248, 113, 113, 0.12);
     }
     .glass-panel {
-      background: rgba(28, 28, 30, 0.82);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border: 1px solid #38383A;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+      background: rgba(37, 42, 54, 0.78);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px rgba(10, 13, 18, 0.35);
     }
     .scanner-laser {
-      background: linear-gradient(180deg, transparent 0%, rgba(0, 122, 255, 0.85) 50%, transparent 100%);
+      background: linear-gradient(180deg, transparent 0%, rgba(79, 134, 247, 0.85) 50%, transparent 100%);
       animation: scan 2.2s ease-in-out infinite;
     }
     @keyframes scan {
@@ -117,7 +168,7 @@
     #reader {
       width: 100% !important;
       border: none !important;
-      background: #000 !important;
+      background: #181B22 !important;
       position: relative !important;
     }
     #reader video {
@@ -842,26 +893,26 @@
   <!-- ============================================== -->
   <!-- STUDENT PROFILE & BIOMETRIC WEBAUTHN LINKING PORTAL -->
   <!-- ============================================== -->
-  <div id="studentProfileModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-xl max-h-[92vh] overflow-y-auto p-4 sm:p-6 rounded-3xl border border-stitch-border shadow-2xl space-y-4 relative bg-[#121215] text-left">
+  <div id="studentProfileModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-xl max-h-[92vh] overflow-y-auto p-4 sm:p-6 rounded-3xl border border-white/10 shadow-soft-glow space-y-4 relative bg-slate-950/95 text-left">
       
       <!-- Modal Top Header -->
-      <div class="flex items-center justify-between border-b border-stitch-border pb-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div class="flex items-center space-x-2.5">
-          <div class="h-9 w-9 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 border border-purple-500/40 flex items-center justify-center text-white text-base shadow-inner">
-            <i data-lucide="user-check" class="w-4 h-4 text-purple-200"></i>
+          <div class="h-9 w-9 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-white text-base shadow-inner">
+            <i data-lucide="user-check" class="w-4 h-4 text-indigo-300"></i>
           </div>
           <div>
             <h3 class="text-sm sm:text-base font-bold text-white flex items-center">
               <span>Edit Profile & Security</span>
-              <span id="modalProfileStateBadge" class="ml-2 text-[8px] sm:text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <span id="modalProfileStateBadge" class="ml-2 text-[8px] sm:text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
                 ● SETUP REQUIRED
               </span>
             </h3>
             <p id="spDeptSubtext" class="text-[10px] text-slate-400 font-mono">Department of Data Science • S.Y. B.Sc. • Smt. C.H.M. College</p>
           </div>
         </div>
-        <button onclick="closeStudentProfileModal()" class="p-1.5 rounded-xl bg-stitch-surface hover:bg-slate-800 text-slate-400 hover:text-white border border-stitch-border transition">
+        <button onclick="closeStudentProfileModal()" class="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-700/60 text-slate-400 hover:text-white border border-slate-800 transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -869,36 +920,36 @@
       <!-- Form Body -->
       <form id="studentProfileForm" onsubmit="event.preventDefault(); saveStudentProfileChanges();" class="space-y-4">
         
-        <!-- CARD 1: Avatar / Profile Header Card (Instagram / Apple Settings Style) -->
-        <div class="p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+        <!-- CARD 1: Avatar / Profile Header Card -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-900/70 border border-slate-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
           <div class="flex items-center space-x-3 min-w-0">
             <div class="relative shrink-0">
-              <div id="spAvatarPreview" class="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 border-2 border-purple-400/50 flex items-center justify-center text-2xl font-bold text-white shadow-lg overflow-hidden">
+              <div id="spAvatarPreview" class="h-14 w-14 rounded-full bg-slate-900 border-2 border-indigo-500/40 flex items-center justify-center text-2xl font-bold text-white shadow-lg overflow-hidden">
                 🎓
               </div>
-              <span id="spPasskeyActiveDot" class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-amber-400 border-2 border-slate-900" title="Passkey Status"></span>
+              <span id="spPasskeyActiveDot" class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-amber-400 border-2 border-slate-950" title="Passkey Status"></span>
             </div>
             <div class="min-w-0 space-y-0.5">
               <h4 id="spFullNameDisplay" class="font-bold text-white text-sm sm:text-base truncate">Alex Chen</h4>
-              <div id="spRollDisplay" class="text-[11px] font-mono text-purple-300 font-bold">CHMC-DS-2024-001</div>
+              <div id="spRollDisplay" class="text-[11px] font-mono text-indigo-300 font-bold">CHMC-DS-2024-001</div>
               <div id="spEmailDisplay" class="text-[10px] font-mono text-slate-400 truncate">alex.chen@chmc.edu</div>
             </div>
           </div>
 
           <div class="flex items-center space-x-2 shrink-0 self-end sm:self-auto">
             <input type="file" id="spPhotoFileInput" accept="image/*" class="hidden" onchange="handleStudentAvatarUpload(event)">
-            <button type="button" onclick="document.getElementById('spPhotoFileInput').click()" class="px-3 py-1.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-200 hover:text-white font-mono text-[11px] font-semibold flex items-center space-x-1.5 transition">
-              <i data-lucide="image" class="w-3.5 h-3.5 text-purple-400"></i>
+            <button type="button" onclick="document.getElementById('spPhotoFileInput').click()" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-700/60 border border-slate-800 text-slate-300 hover:text-white font-mono text-[11px] font-semibold flex items-center space-x-1.5 transition">
+              <i data-lucide="image" class="w-3.5 h-3.5 text-indigo-300"></i>
               <span>Change photo</span>
             </button>
-            <button type="button" onclick="cycleAvatarEmoji()" title="Choose Avatar Icon" class="p-1.5 rounded-xl bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-300 text-xs">
+            <button type="button" onclick="cycleAvatarEmoji()" title="Choose Avatar Icon" class="p-1.5 rounded-xl bg-slate-950 hover:bg-slate-700/60 border border-slate-800 text-slate-300 text-xs">
               ✨
             </button>
           </div>
         </div>
 
-        <!-- CARD 2: Primary Institutional Metadata (Read-Only Badges) -->
-        <div class="p-3.5 rounded-2xl bg-slate-900/60 border border-stitch-border space-y-2.5">
+        <!-- CARD 2: Primary Institutional Metadata -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/50 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-[11px] font-mono text-slate-300 font-semibold flex items-center">
               <i data-lucide="building-2" class="w-3.5 h-3.5 text-indigo-400 mr-1.5"></i>
@@ -911,69 +962,58 @@
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
             <div>
-              <label class="block text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Department</label>
-              <input type="text" id="spDeptReadonly" readonly value="Data Science (DS)" class="w-full bg-stitch-surface/70 border border-stitch-border/80 rounded-xl px-2.5 py-1.5 text-[11px] text-slate-300 font-mono cursor-not-allowed">
+              <label class="block text-[9px] text-slate-500 uppercase tracking-wider mb-0.5">Department</label>
+              <input type="text" id="spDeptReadonly" readonly value="Data Science (DS)" class="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-2.5 py-1.5 text-[11px] text-slate-300 font-mono cursor-not-allowed">
             </div>
             <div>
-              <label class="block text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Semester</label>
-              <input type="text" id="spSemReadonly" readonly value="Semester 3 (S.Y.)" class="w-full bg-stitch-surface/70 border border-stitch-border/80 rounded-xl px-2.5 py-1.5 text-[11px] text-slate-300 font-mono cursor-not-allowed">
+              <label class="block text-[9px] text-slate-500 uppercase tracking-wider mb-0.5">Semester</label>
+              <input type="text" id="spSemReadonly" readonly value="Semester 3 (S.Y.)" class="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-2.5 py-1.5 text-[11px] text-slate-300 font-mono cursor-not-allowed">
             </div>
             <div>
-              <label class="block text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Batch Year</label>
-              <input type="text" id="spBatchReadonly" readonly value="2024–2027" class="w-full bg-stitch-surface/70 border border-stitch-border/80 rounded-xl px-2.5 py-1.5 text-[11px] text-slate-300 font-mono cursor-not-allowed">
+              <label class="block text-[9px] text-slate-500 uppercase tracking-wider mb-0.5">Batch Year</label>
+              <input type="text" id="spBatchReadonly" readonly value="2024–2027" class="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-2.5 py-1.5 text-[11px] text-slate-300 font-mono cursor-not-allowed">
             </div>
             <div>
-              <label class="block text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">College PRN / Roll</label>
-              <input type="text" id="spPrnReadonly" readonly value="CHMC-DS-2024-001" class="w-full bg-stitch-surface/70 border border-stitch-border/80 rounded-xl px-2.5 py-1.5 text-[11px] text-purple-300 font-mono font-bold cursor-not-allowed">
+              <label class="block text-[9px] text-slate-500 uppercase tracking-wider mb-0.5">College PRN / Roll</label>
+              <input type="text" id="spPrnReadonly" readonly value="CHMC-DS-2024-001" class="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl px-2.5 py-1.5 text-[11px] text-indigo-300 font-mono font-bold cursor-not-allowed">
             </div>
           </div>
-
-          <p class="text-[9px] font-mono text-slate-500">
-            ℹ️ Academic details are synchronized with the University Enrollment Register and verified by College IT Cell.
-          </p>
         </div>
 
         <!-- CARD 3: Student Completable Fields -->
-        <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-stitch-border space-y-3">
+        <div class="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/50 space-y-3">
           <div class="flex items-center space-x-1.5">
-            <i data-lucide="edit-3" class="w-3.5 h-3.5 text-purple-400"></i>
-            <span class="text-[11px] font-mono text-slate-200 font-semibold">Personal Contact & Student Bio</span>
+            <i data-lucide="edit-3" class="w-3.5 h-3.5 text-indigo-300"></i>
+            <span class="text-[11px] font-mono text-white font-semibold">Personal Contact & Student Bio</span>
           </div>
 
-          <!-- Phone & Alternate Email -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-mono">
             <div>
               <label class="block text-[10px] text-slate-400 mb-1 font-semibold">1. WhatsApp / Mobile Number</label>
               <div class="flex">
-                <span class="inline-flex items-center px-2.5 rounded-l-xl border border-r-0 border-stitch-border bg-stitch-surface text-slate-400 text-xs">
-                  🇮🇳 +91
-                </span>
-                <input type="tel" id="spPhoneInput" placeholder="9876543210" maxlength="10" class="w-full bg-stitch-surface border border-stitch-border rounded-r-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 font-mono">
+                <span class="inline-flex items-center px-2.5 rounded-l-xl border border-r-0 border-slate-800 bg-slate-950 text-slate-500 text-xs">🇮🇳 +91</span>
+                <input type="tel" id="spPhoneInput" placeholder="9876543210" maxlength="10" class="w-full bg-slate-950 border border-slate-800 rounded-r-xl px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono">
               </div>
             </div>
-
             <div>
               <label class="block text-[10px] text-slate-400 mb-1 font-semibold">2. Alternate Recovery Email</label>
-              <input type="email" id="spAltEmailInput" placeholder="personal.email@gmail.com" class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 font-mono">
+              <input type="email" id="spAltEmailInput" placeholder="personal.email@gmail.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono">
             </div>
           </div>
-
-          <!-- Bio / Academic Interests with Live Counter -->
           <div>
             <div class="flex items-center justify-between mb-1">
               <label class="text-[10px] font-mono text-slate-400 font-semibold">3. Academic Interests & Bio</label>
-              <span id="spBioCounter" class="text-[9px] font-mono text-slate-500">0 / 150</span>
+              <span id="spBioCounter" class="text-[9px] font-mono text-slate-600">0 / 150</span>
             </div>
-            <textarea id="spBioInput" rows="2" maxlength="150" oninput="updateBioCounter()" placeholder="e.g. S.Y. Data Science student interested in Machine Learning, Python, and Predictive Analytics." class="w-full bg-stitch-surface border border-stitch-border rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 font-sans resize-none"></textarea>
+            <textarea id="spBioInput" rows="2" maxlength="150" oninput="updateBioCounter()" placeholder="e.g. S.Y. Data Science student interested in Machine Learning, Python, and Predictive Analytics." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-sans resize-none"></textarea>
           </div>
         </div>
 
-        <!-- CARD 4: Biometric Passkey & Hardware Link Card (THE CRITICAL SECURITY MODULE) -->
-        <div class="p-4 rounded-2xl bg-gradient-to-b from-purple-950/20 to-slate-900 border border-purple-500/40 space-y-3 shadow-md">
-          
-          <div class="flex items-center justify-between border-b border-purple-500/20 pb-2">
+        <!-- CARD 4: Biometric Passkey & Hardware Link Card -->
+        <div class="p-4 rounded-2xl bg-slate-900/70 border border-slate-700/50 space-y-3 shadow-md">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
             <div class="flex items-center space-x-2">
-              <div class="h-6 w-6 rounded-lg bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300">
+              <div class="h-6 w-6 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
                 <i data-lucide="fingerprint" class="w-3.5 h-3.5"></i>
               </div>
               <div>
@@ -981,67 +1021,47 @@
                 <p class="text-[9px] text-slate-400 font-mono">WebAuthn / FIDO2 Hardware Cryptographic Lock</p>
               </div>
             </div>
-            <span id="spPasskeyHeaderStatusChip" class="text-[8px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            <span id="spPasskeyHeaderStatusChip" class="text-[8px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
               ● NOT LINKED
             </span>
           </div>
 
-          <!-- STATE A: NOT LINKED -->
           <div id="spPasskeyStateNotLinked" class="space-y-2.5">
             <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-[10px] font-mono flex items-start space-x-2">
               <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
-              <div>
-                <b>Biometric Setup Required:</b> In-class smart attendance uses a cryptographic 1-device hardware lock. Link your phone's biometric enclave (Touch ID, Face ID, or Windows Hello) to participate in attendance check-in.
-              </div>
+              <div><b>Biometric Setup Required:</b> In-class smart attendance uses a cryptographic 1-device hardware lock. Link your phone's biometric enclave to participate.</div>
             </div>
-
-            <button type="button" onclick="triggerPortalWebAuthnLink()" class="w-full bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-mono font-bold py-2.5 px-4 rounded-xl text-xs shadow-lg shadow-purple-950/50 flex items-center justify-center space-x-2 transition">
+            <button type="button" onclick="triggerPortalWebAuthnLink()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-mono font-bold py-2.5 px-4 rounded-xl text-xs shadow-lg shadow-indigo-950 flex items-center justify-center space-x-2 transition">
               <i data-lucide="fingerprint" class="w-4 h-4"></i>
               <span>🔑 LINK THIS DEVICE (TOUCH ID / FACE ID)</span>
             </button>
           </div>
 
-          <!-- STATE B: LINKED & VERIFIED -->
           <div id="spPasskeyStateLinked" class="hidden space-y-3">
-            <div class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 space-y-1.5 text-[10px] font-mono">
-              <div class="flex items-center justify-between text-emerald-300 font-bold">
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-emerald-500/30 space-y-1.5 text-[10px] font-mono">
+              <div class="flex items-center justify-between text-emerald-400 font-bold">
                 <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>🟢 HARDWARE BIOMETRIC BOUND</span>
-                <span class="bg-emerald-500/20 text-emerald-200 px-1.5 py-0.2 rounded border border-emerald-500/40 text-[9px]">1 Active Lock</span>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-slate-300 pt-1">
                 <div>• <b>Hardware Model:</b> <span id="spLinkedDevName" class="text-white">Apple iPhone (Secure Enclave)</span></div>
-                <div>• <b>Credential ID:</b> <span id="spLinkedCredId" class="text-purple-300 font-mono">cred_pk_9f7a2026</span></div>
-                <div>• <b>Bound On:</b> <span id="spLinkedDate" class="text-slate-400">Aug 25, 2026</span></div>
                 <div>• <b>Protection Level:</b> <span class="text-emerald-400 font-bold">FIDO2 L2 Enclave</span></div>
               </div>
             </div>
-
             <div class="flex flex-wrap gap-2">
-              <button type="button" onclick="testPortalBiometricAuth()" class="flex-1 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-mono text-[10px] font-bold py-2 px-3 rounded-xl flex items-center justify-center space-x-1.5 transition">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                <span>🧪 Test Biometric Auth</span>
-              </button>
-              <button type="button" onclick="triggerPortalWebAuthnLink()" class="flex-1 bg-stitch-surface hover:bg-slate-800 border border-stitch-border text-slate-300 font-mono text-[10px] font-semibold py-2 px-3 rounded-xl flex items-center justify-center space-x-1.5 transition">
-                <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-purple-400"></i>
-                <span>🔄 Re-Link Device</span>
-              </button>
+              <button type="button" onclick="testPortalBiometricAuth()" class="flex-1 bg-emerald-950 border border-emerald-500/30 text-emerald-300 font-mono text-[10px] font-bold py-2 px-3 rounded-xl flex items-center justify-center transition">🧪 Test Biometric Auth</button>
+              <button type="button" onclick="triggerPortalWebAuthnLink()" class="flex-1 bg-slate-950 border border-slate-800 text-slate-300 font-mono text-[10px] font-semibold py-2 px-3 rounded-xl flex items-center justify-center transition">🔄 Re-Link Device</button>
             </div>
-
-            <p class="text-[9px] font-mono text-slate-500 leading-tight">
-              🛡️ <b>Device Switch Policy:</b> To unbind or transfer your account to a new phone, contact Department Coordinator (Mrs. Shiji Johnson) or IT Cell for an authorized recovery reset.
-            </p>
           </div>
-
         </div>
 
         <!-- Sticky Modal Footer -->
-        <div class="flex items-center space-x-2.5 pt-2 border-t border-stitch-border">
-          <button type="button" onclick="closeStudentProfileModal()" class="flex-1 bg-stitch-surface hover:bg-slate-800 text-slate-300 font-mono py-2 rounded-xl text-xs font-semibold border border-stitch-border transition">
+        <div class="flex items-center space-x-2.5 pt-2 border-t border-slate-800">
+          <button type="button" onclick="closeStudentProfileModal()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-slate-300 font-mono py-2 rounded-xl text-xs font-semibold border border-slate-800 transition">
             Cancel
           </button>
-          <button type="submit" id="spSaveBtn" class="flex-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-mono py-2 rounded-xl text-xs font-bold shadow-lg shadow-purple-950/50 flex items-center justify-center space-x-1.5 transition">
+          <button type="submit" id="spSaveBtn" class="flex-2 bg-indigo-600 hover:bg-indigo-500 text-white font-mono py-2 rounded-xl text-xs font-bold shadow-lg shadow-indigo-950 flex items-center justify-center space-x-1.5 transition">
             <i data-lucide="save" class="w-3.5 h-3.5"></i>
-            <span>SAVE CHANGES</span>
+            <span>SAVE PROFILE CHANGES</span>
           </button>
         </div>
 
@@ -1077,8 +1097,8 @@
             <i data-lucide="more-vertical" class="w-4 h-4"></i>
           </button>
 
-          <!-- Translucent iOS Frosted Dropdown Menu -->
-          <div id="headerDropdownMenu" class="hidden absolute right-0 mt-2 w-64 bg-[#1C1C1E] backdrop-blur-2xl rounded-2xl border border-ios-separator shadow-2xl z-50 overflow-hidden py-1.5 divide-y divide-ios-separator">
+          <!-- Translucent Frosted Dropdown Menu -->
+          <div id="headerDropdownMenu" class="hidden absolute right-0 mt-2 w-64 bg-surface/95 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-soft-glow z-50 overflow-hidden py-1.5 divide-y divide-border-subtle">
             
             <!-- 1. Student Profile & WebAuthn Settings (High Priority Entry) -->
             <div class="py-1">
