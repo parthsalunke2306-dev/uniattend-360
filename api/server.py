@@ -41,6 +41,7 @@ from api.schemas import (
     ResetStudentDeviceRequest, BindStudentDeviceRequest, StudentDeviceStatusResponse
 )
 from api.auth import auth_router
+from api.admin import admin_router
 
 app = FastAPI(
     title="UniAttend 360 Enterprise REST API",
@@ -50,8 +51,9 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Register Authentication & RBAC Router
+# Register Authentication, RBAC & Principal Super-Admin Routers
 app.include_router(auth_router)
+app.include_router(admin_router)
 
 # Enable CORS for frontend integration (Vercel, Localhost, Mobile)
 app.add_middleware(

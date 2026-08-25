@@ -173,3 +173,58 @@ class StudentDeviceStatusResponse(BaseModel):
     is_locked: bool
     device_info: Optional[Dict[str, Any]] = None
 
+
+# ==========================================
+# PRINCIPAL SUPER-ADMIN AUTHORITY SCHEMAS
+# ==========================================
+
+class AdminDirectEnrollStudentRequest(BaseModel):
+    full_name: str = Field(..., example="Aarav Sharma")
+    email: str = Field(..., example="aarav.sharma@chmc.edu")
+    identifier: str = Field(..., description="Student Roll Number (e.g. CHMC-DS-2024-006)", example="CHMC-DS-2024-006")
+    department_code: str = Field(default="DS", description="Department Code: DS, CS, IT, AIDS", example="DS")
+    batch_year: Optional[int] = Field(default=2024, example=2024)
+    semester: Optional[int] = Field(default=3, example=3)
+    initial_password: Optional[str] = Field(default="CHMC@2026!", example="CHMC@2026!")
+    expedited: Optional[bool] = Field(default=True)
+    authorized_by: Optional[str] = Field(default="Dr. Manju Lalwani Pathak (Principal)", example="Dr. Manju Lalwani Pathak (Principal)")
+
+
+class AdminExpelStudentRequest(BaseModel):
+    reason: str = Field(..., description="Institutional reason for expulsion or deletion", example="Disciplinary expulsion per College Academic Disciplinary Committee")
+    expulsion_type: Optional[str] = Field(default="DISCIPLINARY", example="DISCIPLINARY") # DISCIPLINARY, ADMISSION_CANCELLED, TRANSFER_OFFBOARDING, TEST_PURGE
+    authorized_by: Optional[str] = Field(default="Dr. Manju Lalwani Pathak (Principal)", example="Dr. Manju Lalwani Pathak (Principal)")
+    confirm_roll_no: str = Field(..., description="Roll number verification check", example="CHMC-DS-2024-006")
+
+
+class AdminStudentResponse(BaseModel):
+    id: int
+    student_id_str: str
+    full_name: str
+    email: str
+    department_code: str
+    department_name: str
+    batch_year: int
+    semester: int
+    total_classes: int
+    attended_classes: int
+    attendance_pct: float
+    is_defaulter: bool
+    is_device_locked: bool
+    device_name: Optional[str] = None
+    account_active: bool = True
+    created_at: Optional[str] = None
+
+
+class AdminAuditLogEntry(BaseModel):
+    id: int
+    event_type: str
+    severity: str
+    actor_name: str
+    target_identifier: Optional[str] = None
+    ip_address: Optional[str] = None
+    device_fingerprint: Optional[str] = None
+    details: Dict[str, Any] = {}
+    created_at: str
+
+
