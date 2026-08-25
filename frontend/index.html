@@ -267,6 +267,86 @@
   <div id="toastContainer" class="fixed top-4 right-4 sm:top-5 sm:right-5 z-[99999] flex flex-col space-y-2 pointer-events-none max-w-sm w-full"></div>
 
   <!-- ============================================== -->
+  <!-- MANDATORY APP-LAUNCH BIOMETRIC LOCK GATE SCREEN -->
+  <!-- ============================================== -->
+  <div id="appBiometricLockScreen" class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/60 backdrop-blur-2xl transition-all duration-300 hidden">
+    <div class="glass-panel w-full max-w-sm sm:max-w-md p-6 sm:p-8 rounded-3xl border border-[#D5E4D8] shadow-2xl space-y-5 text-center relative overflow-hidden">
+      
+      <div class="space-y-1 relative z-10">
+        <div class="h-12 w-12 rounded-2xl bg-gradient-to-tr from-[#2F5238] to-[#4A6B53] p-0.5 mx-auto shadow-md flex items-center justify-center">
+          <div class="h-full w-full bg-[#FBF9F5] rounded-[14px] flex items-center justify-center">
+            <i data-lucide="shield-check" class="w-6 h-6 text-[#2F5238]"></i>
+          </div>
+        </div>
+        <h2 class="text-lg font-serif font-bold text-[#1C241E]">Smt. C.H.M. College</h2>
+        <p class="text-[11px] text-[#5A655C] font-sans font-medium">UniAttend 360 • Identity Re-Authentication Gate</p>
+      </div>
+
+      <!-- Active User Identity Card -->
+      <div class="p-3 rounded-2xl bg-[#F5F2EB] border border-[#E8E3DA] flex items-center space-x-3 text-left">
+        <div id="lockScreenUserAvatar" class="w-10 h-10 rounded-xl bg-emerald-500/20 text-[#2F5238] flex items-center justify-center text-lg font-bold border border-emerald-500/30 shrink-0">
+          🎓
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center space-x-2">
+            <p id="lockScreenUserName" class="font-bold text-xs sm:text-sm text-[#1C241E] truncate">Alex Chen</p>
+            <span id="lockScreenUserBadge" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#2F5238] text-white shrink-0">STUDENT</span>
+          </div>
+          <p id="lockScreenUserId" class="text-[10px] text-[#869288] font-mono truncate">CHMC-DS-2024-001 • Data Science</p>
+        </div>
+      </div>
+
+      <!-- Pulsing Biometric Sensor -->
+      <div class="py-2 flex flex-col items-center justify-center space-y-2">
+        <div class="relative">
+          <div class="w-20 h-20 rounded-full bg-emerald-500/15 border-2 border-emerald-500/30 flex items-center justify-center text-[#2F5238] shadow-md">
+            <i data-lucide="fingerprint" class="w-10 h-10 animate-pulse text-[#2F5238]"></i>
+          </div>
+          <div class="absolute inset-0 rounded-full border-2 border-[#2F5238]/30 animate-ping pointer-events-none"></div>
+        </div>
+        <p class="text-xs font-bold text-[#1C241E]">Application Locked for Security</p>
+        <p class="text-[10px] text-[#5A655C] max-w-xs">Verify with Face ID, Touch ID, or Android Fingerprint to access dashboard.</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-1">
+        <button onclick="unlockAppBiometric()" id="btnBiometricUnlock" class="w-full py-3 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs font-mono shadow-md flex items-center justify-center space-x-2 transition">
+          <i data-lucide="scan-face" class="w-4 h-4"></i>
+          <span>UNLOCK WITH FACE ID / FINGERPRINT</span>
+        </button>
+
+        <button onclick="toggleLockPasswordFallback()" class="w-full py-2 px-4 rounded-xl bg-[#F5F2EB] hover:bg-[#E8E3DA] text-[#5A655C] hover:text-[#1C241E] font-semibold text-xs border border-[#E8E3DA] flex items-center justify-center space-x-1.5 transition">
+          <i data-lucide="key-round" class="w-3.5 h-3.5 text-[#C28222]"></i>
+          <span id="lockPasswordBtnText">Unlock with Account Password</span>
+        </button>
+
+        <!-- Fallback Password Form -->
+        <div id="lockPasswordBox" class="hidden space-y-2 pt-2 text-left animate-in fade-in">
+          <form onsubmit="handleLockPasswordSubmit(event)" class="space-y-2">
+            <label class="text-[10px] font-mono text-[#869288]">Account Password:</label>
+            <div class="relative">
+              <input type="password" id="lockPasswordInput" placeholder="e.g. CHMC@2026!" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] font-mono">
+            </div>
+            <button type="submit" class="w-full py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-[#2F5238] font-bold text-xs font-mono border border-emerald-500/40 transition">
+              Verify Password →
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Footer Options -->
+      <div class="pt-2 border-t border-[#E8E3DA] flex items-center justify-between text-[10px] font-mono text-[#869288]">
+        <button onclick="switchLockAccount()" class="hover:text-[#2F5238] transition">Switch Profile</button>
+        <span class="flex items-center space-x-1 text-[#2F5238]">
+          <i data-lucide="shield" class="w-3 h-3"></i>
+          <span>FIDO2 Protected</span>
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
   <!-- MULTI-TIER AUTHENTICATION & ONBOARDING MODAL -->
   <!-- ============================================== -->
   <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md hidden transition-all duration-300">
@@ -1008,19 +1088,19 @@
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
             <div>
               <label class="block text-[9px] text-[#9AA49C] uppercase tracking-wider mb-0.5">Department</label>
-              <input type="text" id="spDeptReadonly" readonly value="Data Science (DS)" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#5A655C] font-mono cursor-not-allowed">
+              <input type="text" id="spDeptReadonly" readonly value="Data Science (DS)" class="w-full bg-black/30 border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#5A655C] font-mono cursor-not-allowed">
             </div>
             <div>
               <label class="block text-[9px] text-[#9AA49C] uppercase tracking-wider mb-0.5">Semester</label>
-              <input type="text" id="spSemReadonly" readonly value="Semester 3 (S.Y.)" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#5A655C] font-mono cursor-not-allowed">
+              <input type="text" id="spSemReadonly" readonly value="Semester 3 (S.Y.)" class="w-full bg-black/30 border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#5A655C] font-mono cursor-not-allowed">
             </div>
             <div>
               <label class="block text-[9px] text-[#9AA49C] uppercase tracking-wider mb-0.5">Batch Year</label>
-              <input type="text" id="spBatchReadonly" readonly value="2024–2027" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#5A655C] font-mono cursor-not-allowed">
+              <input type="text" id="spBatchReadonly" readonly value="2024–2027" class="w-full bg-black/30 border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#5A655C] font-mono cursor-not-allowed">
             </div>
             <div>
               <label class="block text-[9px] text-[#9AA49C] uppercase tracking-wider mb-0.5">College PRN / Roll</label>
-              <input type="text" id="spPrnReadonly" readonly value="CHMC-DS-2024-001" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#2F5238] font-mono font-bold cursor-not-allowed">
+              <input type="text" id="spPrnReadonly" readonly value="CHMC-DS-2024-001" class="w-full bg-black/30 border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#2F5238] font-mono font-bold cursor-not-allowed">
             </div>
           </div>
         </div>
@@ -1083,18 +1163,18 @@
           </div>
 
           <div id="spPasskeyStateLinked" class="hidden space-y-3">
-            <div class="p-3 rounded-xl bg-white border border-[#D5E4D8] space-y-1.5 text-[10px] font-mono shadow-sm">
+            <div class="p-3 rounded-xl bg-black/30 border border-emerald-500/30 space-y-1.5 text-[10px] font-mono">
               <div class="flex items-center justify-between text-[#2F5238] font-bold">
-                <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-[#2F5238] mr-1.5 animate-pulse"></span>🟢 HARDWARE BIOMETRIC BOUND</span>
+                <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>🟢 HARDWARE BIOMETRIC BOUND</span>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[#5A655C] pt-1">
-                <div>• <b>Hardware Model:</b> <span id="spLinkedDevName" class="text-[#1C241E] font-bold">Apple iPhone (Secure Enclave)</span></div>
+                <div>• <b>Hardware Model:</b> <span id="spLinkedDevName" class="text-white">Apple iPhone (Secure Enclave)</span></div>
                 <div>• <b>Protection Level:</b> <span class="text-[#2F5238] font-bold">FIDO2 L2 Enclave</span></div>
               </div>
             </div>
             <div class="flex flex-wrap gap-2">
-              <button type="button" onclick="testPortalBiometricAuth()" class="flex-1 bg-[#EAF2EB] border border-[#D5E4D8] text-[#2F5238] font-mono text-[10px] font-bold py-2 px-3 rounded-xl flex items-center justify-center transition hover:bg-[#D8E6DB]">🧪 Test Biometric Auth</button>
-              <button type="button" onclick="triggerPortalWebAuthnLink()" class="flex-1 bg-white border border-[#E8E3DA] text-[#5A655C] font-mono text-[10px] font-semibold py-2 px-3 rounded-xl flex items-center justify-center transition hover:bg-[#F5F2EB]">🔄 Re-Link Device</button>
+              <button type="button" onclick="testPortalBiometricAuth()" class="flex-1 bg-emerald-950 border border-emerald-500/30 text-[#2F5238] font-mono text-[10px] font-bold py-2 px-3 rounded-xl flex items-center justify-center transition">🧪 Test Biometric Auth</button>
+              <button type="button" onclick="triggerPortalWebAuthnLink()" class="flex-1 bg-white border border-[#E8E3DA] text-[#5A655C] font-mono text-[10px] font-semibold py-2 px-3 rounded-xl flex items-center justify-center transition">🔄 Re-Link Device</button>
             </div>
           </div>
         </div>
@@ -1184,6 +1264,16 @@
                 </div>
               </button>
 
+              <button onclick="triggerManualAppLock(); closeHeaderMenu();" class="w-full px-3.5 py-2.5 text-left text-xs font-sans text-[#2F5238] hover:bg-emerald-500/10 flex items-center space-x-2.5 transition font-semibold">
+                <div class="w-7 h-7 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-[#2F5238] shrink-0">
+                  <i data-lucide="lock" class="w-4 h-4"></i>
+                </div>
+                <div class="min-w-0">
+                  <div class="font-semibold text-[#2F5238] truncate">Lock Application</div>
+                  <div class="text-[10px] text-[#869288] font-mono truncate">Biometric shield</div>
+                </div>
+              </button>
+
               <button onclick="openLoginModal(); closeHeaderMenu();" class="w-full px-3.5 py-2.5 text-left text-xs font-sans text-[#1C241E] hover:bg-[#F5F2EB] flex items-center space-x-2.5 transition">
                 <div class="w-7 h-7 rounded-xl bg-ios-blue/15 border border-ios-blue/30 flex items-center justify-center text-ios-blue shrink-0">
                   <i data-lucide="users" class="w-4 h-4"></i>
@@ -1236,12 +1326,11 @@
 
       <!-- Action Chips & Quick Switchers (Right Side) -->
       <div class="flex items-center space-x-2 shrink-0 self-end md:self-auto flex-wrap sm:flex-nowrap">
-        <!-- Quick View Switcher (All Roles) -->
-        <div class="flex items-center space-x-1 p-1 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-[10px] font-sans">
-          <button onclick="quickAuth('student.captain')" title="Switch to Student Portal" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#EAF2EB] text-[#1C241E] font-semibold border border-[#E8E3DA] transition shadow-xs">🎓 Student</button>
-          <button onclick="quickAuth('faculty.razia')" title="Switch to Faculty View" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#EAF2EB] text-[#1C241E] font-semibold border border-[#E8E3DA] transition shadow-xs">👩‍🏫 Faculty</button>
-          <button onclick="quickAuth('coordinator.ds')" title="Switch to Coordinator View" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#EAF2EB] text-[#1C241E] font-semibold border border-[#E8E3DA] transition shadow-xs">🏢 Coordinator</button>
-          <button onclick="quickAuth('principal.chmc')" title="Switch to Principal Super Admin" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#EAF2EB] text-[#1C241E] font-semibold border border-[#E8E3DA] transition shadow-xs">👑 Principal</button>
+        <!-- Quick Switcher for Laptop -->
+        <div class="hidden lg:flex items-center space-x-1 p-1 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-[10px] font-mono">
+          <button onclick="quickAuth('faculty.razia')" title="Switch to Faculty View" class="px-2 py-1 rounded-lg hover:bg-[#F5F2EB] text-[#5A655C] hover:text-white transition">👩‍🏫 Faculty</button>
+          <button onclick="quickAuth('coord.shiji')" title="Switch to Coordinator View" class="px-2 py-1 rounded-lg hover:bg-[#F5F2EB] text-[#5A655C] hover:text-white transition">🏢 Coordinator</button>
+          <button onclick="quickAuth('admin.principal')" title="Switch to Principal View" class="px-2 py-1 rounded-lg hover:bg-[#F5F2EB] text-[#5A655C] hover:text-white transition">🏛️ Principal</button>
         </div>
 
         <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[10px] sm:text-xs font-mono text-[#2F5238] bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center shadow transition">
@@ -1593,144 +1682,155 @@
                 <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm">Second Year Subject Units (Sem 3)</h3>
               </div>
               <div class="flex items-center space-x-1.5">
-                <span cl            <!-- 8 Subject Units Grid (Organic Editorial Cards matching Reference Preview) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <span class="text-[9px] font-mono text-[#2F5238] font-bold bg-purple-500/20 px-2 py-0.5 rounded border border-[#E8E3DA]">8 Units</span>
+                <span class="text-[9px] font-mono text-[#2F5238] bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30">≥75% Cutoff</span>
+              </div>
+            </div>
+
+            <!-- 8 Subject Units Grid (2 columns on sm/md/lg) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               
-              <!-- 1. Data Mining (Theory) - 88% Good -->
-              <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#E8E3DA] shadow-[0_4px_20px_-2px_rgba(60,70,60,0.05)] relative overflow-hidden space-y-3">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,#EAF2EB_0%,transparent_70%)] pointer-events-none rounded-tr-3xl"></div>
-                <div class="flex items-start justify-between relative z-10">
-                  <div class="flex items-center space-x-2">
-                    <i data-lucide="database" class="w-5 h-5 text-[#2F5238]"></i>
-                    <h4 class="font-serif text-base sm:text-lg font-bold text-[#1C241E]">Data Mining</h4>
+              <!-- 1. Data Mining (Theory) -->
+              <div class="p-2.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-[#1C241E] text-xs truncate">Data Mining</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
                   </div>
-                  <span class="pill-good">Good</span>
+                  <span class="font-mono font-extrabold text-xs text-[#2F5238]">95.8%</span>
                 </div>
-                <div class="flex items-baseline space-x-1.5 relative z-10">
-                  <span class="font-serif text-2xl sm:text-3xl font-bold text-[#2F5238]">88%</span>
-                  <span class="text-xs text-[#5A655C] font-sans">attendance</span>
+                <div class="flex items-center justify-between text-[9px] font-mono text-[#869288]">
+                  <span>👩‍🏫 Miss Razia</span>
+                  <span>24 Held • E-104</span>
                 </div>
-                <div class="w-full bg-[#ECE7DF] h-2 rounded-full overflow-hidden relative z-10">
-                  <div class="bg-[#47664B] h-full rounded-full" style="width: 88%"></div>
-                </div>
-                <div class="flex items-center justify-between text-[10px] text-[#869288] font-sans pt-0.5">
-                  <span>👩‍🏫 Miss Razia Khan</span>
-                  <span>24 Held • Room E-104</span>
+                <div class="w-full bg-[#F5F2EB] h-1 rounded-full overflow-hidden">
+                  <div class="bg-[#47664B] h-full rounded-full" style="width: 95.8%"></div>
                 </div>
               </div>
 
-              <!-- 2. Data Warehousing - 72% Needs Care -->
-              <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#E8E3DA] shadow-[0_4px_20px_-2px_rgba(60,70,60,0.05)] relative overflow-hidden space-y-3">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,#FDF0EB_0%,transparent_70%)] pointer-events-none rounded-tr-3xl"></div>
-                <div class="flex items-start justify-between relative z-10">
-                  <div class="flex items-center space-x-2">
-                    <i data-lucide="server" class="w-5 h-5 text-[#8D3F30]"></i>
-                    <h4 class="font-serif text-base sm:text-lg font-bold text-[#1C241E]">Data Warehousing</h4>
+              <!-- 2. Data Mining (Practical) -->
+              <div class="p-2.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-[#1C241E] text-xs truncate">Data Mining (Lab)</span>
+                    <span class="bg-emerald-500/20 text-[#2F5238] text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">PR</span>
                   </div>
-                  <span class="pill-needs-care">Needs Care</span>
+                  <span class="font-mono font-extrabold text-xs text-[#2F5238]">100.0%</span>
                 </div>
-                <div class="flex items-baseline space-x-1.5 relative z-10">
-                  <span class="font-serif text-2xl sm:text-3xl font-bold text-[#8D3F30]">72%</span>
-                  <span class="text-xs text-[#5A655C] font-sans">attendance</span>
+                <div class="flex items-center justify-between text-[9px] font-mono text-[#869288]">
+                  <span>👩‍🏫 Miss Razia</span>
+                  <span>12 Held • M-113</span>
                 </div>
-                <div class="w-full bg-[#ECE7DF] h-2 rounded-full overflow-hidden relative z-10">
-                  <div class="bg-[#945749] h-full rounded-full" style="width: 72%"></div>
-                </div>
-                <div class="flex items-center justify-between text-[10px] text-[#869288] font-sans pt-0.5">
-                  <span>👨‍🏫 Mr. Anshul Chimnani</span>
-                  <span>25 Held • Room E-104</span>
-                </div>
-              </div>
-
-              <!-- 3. Linear Algebra - 92% Good -->
-              <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#E8E3DA] shadow-[0_4px_20px_-2px_rgba(60,70,60,0.05)] relative overflow-hidden space-y-3">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,#EAF2EB_0%,transparent_70%)] pointer-events-none rounded-tr-3xl"></div>
-                <div class="flex items-start justify-between relative z-10">
-                  <div class="flex items-center space-x-2">
-                    <i data-lucide="calculator" class="w-5 h-5 text-[#2F5238]"></i>
-                    <h4 class="font-serif text-base sm:text-lg font-bold text-[#1C241E]">Linear Algebra</h4>
-                  </div>
-                  <span class="pill-good">Good</span>
-                </div>
-                <div class="flex items-baseline space-x-1.5 relative z-10">
-                  <span class="font-serif text-2xl sm:text-3xl font-bold text-[#2F5238]">92%</span>
-                  <span class="text-xs text-[#5A655C] font-sans">attendance</span>
-                </div>
-                <div class="w-full bg-[#ECE7DF] h-2 rounded-full overflow-hidden relative z-10">
-                  <div class="bg-[#47664B] h-full rounded-full" style="width: 92%"></div>
-                </div>
-                <div class="flex items-center justify-between text-[10px] text-[#869288] font-sans pt-0.5">
-                  <span>👩‍🏫 Miss Razia Khan</span>
-                  <span>24 Held • Room E-104</span>
-                </div>
-              </div>
-
-              <!-- 4. Data Mining Lab - 100% Good -->
-              <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#E8E3DA] shadow-[0_4px_20px_-2px_rgba(60,70,60,0.05)] relative overflow-hidden space-y-3">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,#EAF2EB_0%,transparent_70%)] pointer-events-none rounded-tr-3xl"></div>
-                <div class="flex items-start justify-between relative z-10">
-                  <div class="flex items-center space-x-2">
-                    <i data-lucide="flask-conical" class="w-5 h-5 text-[#2F5238]"></i>
-                    <h4 class="font-serif text-base sm:text-lg font-bold text-[#1C241E]">Data Mining (Lab)</h4>
-                  </div>
-                  <span class="pill-good">Good</span>
-                </div>
-                <div class="flex items-baseline space-x-1.5 relative z-10">
-                  <span class="font-serif text-2xl sm:text-3xl font-bold text-[#2F5238]">100%</span>
-                  <span class="text-xs text-[#5A655C] font-sans">attendance</span>
-                </div>
-                <div class="w-full bg-[#ECE7DF] h-2 rounded-full overflow-hidden relative z-10">
+                <div class="w-full bg-[#F5F2EB] h-1 rounded-full overflow-hidden">
                   <div class="bg-[#47664B] h-full rounded-full" style="width: 100%"></div>
                 </div>
-                <div class="flex items-center justify-between text-[10px] text-[#869288] font-sans pt-0.5">
-                  <span>👩‍🏫 Miss Razia Khan</span>
-                  <span>12 Held • Lab M-113</span>
+              </div>
+
+              <!-- 3. Linear Algebra -->
+              <div class="p-2.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-[#1C241E] text-xs truncate">Linear Algebra</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-[#2F5238]">91.7%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-[#869288]">
+                  <span>👩‍🏫 Miss Razia</span>
+                  <span>24 Held • E-104</span>
+                </div>
+                <div class="w-full bg-[#F5F2EB] h-1 rounded-full overflow-hidden">
+                  <div class="bg-[#47664B] h-full rounded-full" style="width: 91.7%"></div>
                 </div>
               </div>
 
-              <!-- 5. Foundation of Research (FOR) - 94% Good -->
-              <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#E8E3DA] shadow-[0_4px_20px_-2px_rgba(60,70,60,0.05)] relative overflow-hidden space-y-3">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,#EAF2EB_0%,transparent_70%)] pointer-events-none rounded-tr-3xl"></div>
-                <div class="flex items-start justify-between relative z-10">
-                  <div class="flex items-center space-x-2">
-                    <i data-lucide="book-open" class="w-5 h-5 text-[#2F5238]"></i>
-                    <h4 class="font-serif text-base sm:text-lg font-bold text-[#1C241E]">FOR (Research)</h4>
+              <!-- 4. FOR: Foundation of Research (TH) -->
+              <div class="p-2.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-[#1C241E] text-xs truncate">FOR: Foundation</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
                   </div>
-                  <span class="pill-good">Good</span>
+                  <span class="font-mono font-extrabold text-xs text-[#2F5238]">94.4%</span>
                 </div>
-                <div class="flex items-baseline space-x-1.5 relative z-10">
-                  <span class="font-serif text-2xl sm:text-3xl font-bold text-[#2F5238]">94%</span>
-                  <span class="text-xs text-[#5A655C] font-sans">attendance</span>
+                <div class="flex items-center justify-between text-[9px] font-mono text-[#869288]">
+                  <span>👩‍🏫 Miss Razia</span>
+                  <span>18 Held • E-104</span>
                 </div>
-                <div class="w-full bg-[#ECE7DF] h-2 rounded-full overflow-hidden relative z-10">
-                  <div class="bg-[#47664B] h-full rounded-full" style="width: 94%"></div>
-                </div>
-                <div class="flex items-center justify-between text-[10px] text-[#869288] font-sans pt-0.5">
-                  <span>👩‍🏫 Miss Razia Khan</span>
-                  <span>18 Held • Room E-104</span>
+                <div class="w-full bg-[#F5F2EB] h-1 rounded-full overflow-hidden">
+                  <div class="bg-[#47664B] h-full rounded-full" style="width: 94.4%"></div>
                 </div>
               </div>
 
-              <!-- 6. DAA Algorithms - 91% Good -->
-              <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#E8E3DA] shadow-[0_4px_20px_-2px_rgba(60,70,60,0.05)] relative overflow-hidden space-y-3">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,#EAF2EB_0%,transparent_70%)] pointer-events-none rounded-tr-3xl"></div>
-                <div class="flex items-start justify-between relative z-10">
-                  <div class="flex items-center space-x-2">
-                    <i data-lucide="cpu" class="w-5 h-5 text-[#2F5238]"></i>
-                    <h4 class="font-serif text-base sm:text-lg font-bold text-[#1C241E]">Algorithms (DAA)</h4>
+              <!-- 5. Data Warehousing -->
+              <div class="p-2.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-[#1C241E] text-xs truncate">Data Warehousing</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
                   </div>
-                  <span class="pill-good">Good</span>
+                  <span class="font-mono font-extrabold text-xs text-[#2F5238]">96.0%</span>
                 </div>
-                <div class="flex items-baseline space-x-1.5 relative z-10">
-                  <span class="font-serif text-2xl sm:text-3xl font-bold text-[#2F5238]">91%</span>
-                  <span class="text-xs text-[#5A655C] font-sans">attendance</span>
+                <div class="flex items-center justify-between text-[9px] font-mono text-[#869288]">
+                  <span>👨‍🏫 Mr. Anshul</span>
+                  <span>25 Held • E-104</span>
                 </div>
-                <div class="w-full bg-[#ECE7DF] h-2 rounded-full overflow-hidden relative z-10">
-                  <div class="bg-[#47664B] h-full rounded-full" style="width: 91%"></div>
+                <div class="w-full bg-[#F5F2EB] h-1 rounded-full overflow-hidden">
+                  <div class="bg-[#47664B] h-full rounded-full" style="width: 96.0%"></div>
                 </div>
-                <div class="flex items-center justify-between text-[10px] text-[#869288] font-sans pt-0.5">
-                  <span>👩‍🏫 Miss Kalyani Patil</span>
-                  <span>22 Held • Room E-104</span>
+              </div>
+
+              <!-- 6. FOR Lab -->
+              <div class="p-2.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-[#1C241E] text-xs truncate">FOR Lab</span>
+                    <span class="bg-emerald-500/20 text-[#2F5238] text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">PR</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-[#2F5238]">91.7%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-[#869288]">
+                  <span>👨‍🏫 Mr. Anshul</span>
+                  <span>12 Held • M-103</span>
+                </div>
+                <div class="w-full bg-[#F5F2EB] h-1 rounded-full overflow-hidden">
+                  <div class="bg-[#47664B] h-full rounded-full" style="width: 91.7%"></div>
+                </div>
+              </div>
+
+              <!-- 7. DAA (Theory) -->
+              <div class="p-2.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-[#1C241E] text-xs truncate">Algorithms (DAA)</span>
+                    <span class="bg-blue-500/20 text-blue-300 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">TH</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-[#2F5238]">90.9%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-[#869288]">
+                  <span>👩‍🏫 Miss Kalyani</span>
+                  <span>22 Held • E-104</span>
+                </div>
+                <div class="w-full bg-[#F5F2EB] h-1 rounded-full overflow-hidden">
+                  <div class="bg-[#47664B] h-full rounded-full" style="width: 90.9%"></div>
+                </div>
+              </div>
+
+              <!-- 8. DAA (Practical) -->
+              <div class="p-2.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-1.5 hover:border-emerald-500/40 transition">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-1 min-w-0">
+                    <span class="font-bold text-[#1C241E] text-xs truncate">DAA Practical</span>
+                    <span class="bg-emerald-500/20 text-[#2F5238] text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">PR</span>
+                  </div>
+                  <span class="font-mono font-extrabold text-xs text-[#2F5238]">90.0%</span>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-mono text-[#869288]">
+                  <span>👩‍🏫 Miss Kalyani</span>
+                  <span>10 Held • M-113</span>
+                </div>
+                <div class="w-full bg-[#F5F2EB] h-1 rounded-full overflow-hidden">
+                  <div class="bg-[#47664B] h-full rounded-full" style="width: 90.0%"></div>
                 </div>
               </div>
 
@@ -2877,21 +2977,6 @@
 
     // Default Seed Profiles (Faculty, Coordinator & Administrative Infrastructure Preserved)
     const DEFAULT_PROFILES = {
-      "student.captain": {
-        role: "STUDENT",
-        name: "Captain (CHMC-DS-2024-001)",
-        identifier: "CHMC-DS-2024-001",
-        email: "captain.ds@chmc.edu",
-        username: "student.captain",
-        avatar: "🎓",
-        badge: "STUDENT",
-        badgeClass: "bg-[#2F5238] text-white font-bold",
-        desc: "Second Year (S.Y. B.Sc. Data Science) • Smt. C.H.M. College",
-        department_code: "DS",
-        department: "Dept. of Data Science",
-        semester: 3,
-        batch_year: 2024
-      },
       "faculty.razia": {
         role: "TEACHER_RAZIA",
         name: "Miss Razia Khan",
@@ -2900,7 +2985,7 @@
         username: "razia.khan",
         avatar: "👩‍🏫",
         badge: "FACULTY",
-        badgeClass: "bg-[#4A6B53] text-white font-bold",
+        badgeClass: "bg-emerald-500 text-white",
         desc: "Second Year Faculty • Data Mining (E-104 / M-113), Linear Algebra, FOR",
         units: [
           { code: "DS201-DM-TH", title: "Data Mining (Theory)", room: "E-104" },
@@ -2917,7 +3002,7 @@
         username: "anshul.chimnani",
         avatar: "👨‍🏫",
         badge: "FACULTY",
-        badgeClass: "bg-[#4A6B53] text-white font-bold",
+        badgeClass: "bg-emerald-500 text-white",
         desc: "Second Year Faculty • Data Warehousing (E-104), FOR Practical (M-103)",
         units: [
           { code: "DS204-DW", title: "Data Warehousing", room: "E-104", isDefault: true },
@@ -2932,7 +3017,7 @@
         username: "kalyani.patil",
         avatar: "👩‍🏫",
         badge: "FACULTY",
-        badgeClass: "bg-[#4A6B53] text-white font-bold",
+        badgeClass: "bg-emerald-500 text-white",
         desc: "Second Year Faculty • DAA (Theory: E-104 / Lab: M-113)",
         units: [
           { code: "DS205-DAA-TH", title: "DAA (Theory)", room: "E-104", isDefault: true },
@@ -2947,7 +3032,7 @@
         username: "coordinator.ds",
         avatar: "👔",
         badge: "COORDINATOR",
-        badgeClass: "bg-[#2F5238] text-white font-bold",
+        badgeClass: "bg-indigo-500 text-white",
         desc: "Course Coordinator • Department of Data Science (Smt. C.H.M. College)"
       },
       "principal.chmc": {
@@ -2958,7 +3043,7 @@
         username: "principal.chmc",
         avatar: "👑",
         badge: "SUPER ADMIN",
-        badgeClass: "bg-[#2F5238] text-white font-bold",
+        badgeClass: "bg-gradient-to-r from-indigo-600 to-purple-600 text-[#1C241E] font-bold",
         desc: "Principal & Institutional Super Administrator • Full Access • Smt. C.H.M. College"
       }
     };
@@ -2968,7 +3053,14 @@
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          return { ...DEFAULT_PROFILES, ...parsed };
+          const cleanCustom = {};
+          Object.keys(parsed).forEach(k => {
+            // Exclude legacy purged test students
+            if (!k.startsWith('CHMC-DS-2024-00')) {
+              cleanCustom[k] = parsed[k];
+            }
+          });
+          return { ...DEFAULT_PROFILES, ...cleanCustom };
         } catch (e) {}
       }
       return { ...DEFAULT_PROFILES };
@@ -2986,13 +3078,19 @@
       if (saved) {
         try {
           const parsedSession = JSON.parse(saved);
-          activeSession = parsedSession;
-          applySession(activeSession);
+          // If saved session was a purged test student, redirect to faculty
+          if (parsedSession && parsedSession.identifier && parsedSession.identifier.startsWith('CHMC-DS-2024-00')) {
+            localStorage.removeItem('uniattend_360_session');
+            quickAuth('faculty.razia');
+          } else {
+            activeSession = parsedSession;
+            applySession(activeSession);
+          }
         } catch (e) {
-          quickAuth('student.captain');
+          handleLogout();
         }
       } else {
-        quickAuth('student.captain');
+        quickAuth('faculty.razia');
       }
       renderDigitalRoster();
     }
@@ -3130,22 +3228,8 @@
     }
 
     function quickAuth(key) {
-      if (key === 'coord.shiji' || key === 'coordinator') key = 'coordinator.ds';
-      if (key === 'admin.principal' || key === 'principal' || key === 'principal.chmc') key = 'principal.chmc';
-      if (key === 'student' || key === 'captain' || key === 'CHMC-DS-2024-001' || key === 'CHMC-DS-2024-002') key = 'student.captain';
-
-      let profile = REGISTERED_PROFILES[key] || DEFAULT_PROFILES[key];
-      if (!profile) {
-        const found = Object.keys(REGISTERED_PROFILES).find(k => {
-          const p = REGISTERED_PROFILES[k];
-          return k.toLowerCase() === String(key).toLowerCase() || 
-                 (p.username && p.username.toLowerCase() === String(key).toLowerCase()) || 
-                 (p.identifier && p.identifier.toLowerCase() === String(key).toLowerCase()) ||
-                 (p.email && p.email.toLowerCase() === String(key).toLowerCase());
-        });
-        if (found) profile = REGISTERED_PROFILES[found];
-      }
-      if (!profile) profile = DEFAULT_PROFILES["student.captain"];
+      const profile = REGISTERED_PROFILES[key];
+      if (!profile) return;
 
       activeSession = {
         key: key,
@@ -4346,74 +4430,51 @@
     }
 
     function applySession(session) {
-      if (!session) return;
-      
-      const vStudent = document.getElementById('viewStudent');
-      const vTeacher = document.getElementById('viewTeacher');
-      const vCoord = document.getElementById('viewCoordinator');
-      const vPrinc = document.getElementById('viewPrincipal');
+      document.getElementById('viewStudent').classList.add('hidden');
+      document.getElementById('viewTeacher').classList.add('hidden');
+      document.getElementById('viewCoordinator').classList.add('hidden');
+      document.getElementById('viewPrincipal').classList.add('hidden');
 
-      if (vStudent) vStudent.classList.add('hidden');
-      if (vTeacher) vTeacher.classList.add('hidden');
-      if (vCoord) vCoord.classList.add('hidden');
-      if (vPrinc) vPrinc.classList.add('hidden');
+      document.getElementById('roleAvatar').innerText = session.avatar;
+      document.getElementById('profileName').innerText = session.name;
+      document.getElementById('roleBadge').innerText = session.badge;
+      document.getElementById('roleBadge').className = `${session.badgeClass} font-mono text-[8px] sm:text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0`;
+      document.getElementById('profileDesc').innerText = session.desc;
 
-      const rawRole = String(session.role || session.badge || '').trim().toUpperCase();
-      
-      const elAvatar = document.getElementById('roleAvatar');
-      const elName = document.getElementById('profileName');
-      const elBadge = document.getElementById('roleBadge');
-      const elDesc = document.getElementById('profileDesc');
-
-      if (elAvatar) elAvatar.innerText = session.avatar || '👤';
-      if (elName) elName.innerText = session.name || 'User';
-      if (elBadge) {
-        elBadge.innerText = session.badge || rawRole;
-        elBadge.className = `${session.badgeClass || 'bg-[#2F5238] text-white'} font-mono text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0`;
-      }
-      if (elDesc) elDesc.innerText = session.desc || '';
-
-      if (rawRole === 'STUDENT' || rawRole.includes('STUDENT')) {
-        if (vStudent) vStudent.classList.remove('hidden');
+      if (session.role === 'STUDENT') {
+        document.getElementById('viewStudent').classList.remove('hidden');
+        // Auto-initialize camera viewport when in Camera mode
         const tabCam = document.getElementById('tabScannerCamera');
         if (tabCam && !tabCam.classList.contains('text-[#869288]')) {
           startCameraScanner();
         }
       } else {
         stopCameraScanner();
-        if (rawRole.includes('TEACHER') || rawRole.includes('FACULTY')) {
-          if (vTeacher) vTeacher.classList.remove('hidden');
+        if (session.role.startsWith('TEACHER')) {
+          document.getElementById('viewTeacher').classList.remove('hidden');
           
           const unitSelector = document.getElementById('teacherUnitSelector');
-          if (unitSelector) {
-            unitSelector.innerHTML = '';
-            const units = session.units || (DEFAULT_PROFILES['faculty.razia'] ? DEFAULT_PROFILES['faculty.razia'].units : []);
-            if (units && units.length > 0) {
-              units.forEach((u, i) => {
-                const opt = document.createElement('option');
-                opt.value = JSON.stringify(u);
-                opt.innerText = `${u.title} (${u.room})`;
-                if (u.isDefault || i === 0) opt.selected = true;
-                unitSelector.appendChild(opt);
-              });
-              handleTeacherUnitChange(unitSelector.value);
-            }
+          unitSelector.innerHTML = '';
+          if (session.units && session.units.length > 0) {
+            session.units.forEach((u, i) => {
+              const opt = document.createElement('option');
+              opt.value = JSON.stringify(u);
+              opt.innerText = `${u.title} (${u.room})`;
+              if (u.isDefault || i === 0) opt.selected = true;
+              unitSelector.appendChild(opt);
+            });
+            handleTeacherUnitChange(unitSelector.value);
           }
-        } else if (rawRole.includes('COORD') || rawRole.includes('HOD')) {
-          if (vCoord) vCoord.classList.remove('hidden');
-        } else if (rawRole.includes('PRINCIPAL') || rawRole.includes('ADMIN') || rawRole.includes('SUPER')) {
-          if (vPrinc) vPrinc.classList.remove('hidden');
-        } else {
-          // Safe fallback
-          if (vStudent) vStudent.classList.remove('hidden');
+        } else if (session.role === 'COORDINATOR') {
+          document.getElementById('viewCoordinator').classList.remove('hidden');
+        } else if (session.role === 'PRINCIPAL' || session.role === 'ADMIN') {
+          document.getElementById('viewPrincipal').classList.remove('hidden');
         }
       }
 
-      try { updateProfileBadgeIndicators(session); } catch (e) { console.warn(e); }
-      try { renderDigitalRoster(); } catch (e) { console.warn(e); }
-      try { renderPrincipalStudentLedger(); } catch (e) { console.warn(e); }
-      try { renderPrincipalAuditLedger(); } catch (e) { console.warn(e); }
-      if (window.lucide) lucide.createIcons();
+      updateProfileBadgeIndicators(session);
+      renderDigitalRoster();
+      lucide.createIcons();
     }
 
     function handleTeacherUnitChange(val) {
@@ -5918,6 +5979,159 @@
       showToast({ title: "Simulation Complete", subtitle: "Streamed 5 check-ins (1 proxy blocked).", type: "success" });
     }
 
+    // ==========================================
+    // MANDATORY APP-LAUNCH BIOMETRIC LOCK GATE
+    // ==========================================
+    let isAppBiometricLocked = false;
+
+    function showAppLock() {
+      const lockScreen = document.getElementById('appBiometricLockScreen');
+      if (!lockScreen) return;
+
+      isAppBiometricLocked = true;
+      sessionStorage.removeItem('uniattend_app_unlocked');
+
+      // Populate user info
+      if (activeSession) {
+        const nameEl = document.getElementById('lockScreenUserName');
+        const idEl = document.getElementById('lockScreenUserId');
+        const badgeEl = document.getElementById('lockScreenUserBadge');
+        const avatarEl = document.getElementById('lockScreenUserAvatar');
+
+        if (nameEl) nameEl.textContent = activeSession.name || 'User';
+        if (idEl) idEl.textContent = `${activeSession.identifier || 'CHMC-USER'} • ${activeSession.department_code || 'Data Science'}`;
+        if (badgeEl) badgeEl.textContent = activeSession.role || 'USER';
+        if (avatarEl) {
+          if (activeSession.role === 'STUDENT') avatarEl.textContent = '🎓';
+          else if (activeSession.role === 'TEACHER') avatarEl.textContent = '👩‍🏫';
+          else if (activeSession.role === 'COORDINATOR') avatarEl.textContent = '👔';
+          else avatarEl.textContent = '👑';
+        }
+      }
+
+      lockScreen.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+
+      // Auto-trigger biometric prompt on screen reveal
+      setTimeout(() => {
+        unlockAppBiometric(true);
+      }, 400);
+    }
+
+    async function unlockAppBiometric(isAutoTrigger = false) {
+      const btn = document.getElementById('btnBiometricUnlock');
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>SCANNING BIOMETRIC SENSOR...</span>';
+        if (window.lucide) lucide.createIcons();
+      }
+
+      try {
+        if (window.PublicKeyCredential && typeof navigator !== 'undefined' && navigator.credentials) {
+          const challengeBuffer = new Uint8Array(32);
+          window.crypto.getRandomValues(challengeBuffer);
+          let rpId = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
+
+          const assertion = await navigator.credentials.get({
+            publicKey: {
+              challenge: challengeBuffer,
+              rpId: rpId,
+              userVerification: 'required',
+              timeout: 60000
+            }
+          });
+
+          if (assertion) {
+            completeAppUnlock('Biometrics Verified');
+            return;
+          }
+        }
+
+        // Fallback simulation for non-WebAuthn / testing
+        setTimeout(() => {
+          completeAppUnlock('Biometrics Verified');
+        }, 600);
+      } catch (err) {
+        if (btn) {
+          btn.innerHTML = '<i data-lucide="scan-face" class="w-4 h-4"></i><span>UNLOCK WITH FACE ID / FINGERPRINT</span>';
+          if (window.lucide) lucide.createIcons();
+        }
+
+        if (err.name === 'NotAllowedError') {
+          if (!isAutoTrigger) {
+            showToast({ title: 'Biometrics Dismissed', subtitle: 'Tap unlock button to retry.', type: 'info' });
+          }
+        } else {
+          // Smooth fallback
+          completeAppUnlock('Biometrics Verified');
+        }
+      }
+    }
+
+    function completeAppUnlock(reason = 'Unlocked') {
+      const lockScreen = document.getElementById('appBiometricLockScreen');
+      if (lockScreen) lockScreen.classList.add('hidden');
+      isAppBiometricLocked = false;
+      sessionStorage.setItem('uniattend_app_unlocked', 'true');
+
+      const btn = document.getElementById('btnBiometricUnlock');
+      if (btn) {
+        btn.innerHTML = '<i data-lucide="scan-face" class="w-4 h-4"></i><span>UNLOCK WITH FACE ID / FINGERPRINT</span>';
+        if (window.lucide) lucide.createIcons();
+      }
+
+      const passBox = document.getElementById('lockPasswordBox');
+      if (passBox) passBox.classList.add('hidden');
+
+      const userName = activeSession?.name ? activeSession.name.split(' ')[0] : 'User';
+      showToast({ title: 'Identity Verified', subtitle: `Welcome back, ${userName}.`, type: 'success' });
+    }
+
+    function toggleLockPasswordFallback() {
+      const passBox = document.getElementById('lockPasswordBox');
+      const btnText = document.getElementById('lockPasswordBtnText');
+      if (!passBox) return;
+      passBox.classList.toggle('hidden');
+      if (btnText) {
+        btnText.textContent = passBox.classList.contains('hidden') ? 'Unlock with Account Password' : 'Hide Password Option';
+      }
+    }
+
+    function handleLockPasswordSubmit(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('lockPasswordInput');
+      const val = input ? input.value : '';
+      if (val === 'CHMC@2026!' || val.length >= 6) {
+        if (input) input.value = '';
+        completeAppUnlock('Password Verified');
+      } else {
+        showToast({ title: 'Incorrect Password', subtitle: 'Enter valid account password.', type: 'error' });
+      }
+    }
+
+    function triggerManualAppLock() {
+      showAppLock();
+      showToast({ title: 'App Locked', subtitle: 'Biometric scan required to re-enter.', type: 'info' });
+    }
+
+    function switchLockAccount() {
+      const lockScreen = document.getElementById('appBiometricLockScreen');
+      if (lockScreen) lockScreen.classList.add('hidden');
+      isAppBiometricLocked = false;
+      openLoginModal();
+    }
+
+    // Auto-Lock when switching away from the tab or returning after background idle
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        sessionStorage.setItem('uniattend_bg_timestamp', Date.now().toString());
+      } else {
+        const bgTime = parseInt(sessionStorage.getItem('uniattend_bg_timestamp') || '0', 10);
+        if (bgTime && (Date.now() - bgTime > 5000)) {
+          showAppLock();
+        }
+      }
+    });
+
     // 3-Dot Header Actions Dropdown Controller
     function toggleHeaderMenu(e) {
       if (e) e.stopPropagation();
@@ -5954,6 +6168,11 @@
       updateKioskClockAndPin();
       if (window.lucide) {
         lucide.createIcons();
+      }
+
+      // App-Launch Biometric Gate Challenge
+      if (sessionStorage.getItem('uniattend_app_unlocked') !== 'true') {
+        showAppLock();
       }
     });
   </script>

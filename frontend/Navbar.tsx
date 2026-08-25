@@ -9,7 +9,8 @@ import {
   Fingerprint, 
   LogOut, 
   Sparkles,
-  ChevronDown
+  ChevronDown,
+  Lock
 } from 'lucide-react';
 
 export type UserRole = 'STUDENT' | 'FACULTY' | 'ADMIN';
@@ -30,6 +31,7 @@ interface NavbarProps {
   onRoleChange: (role: UserRole) => void;
   onOpenProfile: () => void;
   onOpenQuickTour?: () => void;
+  onLockApp?: () => void;
   onLogout: () => void;
 }
 
@@ -39,6 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onRoleChange,
   onOpenProfile,
   onOpenQuickTour,
+  onLockApp,
   onLogout,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -182,6 +185,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <KeyRound className="w-4 h-4 text-ochre" />
                     <span>Emergency Device Reset</span>
                   </button>
+
+                  {onLockApp && (
+                    <button
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        onLockApp();
+                      }}
+                      className="w-full flex items-center space-x-2.5 px-3 py-2 text-xs font-medium text-forest hover:bg-sage-bg/30 rounded-xl transition text-left font-semibold"
+                    >
+                      <Lock className="w-4 h-4 text-forest" />
+                      <span>Lock Application Now</span>
+                    </button>
+                  )}
 
                   <div className="my-1 border-t border-border/60"></div>
 

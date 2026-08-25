@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToastProvider, useToast } from './Toast';
 import { Navbar, UserRole, UserSession } from './Navbar';
 import { StudentHome } from './StudentHome';
 import { FacultyKiosk } from './FacultyKiosk';
 import { AdminPortal } from './AdminPortal';
 import { StudentProfileEdit } from './StudentProfileEdit';
+import { AppLockGate, AppLockUser } from './AppLockGate';
 import { Sparkles, CheckCircle2, QrCode, Play, ShieldCheck, X } from 'lucide-react';
 
 const INITIAL_SESSIONS: Record<UserRole, UserSession> = {
@@ -39,11 +40,32 @@ const INITIAL_SESSIONS: Record<UserRole, UserSession> = {
 
 const MainContent: React.FC = () => {
   const [currentRole, setCurrentRole] = useState<UserRole>('STUDENT');
+  const [isAppLocked, setIsAppLocked] = useState<boolean>(true); // App-launch biometric lock
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isQuickTourOpen, setIsQuickTourOpen] = useState(false);
   const toast = useToast();
 
   const userSession = INITIAL_SESSIONS[currentRole];
+
+  // Auto-Lock Lifecycle: Re-authenticate on background return or inactivity
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Tab went to background
+        sessionStorage.setItem('uniattend_background_time', Date.now().toString());
+      } else {
+        // Tab restored from background: prompt re-authentication if away > 5s
+        const bgTime = parseInt(sessionStorage.getItem('uniattend_background_time') || '0', 10);
+        if (bgTime && Date.now() - bgTime > 5000) {
+          setIsAppLocked(true);
+          toast.info('Session Locked', 'Biometric re-verification required.');
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [toast]);
 
   const handleRoleChange = (role: UserRole) => {
     setCurrentRole(role);
@@ -51,29 +73,55 @@ const MainContent: React.FC = () => {
   };
 
   const handleLogout = () => {
-    toast.info('Signed Out', 'Redirecting to login portal.');
+    setIsAppLocked(true);
+    toast.info('Signed Out', 'App locked. Authenticate to enter.');
+  };
+
+  const handleManualLock = () => {
+    setIsAppLocked(true);
+    toast.info('Application Locked', 'Biometric scan required.');
+  };
+
+  const appLockUserData: AppLockUser = {
+    name: userSession.name,
+    identifier: userSession.identifier,
+    role: userSession.role,
+    avatar: userSession.avatar,
+    department: userSession.department,
   };
 
   return (
     <div className="min-h-screen bg-canvas text-text-primary flex flex-col font-sans pb-20 md:pb-8">
-      {/* Top Persistent Header & Mobile Nav */}
+      {/* 1. MANDATORY APP-LAUNCH BIOMETRIC LOCK GATE */}
+      <AppLockGate
+        isLocked={isAppLocked}
+        user={appLockUserData}
+        onUnlock={() => setIsAppLocked(false)}
+        onSwitchAccount={() => {
+          setIsAppLocked(false);
+          setIsProfileOpen(true);
+        }}
+      />
+
+      {/* 2. TOP PERSISTENT NAVBAR & MOBILE DOCK */}
       <Navbar
         currentRole={currentRole}
         userSession={userSession}
         onRoleChange={handleRoleChange}
         onOpenProfile={() => setIsProfileOpen(true)}
         onOpenQuickTour={() => setIsQuickTourOpen(true)}
+        onLockApp={handleManualLock}
         onLogout={handleLogout}
       />
 
-      {/* Main Dynamic View Area */}
+      {/* 3. DYNAMIC ROLE-BASED PORTAL */}
       <main className="flex-1">
         {currentRole === 'STUDENT' && <StudentHome />}
         {currentRole === 'FACULTY' && <FacultyKiosk />}
         {currentRole === 'ADMIN' && <AdminPortal />}
       </main>
 
-      {/* Profile & Biometric Linking Modal */}
+      {/* 4. STUDENT PROFILE & BIOMETRIC LINKING MODAL */}
       {isProfileOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface rounded-3xl border border-border shadow-organic-card max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 relative animate-in fade-in">
@@ -104,7 +152,7 @@ const MainContent: React.FC = () => {
         </div>
       )}
 
-      {/* 5-Second Zero-Learning-Curve Quick Tour Modal */}
+      {/* 5. 5-SECOND QUICK START GUIDE MODAL */}
       {isQuickTourOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-surface rounded-3xl border border-border shadow-organic-card max-w-md w-full p-6 sm:p-8 space-y-6 animate-in fade-in">
