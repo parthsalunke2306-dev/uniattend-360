@@ -5,16 +5,13 @@ import {
   Square, 
   Maximize2, 
   Minimize2, 
-  QrCode, 
   Users, 
   ShieldAlert, 
-  PlusCircle, 
-  Sparkles, 
-  CheckCircle2, 
   MapPin, 
-  BookOpen, 
-  Clock, 
-  AlertTriangle 
+  Clock,
+  AlertTriangle,
+  CheckCircle2,
+  X
 } from 'lucide-react';
 import { useToast } from './Toast';
 
@@ -31,6 +28,11 @@ export interface LectureSession {
   status: 'SCHEDULED' | 'ACTIVE' | 'PAUSED' | 'COMPLETED';
   presentCount: number;
   totalEnrolled: number;
+}
+
+interface FacultyKioskProps {
+  fallbackAlerts?: string[];
+  onClearFallbackAlerts?: () => void;
 }
 
 const INITIAL_FACULTY_LECTURES: LectureSession[] = [
@@ -64,16 +66,19 @@ const INITIAL_FACULTY_LECTURES: LectureSession[] = [
   },
 ];
 
-export const FacultyKiosk: React.FC = () => {
+export const FacultyKiosk: React.FC<FacultyKioskProps> = ({
+  fallbackAlerts = [],
+  onClearFallbackAlerts,
+}) => {
   const toast = useToast();
   const [lectures, setLectures] = useState<LectureSession[]>(INITIAL_FACULTY_LECTURES);
   const [selectedId, setSelectedId] = useState<string>(INITIAL_FACULTY_LECTURES[0].id);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [secondsRemaining, setSecondsRemaining] = useState<number>(8);
   const [currentPin, setCurrentPin] = useState<string>('849201');
-  const [flaggedProxiesCount, setFlaggedProxiesCount] = useState<number>(1);
 
   const activeLecture = lectures.find((l) => l.id === selectedId) || lectures[0];
+  const totalAlertsCount = 1 + fallbackAlerts.length;
 
   // 8-second rotating TOTP & QR Epoch Loop
   useEffect(() => {
@@ -156,6 +161,52 @@ export const FacultyKiosk: React.FC = () => {
 
       </div>
 
+      {/* REAL-TIME SECURITY / PROXY ALERT FEED BANNER */}
+      {totalAlertsCount > 0 && (
+        <div className="p-4 sm:p-5 rounded-3xl bg-clay-bg/30 border border-clay/30 space-y-2.5 animate-in fade-in">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="p-1 rounded-lg bg-clay-bg text-clay font-bold">
+                <ShieldAlert className="w-4 h-4" />
+              </div>
+              <h4 className="text-xs font-bold text-clay uppercase tracking-wider font-mono">
+                Live Security & Biometric Bypass Interceptions ({totalAlertsCount})
+              </h4>
+            </div>
+            {onClearFallbackAlerts && (
+              <button
+                onClick={onClearFallbackAlerts}
+                className="text-[10px] font-mono text-text-muted hover:text-text-primary px-2 py-0.5 rounded bg-surface border border-border"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+
+          <div className="space-y-1.5 text-xs">
+            <div className="p-2.5 rounded-xl bg-surface border border-border flex items-center justify-between text-text-primary">
+              <span className="font-medium text-clay flex items-center space-x-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                <span>🚨 Remote Proxy Intercepted: Roll #002 tried checking in from 1.8km away.</span>
+              </span>
+              <span className="text-[10px] font-mono text-text-muted">BLOCKED</span>
+            </div>
+
+            {fallbackAlerts.map((alert, idx) => (
+              <div key={idx} className="p-2.5 rounded-xl bg-surface border border-border flex items-center justify-between text-text-primary">
+                <span className="font-medium text-ochre flex items-center space-x-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-ochre" />
+                  <span>{alert}</span>
+                </span>
+                <span className="text-[10px] font-mono text-ochre font-bold bg-ochre-bg px-1.5 py-0.2 rounded border border-ochre/30">
+                  FLAGGED
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* 2. THE PRESENTATION STAGE (Step 2 & 3: Clean Projector View) */}
       <div className="p-6 sm:p-10 rounded-3xl bg-surface border border-border shadow-organic-card space-y-8">
         
@@ -181,14 +232,12 @@ export const FacultyKiosk: React.FC = () => {
             </p>
           </div>
 
-          {/* Location Anchor Indicator */}
           <div className="flex items-center space-x-2 text-xs font-mono text-text-secondary bg-elevated px-3 py-1.5 rounded-xl border border-border self-start">
             <MapPin className="w-3.5 h-3.5 text-forest" />
             <span>Classroom Perimeter: ±3.0m Verified</span>
           </div>
         </div>
 
-        {/* Center: Split Screen Projector Stage */}
         {activeLecture.status === 'SCHEDULED' ? (
           <div className="py-16 text-center space-y-5 max-w-md mx-auto">
             <div className="w-16 h-16 rounded-3xl bg-sage-bg text-forest mx-auto flex items-center justify-center border border-sage/30 shadow-md">
@@ -255,10 +304,10 @@ export const FacultyKiosk: React.FC = () => {
                     {activeLecture.presentCount} of {activeLecture.totalEnrolled} Students Present
                   </span>
                 </div>
-                {flaggedProxiesCount > 0 && (
+                {totalAlertsCount > 0 && (
                   <span className="flex items-center space-x-1 text-[11px] font-semibold text-clay bg-clay-bg px-2.5 py-1 rounded-full border border-clay/30">
                     <ShieldAlert className="w-3.5 h-3.5" />
-                    <span>{flaggedProxiesCount} Remote Proxy Intercepted</span>
+                    <span>{totalAlertsCount} Security Flags</span>
                   </span>
                 )}
               </div>

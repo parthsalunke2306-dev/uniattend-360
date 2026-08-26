@@ -5,7 +5,7 @@ import { StudentHome } from './StudentHome';
 import { FacultyKiosk } from './FacultyKiosk';
 import { AdminPortal } from './AdminPortal';
 import { StudentProfileEdit } from './StudentProfileEdit';
-import { AppLockGate, AppLockUser } from './AppLockGate';
+import { AppLockGate, AppLockUser, UnlockMethod } from './AppLockGate';
 import { Sparkles, CheckCircle2, QrCode, Play, ShieldCheck, X } from 'lucide-react';
 
 const INITIAL_SESSIONS: Record<UserRole, UserSession> = {
@@ -40,6 +40,7 @@ const INITIAL_SESSIONS: Record<UserRole, UserSession> = {
 
 const MainContent: React.FC = () => {
   const [currentRole, setCurrentRole] = useState<UserRole>('STUDENT');
+  const [fallbackProxyAlerts, setFallbackProxyAlerts] = useState<string[]>([]);
   
   // Automatic Browser-Close Session Biometric Lock:
   // Evaluates sessionStorage on initial app launch. If browser/tab was closed, sessionStorage is empty, triggering biometric gate.
@@ -54,9 +55,15 @@ const MainContent: React.FC = () => {
 
   const userSession = INITIAL_SESSIONS[currentRole];
 
-  const handleUnlock = () => {
+  const handleUnlock = (method: UnlockMethod) => {
     setIsAppLocked(false);
     sessionStorage.setItem('uniattend_session_unlocked', 'true');
+
+    if (method === 'FALLBACK_2FA') {
+      const alertMsg = `⚠️ Fallback Access Flag: ${userSession.name} (${userSession.identifier}) logged in via Email 2FA (Bypassed Hardware Biometrics).`;
+      setFallbackProxyAlerts((prev) => [alertMsg, ...prev]);
+      toast.warning('Faculty Alert Dispatched', 'Real-time proxy flag sent to lecturing staff.');
+    }
   };
 
   const handleRoleChange = (role: UserRole) => {
@@ -104,7 +111,12 @@ const MainContent: React.FC = () => {
       {/* 3. DYNAMIC ROLE-BASED PORTAL */}
       <main className="flex-1">
         {currentRole === 'STUDENT' && <StudentHome />}
-        {currentRole === 'FACULTY' && <FacultyKiosk />}
+        {currentRole === 'FACULTY' && (
+          <FacultyKiosk 
+            fallbackAlerts={fallbackProxyAlerts} 
+            onClearFallbackAlerts={() => setFallbackProxyAlerts([])} 
+          />
+        )}
         {currentRole === 'ADMIN' && <AdminPortal />}
       </main>
 
