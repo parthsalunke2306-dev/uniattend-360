@@ -265,9 +265,8 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
               
               {/* Field 1: Name * */}
               <div className="space-y-1">
-                <label className="text-xs font-mono font-bold text-text-primary flex items-center justify-between">
-                  <span>Name <span className="text-clay">*</span></span>
-                  <span className="text-[10px] font-normal text-text-muted">Full Name</span>
+                <label className="text-xs font-mono font-bold text-text-primary block">
+                  Name <span className="text-clay">*</span>
                 </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-text-muted absolute left-3 top-3" />
@@ -284,9 +283,8 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
 
               {/* Field 2: Roll no * */}
               <div className="space-y-1">
-                <label className="text-xs font-mono font-bold text-text-primary flex items-center justify-between">
-                  <span>Roll no <span className="text-clay">*</span></span>
-                  <span className="text-[10px] font-normal text-text-muted">Roll / Faculty ID</span>
+                <label className="text-xs font-mono font-bold text-text-primary block">
+                  Roll no <span className="text-clay">*</span>
                 </label>
                 <div className="relative">
                   <IdCard className="w-4 h-4 text-text-muted absolute left-3 top-3" />
@@ -303,9 +301,8 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
 
               {/* Field 3: Email * */}
               <div className="space-y-1">
-                <label className="text-xs font-mono font-bold text-text-primary flex items-center justify-between">
-                  <span>Email <span className="text-clay">*</span></span>
-                  <span className="text-[10px] font-normal text-text-muted">Registered Email</span>
+                <label className="text-xs font-mono font-bold text-text-primary block">
+                  Email <span className="text-clay">*</span>
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-text-muted absolute left-3 top-3" />
@@ -322,9 +319,8 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
 
               {/* Field 4: Password * */}
               <div className="space-y-1">
-                <label className="text-xs font-mono font-bold text-text-primary flex items-center justify-between">
-                  <span>Password <span className="text-clay">*</span></span>
-                  <span className="text-[10px] font-normal text-text-muted">Argon2id Hash</span>
+                <label className="text-xs font-mono font-bold text-text-primary block">
+                  Password <span className="text-clay">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-text-muted absolute left-3 top-3" />
