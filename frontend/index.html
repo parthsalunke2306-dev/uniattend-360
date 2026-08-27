@@ -267,143 +267,289 @@
   <div id="toastContainer" class="fixed top-4 right-4 sm:top-5 sm:right-5 z-[99999] flex flex-col space-y-2 pointer-events-none max-w-sm w-full"></div>
 
   <!-- ============================================== -->
-  <!-- ============================================== -->
-  <!-- MANDATORY APP-LAUNCH BIOMETRIC LOCK GATE SCREEN -->
-  <!-- ============================================== -->
-  <div id="appBiometricLockScreen" class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/60 backdrop-blur-2xl transition-all duration-300 hidden">
-    <div class="glass-panel w-full max-w-sm sm:max-w-md p-6 sm:p-8 rounded-3xl border border-[#D5E4D8] shadow-2xl space-y-5 text-center relative overflow-hidden max-h-[92vh] overflow-y-auto">
+  <!-- ============================================================== -->
+  <!-- MANDATORY APP-LAUNCH GATE: 1. LOGIN/SIGN IN -> 2. BIOMETRIC -> UNLOCK -->
+  <!-- ============================================================== -->
+  <div id="appBiometricLockScreen" class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/60 backdrop-blur-2xl transition-all duration-300">
+    <div class="glass-panel w-full max-w-sm sm:max-w-md p-6 sm:p-8 rounded-3xl border border-[#D5E4D8] shadow-2xl space-y-4 text-center relative overflow-hidden max-h-[92vh] overflow-y-auto">
       
-      <div class="space-y-1 relative z-10">
-        <!-- Device Mode Badge -->
-        <div class="flex items-center justify-center mb-1">
-          <span id="lockScreenDeviceBadge" class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-[#2F5238] border border-emerald-500/20">
-            <i data-lucide="smartphone" class="w-3 h-3"></i>
-            <span>Mobile Biometric Gate (Strict)</span>
+      <!-- STAGE 1: LOGIN / SIGN IN FORM (EXACT MATCH TO HAND-DRAWN SKETCH) -->
+      <div id="gateLoginStage" class="space-y-4 text-left animate-in fade-in">
+        
+        <!-- Header & Institution Branding -->
+        <div class="text-center space-y-1 pb-1 border-b border-[#E8E3DA]">
+          <div class="flex items-center justify-center mb-1">
+            <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-[#2F5238] border border-emerald-500/20">
+              <i data-lucide="shield-check" class="w-3 h-3"></i>
+              <span>Smt. C.H.M. College • UniAttend 360</span>
+            </span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-serif font-bold text-[#1C241E] tracking-tight">
+            Login / Sign in
+          </h2>
+          <p class="text-[11px] text-[#5A655C] font-sans">
+            Enter your credentials to initiate hardware biometric verification.
+          </p>
+        </div>
+
+        <!-- The 4 Core Fields from Sketch -->
+        <form id="gateLoginForm" onsubmit="handleGateLoginSubmit(event)" class="space-y-3.5">
+          
+          <!-- Field 1: Name * -->
+          <div class="space-y-1">
+            <label class="text-xs font-mono font-bold text-[#1C241E] flex items-center justify-between">
+              <span>Name <span class="text-[#8D3F30]">*</span></span>
+              <span class="text-[10px] font-normal text-[#869288]">Full Name</span>
+            </label>
+            <div class="relative">
+              <i data-lucide="user" class="w-4 h-4 text-[#869288] absolute left-3 top-3"></i>
+              <input 
+                type="text" 
+                id="gateInputName" 
+                placeholder="Enter full name (e.g. Alex Chen)" 
+                required 
+                value="Alex Chen"
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+            </div>
+          </div>
+
+          <!-- Field 2: Roll no * -->
+          <div class="space-y-1">
+            <label class="text-xs font-mono font-bold text-[#1C241E] flex items-center justify-between">
+              <span>Roll no <span class="text-[#8D3F30]">*</span></span>
+              <span class="text-[10px] font-normal text-[#869288]">Roll / Faculty ID</span>
+            </label>
+            <div class="relative">
+              <i data-lucide="id-card" class="w-4 h-4 text-[#869288] absolute left-3 top-3"></i>
+              <input 
+                type="text" 
+                id="gateInputRollNo" 
+                placeholder="e.g. CHMC-DS-2024-001 or Faculty ID" 
+                required 
+                value="CHMC-DS-2024-001"
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+            </div>
+          </div>
+
+          <!-- Field 3: Email * -->
+          <div class="space-y-1">
+            <label class="text-xs font-mono font-bold text-[#1C241E] flex items-center justify-between">
+              <span>Email <span class="text-[#8D3F30]">*</span></span>
+              <span class="text-[10px] font-normal text-[#869288]">Registered Email</span>
+            </label>
+            <div class="relative">
+              <i data-lucide="mail" class="w-4 h-4 text-[#869288] absolute left-3 top-3"></i>
+              <input 
+                type="email" 
+                id="gateInputEmail" 
+                placeholder="e.g. alex.chen@chmc.edu" 
+                required 
+                value="alex.chen@chmc.edu"
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+            </div>
+          </div>
+
+          <!-- Field 4: Password * -->
+          <div class="space-y-1">
+            <label class="text-xs font-mono font-bold text-[#1C241E] flex items-center justify-between">
+              <span>Password <span class="text-[#8D3F30]">*</span></span>
+              <span class="text-[10px] font-normal text-[#869288]">Argon2id Hash</span>
+            </label>
+            <div class="relative">
+              <i data-lucide="lock" class="w-4 h-4 text-[#869288] absolute left-3 top-3"></i>
+              <input 
+                type="password" 
+                id="gateInputPassword" 
+                placeholder="Enter password (CHMC@2026!)" 
+                required 
+                value="CHMC@2026!"
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-10 py-2.5 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+              <button type="button" onclick="toggleGatePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
+                <i data-lucide="eye" id="gatePasswordEyeIcon" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Error Alert Banner -->
+          <div id="gateLoginError" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[11px] font-mono text-center"></div>
+
+          <!-- Action Button: Login / Sign in -->
+          <button 
+            type="submit" 
+            id="btnGateLoginSubmit" 
+            class="w-full py-3.5 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
+          >
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+            <span>Login / Sign in</span>
+          </button>
+        </form>
+
+        <!-- 1-Click Persona Quick-Fill Chips -->
+        <div class="pt-2 border-t border-[#E8E3DA] space-y-1.5">
+          <span class="text-[9px] font-mono text-[#869288] uppercase tracking-wider block text-center">⚡ Quick-Fill Demo Profiles:</span>
+          <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
+            <button type="button" onclick="fillGateLogin('Alex Chen', 'CHMC-DS-2024-001', 'alex.chen@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-[#2F5238] text-left truncate font-bold">
+              🎓 Alex Chen (001)
+            </button>
+            <button type="button" onclick="fillGateLogin('Aarav Sharma', 'CHMC-DS-2024-002', 'aarav.sharma@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-[#E8E3DA] text-[#2F5238] text-left truncate">
+              🎓 Aarav (002)
+            </button>
+            <button type="button" onclick="fillGateLogin('Miss Razia Khan', 'faculty.razia', 'razia.khan@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-[#2F5238] text-left truncate">
+              👩‍🏫 Miss Razia (Faculty)
+            </button>
+            <button type="button" onclick="fillGateLogin('Mrs. Shiji Wilson', 'coordinator.ds', 'shiji.wilson@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-[#2F5238] text-left truncate">
+              👔 Mrs. Shiji (HOD)
+            </button>
+            <button type="button" onclick="fillGateLogin('Dr. Manju Lalwani Pathak', 'principal.chmc', 'principal@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-[#2F5238] text-left truncate font-bold col-span-2 text-center">
+              👑 Dr. Manju Lalwani Pathak (Principal & Super Admin)
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- STAGE 2: BIOMETRIC VERIFICATION GATE (APPEARS AFTER LOGIN SUBMIT) -->
+      <div id="gateBiometricStage" class="space-y-4 text-center hidden animate-in fade-in">
+        
+        <div class="space-y-1 relative z-10">
+          <div class="flex items-center justify-center mb-1">
+            <span id="lockScreenDeviceBadge" class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-[#2F5238] border border-emerald-500/20">
+              <i data-lucide="smartphone" class="w-3 h-3"></i>
+              <span>Hardware Biometric Gate</span>
+            </span>
+          </div>
+
+          <div class="h-11 w-11 rounded-2xl bg-gradient-to-tr from-[#2F5238] to-[#4A6B53] p-0.5 mx-auto shadow-md flex items-center justify-center">
+            <div class="h-full w-full bg-[#FBF9F5] rounded-[14px] flex items-center justify-center">
+              <i data-lucide="shield-check" class="w-5 h-5 text-[#2F5238]"></i>
+            </div>
+          </div>
+          <h2 class="text-lg font-serif font-bold text-[#1C241E]">Biometric Verification</h2>
+          <p class="text-[11px] text-[#5A655C] font-sans font-medium">Verify your hardware passkey to unlock the portal.</p>
+        </div>
+
+        <!-- Active User Identity Card -->
+        <div class="p-3 rounded-2xl bg-[#F5F2EB] border border-[#E8E3DA] flex items-center space-x-3 text-left">
+          <div id="lockScreenUserAvatar" class="w-10 h-10 rounded-xl bg-emerald-500/20 text-[#2F5238] flex items-center justify-center text-lg font-bold border border-emerald-500/30 shrink-0">
+            🎓
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center space-x-2">
+              <p id="lockScreenUserName" class="font-bold text-xs sm:text-sm text-[#1C241E] truncate">Alex Chen</p>
+              <span id="lockScreenUserBadge" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#2F5238] text-white shrink-0">STUDENT</span>
+            </div>
+            <p id="lockScreenUserId" class="text-[10px] text-[#869288] font-mono truncate">CHMC-DS-2024-001 • Data Science</p>
+          </div>
+        </div>
+
+        <!-- 3-Strike Biometric Meter (Mobile Enforced) -->
+        <div id="lockScreenStrikeMeter" class="p-3 rounded-2xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-2 text-left">
+          <div class="flex items-center justify-between text-[11px] font-mono">
+            <span class="text-[#869288] font-bold uppercase">Biometric Attempts</span>
+            <span id="lockScreenStrikeText" class="font-bold text-[#2F5238]">0 of 3 Strikes Used</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div id="strikeDot1" class="h-2 rounded-full bg-[#2F5238]/30 transition-all"></div>
+            <div id="strikeDot2" class="h-2 rounded-full bg-[#2F5238]/30 transition-all"></div>
+            <div id="strikeDot3" class="h-2 rounded-full bg-[#2F5238]/30 transition-all"></div>
+          </div>
+          <p id="lockScreenStrikeDesc" class="text-[10px] text-[#869288]">
+            🔒 2FA Fallback locked until 3 failed sensor attempts (3 remaining).
+          </p>
+        </div>
+
+        <!-- Pulsing Biometric Sensor -->
+        <div id="lockBiometricSensorBox" class="py-1 flex flex-col items-center justify-center space-y-2">
+          <div class="relative">
+            <div id="lockSensorIconWrap" class="w-16 h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500/30 flex items-center justify-center text-[#2F5238] shadow-md transition-colors">
+              <i id="lockSensorIcon" data-lucide="fingerprint" class="w-8 h-8 animate-pulse text-[#2F5238]"></i>
+            </div>
+            <div id="lockSensorPing" class="absolute inset-0 rounded-full border-2 border-[#2F5238]/30 animate-ping pointer-events-none"></div>
+          </div>
+          <p id="lockSensorTitle" class="text-xs font-bold text-[#1C241E]">Device Verification Required</p>
+          <p id="lockSensorDesc" class="text-[10px] text-[#5A655C] max-w-xs">Verify with Face ID, Touch ID, or Android Fingerprint to access dashboard.</p>
+        </div>
+
+        <!-- Action Deck -->
+        <div class="space-y-2 pt-1">
+          <!-- Biometric Unlock Button -->
+          <button onclick="unlockAppBiometric()" id="btnBiometricUnlock" class="w-full py-3 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs font-mono shadow-md flex items-center justify-center space-x-2 transition">
+            <i data-lucide="scan-face" class="w-4 h-4"></i>
+            <span>UNLOCK WITH FACE ID / FINGERPRINT</span>
+          </button>
+
+          <!-- 2FA Fallback Trigger Button -->
+          <button onclick="toggleLockPasswordFallback()" id="btnToggleLockFallback" class="w-full py-2 px-4 rounded-xl bg-[#F5F2EB] text-[#869288] font-semibold text-xs border border-[#E8E3DA] flex items-center justify-center space-x-1.5 transition cursor-not-allowed" disabled>
+            <i data-lucide="key-round" class="w-3.5 h-3.5 text-[#C28222]"></i>
+            <span id="lockPasswordBtnText">🔒 2FA Fallback Locked (3 Biometric Fails Required)</span>
+          </button>
+
+          <!-- 2-Factor Emergency Fallback Form (Password + Email OTP) -->
+          <div id="lockPasswordBox" class="hidden space-y-3 pt-2 text-left animate-in fade-in">
+            <form onsubmit="handle2FAFallbackSubmit(event)" class="space-y-3">
+              <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[10px] text-[#1C241E] space-y-0.5">
+                <div class="flex items-center space-x-1 text-amber-700 font-bold">
+                  <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                  <span>2-Factor Emergency Identity Verification</span>
+                </div>
+                <p class="text-[#5A655C]">Requires both your account password and a one-time code sent to your college email.</p>
+              </div>
+
+              <!-- Field 1: Password -->
+              <div class="space-y-1">
+                <label class="text-[10px] font-mono text-[#869288]">1. Account Password:</label>
+                <div class="relative">
+                  <input type="password" id="lockPasswordInput" placeholder="Enter password (CHMC@2026!)" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-3 pr-10 py-2 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] font-mono">
+                  <button type="button" onclick="toggleLockPasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
+                    <i data-lucide="eye" id="lockPasswordEyeIcon" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Field 2: Email OTP -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <label class="text-[10px] font-mono text-[#869288]">2. College Email OTP:</label>
+                  <span id="lockEmailDisplay" class="text-[9px] font-mono text-[#869288] truncate max-w-[150px]">alex.chen@chmc.edu</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <input type="text" id="lockEmailOtpInput" maxlength="6" placeholder="6-Digit OTP" required class="flex-1 bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] font-mono text-center font-bold tracking-widest">
+                  <button type="button" id="btnSendLockOtp" onclick="sendLockEmailOtp()" class="px-3 py-2 rounded-xl text-[11px] font-bold font-mono bg-emerald-500/15 text-[#2F5238] hover:bg-emerald-500/25 border border-emerald-500/30 transition shrink-0 flex items-center space-x-1">
+                    <i data-lucide="send" class="w-3 h-3"></i>
+                    <span id="btnSendLockOtpText">Send Code</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Security Proxy Warning Note -->
+              <p class="text-[9px] font-mono text-[#8D3F30] flex items-center space-x-1">
+                <i data-lucide="alert-triangle" class="w-3 h-3 shrink-0"></i>
+                <span>Notice: Unlocking via 2FA dispatches a proxy flag to your instructor.</span>
+              </p>
+
+              <button type="submit" class="w-full py-2.5 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs font-mono shadow-md transition">
+                Verify 2FA & Enter Portal →
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Footer / Back to Login Option -->
+        <div class="pt-2 border-t border-[#E8E3DA] flex items-center justify-between text-[10px] font-mono text-[#869288]">
+          <button type="button" onclick="showLoginStage()" class="hover:text-[#2F5238] transition flex items-center space-x-1">
+            <i data-lucide="arrow-left" class="w-3 h-3"></i>
+            <span>Back to Login</span>
+          </button>
+          <span class="flex items-center space-x-1 text-[#2F5238]">
+            <i data-lucide="shield" class="w-3 h-3"></i>
+            <span>FIDO2 Protected</span>
           </span>
         </div>
 
-        <div class="h-11 w-11 rounded-2xl bg-gradient-to-tr from-[#2F5238] to-[#4A6B53] p-0.5 mx-auto shadow-md flex items-center justify-center">
-          <div class="h-full w-full bg-[#FBF9F5] rounded-[14px] flex items-center justify-center">
-            <i data-lucide="shield-check" class="w-5 h-5 text-[#2F5238]"></i>
-          </div>
-        </div>
-        <h2 class="text-lg font-serif font-bold text-[#1C241E]">Smt. C.H.M. College</h2>
-        <p class="text-[11px] text-[#5A655C] font-sans font-medium">UniAttend 360 • Identity Re-Authentication Gate</p>
-      </div>
-
-      <!-- Active User Identity Card -->
-      <div class="p-3 rounded-2xl bg-[#F5F2EB] border border-[#E8E3DA] flex items-center space-x-3 text-left">
-        <div id="lockScreenUserAvatar" class="w-10 h-10 rounded-xl bg-emerald-500/20 text-[#2F5238] flex items-center justify-center text-lg font-bold border border-emerald-500/30 shrink-0">
-          🎓
-        </div>
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center space-x-2">
-            <p id="lockScreenUserName" class="font-bold text-xs sm:text-sm text-[#1C241E] truncate">Alex Chen</p>
-            <span id="lockScreenUserBadge" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#2F5238] text-white shrink-0">STUDENT</span>
-          </div>
-          <p id="lockScreenUserId" class="text-[10px] text-[#869288] font-mono truncate">CHMC-DS-2024-001 • Data Science</p>
-        </div>
-      </div>
-
-      <!-- 3-Strike Biometric Meter (Mobile Enforced) -->
-      <div id="lockScreenStrikeMeter" class="p-3 rounded-2xl bg-[#F5F2EB] border border-[#E8E3DA] space-y-2 text-left">
-        <div class="flex items-center justify-between text-[11px] font-mono">
-          <span class="text-[#869288] font-bold uppercase">Biometric Attempts</span>
-          <span id="lockScreenStrikeText" class="font-bold text-[#2F5238]">0 of 3 Strikes Used</span>
-        </div>
-        <div class="grid grid-cols-3 gap-2">
-          <div id="strikeDot1" class="h-2 rounded-full bg-[#2F5238]/30 transition-all"></div>
-          <div id="strikeDot2" class="h-2 rounded-full bg-[#2F5238]/30 transition-all"></div>
-          <div id="strikeDot3" class="h-2 rounded-full bg-[#2F5238]/30 transition-all"></div>
-        </div>
-        <p id="lockScreenStrikeDesc" class="text-[10px] text-[#869288]">
-          🔒 2FA Fallback locked until 3 failed sensor attempts (3 remaining).
-        </p>
-      </div>
-
-      <!-- Pulsing Biometric Sensor -->
-      <div id="lockBiometricSensorBox" class="py-1 flex flex-col items-center justify-center space-y-2">
-        <div class="relative">
-          <div id="lockSensorIconWrap" class="w-16 h-16 rounded-full bg-emerald-500/15 border-2 border-emerald-500/30 flex items-center justify-center text-[#2F5238] shadow-md transition-colors">
-            <i id="lockSensorIcon" data-lucide="fingerprint" class="w-8 h-8 animate-pulse text-[#2F5238]"></i>
-          </div>
-          <div id="lockSensorPing" class="absolute inset-0 rounded-full border-2 border-[#2F5238]/30 animate-ping pointer-events-none"></div>
-        </div>
-        <p id="lockSensorTitle" class="text-xs font-bold text-[#1C241E]">Application Locked for Security</p>
-        <p id="lockSensorDesc" class="text-[10px] text-[#5A655C] max-w-xs">Verify with Face ID, Touch ID, or Android Fingerprint to access dashboard.</p>
-      </div>
-
-      <!-- Action Deck -->
-      <div class="space-y-2 pt-1">
-        <!-- Biometric Unlock Button -->
-        <button onclick="unlockAppBiometric()" id="btnBiometricUnlock" class="w-full py-3 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs font-mono shadow-md flex items-center justify-center space-x-2 transition">
-          <i data-lucide="scan-face" class="w-4 h-4"></i>
-          <span>UNLOCK WITH FACE ID / FINGERPRINT</span>
-        </button>
-
-        <!-- 2FA Fallback Trigger Button -->
-        <button onclick="toggleLockPasswordFallback()" id="btnToggleLockFallback" class="w-full py-2 px-4 rounded-xl bg-[#F5F2EB] text-[#869288] font-semibold text-xs border border-[#E8E3DA] flex items-center justify-center space-x-1.5 transition cursor-not-allowed" disabled>
-          <i data-lucide="key-round" class="w-3.5 h-3.5 text-[#C28222]"></i>
-          <span id="lockPasswordBtnText">🔒 2FA Fallback Locked (3 Biometric Fails Required)</span>
-        </button>
-
-        <!-- 2-Factor Emergency Fallback Form (Password + Email OTP) -->
-        <div id="lockPasswordBox" class="hidden space-y-3 pt-2 text-left animate-in fade-in">
-          <form onsubmit="handle2FAFallbackSubmit(event)" class="space-y-3">
-            <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[10px] text-[#1C241E] space-y-0.5">
-              <div class="flex items-center space-x-1 text-amber-700 font-bold">
-                <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
-                <span>2-Factor Emergency Identity Verification</span>
-              </div>
-              <p class="text-[#5A655C]">Requires both your account password and a one-time code sent to your college email.</p>
-            </div>
-
-            <!-- Field 1: Password -->
-            <div class="space-y-1">
-              <label class="text-[10px] font-mono text-[#869288]">1. Account Password:</label>
-              <div class="relative">
-                <input type="password" id="lockPasswordInput" placeholder="Enter password (CHMC@2026!)" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-3 pr-10 py-2 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] font-mono">
-                <button type="button" onclick="toggleLockPasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
-                  <i data-lucide="eye" id="lockPasswordEyeIcon" class="w-3.5 h-3.5"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- Field 2: Email OTP -->
-            <div class="space-y-1">
-              <div class="flex items-center justify-between">
-                <label class="text-[10px] font-mono text-[#869288]">2. College Email OTP:</label>
-                <span id="lockEmailDisplay" class="text-[9px] font-mono text-[#869288] truncate max-w-[150px]">alex.chen@chmc.edu</span>
-              </div>
-              <div class="flex items-center space-x-2">
-                <input type="text" id="lockEmailOtpInput" maxlength="6" placeholder="6-Digit OTP" required class="flex-1 bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] font-mono text-center font-bold tracking-widest">
-                <button type="button" id="btnSendLockOtp" onclick="sendLockEmailOtp()" class="px-3 py-2 rounded-xl text-[11px] font-bold font-mono bg-emerald-500/15 text-[#2F5238] hover:bg-emerald-500/25 border border-emerald-500/30 transition shrink-0 flex items-center space-x-1">
-                  <i data-lucide="send" class="w-3 h-3"></i>
-                  <span id="btnSendLockOtpText">Send Code</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Security Proxy Warning Note -->
-            <p class="text-[9px] font-mono text-[#8D3F30] flex items-center space-x-1">
-              <i data-lucide="alert-triangle" class="w-3 h-3 shrink-0"></i>
-              <span>Notice: Unlocking via 2FA dispatches a proxy flag to your instructor.</span>
-            </p>
-
-            <button type="submit" class="w-full py-2.5 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs font-mono shadow-md transition">
-              Verify 2FA & Enter Portal →
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <!-- Footer Options -->
-      <div class="pt-2 border-t border-[#E8E3DA] flex items-center justify-between text-[10px] font-mono text-[#869288]">
-        <button onclick="switchLockAccount()" class="hover:text-[#2F5238] transition">Switch Profile</button>
-        <span class="flex items-center space-x-1 text-[#2F5238]">
-          <i data-lucide="shield" class="w-3 h-3"></i>
-          <span>FIDO2 Protected</span>
-        </span>
       </div>
 
     </div>
@@ -6046,6 +6192,154 @@
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) || (window.innerWidth <= 768);
     }
 
+    function toggleGatePasswordVisibility() {
+      const input = document.getElementById('gateInputPassword');
+      const icon = document.getElementById('gatePasswordEyeIcon');
+      if (!input || !icon) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function fillGateLogin(name, rollNo, email, pwd = 'CHMC@2026!') {
+      const nameInp = document.getElementById('gateInputName');
+      const rollInp = document.getElementById('gateInputRollNo');
+      const emailInp = document.getElementById('gateInputEmail');
+      const passInp = document.getElementById('gateInputPassword');
+
+      if (nameInp) nameInp.value = name;
+      if (rollInp) rollInp.value = rollNo;
+      if (emailInp) emailInp.value = email;
+      if (passInp) passInp.value = pwd;
+      
+      const errEl = document.getElementById('gateLoginError');
+      if (errEl) errEl.classList.add('hidden');
+    }
+
+    function handleGateLoginSubmit(e) {
+      if (e) e.preventDefault();
+      const nameVal = document.getElementById('gateInputName')?.value.trim() || '';
+      const rollVal = document.getElementById('gateInputRollNo')?.value.trim() || '';
+      const emailVal = document.getElementById('gateInputEmail')?.value.trim().toLowerCase() || '';
+      const passVal = document.getElementById('gateInputPassword')?.value || '';
+      const errEl = document.getElementById('gateLoginError');
+
+      if (!passVal) {
+        if (errEl) {
+          errEl.textContent = 'Please enter your account password.';
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (passVal !== 'CHMC@2026!' && passVal.length < 6) {
+        if (errEl) {
+          errEl.textContent = 'Invalid password. (Default: CHMC@2026!)';
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      // Locate matching profile in REGISTERED_PROFILES
+      let matchedKey = null;
+      const searchTerms = [rollVal.toLowerCase(), emailVal.toLowerCase(), nameVal.toLowerCase()].filter(Boolean);
+
+      for (const k of Object.keys(REGISTERED_PROFILES)) {
+        const p = REGISTERED_PROFILES[k];
+        const pId = (p.identifier || k).toLowerCase();
+        const pEmail = (p.email || '').toLowerCase();
+        const pName = (p.name || '').toLowerCase();
+
+        if (searchTerms.some(term => pId === term || pEmail === term || pName.includes(term) || term.includes(pName))) {
+          matchedKey = k;
+          break;
+        }
+      }
+
+      let targetProfile = null;
+      if (matchedKey) {
+        targetProfile = REGISTERED_PROFILES[matchedKey];
+      } else {
+        const isTeacher = rollVal.toUpperCase().startsWith('FAC') || rollVal.toUpperCase().startsWith('TEA');
+        targetProfile = {
+          role: isTeacher ? 'TEACHER' : 'STUDENT',
+          name: nameVal || (rollVal ? `User ${rollVal}` : 'UniAttend User'),
+          identifier: rollVal.toUpperCase() || 'CHMC-DS-2024-001',
+          email: emailVal || `${(nameVal || 'user').toLowerCase().replace(/\s+/g, '.')}@chmc.edu`,
+          username: (rollVal || nameVal || 'user').toLowerCase().replace(/[^a-z0-9]/g, '.'),
+          avatar: isTeacher ? '👩‍🏫' : '🎓',
+          badge: isTeacher ? 'TEACHER' : 'STUDENT',
+          badgeClass: isTeacher ? 'bg-emerald-600 text-white' : 'bg-[#2F5238] text-white',
+          department_code: 'DS',
+          desc: `${isTeacher ? 'Faculty Member' : 'Data Science Student'} • ${rollVal || 'CHMC-DS-2024-001'} • Smt. C.H.M. College`
+        };
+        REGISTERED_PROFILES[targetProfile.identifier] = targetProfile;
+      }
+
+      if (errEl) errEl.classList.add('hidden');
+
+      // Establish authenticated user session
+      activeSession = {
+        key: targetProfile.identifier || matchedKey,
+        ...targetProfile,
+        token: "jwt_token_secure_" + Date.now(),
+        session_token: "sess_" + Math.random().toString(36).substring(2)
+      };
+      localStorage.setItem('uniattend_360_session', JSON.stringify(activeSession));
+      applySession(activeSession);
+
+      showToast({ title: 'Credentials Accepted', subtitle: 'Directing to Biometric Verification...', type: 'info' });
+
+      // Direct device to Biometric Verification stage
+      showBiometricVerificationStage();
+    }
+
+    function showBiometricVerificationStage() {
+      const loginStage = document.getElementById('gateLoginStage');
+      const bioStage = document.getElementById('gateBiometricStage');
+
+      if (loginStage) loginStage.classList.add('hidden');
+      if (bioStage) bioStage.classList.remove('hidden');
+
+      // Populate user info in Biometric Verification Stage
+      if (activeSession) {
+        const nameEl = document.getElementById('lockScreenUserName');
+        const idEl = document.getElementById('lockScreenUserId');
+        const badgeEl = document.getElementById('lockScreenUserBadge');
+        const avatarEl = document.getElementById('lockScreenUserAvatar');
+        const emailEl = document.getElementById('lockEmailDisplay');
+
+        if (nameEl) nameEl.textContent = activeSession.name || 'User';
+        if (idEl) idEl.textContent = `${activeSession.identifier || 'CHMC-USER'} • ${activeSession.department_code || 'Data Science'}`;
+        if (badgeEl) badgeEl.textContent = activeSession.role || 'USER';
+        if (emailEl) emailEl.textContent = activeSession.email || `${(activeSession.identifier || 'user').toLowerCase()}@chmc.edu`;
+        if (avatarEl) avatarEl.textContent = activeSession.avatar || (activeSession.role === 'STUDENT' ? '🎓' : '👩‍🏫');
+      }
+
+      biometricStrikes = 0;
+      updateStrikeUI();
+      if (window.lucide) lucide.createIcons();
+
+      // Trigger hardware biometric prompt
+      setTimeout(() => {
+        unlockAppBiometric(true);
+      }, 350);
+    }
+
+    function showLoginStage() {
+      const loginStage = document.getElementById('gateLoginStage');
+      const bioStage = document.getElementById('gateBiometricStage');
+
+      if (bioStage) bioStage.classList.add('hidden');
+      if (loginStage) loginStage.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
     function updateStrikeUI() {
       const isMobile = isMobileClient();
       const strikeContainer = document.getElementById('lockScreenStrikeMeter');
@@ -6120,7 +6414,7 @@
           sensorIcon.classList.add('animate-pulse');
           sensorIcon.classList.remove('text-[#8D3F30]');
           if (sensorPing) sensorPing.classList.remove('hidden');
-          sensorTitle.textContent = 'Application Locked for Security';
+          sensorTitle.textContent = 'Device Verification Required';
           sensorDesc.textContent = 'Verify with Face ID, Touch ID, or Android Fingerprint to access dashboard.';
         }
       }
@@ -6135,39 +6429,16 @@
       isAppBiometricLocked = true;
       sessionStorage.removeItem('uniattend_session_unlocked');
 
-      // Populate user info & registered email
-      if (activeSession) {
-        const nameEl = document.getElementById('lockScreenUserName');
-        const idEl = document.getElementById('lockScreenUserId');
-        const badgeEl = document.getElementById('lockScreenUserBadge');
-        const avatarEl = document.getElementById('lockScreenUserAvatar');
-        const emailEl = document.getElementById('lockEmailDisplay');
+      // Pre-fill fields from activeSession or default
+      const curName = activeSession?.name || 'Alex Chen';
+      const curRoll = activeSession?.identifier || 'CHMC-DS-2024-001';
+      const curEmail = activeSession?.email || 'alex.chen@chmc.edu';
+      fillGateLogin(curName, curRoll, curEmail, 'CHMC@2026!');
 
-        if (nameEl) nameEl.textContent = activeSession.name || 'User';
-        if (idEl) idEl.textContent = `${activeSession.identifier || 'CHMC-USER'} • ${activeSession.department_code || 'Data Science'}`;
-        if (badgeEl) badgeEl.textContent = activeSession.role || 'USER';
-        if (emailEl) {
-          const email = `${(activeSession.identifier || 'alex.chen').toLowerCase().replace(/[^a-z0-9]/g, '.')}@chmc.edu`;
-          emailEl.textContent = email;
-        }
-        if (avatarEl) {
-          if (activeSession.role === 'STUDENT') avatarEl.textContent = '🎓';
-          else if (activeSession.role === 'TEACHER') avatarEl.textContent = '👩‍🏫';
-          else if (activeSession.role === 'COORDINATOR') avatarEl.textContent = '👔';
-          else avatarEl.textContent = '👑';
-        }
-      }
-
-      updateStrikeUI();
+      // Present Login / Sign In form as the FIRST page
+      showLoginStage();
       lockScreen.classList.remove('hidden');
       if (window.lucide) lucide.createIcons();
-
-      // Auto-trigger biometric prompt on screen reveal if strikes < 3
-      if (biometricStrikes < 3) {
-        setTimeout(() => {
-          unlockAppBiometric(true);
-        }, 400);
-      }
     }
 
     async function unlockAppBiometric(isAutoTrigger = false) {
@@ -6371,16 +6642,11 @@
       if (passBox) passBox.classList.add('hidden');
 
       const userName = activeSession?.name ? activeSession.name.split(' ')[0] : 'User';
-      if (method === 'BIOMETRIC') {
-        showToast({ title: 'Identity Verified', subtitle: `Welcome back, ${userName}.`, type: 'success' });
-      }
+      showToast({ title: 'Portal Unlocked', subtitle: `Welcome, ${userName}. Verified via ${method === 'BIOMETRIC' ? 'Hardware Biometrics' : '2FA Fallback'}.`, type: 'success' });
     }
 
     function switchLockAccount() {
-      const lockScreen = document.getElementById('appBiometricLockScreen');
-      if (lockScreen) lockScreen.classList.add('hidden');
-      isAppBiometricLocked = false;
-      openLoginModal();
+      showLoginStage();
     }
 
     // 3-Dot Header Actions Dropdown Controller
@@ -6421,8 +6687,7 @@
         lucide.createIcons();
       }
 
-      // Automatic Browser-Close Session Biometric Lock Gate:
-      // When browser or tab is closed, sessionStorage is destroyed. Re-opening the app automatically challenges biometric unlock.
+      // Mandatory App Gate: First page to appear is the Login / Sign in page
       if (sessionStorage.getItem('uniattend_session_unlocked') !== 'true') {
         showAppLock();
       }
