@@ -425,6 +425,13 @@
           </div>
         </div>
 
+        <!-- Create Account switch link -->
+        <div class="text-center pt-1 border-t border-[#E8E3DA]/60">
+          <button type="button" onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[11px] font-mono text-[#2F5238] hover:underline font-semibold">
+            ✍️ New student or faculty? Create Account →
+          </button>
+        </div>
+
       </div>
 
     </div>
@@ -439,29 +446,29 @@
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/30 rounded-full blur-2xl pointer-events-none"></div>
       <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-600/20 rounded-full blur-2xl pointer-events-none"></div>
 
-      <!-- Header -->
-      <div class="text-center space-y-1 relative z-10">
-        <div class="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 mx-auto shadow-lg shadow-sm flex items-center justify-center">
+      <!-- Header with Logo box and College Name (Matching Sketch) -->
+      <div class="text-center space-y-1.5 relative z-10">
+        <div class="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 mx-auto shadow-md flex items-center justify-center">
           <div class="h-full w-full bg-[#FBF9F5] rounded-[14px] flex items-center justify-center">
-            <i data-lucide="shield-check" class="w-5 h-5 text-[#2F5238]"></i>
+            <i data-lucide="shield-check" class="w-6 h-6 text-[#2F5238]"></i>
           </div>
         </div>
-        <h2 class="text-lg sm:text-xl font-extrabold text-[#1C241E] tracking-tight">Smt. C.H.M. College</h2>
+        <h2 class="text-xl sm:text-2xl font-serif font-bold text-[#1C241E] tracking-tight">Smt. C.H.M. College</h2>
         <p class="text-[11px] text-[#2F5238] font-mono">UniAttend 360 • Attendance Portal</p>
       </div>
 
-      <!-- TAB TOGGLE: SIGN IN VS CREATE ACCOUNT -->
+      <!-- TAB TOGGLE: SIGN IN VS CREATE ACCOUNT (MATCHING SKETCH) -->
       <div class="flex rounded-xl bg-[#F5F2EB] p-1 border border-[#E8E3DA] text-xs font-mono relative z-10">
-        <button id="tabBtnSignIn" onclick="switchAuthTab('SIGNIN')" class="flex-1 py-1.5 rounded-lg font-bold transition duration-150 bg-[#2F5238] hover:bg-[#25422D] text-white shadow">
-          🔐 Sign In
+        <button id="tabBtnSignIn" onclick="switchAuthTab('SIGNIN')" class="flex-1 py-2 rounded-lg font-bold transition duration-150 text-[#869288] hover:text-[#1C241E]">
+          Sign In
         </button>
-        <button id="tabBtnRegister" onclick="switchAuthTab('REGISTER')" class="flex-1 py-1.5 rounded-lg text-[#869288] hover:text-[#1C241E] font-bold transition duration-150">
-          ✍️ Create Account
+        <button id="tabBtnRegister" onclick="switchAuthTab('REGISTER')" class="flex-1 py-2 rounded-lg font-bold transition duration-150 bg-[#2F5238] hover:bg-[#25422D] text-white shadow">
+          Create Account
         </button>
       </div>
 
       <!-- 1. SIGN IN FORM (PRIMARY AUTH) -->
-      <div id="authSignInBox" class="space-y-3.5 relative z-10">
+      <div id="authSignInBox" class="space-y-3.5 relative z-10 hidden">
         
         <!-- STEP 1: CREDENTIALS -->
         <div id="authStep1" class="space-y-3.5">
@@ -470,7 +477,7 @@
               <label class="text-[11px] font-mono text-[#869288]">Roll No / Faculty ID / Email</label>
               <div class="relative">
                 <i data-lucide="user" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
-                <input type="text" id="loginIdentifier" placeholder="e.g. aarav.sharma@chmc.edu or CHMC-DS-2024-002" required value="aarav.sharma@chmc.edu" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder:text-[#9AA49C] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+                <input type="text" id="loginIdentifier" placeholder="e.g. aarav.sharma@chmc.edu or CHMC-DS-2024-002" required value="aarav.sharma@chmc.edu" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] placeholder:text-[#9AA49C] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
               </div>
             </div>
 
@@ -481,7 +488,7 @@
               </div>
               <div class="relative">
                 <i data-lucide="lock" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
-                <input type="password" id="loginPassword" value="CHMC@2026!" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder:text-[#9AA49C] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+                <input type="password" id="loginPassword" value="CHMC@2026!" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] placeholder:text-[#9AA49C] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
               </div>
             </div>
 
@@ -529,55 +536,143 @@
 
       </div>
 
-      <!-- 2. CREATE ACCOUNT FORM (DYNAMIC ONBOARDING) -->
-      <div id="authRegisterBox" class="space-y-3 relative z-10 hidden">
-        <div class="p-2.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 text-center space-y-0.5">
-          <span class="text-[11px] font-mono text-[#2F5238] font-bold uppercase tracking-wider flex items-center justify-center">
-            <i data-lucide="user-plus" class="w-3.5 h-3.5 mr-1 text-[#2F5238]"></i>
-            Self-Registration
-          </span>
-          <p class="text-[10px] text-[#5A655C]">Join S.Y. Data Science class. Any email supported.</p>
-        </div>
-
-        <form onsubmit="handleRegisterSubmit(event)" class="space-y-2.5 text-left">
+      <!-- 2. CREATE ACCOUNT FORM (EXACT MATCH TO HAND-DRAWN SKETCH IN IMAGE 2) -->
+      <div id="authRegisterBox" class="space-y-3 relative z-10 animate-in fade-in">
+        
+        <form onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-left">
           
-          <div class="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
-            <label class="flex items-center p-1.5 rounded-lg bg-[#F5F2EB] border border-[#D5E4D8] cursor-pointer text-[#2F5238]">
-              <input type="radio" name="regRole" value="STUDENT" checked onchange="toggleRegRole('STUDENT')" class="mr-1.5 text-purple-500">
-              <span>🎓 Student</span>
+          <!-- Row 1: Firstname, Middle name, Last name (3 columns) -->
+          <div class="grid grid-cols-3 gap-2">
+            <!-- Firstname -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
+                Firstname <span class="text-[#8D3F30]">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="regFirstName" 
+                placeholder="First name" 
+                required 
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+            </div>
+
+            <!-- Middle name -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
+                Middle name
+              </label>
+              <input 
+                type="text" 
+                id="regMiddleName" 
+                placeholder="Middle" 
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+            </div>
+
+            <!-- Last name -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
+                Last name <span class="text-[#8D3F30]">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="regLastName" 
+                placeholder="Last name" 
+                required 
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+            </div>
+          </div>
+
+          <!-- Row 2: Email address -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+              Email address <span class="text-[#8D3F30]">*</span>
             </label>
-            <label class="flex items-center p-1.5 rounded-lg bg-[#F5F2EB] border border-[#E8E3DA] cursor-pointer text-[#5A655C]">
-              <input type="radio" name="regRole" value="TEACHER" onchange="toggleRegRole('TEACHER')" class="mr-1.5 text-[#2F5238]">
-              <span>👨‍🏫 Faculty</span>
+            <div class="relative">
+              <i data-lucide="mail" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+              <input 
+                type="email" 
+                id="regEmail" 
+                placeholder="e.g. alex.chen@chmc.edu" 
+                required 
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+            </div>
+          </div>
+
+          <!-- Row 3: Password -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+              Password <span class="text-[#8D3F30]">*</span>
             </label>
+            <div class="relative">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+              <input 
+                type="password" 
+                id="regPassword" 
+                placeholder="Enter password (min 6 chars)" 
+                required 
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-9 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+              <button type="button" onclick="toggleRegPasswordVisibility('regPassword', 'regPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
+                <i data-lucide="eye" id="regPasswordEyeIcon" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </div>
 
-          <div class="space-y-0.5">
-            <label class="text-[10px] font-mono text-[#869288]">Full Name</label>
-            <input type="text" id="regFullName" placeholder="e.g. Ramesh Singh" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+          <!-- Row 4: Confirm Password -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+              Confirm Password <span class="text-[#8D3F30]">*</span>
+            </label>
+            <div class="relative">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+              <input 
+                type="password" 
+                id="regConfirmPassword" 
+                placeholder="Re-enter password" 
+                required 
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-9 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+              >
+              <button type="button" onclick="toggleRegPasswordVisibility('regConfirmPassword', 'regConfirmPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
+                <i data-lucide="eye" id="regConfirmPasswordEyeIcon" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </div>
 
-          <div class="space-y-0.5">
-            <label class="text-[10px] font-mono text-[#869288]">Email Address</label>
-            <input type="email" id="regEmail" placeholder="e.g. ramesh.singh@gmail.com" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+          <!-- Row 5: User category (Select / Dropdown) -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+              User category <span class="text-[#8D3F30]">*</span>
+            </label>
+            <div class="relative">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3 pointer-events-none"></i>
+              <select 
+                id="regUserCategory" 
+                required
+                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-8 py-2 text-xs text-[#1C241E] font-sans appearance-none focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition cursor-pointer font-medium"
+              >
+                <option value="STUDENT">🎓 Student</option>
+                <option value="TEACHER">👨‍🏫 Faculty</option>
+                <option value="COORDINATOR">👔 Course Coordinator</option>
+                <option value="PRINCIPAL">👑 Principal / Administrator</option>
+              </select>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#869288] absolute right-3 top-3 pointer-events-none"></i>
+            </div>
           </div>
 
-          <div class="space-y-0.5">
-            <label id="regIdLabel" class="text-[10px] font-mono text-[#869288]">Roll Number / Student ID</label>
-            <input type="text" id="regIdentifier" placeholder="e.g. CHMC-DS-2024-006" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] uppercase">
-          </div>
+          <!-- Error Alert Banner -->
+          <div id="registerError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[11px] font-mono text-center"></div>
 
-          <div class="space-y-0.5">
-            <label class="text-[10px] font-mono text-[#869288]">Password (Min 8 chars)</label>
-            <input type="password" id="regPassword" placeholder="e.g. SecurePass@2026!" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
-          </div>
-
-          <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-[#1C241E] font-bold py-2 rounded-xl text-xs font-mono shadow-md flex items-center justify-center space-x-1.5">
-            <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
-            <span>CREATE ACCOUNT & SIGN IN</span>
+          <!-- Row 6: Submit Button (Matching Sketch) -->
+          <button 
+            type="submit" 
+            class="w-full py-3 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
+          >
+            <span>Submit</span>
           </button>
-
-          <div id="registerError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[10px] font-mono text-center"></div>
         </form>
       </div>
 
@@ -3176,66 +3271,146 @@
       const boxReg = document.getElementById('authRegisterBox');
 
       if (tab === 'SIGNIN') {
-        btnIn.className = "flex-1 py-1.5 rounded-lg font-bold transition duration-150 bg-[#2F5238] hover:bg-[#25422D] text-white shadow";
-        btnReg.className = "flex-1 py-1.5 rounded-lg text-[#869288] hover:text-[#1C241E] font-bold transition duration-150";
-        boxIn.classList.remove('hidden');
-        boxReg.classList.add('hidden');
+        if (btnIn) btnIn.className = "flex-1 py-2 rounded-lg font-bold transition duration-150 bg-[#2F5238] hover:bg-[#25422D] text-white shadow";
+        if (btnReg) btnReg.className = "flex-1 py-2 rounded-lg text-[#869288] hover:text-[#1C241E] font-bold transition duration-150";
+        if (boxIn) boxIn.classList.remove('hidden');
+        if (boxReg) boxReg.classList.add('hidden');
       } else {
-        btnReg.className = "flex-1 py-1.5 rounded-lg font-bold transition duration-150 bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow";
-        btnIn.className = "flex-1 py-1.5 rounded-lg text-[#869288] hover:text-[#1C241E] font-bold transition duration-150";
-        boxReg.classList.remove('hidden');
-        boxIn.classList.add('hidden');
+        if (btnReg) btnReg.className = "flex-1 py-2 rounded-lg font-bold transition duration-150 bg-[#2F5238] hover:bg-[#25422D] text-white shadow";
+        if (btnIn) btnIn.className = "flex-1 py-2 rounded-lg text-[#869288] hover:text-[#1C241E] font-bold transition duration-150";
+        if (boxReg) boxReg.classList.remove('hidden');
+        if (boxIn) boxIn.classList.add('hidden');
       }
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
-    function toggleRegRole(role) {
-      const lbl = document.getElementById('regIdLabel');
-      const inp = document.getElementById('regIdentifier');
-      if (role === 'STUDENT') {
-        lbl.innerText = "Roll Number / Student ID";
-        inp.placeholder = "e.g. CHMC-DS-2024-006";
+    function toggleRegPasswordVisibility(inputId, iconId) {
+      const inp = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (!inp) return;
+      if (inp.type === 'password') {
+        inp.type = 'text';
       } else {
-        lbl.innerText = "Faculty Identifier / Staff ID";
-        inp.placeholder = "e.g. FAC-DS-04";
+        inp.type = 'password';
       }
     }
 
     function handleRegisterSubmit(e) {
       e.preventDefault();
-      const role = document.querySelector('input[name="regRole"]:checked').value;
-      const fullName = document.getElementById('regFullName').value.trim();
-      const email = document.getElementById('regEmail').value.trim().toLowerCase();
-      const idStr = document.getElementById('regIdentifier').value.trim().toUpperCase();
-      const pwd = document.getElementById('regPassword').value;
+      const firstName = (document.getElementById('regFirstName')?.value || '').trim();
+      const middleName = (document.getElementById('regMiddleName')?.value || '').trim();
+      const lastName = (document.getElementById('regLastName')?.value || '').trim();
+      const email = (document.getElementById('regEmail')?.value || '').trim().toLowerCase();
+      const pwd = document.getElementById('regPassword')?.value || '';
+      const confirmPwd = document.getElementById('regConfirmPassword')?.value || '';
+      const category = document.getElementById('regUserCategory')?.value || 'STUDENT';
       const errEl = document.getElementById('registerError');
 
-      if (pwd.length < 8) {
-        errEl.innerText = "Password must be at least 8 characters long.";
-        errEl.classList.remove('hidden');
+      if (!firstName || !lastName) {
+        if (errEl) {
+          errEl.innerText = "Please enter both First name and Last name.";
+          errEl.classList.remove('hidden');
+        }
         return;
       }
 
-      const key = idStr;
+      if (!email || !email.includes('@')) {
+        if (errEl) {
+          errEl.innerText = "Please enter a valid email address.";
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (pwd.length < 6) {
+        if (errEl) {
+          errEl.innerText = "Password must be at least 6 characters long.";
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (pwd !== confirmPwd) {
+        if (errEl) {
+          errEl.innerText = "Passwords do not match. Please re-enter.";
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (errEl) errEl.classList.add('hidden');
+
+      const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+      const randomSuffix = Math.floor(100 + Math.random() * 900);
+      
+      let idStr = '';
+      let avatar = '🎓';
+      let badgeClass = 'bg-[#2F5238] text-white';
+      let roleTitle = 'STUDENT';
+      let desc = '';
+
+      if (category === 'STUDENT') {
+        idStr = `CHMC-DS-2024-${randomSuffix}`;
+        avatar = '🎓';
+        badgeClass = 'bg-[#2F5238] text-white';
+        roleTitle = 'STUDENT';
+        desc = `Second Year (S.Y. B.Sc. Data Science) • ${idStr} • Smt. C.H.M. College`;
+      } else if (category === 'TEACHER') {
+        idStr = `FAC-DS-${randomSuffix}`;
+        avatar = '👨‍🏫';
+        badgeClass = 'bg-emerald-600 text-white';
+        roleTitle = 'TEACHER';
+        desc = `Faculty Member • ${idStr} • Smt. C.H.M. College`;
+      } else if (category === 'COORDINATOR') {
+        idStr = `coordinator.${firstName.toLowerCase()}`;
+        avatar = '👔';
+        badgeClass = 'bg-indigo-600 text-white';
+        roleTitle = 'COORDINATOR';
+        desc = `Course Coordinator • Smt. C.H.M. College`;
+      } else {
+        idStr = `principal.${firstName.toLowerCase()}`;
+        avatar = '👑';
+        badgeClass = 'bg-purple-600 text-white';
+        roleTitle = 'PRINCIPAL';
+        desc = `Principal & Super Admin • Smt. C.H.M. College`;
+      }
+
       const newProfile = {
-        role: role,
+        role: roleTitle,
         name: fullName,
         identifier: idStr,
         email: email,
-        username: idStr.toLowerCase().replace("-", "."),
-        avatar: role === 'STUDENT' ? "🎓" : "👨‍🏫",
-        badge: role,
-        badgeClass: role === 'STUDENT' ? "bg-[#2F5238] text-white" : "bg-emerald-500 text-white",
-        desc: `${role === 'STUDENT' ? 'Second Year (S.Y. B.Sc. Data Science)' : 'Faculty Member'} • ${idStr} • Smt. C.H.M. College`
+        username: idStr.toLowerCase().replace(/[^a-z0-9]/g, '.'),
+        avatar: avatar,
+        badge: roleTitle,
+        badgeClass: badgeClass,
+        department_code: 'DS',
+        desc: desc
       };
 
-      REGISTERED_PROFILES[key] = newProfile;
+      REGISTERED_PROFILES[idStr] = newProfile;
       const stored = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
-      stored[key] = newProfile;
+      stored[idStr] = newProfile;
       localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
 
-      showToast({ title: "Account Created", subtitle: `Welcome, ${fullName}!`, type: "success" });
-      quickAuth(key);
+      // Establish active session
+      activeSession = {
+        key: idStr,
+        ...newProfile,
+        token: "jwt_token_secure_" + Date.now(),
+        session_token: "sess_" + Math.random().toString(36).substring(2)
+      };
+      localStorage.setItem('uniattend_360_session', JSON.stringify(activeSession));
+      applySession(activeSession);
+
+      showToast({ 
+        title: "Account Created", 
+        subtitle: `Welcome, ${firstName}! Role: ${roleTitle}`, 
+        type: "success" 
+      });
+
+      closeLoginModal();
+      completeAppUnlock('CREDENTIALS');
       renderDigitalRoster();
     }
 
