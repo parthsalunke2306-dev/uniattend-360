@@ -518,7 +518,6 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
                     <option value="STUDENT">🎓 Student</option>
                     <option value="TEACHER">👨‍🏫 Faculty</option>
                     <option value="COORDINATOR">👔 Course Coordinator</option>
-                    <option value="PRINCIPAL">👑 Principal / Administrator</option>
                   </select>
                   <ChevronDown className="w-3.5 h-3.5 text-text-muted absolute right-3 top-3 pointer-events-none" />
                 </div>
