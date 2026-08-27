@@ -268,32 +268,38 @@
 
   <!-- ============================================== -->
   <!-- ============================================================== -->
-  <!-- MANDATORY APP-LAUNCH GATE: 1. LOGIN/SIGN IN -> 2. BIOMETRIC -> UNLOCK -->
+  <!-- MANDATORY APP-LAUNCH GATE & AUTHENTICATION PORTAL (UNIFIED)    -->
   <!-- ============================================================== -->
-  <div id="appBiometricLockScreen" class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/60 backdrop-blur-2xl transition-all duration-300">
-    <div class="glass-panel w-full max-w-sm sm:max-w-md p-6 sm:p-8 rounded-3xl border border-[#D5E4D8] shadow-2xl space-y-4 text-center relative overflow-hidden max-h-[92vh] overflow-y-auto">
+  <div id="appBiometricLockScreen" class="fixed inset-0 z-[99998] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-2xl transition-all duration-300">
+    <div class="glass-panel w-full max-w-sm sm:max-w-md p-5 sm:p-7 rounded-3xl border border-[#D5E4D8] shadow-2xl space-y-4 text-center relative overflow-hidden max-h-[92vh] overflow-y-auto">
       
-      <!-- STAGE 1: LOGIN / SIGN IN FORM (EXACT MATCH TO HAND-DRAWN SKETCH) -->
-      <div id="gateLoginStage" class="space-y-4 text-left animate-in fade-in">
-        
-        <!-- Header & Institution Branding -->
-        <div class="text-center space-y-1 pb-1 border-b border-[#E8E3DA]">
-          <div class="flex items-center justify-center mb-1">
-            <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-[#2F5238] border border-emerald-500/20">
-              <i data-lucide="shield-check" class="w-3 h-3"></i>
-              <span>Smt. C.H.M. College • UniAttend 360</span>
-            </span>
-          </div>
-          <h2 class="text-xl sm:text-2xl font-serif font-bold text-[#1C241E] tracking-tight">
-            Login / Sign in
-          </h2>
-          <p class="text-[11px] text-[#5A655C] font-sans">
-            Enter your credentials to initiate hardware biometric verification.
-          </p>
-        </div>
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/20 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-600/20 rounded-full blur-2xl pointer-events-none"></div>
 
-        <!-- The 4 Core Fields from Sketch -->
-        <form id="gateLoginForm" onsubmit="handleGateLoginSubmit(event)" class="space-y-3.5">
+      <!-- Header with Logo box and College Name (Matching Sketch) -->
+      <div class="text-center space-y-1.5 relative z-10">
+        <div class="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 mx-auto shadow-md flex items-center justify-center">
+          <div class="h-full w-full bg-[#FBF9F5] rounded-[14px] flex items-center justify-center">
+            <i data-lucide="shield-check" class="w-6 h-6 text-[#2F5238]"></i>
+          </div>
+        </div>
+        <h2 class="text-xl sm:text-2xl font-serif font-bold text-[#1C241E] tracking-tight">Smt. C.H.M. College</h2>
+        <p class="text-[11px] text-[#2F5238] font-mono">UniAttend 360 • Attendance Portal</p>
+      </div>
+
+      <!-- TAB TOGGLE: SIGN IN VS CREATE ACCOUNT (MATCHING SKETCH) -->
+      <div class="flex rounded-xl bg-[#F5F2EB] p-1 border border-[#E8E3DA] text-xs font-mono relative z-10">
+        <button id="gateTabBtnSignIn" onclick="switchGateAuthTab('SIGNIN')" class="flex-1 py-2 rounded-lg font-bold transition duration-150 bg-[#2F5238] hover:bg-[#25422D] text-white shadow">
+          Sign In
+        </button>
+        <button id="gateTabBtnRegister" onclick="switchGateAuthTab('REGISTER')" class="flex-1 py-2 rounded-lg font-bold transition duration-150 text-[#869288] hover:text-[#1C241E]">
+          Create Account
+        </button>
+      </div>
+
+      <!-- 1. SIGN IN FORM PANEL -->
+      <div id="gateSignInBox" class="space-y-3.5 relative z-10 animate-in fade-in">
+        <form id="gateLoginForm" onsubmit="handleGateLoginSubmit(event)" class="space-y-3 text-left">
           
           <!-- Field 1: Name * -->
           <div class="space-y-1">
@@ -364,7 +370,7 @@
                 value="CHMC@2026!"
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-10 py-2.5 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
               >
-              <button type="button" onclick="toggleGatePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
+              <button type="button" onclick="toggleGatePasswordVisibility('gateInputPassword', 'gatePasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
                 <i data-lucide="eye" id="gatePasswordEyeIcon" class="w-4 h-4"></i>
               </button>
             </div>
@@ -373,38 +379,38 @@
           <!-- Error Alert Banner -->
           <div id="gateLoginError" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[11px] font-mono text-center"></div>
 
-        <!-- Action Buttons -->
-        <div class="space-y-2 pt-1">
-          <!-- Primary Submit: Login / Sign in -->
-          <button 
-            type="submit" 
-            id="btnGateLoginSubmit" 
-            class="w-full py-3.5 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
-          >
-            <i data-lucide="log-in" class="w-4 h-4"></i>
-            <span>Login / Sign in</span>
-          </button>
+          <!-- Action Buttons -->
+          <div class="space-y-2 pt-1">
+            <!-- Primary Submit: Login / Sign in -->
+            <button 
+              type="submit" 
+              id="btnGateLoginSubmit" 
+              class="w-full py-3.5 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
+            >
+              <i data-lucide="log-in" class="w-4 h-4"></i>
+              <span>Login / Sign in</span>
+            </button>
 
-          <!-- Direct Google Password Manager / Passkey Button -->
-          <button 
-            type="button" 
-            onclick="loginWithGooglePasswordManager()" 
-            id="btnGooglePasskeyDirect"
-            class="w-full py-2.5 px-3 rounded-xl bg-[#F5F2EB] hover:bg-[#EAE5DA] text-[#1C241E] font-bold text-xs font-mono border border-[#E8E3DA] flex items-center justify-center space-x-2 transition shadow-sm"
-          >
-            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-            </svg>
-            <span>Sign in with Google Password Manager</span>
-          </button>
-        </div>
+            <!-- Direct Google Password Manager / Passkey Button -->
+            <button 
+              type="button" 
+              onclick="loginWithGooglePasswordManager()" 
+              id="btnGooglePasskeyDirect"
+              class="w-full py-2.5 px-3 rounded-xl bg-[#F5F2EB] hover:bg-[#EAE5DA] text-[#1C241E] font-bold text-xs font-mono border border-[#E8E3DA] flex items-center justify-center space-x-2 transition shadow-sm"
+            >
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Sign in with Google Password Manager</span>
+            </button>
+          </div>
         </form>
 
         <!-- 1-Click Persona Quick-Fill Chips -->
-        <div class="pt-2 border-t border-[#E8E3DA] space-y-1.5">
+        <div class="pt-2 border-t border-[#E8E3DA] space-y-1.5 text-left">
           <span class="text-[9px] font-mono text-[#869288] uppercase tracking-wider block text-center">⚡ Quick-Fill Demo Profiles:</span>
           <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
             <button type="button" onclick="fillGateLogin('Alex Chen', 'CHMC-DS-2024-001', 'alex.chen@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-[#2F5238] text-left truncate font-bold">
@@ -424,160 +430,46 @@
             </button>
           </div>
         </div>
-
-        <!-- Create Account switch link -->
-        <div class="text-center pt-1 border-t border-[#E8E3DA]/60">
-          <button type="button" onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[11px] font-mono text-[#2F5238] hover:underline font-semibold">
-            ✍️ New student or faculty? Create Account →
-          </button>
-        </div>
-
       </div>
 
-    </div>
-  </div>
-
-  <!-- ============================================== -->
-  <!-- MULTI-TIER AUTHENTICATION & ONBOARDING MODAL -->
-  <!-- ============================================== -->
-  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-sm sm:max-w-md p-5 sm:p-7 rounded-3xl border border-[#D5E4D8] shadow-2xl shadow-sm space-y-4 relative overflow-hidden max-h-[92vh] overflow-y-auto">
-      
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/30 rounded-full blur-2xl pointer-events-none"></div>
-      <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-600/20 rounded-full blur-2xl pointer-events-none"></div>
-
-      <!-- Header with Logo box and College Name (Matching Sketch) -->
-      <div class="text-center space-y-1.5 relative z-10">
-        <div class="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 mx-auto shadow-md flex items-center justify-center">
-          <div class="h-full w-full bg-[#FBF9F5] rounded-[14px] flex items-center justify-center">
-            <i data-lucide="shield-check" class="w-6 h-6 text-[#2F5238]"></i>
-          </div>
-        </div>
-        <h2 class="text-xl sm:text-2xl font-serif font-bold text-[#1C241E] tracking-tight">Smt. C.H.M. College</h2>
-        <p class="text-[11px] text-[#2F5238] font-mono">UniAttend 360 • Attendance Portal</p>
-      </div>
-
-      <!-- TAB TOGGLE: SIGN IN VS CREATE ACCOUNT (MATCHING SKETCH) -->
-      <div class="flex rounded-xl bg-[#F5F2EB] p-1 border border-[#E8E3DA] text-xs font-mono relative z-10">
-        <button id="tabBtnSignIn" onclick="switchAuthTab('SIGNIN')" class="flex-1 py-2 rounded-lg font-bold transition duration-150 text-[#869288] hover:text-[#1C241E]">
-          Sign In
-        </button>
-        <button id="tabBtnRegister" onclick="switchAuthTab('REGISTER')" class="flex-1 py-2 rounded-lg font-bold transition duration-150 bg-[#2F5238] hover:bg-[#25422D] text-white shadow">
-          Create Account
-        </button>
-      </div>
-
-      <!-- 1. SIGN IN FORM (PRIMARY AUTH) -->
-      <div id="authSignInBox" class="space-y-3.5 relative z-10 hidden">
-        
-        <!-- STEP 1: CREDENTIALS -->
-        <div id="authStep1" class="space-y-3.5">
-          <form onsubmit="handleStep1Submit(event)" class="space-y-3">
-            <div class="space-y-1">
-              <label class="text-[11px] font-mono text-[#869288]">Roll No / Faculty ID / Email</label>
-              <div class="relative">
-                <i data-lucide="user" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
-                <input type="text" id="loginIdentifier" placeholder="e.g. aarav.sharma@chmc.edu or CHMC-DS-2024-002" required value="aarav.sharma@chmc.edu" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] placeholder:text-[#9AA49C] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
-              </div>
-            </div>
-
-            <div class="space-y-1">
-              <div class="flex justify-between items-center text-[11px] font-mono">
-                <label class="text-[#869288]">Password</label>
-                <span class="text-[#2F5238] text-[10px] cursor-pointer hover:underline" onclick="showRecoveryNotice()">Forgot?</span>
-              </div>
-              <div class="relative">
-                <i data-lucide="lock" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
-                <input type="password" id="loginPassword" value="CHMC@2026!" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] placeholder:text-[#9AA49C] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between text-[10px] font-mono text-[#869288]">
-              <label class="flex items-center space-x-1.5 cursor-pointer">
-                <input type="checkbox" id="rememberDeviceCheck" class="rounded bg-[#F5F2EB] text-purple-500 text-xs">
-                <span class="text-[#5A655C]">Remember device</span>
-              </label>
-              <span class="text-[#2F5238] flex items-center"><i data-lucide="shield" class="w-3 h-3 mr-1"></i> Argon2id</span>
-            </div>
-
-            <button type="submit" class="w-full bg-[#2F5238] hover:bg-[#25422D] text-white font-bold py-2.5 rounded-xl shadow-lg shadow-sm text-xs font-mono flex items-center justify-center space-x-1.5 transition duration-150">
-              <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
-              <span>SECURE SIGN IN</span>
-            </button>
-
-            <div id="loginError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[11px] font-mono text-center"></div>
-          </form>
-
-          <!-- 1-Click Persona Demo Grid -->
-          <div class="space-y-1.5 pt-2 border-t border-[#E8E3DA]">
-            <span class="text-[9px] font-mono text-[#869288] uppercase tracking-wider block text-center">⚡ 1-Click Demo Profiles:</span>
-            <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-              <button onclick="quickAuth('CHMC-DS-2024-002')" class="p-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-[#E8E3DA] text-[#2F5238] text-left truncate">
-                🎓 Aarav (Student 002)
-              </button>
-              <button onclick="quickAuth('faculty.razia')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-[#2F5238] text-left truncate">
-                👩‍🏫 Miss Razia (4 Units)
-              </button>
-              <button onclick="quickAuth('faculty.anshul')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-[#2F5238] text-left truncate">
-                👨‍🏫 Mr. Anshul (2 Units)
-              </button>
-              <button onclick="quickAuth('faculty.kalyani')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-[#2F5238] text-left truncate">
-                👩‍🏫 Miss Kalyani (2 Units)
-              </button>
-              <button onclick="quickAuth('coordinator.ds')" class="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-[#2F5238] text-left truncate">
-                👔 Mrs. Shiji (Coord)
-              </button>
-              <button onclick="quickAuth('principal.chmc')" class="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-[#2F5238] text-left truncate font-bold">
-                👑 Dr. Manju (Super Admin)
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- 2. CREATE ACCOUNT FORM (EXACT MATCH TO HAND-DRAWN SKETCH IN IMAGE 2) -->
-      <div id="authRegisterBox" class="space-y-3 relative z-10 animate-in fade-in">
-        
-        <form onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-left">
+      <!-- 2. CREATE ACCOUNT FORM PANEL (EXACT MATCH TO HAND-DRAWN SKETCH) -->
+      <div id="gateRegisterBox" class="space-y-3 relative z-10 animate-in fade-in hidden">
+        <form onsubmit="handleGateRegisterSubmit(event)" class="space-y-3 text-left">
           
           <!-- Row 1: Firstname, Middle name, Last name (3 columns) -->
           <div class="grid grid-cols-3 gap-2">
-            <!-- Firstname -->
             <div class="space-y-1">
               <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
                 Firstname <span class="text-[#8D3F30]">*</span>
               </label>
               <input 
                 type="text" 
-                id="regFirstName" 
+                id="gateRegFirstName" 
                 placeholder="First name" 
                 required 
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
               >
             </div>
 
-            <!-- Middle name -->
             <div class="space-y-1">
               <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
                 Middle name
               </label>
               <input 
                 type="text" 
-                id="regMiddleName" 
+                id="gateRegMiddleName" 
                 placeholder="Middle" 
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
               >
             </div>
 
-            <!-- Last name -->
             <div class="space-y-1">
               <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
                 Last name <span class="text-[#8D3F30]">*</span>
               </label>
               <input 
                 type="text" 
-                id="regLastName" 
+                id="gateRegLastName" 
                 placeholder="Last name" 
                 required 
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
@@ -594,7 +486,7 @@
               <i data-lucide="mail" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
               <input 
                 type="email" 
-                id="regEmail" 
+                id="gateRegEmail" 
                 placeholder="e.g. alex.chen@chmc.edu" 
                 required 
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
@@ -611,13 +503,13 @@
               <i data-lucide="lock" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
               <input 
                 type="password" 
-                id="regPassword" 
+                id="gateRegPassword" 
                 placeholder="Enter password (min 6 chars)" 
                 required 
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-9 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
               >
-              <button type="button" onclick="toggleRegPasswordVisibility('regPassword', 'regPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
-                <i data-lucide="eye" id="regPasswordEyeIcon" class="w-3.5 h-3.5"></i>
+              <button type="button" onclick="toggleRegPasswordVisibility('gateRegPassword', 'gateRegPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
+                <i data-lucide="eye" id="gateRegPasswordEyeIcon" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
@@ -631,13 +523,13 @@
               <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
               <input 
                 type="password" 
-                id="regConfirmPassword" 
+                id="gateRegConfirmPassword" 
                 placeholder="Re-enter password" 
                 required 
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-9 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
               >
-              <button type="button" onclick="toggleRegPasswordVisibility('regConfirmPassword', 'regConfirmPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
-                <i data-lucide="eye" id="regConfirmPasswordEyeIcon" class="w-3.5 h-3.5"></i>
+              <button type="button" onclick="toggleRegPasswordVisibility('gateRegConfirmPassword', 'gateRegConfirmPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
+                <i data-lucide="eye" id="gateRegConfirmPasswordEyeIcon" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
@@ -650,7 +542,7 @@
             <div class="relative">
               <i data-lucide="users" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3 pointer-events-none"></i>
               <select 
-                id="regUserCategory" 
+                id="gateRegUserCategory" 
                 required
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-8 py-2 text-xs text-[#1C241E] font-sans appearance-none focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition cursor-pointer font-medium"
               >
@@ -663,7 +555,7 @@
           </div>
 
           <!-- Error Alert Banner -->
-          <div id="registerError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[11px] font-mono text-center"></div>
+          <div id="gateRegisterError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[11px] font-mono text-center"></div>
 
           <!-- Row 6: Submit Button (Matching Sketch) -->
           <button 
@@ -677,6 +569,9 @@
 
     </div>
   </div>
+
+  <!-- Hidden Alias for legacy loginModal references -->
+  <div id="loginModal" class="hidden"></div>
 
 
   <!-- ============================================== -->
@@ -3263,11 +3158,11 @@
       renderDigitalRoster();
     }
 
-    function switchAuthTab(tab) {
-      const btnIn = document.getElementById('tabBtnSignIn');
-      const btnReg = document.getElementById('tabBtnRegister');
-      const boxIn = document.getElementById('authSignInBox');
-      const boxReg = document.getElementById('authRegisterBox');
+    function switchGateAuthTab(tab) {
+      const btnIn = document.getElementById('gateTabBtnSignIn');
+      const btnReg = document.getElementById('gateTabBtnRegister');
+      const boxIn = document.getElementById('gateSignInBox');
+      const boxReg = document.getElementById('gateRegisterBox');
 
       if (tab === 'SIGNIN') {
         if (btnIn) btnIn.className = "flex-1 py-2 rounded-lg font-bold transition duration-150 bg-[#2F5238] hover:bg-[#25422D] text-white shadow";
@@ -3283,27 +3178,40 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    function toggleRegPasswordVisibility(inputId, iconId) {
-      const inp = document.getElementById(inputId);
-      const icon = document.getElementById(iconId);
-      if (!inp) return;
-      if (inp.type === 'password') {
-        inp.type = 'text';
-      } else {
-        inp.type = 'password';
-      }
+    function switchAuthTab(tab) {
+      switchGateAuthTab(tab);
     }
 
-    function handleRegisterSubmit(e) {
-      e.preventDefault();
-      const firstName = (document.getElementById('regFirstName')?.value || '').trim();
-      const middleName = (document.getElementById('regMiddleName')?.value || '').trim();
-      const lastName = (document.getElementById('regLastName')?.value || '').trim();
-      const email = (document.getElementById('regEmail')?.value || '').trim().toLowerCase();
-      const pwd = document.getElementById('regPassword')?.value || '';
-      const confirmPwd = document.getElementById('regConfirmPassword')?.value || '';
-      const category = document.getElementById('regUserCategory')?.value || 'STUDENT';
-      const errEl = document.getElementById('registerError');
+    function toggleRegPasswordVisibility(inputId, iconId) {
+      const inp = document.getElementById(inputId);
+      if (!inp) return;
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    function toggleGatePasswordVisibility(inputId = 'gateInputPassword', iconId = 'gatePasswordEyeIcon') {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        if (icon) icon.setAttribute('data-lucide', 'eye');
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function handleGateRegisterSubmit(e) {
+      if (e) e.preventDefault();
+      const firstName = (document.getElementById('gateRegFirstName')?.value || '').trim();
+      const middleName = (document.getElementById('gateRegMiddleName')?.value || '').trim();
+      const lastName = (document.getElementById('gateRegLastName')?.value || '').trim();
+      const email = (document.getElementById('gateRegEmail')?.value || '').trim().toLowerCase();
+      const pwd = document.getElementById('gateRegPassword')?.value || '';
+      const confirmPwd = document.getElementById('gateRegConfirmPassword')?.value || '';
+      const category = document.getElementById('gateRegUserCategory')?.value || 'STUDENT';
+      const errEl = document.getElementById('gateRegisterError');
 
       if (!firstName || !lastName) {
         if (errEl) {
@@ -3360,18 +3268,12 @@
         badgeClass = 'bg-emerald-600 text-white';
         roleTitle = 'TEACHER';
         desc = `Faculty Member • ${idStr} • Smt. C.H.M. College`;
-      } else if (category === 'COORDINATOR') {
+      } else {
         idStr = `coordinator.${firstName.toLowerCase()}`;
         avatar = '👔';
         badgeClass = 'bg-indigo-600 text-white';
         roleTitle = 'COORDINATOR';
         desc = `Course Coordinator • Smt. C.H.M. College`;
-      } else {
-        idStr = `principal.${firstName.toLowerCase()}`;
-        avatar = '👑';
-        badgeClass = 'bg-purple-600 text-white';
-        roleTitle = 'PRINCIPAL';
-        desc = `Principal & Super Admin • Smt. C.H.M. College`;
       }
 
       const newProfile = {
@@ -3408,20 +3310,21 @@
         type: "success" 
       });
 
-      closeLoginModal();
       completeAppUnlock('CREDENTIALS');
       renderDigitalRoster();
     }
 
-    function openLoginModal() {
-      document.getElementById('loginModal').classList.remove('hidden');
-      document.getElementById('authStep1').classList.remove('hidden');
-      document.getElementById('authStep2').classList.add('hidden');
-      document.getElementById('loginError').classList.add('hidden');
+    function handleRegisterSubmit(e) {
+      handleGateRegisterSubmit(e);
+    }
+
+    function openLoginModal(tab = 'SIGNIN') {
+      showAppLock(tab);
     }
 
     function closeLoginModal() {
-      document.getElementById('loginModal').classList.add('hidden');
+      const lockScreen = document.getElementById('appBiometricLockScreen');
+      if (lockScreen) lockScreen.classList.add('hidden');
     }
 
     function openSecurityHub() {
@@ -6241,20 +6144,6 @@
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) || (window.innerWidth <= 768);
     }
 
-    function toggleGatePasswordVisibility() {
-      const input = document.getElementById('gateInputPassword');
-      const icon = document.getElementById('gatePasswordEyeIcon');
-      if (!input || !icon) return;
-      if (input.type === 'password') {
-        input.type = 'text';
-        icon.setAttribute('data-lucide', 'eye-off');
-      } else {
-        input.type = 'password';
-        icon.setAttribute('data-lucide', 'eye');
-      }
-      if (window.lucide) lucide.createIcons();
-    }
-
     function fillGateLogin(name, rollNo, email, pwd = 'CHMC@2026!') {
       const nameInp = document.getElementById('gateInputName');
       const rollInp = document.getElementById('gateInputRollNo');
@@ -6398,7 +6287,7 @@
       completeAppUnlock(isPasskeyDirect ? 'GOOGLE_PASSWORD_MANAGER' : 'CREDENTIALS');
     }
 
-    function showAppLock() {
+    function showAppLock(tab = 'SIGNIN') {
       const lockScreen = document.getElementById('appBiometricLockScreen');
       if (!lockScreen) return;
 
@@ -6412,6 +6301,7 @@
       fillGateLogin(curName, curRoll, curEmail, 'CHMC@2026!');
 
       lockScreen.classList.remove('hidden');
+      switchGateAuthTab(tab);
       if (window.lucide) lucide.createIcons();
     }
 
