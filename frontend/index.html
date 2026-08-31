@@ -2135,295 +2135,416 @@
     <!-- ============================================== -->
     <!-- VIEW 2: TEACHER / PROFESSOR CLASSROOM KIOSK -->
     <!-- ============================================== -->
-    <div id="viewTeacher" class="space-y-3 sm:space-y-5 hidden">
+    <div id="viewTeacher" class="space-y-4 sm:space-y-6 hidden">
       
-      <!-- 1. LECTURE SCHEDULING & CONTEXT HEADER DECK -->
-      <div class="glass-panel p-3.5 sm:p-4 rounded-2xl border border-[#D5E4D8] neon-border flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-lg">
-        <div class="space-y-1 min-w-0">
-          <div class="flex items-center space-x-2 flex-wrap">
-            <span id="activeLectureIndexPill" class="bg-purple-500/20 text-[#2F5238] font-mono text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border border-[#D5E4D8]">
-              📖 47% Syllabus Completed (Lecture 14 of 30)
-            </span>
-            <span id="activeLectureRoomBadge" class="bg-[#F5F2EB] text-[#5A655C] font-mono text-[10px] px-2 py-0.5 rounded-full border border-[#E8E3DA]">
-              Room E-104 (Extension)
-            </span>
-            <span id="activeLectureTimeBadge" class="text-[10px] font-mono text-[#869288]">
-              Today • 09:00 AM - 10:00 AM
+      <!-- TOP INTERACTIVE NAVIGATION & BREADCRUMB DECK -->
+      <div class="glass-panel p-3.5 sm:p-4 rounded-2xl border border-[#E8E3DA] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm bg-white/90">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2 text-xs font-mono text-[#869288] flex-wrap gap-y-1">
+            <button onclick="facultyResetToStart()" class="hover:text-[#2F5238] font-bold flex items-center transition">
+              <i data-lucide="layout-grid" class="w-3.5 h-3.5 mr-1 text-[#2F5238]"></i>
+              <span>Faculty Portal</span>
+            </button>
+            <span id="facultyBreadcrumbSep1" class="text-[#CCD6CE] hidden">/</span>
+            <button id="facultyBreadcrumbDept" onclick="facultyGoToStep('YEARS')" class="hover:text-[#2F5238] font-semibold hidden transition">
+              Department
+            </button>
+            <span id="facultyBreadcrumbSep2" class="text-[#CCD6CE] hidden">/</span>
+            <button id="facultyBreadcrumbYear" onclick="facultyGoToStep('SUBJECTS')" class="hover:text-[#2F5238] font-semibold hidden transition">
+              Year
+            </button>
+            <span id="facultyBreadcrumbSep3" class="text-[#CCD6CE] hidden">/</span>
+            <span id="facultyBreadcrumbSubject" class="text-[#2F5238] font-bold hidden">
+              Subject
             </span>
           </div>
-          <div class="flex items-center space-x-2">
-            <h2 id="activeLectureCourseTitle" class="text-sm sm:text-base font-bold text-[#1C241E] truncate">
-              Data Mining (Theory)
-            </h2>
-            <span class="text-[#9AA49C]">•</span>
-            <p id="activeLectureTopic" class="text-[11px] sm:text-xs text-[#2F5238] font-mono truncate">
-              Topic: Frequent Itemset Mining & Apriori Algorithm
-            </p>
-          </div>
+          <h2 id="facultyPortalHeaderTitle" class="text-sm sm:text-base font-bold text-[#1C241E] flex items-center">
+            <span>Select Academic Department / Course</span>
+          </h2>
         </div>
 
-        <!-- Add New Class / Switch Session Actions -->
-        <div class="flex items-center space-x-2 shrink-0 self-start md:self-auto">
-          <select id="facultyLectureDropdown" onchange="switchFacultyActiveLecture(this.value)" class="bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] max-w-[180px] sm:max-w-xs truncate">
-          </select>
-          <button onclick="openCreateLectureModal()" class="px-3 py-1.5 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white text-xs font-mono font-bold shadow-md flex items-center space-x-1.5 transition">
-            <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
-            <span>+ Add New Class</span>
+        <div class="flex items-center space-x-2 shrink-0">
+          <button id="facultyBackStepBtn" onclick="facultyGoBack()" class="px-3 py-1.5 rounded-xl bg-[#F5F2EB] hover:bg-[#E8E3DA] text-[#5A655C] text-xs font-mono font-bold border border-[#E8E3DA] flex items-center space-x-1.5 transition hidden">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Back</span>
+          </button>
+          <button onclick="facultyResetToStart()" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-[#2F5238] text-xs font-mono font-bold border border-emerald-500/30 flex items-center space-x-1.5 transition">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Reset Flow</span>
           </button>
         </div>
       </div>
 
-      <!-- 2. ATTENDANCE LIFECYCLE CONTROL STRIP (START / PAUSE / RESUME / STOP) -->
-      <div class="glass-panel p-3 sm:p-4 rounded-2xl border border-[#E8E3DA] bg-gradient-to-r from-slate-950/80 via-slate-900/90 to-purple-950/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="flex items-center space-x-3">
-          <div class="flex items-center space-x-2">
-            <span class="text-[10px] font-mono text-[#869288] uppercase tracking-wider font-semibold">Session Status:</span>
-            <span id="lifecycleStatusBadge" class="bg-emerald-500/20 text-[#2F5238] font-mono text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center shadow">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
-              <span>RUNNING — ACCEPTING CHECK-INS</span>
-            </span>
-          </div>
-          <span id="lifecycleSubtext" class="hidden md:inline text-[10px] font-mono text-[#869288]">
-            QR code and PIN are now visible to students
-          </span>
-        </div>
-
-        <!-- Action Control Buttons -->
-        <div class="flex items-center space-x-2 flex-wrap sm:flex-nowrap">
-          <!-- Start Button -->
-          <button id="btnStartAttendance" onclick="startLectureAttendance()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-[#1C241E] font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition disabled:opacity-40 disabled:cursor-not-allowed">
-            <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
-            <span>Start</span>
-          </button>
-          
-          <!-- Pause / Resume Button -->
-          <button id="btnPauseResumeAttendance" onclick="togglePauseResumeAttendance()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-[#1C241E] font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition disabled:opacity-40 disabled:cursor-not-allowed">
-            <i id="pauseResumeIcon" data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>
-            <span id="pauseResumeText">Pause</span>
-          </button>
-          
-          <!-- End & Save Button -->
-          <button id="btnStopAttendance" onclick="stopLectureAttendance()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-[#1C241E] font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition disabled:opacity-40 disabled:cursor-not-allowed">
-            <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
-            <span>End & Save</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-5">
-        
-        <!-- Live Rotating Projector Display Card -->
-        <div class="glass-panel p-3.5 sm:p-5 rounded-2xl lg:col-span-1 text-center space-y-3 neon-border relative overflow-hidden" id="kioskDisplayCard">
-          
-          <!-- KIOSK STATE OVERLAY (FOR PAUSED / SCHEDULED / COMPLETED) -->
-          <div id="kioskStateOverlay" class="absolute inset-0 z-20 bg-[#F5F2EB] backdrop-blur-md flex flex-col items-center justify-center p-4 text-center space-y-2 hidden transition-all duration-300">
-            <div id="kioskOverlayIcon" class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-[#C28222] text-2xl mb-1 shadow-inner">
-              ⏸️
+      <!-- ============================================== -->
+      <!-- STEP 1: DEPARTMENT / COURSE SELECTION TILES -->
+      <!-- ============================================== -->
+      <div id="facultyStep1_Departments" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="bg-[#2F5238] text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded-md">STEP 1</span>
+              <h3 class="font-bold text-[#1C241E] text-sm sm:text-base">Assigned Academic Programs & Departments</h3>
             </div>
-            <h3 id="kioskOverlayTitle" class="text-sm sm:text-base font-bold text-[#1C241E] font-mono">
-              ATTENDANCE PAUSED
-            </h3>
-            <p id="kioskOverlayDesc" class="text-[10px] text-[#5A655C] font-mono max-w-xs">
-              Instructor has temporarily paused check-ins. QR code and PIN entry are frozen.
-            </p>
-            <button id="kioskOverlayActionBtn" onclick="togglePauseResumeAttendance()" class="mt-2 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-[#1C241E] font-mono text-xs font-bold shadow-lg flex items-center space-x-1">
-              <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
-              <span>Resume Attendance</span>
+            <p class="text-[11px] sm:text-xs text-[#5A655C] mt-0.5">Select a course to view assigned academic cohorts and annual curriculums.</p>
+          </div>
+        </div>
+
+        <div id="facultyDeptGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+          <!-- Dynamically populated by renderFacultyPortal() -->
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- STEP 2: ACADEMIC YEAR SELECTION TILES -->
+      <!-- ============================================== -->
+      <div id="facultyStep2_Years" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="bg-[#2F5238] text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded-md">STEP 2</span>
+              <h3 id="facultyYearStepHeading" class="font-bold text-[#1C241E] text-sm sm:text-base">Select Academic Year Cohort</h3>
+            </div>
+            <p id="facultyYearStepSubheading" class="text-[11px] sm:text-xs text-[#5A655C] mt-0.5">Select the cohort year level to inspect and manage your assigned subjects.</p>
+          </div>
+        </div>
+
+        <div id="facultyYearGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
+          <!-- Dynamically populated with 3 (or 4) tiles -->
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- STEP 3: SUBJECT SELECTION TILES (SORTED A-Z) -->
+      <!-- ============================================== -->
+      <div id="facultyStep3_Subjects" class="space-y-4 hidden">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="bg-[#2F5238] text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded-md">STEP 3</span>
+              <h3 id="facultySubjectStepHeading" class="font-bold text-[#1C241E] text-sm sm:text-base">Select Subject</h3>
+            </div>
+            <p id="facultySubjectStepSubheading" class="text-[11px] sm:text-xs text-[#5A655C] mt-0.5">Showing subjects arranged in ascending alphabetical order (A-Z).</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span id="facultySubjectCountBadge" class="bg-emerald-500/10 text-[#2F5238] border border-emerald-500/30 text-xs font-mono font-bold px-2.5 py-1 rounded-xl">
+              0 Subjects
+            </span>
+          </div>
+        </div>
+
+        <div id="facultySubjectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+          <!-- Dynamically populated with Subject tiles sorted A-Z -->
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- STEP 4: CLASSROOM KIOSK & ATTENDANCE DECK -->
+      <!-- ============================================== -->
+      <div id="facultyStep4_Classroom" class="space-y-3 sm:space-y-5 hidden">
+        
+        <!-- Live Action Banner: Switch Subject / Change Details -->
+        <div class="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-base">📚</span>
+            <div>
+              <span class="text-xs font-bold text-[#1C241E]" id="activeSessionSubjectBanner">Data Mining (Theory)</span>
+              <span class="text-[10px] font-mono text-[#5A655C] ml-2" id="activeSessionMetaBanner">B.Sc. Data Science • Second Year (S.Y.)</span>
+            </div>
+          </div>
+          <button onclick="facultyGoToStep('SUBJECTS')" class="px-3 py-1 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white text-xs font-mono font-bold shadow transition flex items-center space-x-1">
+            <i data-lucide="grid" class="w-3 h-3"></i>
+            <span>Change Subject</span>
+          </button>
+        </div>
+
+        <!-- 1. LECTURE SCHEDULING & CONTEXT HEADER DECK -->
+        <div class="glass-panel p-3.5 sm:p-4 rounded-2xl border border-[#D5E4D8] neon-border flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-lg">
+          <div class="space-y-1 min-w-0">
+            <div class="flex items-center space-x-2 flex-wrap">
+              <span id="activeLectureIndexPill" class="bg-purple-500/20 text-[#2F5238] font-mono text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border border-[#D5E4D8]">
+                📖 47% Syllabus Completed (Lecture 14 of 30)
+              </span>
+              <span id="activeLectureRoomBadge" class="bg-[#F5F2EB] text-[#5A655C] font-mono text-[10px] px-2 py-0.5 rounded-full border border-[#E8E3DA]">
+                Room E-104 (Extension)
+              </span>
+              <span id="activeLectureTimeBadge" class="text-[10px] font-mono text-[#869288]">
+                Today • 09:00 AM - 10:00 AM
+              </span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <h2 id="activeLectureCourseTitle" class="text-sm sm:text-base font-bold text-[#1C241E] truncate">
+                Data Mining (Theory)
+              </h2>
+              <span class="text-[#9AA49C]">•</span>
+              <p id="activeLectureTopic" class="text-[11px] sm:text-xs text-[#2F5238] font-mono truncate">
+                Topic: Frequent Itemset Mining & Apriori Algorithm
+              </p>
+            </div>
+          </div>
+
+          <!-- Add New Class / Switch Session Actions -->
+          <div class="flex items-center space-x-2 shrink-0 self-start md:self-auto">
+            <select id="facultyLectureDropdown" onchange="switchFacultyActiveLecture(this.value)" class="bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] max-w-[180px] sm:max-w-xs truncate">
+            </select>
+            <button onclick="openCreateLectureModal()" class="px-3 py-1.5 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white text-xs font-mono font-bold shadow-md flex items-center space-x-1.5 transition">
+              <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+              <span>+ Add New Class</span>
             </button>
           </div>
+        </div>
 
-          <div class="flex items-center justify-between border-b border-[#E8E3DA] pb-1.5">
-            <span class="text-[11px] font-mono text-[#2F5238] font-bold">CLASSROOM DISPLAY</span>
-            <span id="kioskRoomTag" class="text-[9px] font-mono text-[#869288] bg-[#F5F2EB] px-1.5 py-0.2 rounded">E-104</span>
-          </div>
-
-          <!-- Rotating Dynamic QR Code with Circular Progress Countdown Ring -->
-          <div class="p-3.5 bg-white rounded-3xl inline-block shadow-2xl border-4 border-slate-100/20 relative">
-            <div class="relative inline-block">
-              <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=CHMC-DS-Token-582914" class="w-36 h-36 sm:w-44 sm:h-44 mx-auto rounded-2xl" alt="Dynamic Dynamic QR">
-            </div>
-
-            <!-- Integrated SVG Circular Countdown HUD -->
-            <div class="flex items-center justify-center space-x-2 mt-2 pt-2 border-t border-slate-100">
-              <div class="relative flex items-center justify-center">
-                <svg class="w-7 h-7 transform -rotate-90">
-                  <circle cx="14" cy="14" r="11" stroke="#E2E8F0" stroke-width="2.5" fill="transparent" />
-                  <circle id="kioskTimerRing" cx="14" cy="14" r="11" stroke="#2563EB" stroke-width="2.5" stroke-dasharray="69.1" stroke-dashoffset="0" stroke-linecap="round" fill="transparent" class="transition-all duration-200 ease-linear" />
-                </svg>
-                <span id="kioskTimer" class="absolute text-[9px] font-mono font-extrabold text-blue-700">8s</span>
-              </div>
-              <span class="text-[10px] font-mono text-slate-700 font-semibold">Dynamic TOTP Stream</span>
-            </div>
-          </div>
-
-          <!-- Rolling PIN HUD (High-Contrast Back-Row Legibility) -->
-          <div class="p-3 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-950 border-2 border-emerald-500/50 shadow-xl">
-            <div class="flex items-center justify-between text-[8px] font-mono text-[#869288] uppercase tracking-wider mb-0.5">
-              <span>Class PIN (for students far from screen)</span>
-              <span class="text-[#2F5238] font-bold bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/30">6-DIGIT CODE</span>
-            </div>
-            <div id="kioskPinDisplay" class="font-mono font-black text-3xl sm:text-4xl text-[#2F5238] tracking-[0.22em] my-1 pin-hud">582914</div>
-            <div class="flex items-center justify-between text-[9px] font-mono text-[#2F5238]/90 pt-0.5 border-t border-emerald-500/20">
-              <span>⏱️ Sync: 8s Window</span>
-              <span>📍 <span id="kioskGeofenceTag">20m</span> Perimeter Lock</span>
-            </div>
-          </div>
-
-          <!-- Dynamic Faculty-Centric Geofence Controller -->
-          <div class="p-3 rounded-2xl bg-[#F5F2EB] border border-emerald-500/40 space-y-2.5 text-left shadow-lg">
-            <div class="flex items-center justify-between">
-              <span class="text-[9px] font-mono text-[#2F5238] font-bold uppercase tracking-wider flex items-center">
-                <i data-lucide="crosshair" class="w-3.5 h-3.5 mr-1 text-[#2F5238]"></i>
-                Classroom Location Pin
+        <!-- 2. ATTENDANCE LIFECYCLE CONTROL STRIP (START / PAUSE / RESUME / STOP) -->
+        <div class="glass-panel p-3 sm:p-4 rounded-2xl border border-[#E8E3DA] bg-gradient-to-r from-slate-950/80 via-slate-900/90 to-purple-950/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] font-mono text-[#869288] uppercase tracking-wider font-semibold">Session Status:</span>
+              <span id="lifecycleStatusBadge" class="bg-emerald-500/20 text-[#2F5238] font-mono text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center shadow">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+                <span>RUNNING — ACCEPTING CHECK-INS</span>
               </span>
-              <span id="teacherRadiusBadge" class="bg-emerald-500/20 text-[#2F5238] font-mono text-[9px] font-bold px-1.5 py-0.2 rounded border border-emerald-500/40">20m</span>
             </div>
+            <span id="lifecycleSubtext" class="hidden md:inline text-[10px] font-mono text-[#869288]">
+              QR code and PIN are now visible to students
+            </span>
+          </div>
 
-            <!-- Anchor Source Selector -->
-            <div class="space-y-0.5">
-              <label class="text-[8px] font-mono text-[#869288]">Set Location To:</label>
-              <select id="facultyAnchorSelect" onchange="handleFacultyAnchorSelect(this.value)" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl p-1.5 text-[11px] text-[#1C241E] font-mono focus:outline-none focus:border-emerald-500 truncate">
-                <option value="19.22170,73.16460|DEVICE_GPS">📍 Live Faculty Device GPS (This Laptop/Phone)</option>
-                <option value="19.22170,73.16460|ROOM_E104">🏢 Room E-104 (Extension Building Theory • 19.22170, 73.16460)</option>
-                <option value="19.22150,73.16440|ROOM_M113">🔬 Room M-113 (Data Science Lab • 19.22150, 73.16440)</option>
-                <option value="19.22140,73.16430|ROOM_M103">🧪 Room M-103 (Main Building Lab • 19.22140, 73.16430)</option>
-                <option value="19.22130,73.16420|ROOM_AUD">🏛️ Smt. CHM Auditorium (Large Venue • 19.22130, 73.16420)</option>
-              </select>
-            </div>
-
-            <!-- Real-Time Anchor Coordinates HUD -->
-            <div id="facultyAnchorCoordinatesHUD" class="p-1.5 rounded-xl bg-white border border-emerald-500/30 flex items-center justify-between text-[9px] font-mono text-[#2F5238]">
-              <div class="flex items-center space-x-1 truncate">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="facultyAnchorCoordsText">19.22170° N, 73.16460° E</span>
-              </div>
-              <span id="facultyAnchorAccuracyBadge" class="text-[#869288] text-[8px] bg-[#F5F2EB] px-1 py-0.2 rounded shrink-0">±3.0m Lock</span>
-            </div>
-
-            <!-- Sync Real GPS Button -->
-            <button type="button" onclick="acquireRealFacultyDeviceGPS()" class="w-full py-1 px-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-[#2F5238] border border-emerald-500/30 text-[10px] font-mono font-bold flex items-center justify-center space-x-1 transition">
-              <i data-lucide="locate-fixed" class="w-3 h-3 text-[#2F5238]"></i>
-              <span>🛰️ Use My Current Location</span>
+          <!-- Action Control Buttons -->
+          <div class="flex items-center space-x-2 flex-wrap sm:flex-nowrap">
+            <!-- Start Button -->
+            <button id="btnStartAttendance" onclick="startLectureAttendance()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-[#1C241E] font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition disabled:opacity-40 disabled:cursor-not-allowed">
+              <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+              <span>Start</span>
             </button>
             
-            <!-- Radius Slider -->
-            <div class="space-y-0.5 pt-1">
-              <div class="flex justify-between text-[8px] font-mono text-[#869288]">
-                <span>Allowed Distance:</span>
-                <span id="facultyPerimeterSliderVal" class="text-[#2F5238] font-bold">20 meters</span>
-              </div>
-              <input type="range" min="5" max="50" value="20" step="1" id="teacherGeofenceSlider" oninput="handleTeacherRadiusChange(this.value)" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
-            </div>
-
-            <!-- Quick Presets -->
-            <div class="grid grid-cols-4 gap-1 text-[9px] font-mono">
-              <button type="button" onclick="setGeofencePreset(10)" class="p-1 rounded bg-[#F5F2EB] text-[#5A655C] text-center truncate">10m</button>
-              <button type="button" onclick="setGeofencePreset(20)" class="p-1 rounded bg-emerald-500/20 text-[#2F5238] border border-emerald-500/40 text-center font-bold truncate">20m</button>
-              <button type="button" onclick="setGeofencePreset(35)" class="p-1 rounded bg-[#F5F2EB] text-[#5A655C] text-center truncate">35m</button>
-              <button type="button" onclick="setGeofencePreset(50)" class="p-1 rounded bg-[#F5F2EB] text-[#5A655C] text-center truncate">50m</button>
-            </div>
-          </div>
-
-          <!-- Unit Selector -->
-          <div class="space-y-0.5 text-left">
-            <label class="text-[9px] font-mono text-[#869288]">Select Subject:</label>
-            <select id="teacherUnitSelector" onchange="handleTeacherUnitChange(this.value)" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl p-1.5 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] truncate">
-            </select>
+            <!-- Pause / Resume Button -->
+            <button id="btnPauseResumeAttendance" onclick="togglePauseResumeAttendance()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-[#1C241E] font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition disabled:opacity-40 disabled:cursor-not-allowed">
+              <i id="pauseResumeIcon" data-lucide="pause" class="w-3.5 h-3.5 fill-current"></i>
+              <span id="pauseResumeText">Pause</span>
+            </button>
+            
+            <!-- End & Save Button -->
+            <button id="btnStopAttendance" onclick="stopLectureAttendance()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-[#1C241E] font-mono text-xs font-bold shadow-md flex items-center space-x-1 transition disabled:opacity-40 disabled:cursor-not-allowed">
+              <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
+              <span>End & Save</span>
+            </button>
           </div>
         </div>
 
-        <!-- Right Column: Digital Roster & Real-Time Proxy Incident Feed -->
-        <div class="lg:col-span-2 space-y-3.5 flex flex-col justify-between">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-5">
           
-          <!-- 1. Live Digital Attendance Roster -->
-          <div class="glass-panel p-3.5 sm:p-5 rounded-2xl border border-[#E8E3DA] space-y-3">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-[#E8E3DA] pb-2">
-              <div>
-                <h3 id="teacherSubjectTitle" class="font-bold text-[#1C241E] text-xs sm:text-sm">Data Mining (Theory)</h3>
-                <p id="teacherRosterSub" class="text-[10px] font-mono text-[#869288]">Teacher: Miss Razia Khan • Second Year Class</p>
+          <!-- Live Rotating Projector Display Card -->
+          <div class="glass-panel p-3.5 sm:p-5 rounded-2xl lg:col-span-1 text-center space-y-3 neon-border relative overflow-hidden" id="kioskDisplayCard">
+            
+            <!-- KIOSK STATE OVERLAY (FOR PAUSED / SCHEDULED / COMPLETED) -->
+            <div id="kioskStateOverlay" class="absolute inset-0 z-20 bg-[#F5F2EB] backdrop-blur-md flex flex-col items-center justify-center p-4 text-center space-y-2 hidden transition-all duration-300">
+              <div id="kioskOverlayIcon" class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-[#C28222] text-2xl mb-1 shadow-inner">
+                ⏸️
               </div>
-              <span id="rosterCountBadge" class="bg-emerald-500/20 text-[#2F5238] font-mono text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/30 w-fit">
-                Verified: 4 / 5 Present
-              </span>
-            </div>
-
-            <!-- Table of Students -->
-            <div class="overflow-x-auto border border-[#E8E3DA] rounded-xl mt-2 max-h-52 overflow-y-auto">
-              <table class="w-full text-left text-xs font-mono whitespace-nowrap">
-                <thead class="bg-[#F5F2EB] text-[#5A655C] uppercase sticky top-0">
-                  <tr>
-                    <th class="p-2">Roll No</th>
-                    <th class="p-2">Student Name</th>
-                    <th class="p-2">Status</th>
-                    <th class="p-2">Distance</th>
-                    <th class="p-2">1-Device Lock</th>
-                    <th class="p-2 text-right">Device Action</th>
-                  </tr>
-                </thead>
-                <tbody id="digitalRosterBody" class="divide-y divide-stitch-border text-[#5A655C]">
-                </tbody>
-              </table>
-            </div>
-
-            <div class="flex flex-col sm:flex-row space-y-1.5 sm:space-y-0 sm:space-x-2 pt-1">
-              <button onclick="stopLectureAttendance()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-[#1C241E] font-bold py-2 rounded-xl text-xs font-mono shadow-md">
-                Save Attendance Record
+              <h3 id="kioskOverlayTitle" class="text-sm sm:text-base font-bold text-[#1C241E] font-mono">
+                ATTENDANCE PAUSED
+              </h3>
+              <p id="kioskOverlayDesc" class="text-[10px] text-[#5A655C] font-mono max-w-xs">
+                Instructor has temporarily paused check-ins. QR code and PIN entry are frozen.
+              </p>
+              <button id="kioskOverlayActionBtn" onclick="togglePauseResumeAttendance()" class="mt-2 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-[#1C241E] font-mono text-xs font-bold shadow-lg flex items-center space-x-1">
+                <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                <span>Resume Attendance</span>
               </button>
+            </div>
+
+            <div class="flex items-center justify-between border-b border-[#E8E3DA] pb-1.5">
+              <span class="text-[11px] font-mono text-[#2F5238] font-bold">CLASSROOM DISPLAY</span>
+              <span id="kioskRoomTag" class="text-[9px] font-mono text-[#869288] bg-[#F5F2EB] px-1.5 py-0.2 rounded">E-104</span>
+            </div>
+
+            <!-- Rotating Dynamic QR Code with Circular Progress Countdown Ring -->
+            <div class="p-3.5 bg-white rounded-3xl inline-block shadow-2xl border-4 border-slate-100/20 relative">
+              <div class="relative inline-block">
+                <img id="kioskQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=CHMC-DS-Token-582914" class="w-36 h-36 sm:w-44 sm:h-44 mx-auto rounded-2xl" alt="Dynamic Dynamic QR">
+              </div>
+
+              <!-- Integrated SVG Circular Countdown HUD -->
+              <div class="flex items-center justify-center space-x-2 mt-2 pt-2 border-t border-slate-100">
+                <div class="relative flex items-center justify-center">
+                  <svg class="w-7 h-7 transform -rotate-90">
+                    <circle cx="14" cy="14" r="11" stroke="#E2E8F0" stroke-width="2.5" fill="transparent" />
+                    <circle id="kioskTimerRing" cx="14" cy="14" r="11" stroke="#2563EB" stroke-width="2.5" stroke-dasharray="69.1" stroke-dashoffset="0" stroke-linecap="round" fill="transparent" class="transition-all duration-200 ease-linear" />
+                  </svg>
+                  <span id="kioskTimer" class="absolute text-[9px] font-mono font-extrabold text-blue-700">8s</span>
+                </div>
+                <span class="text-[10px] font-mono text-slate-700 font-semibold">Dynamic TOTP Stream</span>
+              </div>
+            </div>
+
+            <!-- Rolling PIN HUD (High-Contrast Back-Row Legibility) -->
+            <div class="p-3 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-950 border-2 border-emerald-500/50 shadow-xl">
+              <div class="flex items-center justify-between text-[8px] font-mono text-[#869288] uppercase tracking-wider mb-0.5">
+                <span>Class PIN (for students far from screen)</span>
+                <span class="text-[#2F5238] font-bold bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/30">6-DIGIT CODE</span>
+              </div>
+              <div id="kioskPinDisplay" class="font-mono font-black text-3xl sm:text-4xl text-[#2F5238] tracking-[0.22em] my-1 pin-hud">582914</div>
+              <div class="flex items-center justify-between text-[9px] font-mono text-[#2F5238]/90 pt-0.5 border-t border-emerald-500/20">
+                <span>⏱️ Sync: 8s Window</span>
+                <span>📍 <span id="kioskGeofenceTag">20m</span> Perimeter Lock</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Faculty-Centric Geofence Controller -->
+            <div class="p-3 rounded-2xl bg-[#F5F2EB] border border-emerald-500/40 space-y-2.5 text-left shadow-lg">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono text-[#2F5238] font-bold uppercase tracking-wider flex items-center">
+                  <i data-lucide="crosshair" class="w-3.5 h-3.5 mr-1 text-[#2F5238]"></i>
+                  Classroom Location Pin
+                </span>
+                <span id="teacherRadiusBadge" class="bg-emerald-500/20 text-[#2F5238] font-mono text-[9px] font-bold px-1.5 py-0.2 rounded border border-emerald-500/40">20m</span>
+              </div>
+
+              <!-- Anchor Source Selector -->
+              <div class="space-y-0.5">
+                <label class="text-[8px] font-mono text-[#869288]">Set Location To:</label>
+                <select id="facultyAnchorSelect" onchange="handleFacultyAnchorSelect(this.value)" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl p-1.5 text-[11px] text-[#1C241E] font-mono focus:outline-none focus:border-emerald-500 truncate">
+                  <option value="19.22170,73.16460|DEVICE_GPS">📍 Live Faculty Device GPS (This Laptop/Phone)</option>
+                  <option value="19.22170,73.16460|ROOM_E104">🏢 Room E-104 (Extension Building Theory • 19.22170, 73.16460)</option>
+                  <option value="19.22150,73.16440|ROOM_M113">🔬 Room M-113 (Data Science Lab • 19.22150, 73.16440)</option>
+                  <option value="19.22140,73.16430|ROOM_M103">🧪 Room M-103 (Main Building Lab • 19.22140, 73.16430)</option>
+                  <option value="19.22130,73.16420|ROOM_AUD">🏛️ Smt. CHM Auditorium (Large Venue • 19.22130, 73.16420)</option>
+                </select>
+              </div>
+
+              <!-- Real-Time Anchor Coordinates HUD -->
+              <div id="facultyAnchorCoordinatesHUD" class="p-1.5 rounded-xl bg-white border border-emerald-500/30 flex items-center justify-between text-[9px] font-mono text-[#2F5238]">
+                <div class="flex items-center space-x-1 truncate">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span id="facultyAnchorCoordsText">19.22170° N, 73.16460° E</span>
+                </div>
+                <span id="facultyAnchorAccuracyBadge" class="text-[#869288] text-[8px] bg-[#F5F2EB] px-1 py-0.2 rounded shrink-0">±3.0m Lock</span>
+              </div>
+
+              <!-- Sync Real GPS Button -->
+              <button type="button" onclick="acquireRealFacultyDeviceGPS()" class="w-full py-1 px-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-[#2F5238] border border-emerald-500/30 text-[10px] font-mono font-bold flex items-center justify-center space-x-1 transition">
+                <i data-lucide="locate-fixed" class="w-3.5 h-3.5 text-[#2F5238]"></i>
+                <span>🛰️ Use My Current Location</span>
+              </button>
+              
+              <!-- Radius Slider -->
+              <div class="space-y-0.5 pt-1">
+                <div class="flex justify-between text-[8px] font-mono text-[#869288]">
+                  <span>Allowed Distance:</span>
+                  <span id="facultyPerimeterSliderVal" class="text-[#2F5238] font-bold">20 meters</span>
+                </div>
+                <input type="range" min="5" max="50" value="20" step="1" id="teacherGeofenceSlider" oninput="handleTeacherRadiusChange(this.value)" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
+              </div>
+
+              <!-- Quick Presets -->
+              <div class="grid grid-cols-4 gap-1 text-[9px] font-mono">
+                <button type="button" onclick="setGeofencePreset(10)" class="p-1 rounded bg-[#F5F2EB] text-[#5A655C] text-center truncate">10m</button>
+                <button type="button" onclick="setGeofencePreset(20)" class="p-1 rounded bg-emerald-500/20 text-[#2F5238] border border-emerald-500/40 text-center font-bold truncate">20m</button>
+                <button type="button" onclick="setGeofencePreset(35)" class="p-1 rounded bg-[#F5F2EB] text-[#5A655C] text-center truncate">35m</button>
+                <button type="button" onclick="setGeofencePreset(50)" class="p-1 rounded bg-[#F5F2EB] text-[#5A655C] text-center truncate">50m</button>
+              </div>
+            </div>
+
+            <!-- Unit Selector -->
+            <div class="space-y-0.5 text-left">
+              <label class="text-[9px] font-mono text-[#869288]">Select Subject:</label>
+              <select id="teacherUnitSelector" onchange="handleTeacherUnitChange(this.value)" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl p-1.5 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] truncate">
+              </select>
             </div>
           </div>
 
-          <!-- 2. Real-Time Proxy & Security Incident Feed HUD -->
-          <div class="glass-panel p-3.5 sm:p-5 rounded-2xl border border-rose-500/40 neon-border-rose space-y-3 bg-gradient-to-r from-rose-950/20 to-slate-900/40">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-[#E8E3DA] pb-2">
-              <div class="flex items-center space-x-2">
-                <div class="w-7 h-7 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-[#8D3F30] text-sm">
-                  🚨
-                </div>
+          <!-- Right Column: Digital Roster & Real-Time Proxy Incident Feed -->
+          <div class="lg:col-span-2 space-y-3.5 flex flex-col justify-between">
+            
+            <!-- 1. Live Digital Attendance Roster -->
+            <div class="glass-panel p-3.5 sm:p-5 rounded-2xl border border-[#E8E3DA] space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-[#E8E3DA] pb-2">
                 <div>
-                  <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm flex items-center">
-                    <span>⚠️ Suspicious Activity Monitor</span>
-                  </h3>
-                  <p class="text-[10px] font-mono text-[#869288]">Any check-in attempts from outside the classroom will appear here</p>
+                  <h3 id="teacherSubjectTitle" class="font-bold text-[#1C241E] text-xs sm:text-sm">Data Mining (Theory)</h3>
+                  <p id="teacherRosterSub" class="text-[10px] font-mono text-[#869288]">Teacher: Miss Razia Khan • Second Year Class</p>
                 </div>
+                <span id="rosterCountBadge" class="bg-emerald-500/20 text-[#2F5238] font-mono text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/30 w-fit">
+                  Verified: 0 / 0 Present
+                </span>
               </div>
 
-              <div class="flex items-center space-x-2">
-                <span id="proxyIncidentCounterBadge" class="bg-rose-500/20 text-[#8D3F30] border border-rose-500/40 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full flex items-center">
-                  <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1 animate-ping"></span>
-                  <span id="proxyIncidentCountText">0 Interceptions</span>
-                </span>
-                <button onclick="clearProxyIncidentsFeed()" class="text-[10px] font-mono text-[#869288] hover:text-white px-2 py-0.5 rounded bg-[#F5F2EB] hover:bg-slate-700">
-                  Clear
+              <!-- Table of Students -->
+              <div class="overflow-x-auto border border-[#E8E3DA] rounded-xl mt-2 max-h-52 overflow-y-auto">
+                <table class="w-full text-left text-xs font-mono whitespace-nowrap">
+                  <thead class="bg-[#F5F2EB] text-[#5A655C] uppercase sticky top-0">
+                    <tr>
+                      <th class="p-2">Roll No</th>
+                      <th class="p-2">Student Name</th>
+                      <th class="p-2">Status</th>
+                      <th class="p-2">Distance</th>
+                      <th class="p-2">1-Device Lock</th>
+                      <th class="p-2 text-right">Device Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="digitalRosterBody" class="divide-y divide-stitch-border text-[#5A655C]">
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="flex flex-col sm:flex-row space-y-1.5 sm:space-y-0 sm:space-x-2 pt-1">
+                <button onclick="stopLectureAttendance()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-[#1C241E] font-bold py-2 rounded-xl text-xs font-mono shadow-md">
+                  Save Attendance Record
                 </button>
               </div>
             </div>
 
-            <!-- Simulation Trigger Controls -->
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-1.5 text-[10px] font-mono">
-              <button onclick="simulateScan()" class="p-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-[#2F5238] text-left truncate font-semibold">
-                ⚡ In-Class Scan (&lt;10m)
-              </button>
-              <button onclick="simulateRemoteProxyBreach()" class="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-[#8D3F30] text-left truncate font-semibold">
-                🚨 Remote Proxy (1.8km)
-              </button>
-              <button onclick="simulateDeviceSharingProxy()" class="p-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-[#C28222] text-left truncate font-semibold">
-                📱 Device Sharing
-              </button>
-              <button onclick="simulateDeviceMismatchProxy()" class="p-1.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-[#D5E4D8] text-[#2F5238] text-left truncate font-semibold">
-                🚫 Handset Mismatch
-              </button>
-            </div>
+            <!-- 2. Real-Time Proxy & Security Incident Feed HUD -->
+            <div class="glass-panel p-3.5 sm:p-5 rounded-2xl border border-rose-500/40 neon-border-rose space-y-3 bg-gradient-to-r from-rose-950/20 to-slate-900/40">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-[#E8E3DA] pb-2">
+                <div class="flex items-center space-x-2">
+                  <div class="w-7 h-7 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-[#8D3F30] text-sm">
+                    🚨
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm flex items-center">
+                      <span>⚠️ Suspicious Activity Monitor</span>
+                    </h3>
+                    <p class="text-[10px] font-mono text-[#869288]">Any check-in attempts from outside the classroom will appear here</p>
+                  </div>
+                </div>
 
-            <!-- Incident Stream -->
-            <div class="space-y-1.5 max-h-44 overflow-y-auto pr-1" id="proxyIncidentFeedList">
-              <div class="p-3 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-center text-[#869288] text-[11px] font-mono">
-                🟢 No proxy attempts detected in this active session. System running with zero security breaches.
+                <div class="flex items-center space-x-2">
+                  <span id="proxyIncidentCounterBadge" class="bg-rose-500/20 text-[#8D3F30] border border-rose-500/40 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full flex items-center">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1 animate-ping"></span>
+                    <span id="proxyIncidentCountText">0 Interceptions</span>
+                  </span>
+                  <button onclick="clearProxyIncidentsFeed()" class="text-[10px] font-mono text-[#869288] hover:text-white px-2 py-0.5 rounded bg-[#F5F2EB] hover:bg-slate-700">
+                    Clear
+                  </button>
+                </div>
+              </div>
+
+              <!-- Simulation Trigger Controls -->
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-1.5 text-[10px] font-mono">
+                <button onclick="simulateScan()" class="p-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-[#2F5238] text-left truncate font-semibold">
+                  ⚡ In-Class Scan (&lt;10m)
+                </button>
+                <button onclick="simulateRemoteProxyBreach()" class="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-[#8D3F30] text-left truncate font-semibold">
+                  🚨 Remote Proxy (1.8km)
+                </button>
+                <button onclick="simulateDeviceSharingProxy()" class="p-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-[#C28222] text-left truncate font-semibold">
+                  📱 Device Sharing
+                </button>
+                <button onclick="simulateDeviceMismatchProxy()" class="p-1.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-[#D5E4D8] text-[#2F5238] text-left truncate font-semibold">
+                  🚫 Handset Mismatch
+                </button>
+              </div>
+
+              <!-- Incident Stream -->
+              <div class="space-y-1.5 max-h-44 overflow-y-auto pr-1" id="proxyIncidentFeedList">
+                <div class="p-3 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-center text-[#869288] text-[11px] font-mono">
+                  🟢 No proxy attempts detected in this active session. System running with zero security breaches.
+                </div>
               </div>
             </div>
+
           </div>
 
         </div>
-
       </div>
     </div>
 
@@ -4891,18 +5012,21 @@
         stopCameraScanner();
         if (session.role.startsWith('TEACHER')) {
           document.getElementById('viewTeacher').classList.remove('hidden');
+          initFacultyPortal();
           
           const unitSelector = document.getElementById('teacherUnitSelector');
-          unitSelector.innerHTML = '';
-          if (session.units && session.units.length > 0) {
-            session.units.forEach((u, i) => {
-              const opt = document.createElement('option');
-              opt.value = JSON.stringify(u);
-              opt.innerText = `${u.title} (${u.room})`;
-              if (u.isDefault || i === 0) opt.selected = true;
-              unitSelector.appendChild(opt);
-            });
-            handleTeacherUnitChange(unitSelector.value);
+          if (unitSelector) {
+            unitSelector.innerHTML = '';
+            if (session.units && session.units.length > 0) {
+              session.units.forEach((u, i) => {
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify(u);
+                opt.innerText = `${u.title} (${u.room})`;
+                if (u.isDefault || i === 0) opt.selected = true;
+                unitSelector.appendChild(opt);
+              });
+              handleTeacherUnitChange(unitSelector.value);
+            }
           }
         } else if (session.role === 'COORDINATOR') {
           document.getElementById('viewCoordinator').classList.remove('hidden');
@@ -4918,13 +5042,644 @@
 
 
 
+    // ==============================================
+    // INSTITUTIONAL CURRICULAR STRUCTURE & DRILL-DOWN TILES
+    // ==============================================
+    const INSTITUTIONAL_COURSES = [
+      {
+        id: "DS",
+        code: "B.Sc. DS",
+        title: "B.Sc. Data Science",
+        badge: "PROGRAM 01",
+        type: "3-Year Degree Program (F.Y., S.Y., T.Y.)",
+        durationYears: 3,
+        icon: "database",
+        years: ["FY", "SY", "TY"],
+        description: "Statistical learning, data engineering, distributed analytics & predictive modeling."
+      },
+      {
+        id: "CS",
+        code: "B.Sc. CS",
+        title: "B.Sc. Computer Science",
+        badge: "PROGRAM 02",
+        type: "3-Year Degree Program (F.Y., S.Y., T.Y.)",
+        durationYears: 3,
+        icon: "code-2",
+        years: ["FY", "SY", "TY"],
+        description: "Core algorithms, operating systems, database architectures & software design patterns."
+      },
+      {
+        id: "IT",
+        code: "B.Sc. IT",
+        title: "B.Sc. Information Technology",
+        badge: "PROGRAM 03",
+        type: "3-Year Degree Program (F.Y., S.Y., T.Y.)",
+        durationYears: 3,
+        icon: "server",
+        years: ["FY", "SY", "TY"],
+        description: "Enterprise networking, cloud infrastructure, virtualization & web systems administration."
+      },
+      {
+        id: "AIDS",
+        code: "B.Tech AI&DS",
+        title: "B.Tech AI & Data Science",
+        badge: "PROGRAM 04",
+        type: "4-Year Engineering Program (F.Y., S.Y., T.Y., Final Year)",
+        durationYears: 4,
+        icon: "cpu",
+        years: ["FY", "SY", "TY", "FINAL"],
+        description: "Deep neural networks, computer vision, robotics, reinforcement learning & industrial practicum."
+      }
+    ];
+
+    const ACADEMIC_YEARS_DEF = {
+      "FY": {
+        id: "FY",
+        title: "First Year (F.Y.)",
+        badge: "YEAR 1",
+        icon: "compass",
+        semesters: "Semesters 1 & 2",
+        description: "Foundational mathematics, computational thinking & introductory programming languages."
+      },
+      "SY": {
+        id: "SY",
+        title: "Second Year (S.Y.)",
+        badge: "YEAR 2",
+        icon: "layers",
+        semesters: "Semesters 3 & 4",
+        description: "Core specialization units, data algorithms, advanced database labs & research foundations."
+      },
+      "TY": {
+        id: "TY",
+        title: "Third Year (T.Y.)",
+        badge: "YEAR 3",
+        icon: "award",
+        semesters: "Semesters 5 & 6",
+        description: "Advanced domain electives, machine learning engineering, capstones & applied analytics."
+      },
+      "FINAL": {
+        id: "FINAL",
+        title: "Final Year (4th Year)",
+        badge: "YEAR 4",
+        icon: "zap",
+        semesters: "Semesters 7 & 8",
+        description: "Industrial practicum, thesis defense, scalable cloud deployments & specialized research."
+      }
+    };
+
+    const CURRICULUM_SUBJECTS = [
+      // Miss Razia Khan (DS - SY)
+      {
+        code: "DS201-DM-TH",
+        title: "Data Mining (Theory)",
+        dept: "DS",
+        year: "SY",
+        facultyUsername: "faculty.razia",
+        facultyName: "Miss Razia Khan",
+        room: "E-104",
+        badge: "THEORY",
+        icon: "database",
+        topic: "Frequent Itemset Mining & Apriori Algorithm",
+        totalLectures: 30,
+        completedLectures: 14,
+        description: "Algorithmic discovery of patterns in large datasets, association rules, and clustering."
+      },
+      {
+        code: "DS201-DM-PR",
+        title: "Data Mining (Practical)",
+        dept: "DS",
+        year: "SY",
+        facultyUsername: "faculty.razia",
+        facultyName: "Miss Razia Khan",
+        room: "M-113",
+        badge: "LAB PRACTICAL",
+        icon: "terminal",
+        topic: "Hands-on WEKA Classification & Clustering",
+        totalLectures: 15,
+        completedLectures: 12,
+        description: "Applied data mining workflows using Python scikit-learn, Orange, and WEKA workbenches."
+      },
+      {
+        code: "DS203-FOR-TH",
+        title: "FOR: Research Foundation",
+        dept: "DS",
+        year: "SY",
+        facultyUsername: "faculty.razia",
+        facultyName: "Miss Razia Khan",
+        room: "E-104",
+        badge: "THEORY",
+        icon: "book-open",
+        topic: "Formulating Hypotheses & Academic Review",
+        totalLectures: 30,
+        completedLectures: 10,
+        description: "Quantitative scientific methodologies, academic research ethics, and LaTeX documentation."
+      },
+      {
+        code: "DS202-LA",
+        title: "Linear Algebra & Vectors",
+        dept: "DS",
+        year: "SY",
+        facultyUsername: "faculty.razia",
+        facultyName: "Miss Razia Khan",
+        room: "E-104",
+        badge: "THEORY",
+        icon: "grid",
+        topic: "Eigenvalues, Eigenvectors & SVD Decomposition",
+        totalLectures: 30,
+        completedLectures: 18,
+        description: "Vector spaces, subspaces, linear transformations, inner products, and matrix factorization."
+      },
+      // Miss Razia Khan (DS - FY)
+      {
+        code: "DS101-PY",
+        title: "Introduction to Python Programming",
+        dept: "DS",
+        year: "FY",
+        facultyUsername: "faculty.razia",
+        facultyName: "Miss Razia Khan",
+        room: "E-102",
+        badge: "THEORY",
+        icon: "code",
+        topic: "OOP Constructs & Data Structures in Python",
+        totalLectures: 30,
+        completedLectures: 8,
+        description: "Syntax, memory model, control flow, functions, OOP paradigms, and standard library modules."
+      },
+      // Miss Razia Khan (CS - SY)
+      {
+        code: "CS201-DBMS",
+        title: "Database Management Systems",
+        dept: "CS",
+        year: "SY",
+        facultyUsername: "faculty.razia",
+        facultyName: "Miss Razia Khan",
+        room: "C-201",
+        badge: "THEORY",
+        icon: "database",
+        topic: "Relational Calculus & Transaction Isolation",
+        totalLectures: 30,
+        completedLectures: 15,
+        description: "Relational database design, normal forms (1NF-BCNF), ACID transactions, and query optimization."
+      },
+      // Miss Razia Khan (AIDS - FINAL)
+      {
+        code: "AI401-DL",
+        title: "Deep Learning & Computer Vision",
+        dept: "AIDS",
+        year: "FINAL",
+        facultyUsername: "faculty.razia",
+        facultyName: "Miss Razia Khan",
+        room: "A-402",
+        badge: "ADVANCED",
+        icon: "cpu",
+        topic: "Convolutional Architectures & Object Localization",
+        totalLectures: 30,
+        completedLectures: 22,
+        description: "State-of-the-art CNNs, vision transformers, transfer learning, and real-time inference acceleration."
+      },
+
+      // Mr. Anshul Chimnani (DS - SY)
+      {
+        code: "DS204-DW",
+        title: "Data Warehousing & Business Intelligence",
+        dept: "DS",
+        year: "SY",
+        facultyUsername: "faculty.anshul",
+        facultyName: "Mr. Anshul Chimnani",
+        room: "E-104",
+        badge: "THEORY",
+        icon: "layers",
+        topic: "Star vs Snowflake Schemas in ETL Pipelines",
+        totalLectures: 30,
+        completedLectures: 25,
+        description: "Enterprise dimensional modeling, OLAP cubing, data lakes, and automated ETL ingestion pipelines."
+      },
+      {
+        code: "DS203-FOR-PR",
+        title: "FOR: Applied Research Lab",
+        dept: "DS",
+        year: "SY",
+        facultyUsername: "faculty.anshul",
+        facultyName: "Mr. Anshul Chimnani",
+        room: "M-103",
+        badge: "LAB PRACTICAL",
+        icon: "terminal",
+        topic: "Statistical Analysis in R & Bioconductor",
+        totalLectures: 15,
+        completedLectures: 9,
+        description: "Exploratory hypothesis testing, ANOVA, linear models, and statistical computing with R studio."
+      },
+      // Mr. Anshul Chimnani (CS - SY)
+      {
+        code: "CS202-OS",
+        title: "Operating Systems & Kernel Architecture",
+        dept: "CS",
+        year: "SY",
+        facultyUsername: "faculty.anshul",
+        facultyName: "Mr. Anshul Chimnani",
+        room: "C-203",
+        badge: "THEORY",
+        icon: "cpu",
+        topic: "Virtual Memory, Page Replacement & Scheduling",
+        totalLectures: 30,
+        completedLectures: 17,
+        description: "Processes, multithreading, concurrency locks, virtual memory pagers, and Linux kernel fundamentals."
+      },
+
+      // Miss Kalyani Patil (DS - SY)
+      {
+        code: "DS205-DAA-TH",
+        title: "Design & Analysis of Algorithms (Theory)",
+        dept: "DS",
+        year: "SY",
+        facultyUsername: "faculty.kalyani",
+        facultyName: "Miss Kalyani Patil",
+        room: "E-104",
+        badge: "THEORY",
+        icon: "activity",
+        topic: "Dynamic Programming & Greedy Approximations",
+        totalLectures: 30,
+        completedLectures: 20,
+        description: "Asymptotic complexity, recurrence relations, divide-and-conquer, DP, graph algorithms, and NP-completeness."
+      },
+      {
+        code: "DS205-DAA-PR",
+        title: "Design & Analysis of Algorithms (Practical)",
+        dept: "DS",
+        year: "SY",
+        facultyUsername: "faculty.kalyani",
+        facultyName: "Miss Kalyani Patil",
+        room: "M-113",
+        badge: "LAB PRACTICAL",
+        icon: "terminal",
+        topic: "Benchmarking Algorithm Execution Profiles",
+        totalLectures: 15,
+        completedLectures: 11,
+        description: "Empirical benchmarking of sorting, graph traversals, and dynamic programming in C++ and Python."
+      },
+      // Miss Kalyani Patil (IT - TY)
+      {
+        code: "IT301-CLOUD",
+        title: "Cloud Computing & Virtualization",
+        dept: "IT",
+        year: "TY",
+        facultyUsername: "faculty.kalyani",
+        facultyName: "Miss Kalyani Patil",
+        room: "I-105",
+        badge: "THEORY",
+        icon: "cloud",
+        topic: "Serverless Architectures & Docker Containers",
+        totalLectures: 30,
+        completedLectures: 19,
+        description: "IaaS, PaaS, SaaS, container orchestration with Kubernetes, and high-availability cloud deployments."
+      }
+    ];
+
+    let facultyCurrentStep = 'DEPARTMENTS'; // 'DEPARTMENTS' | 'YEARS' | 'SUBJECTS' | 'CLASSROOM'
+    let facultySelectedDept = null;
+    let facultySelectedYear = null;
+    let facultySelectedSubject = null;
+
+    function initFacultyPortal() {
+      facultyCurrentStep = 'DEPARTMENTS';
+      facultySelectedDept = null;
+      facultySelectedYear = null;
+      facultySelectedSubject = null;
+      renderFacultyPortal();
+    }
+
+    function renderFacultyPortal() {
+      const step1El = document.getElementById('facultyStep1_Departments');
+      const step2El = document.getElementById('facultyStep2_Years');
+      const step3El = document.getElementById('facultyStep3_Subjects');
+      const step4El = document.getElementById('facultyStep4_Classroom');
+
+      const backBtn = document.getElementById('facultyBackStepBtn');
+      const headerTitle = document.getElementById('facultyPortalHeaderTitle');
+
+      // Breadcrumb elements
+      const sep1 = document.getElementById('facultyBreadcrumbSep1');
+      const breadDept = document.getElementById('facultyBreadcrumbDept');
+      const sep2 = document.getElementById('facultyBreadcrumbSep2');
+      const breadYear = document.getElementById('facultyBreadcrumbYear');
+      const sep3 = document.getElementById('facultyBreadcrumbSep3');
+      const breadSubject = document.getElementById('facultyBreadcrumbSubject');
+
+      // Hide all steps initially
+      if (step1El) step1El.classList.add('hidden');
+      if (step2El) step2El.classList.add('hidden');
+      if (step3El) step3El.classList.add('hidden');
+      if (step4El) step4El.classList.add('hidden');
+
+      // Reset breadcrumb visibility
+      if (sep1) sep1.classList.add('hidden');
+      if (breadDept) breadDept.classList.add('hidden');
+      if (sep2) sep2.classList.add('hidden');
+      if (breadYear) breadYear.classList.add('hidden');
+      if (sep3) sep3.classList.add('hidden');
+      if (breadSubject) breadSubject.classList.add('hidden');
+
+      const activeUser = activeSession ? activeSession.username : 'faculty.razia';
+
+      if (facultyCurrentStep === 'DEPARTMENTS') {
+        if (step1El) step1El.classList.remove('hidden');
+        if (backBtn) backBtn.classList.add('hidden');
+        if (headerTitle) headerTitle.innerText = "Select Academic Department / Program";
+
+        // Render Step 1 Tiles
+        const deptGrid = document.getElementById('facultyDeptGrid');
+        if (deptGrid) {
+          const mySubjects = CURRICULUM_SUBJECTS.filter(s => s.facultyUsername === activeUser || (activeUser && activeUser.includes(s.facultyUsername.split('.')[1])));
+          const myDeptIds = mySubjects.length > 0 ? Array.from(new Set(mySubjects.map(s => s.dept))) : ['DS', 'CS', 'IT', 'AIDS'];
+          
+          const availableCourses = INSTITUTIONAL_COURSES.filter(c => myDeptIds.includes(c.id));
+          const coursesToRender = availableCourses.length > 0 ? availableCourses : INSTITUTIONAL_COURSES;
+
+          deptGrid.innerHTML = coursesToRender.map((c, idx) => `
+            <div onclick="selectFacultyDepartment('${c.id}')" class="glass-panel p-5 rounded-2xl border border-[#E8E3DA] hover:border-[#2F5238] shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between group cursor-pointer bg-white/95 text-left">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="bg-[#F5F2EB] text-[#2F5238] border border-[#E8E3DA] font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                    ${c.badge || `PROGRAM 0${idx + 1}`}
+                  </span>
+                  <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-[#2F5238] group-hover:bg-[#2F5238] group-hover:text-white transition-colors duration-200">
+                    <i data-lucide="${c.icon || 'layers'}" class="w-4 h-4"></i>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 class="font-bold text-sm sm:text-base text-[#1C241E] group-hover:text-[#2F5238] transition leading-tight">
+                    ${c.title}
+                  </h3>
+                  <span class="text-[10px] font-mono text-[#869288] mt-0.5 block">${c.type}</span>
+                </div>
+                
+                <p class="text-xs text-[#5A655C] font-sans leading-relaxed line-clamp-2">
+                  ${c.description}
+                </p>
+              </div>
+
+              <button class="mt-4 w-full bg-[#2F5238] hover:bg-[#25422D] text-white py-2.5 rounded-xl font-mono text-xs font-bold shadow-md flex items-center justify-center space-x-1.5 transition">
+                <span>Select Course ➔</span>
+              </button>
+            </div>
+          `).join('');
+        }
+
+      } else if (facultyCurrentStep === 'YEARS') {
+        if (step2El) step2El.classList.remove('hidden');
+        if (backBtn) backBtn.classList.remove('hidden');
+
+        const deptObj = INSTITUTIONAL_COURSES.find(c => c.id === facultySelectedDept) || INSTITUTIONAL_COURSES[0];
+        if (headerTitle) headerTitle.innerText = `Select Academic Year • ${deptObj.title}`;
+
+        // Update Breadcrumb
+        if (sep1) sep1.classList.remove('hidden');
+        if (breadDept) {
+          breadDept.classList.remove('hidden');
+          breadDept.innerText = deptObj.code || deptObj.title;
+        }
+
+        // Render Step 2 Tiles (3 or 4 tiles based on course)
+        const yearHeading = document.getElementById('facultyYearStepHeading');
+        const yearSubheading = document.getElementById('facultyYearStepSubheading');
+        if (yearHeading) yearHeading.innerText = `${deptObj.title} • Cohort Level`;
+        if (yearSubheading) yearSubheading.innerText = `Select one of the ${deptObj.durationYears} academic year cohorts below.`;
+
+        const yearGrid = document.getElementById('facultyYearGrid');
+        if (yearGrid) {
+          const yearsList = deptObj.years.map(yId => ACADEMIC_YEARS_DEF[yId]).filter(Boolean);
+          
+          yearGrid.innerHTML = yearsList.map((y, idx) => `
+            <div onclick="selectFacultyYear('${y.id}')" class="glass-panel p-5 rounded-2xl border border-[#E8E3DA] hover:border-[#2F5238] shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between group cursor-pointer bg-white/95 text-left">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="bg-[#F5F2EB] text-[#2F5238] border border-[#E8E3DA] font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                    ${y.badge || `YEAR ${idx + 1}`}
+                  </span>
+                  <div class="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-[#2F5238] group-hover:bg-[#2F5238] group-hover:text-white transition-colors duration-200">
+                    <i data-lucide="${y.icon || 'compass'}" class="w-4 h-4"></i>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 class="font-bold text-sm sm:text-base text-[#1C241E] group-hover:text-[#2F5238] transition leading-tight">
+                    ${y.title}
+                  </h3>
+                  <span class="text-[10px] font-mono text-[#869288] mt-0.5 block">${y.semesters}</span>
+                </div>
+                
+                <p class="text-xs text-[#5A655C] font-sans leading-relaxed line-clamp-2">
+                  ${y.description}
+                </p>
+              </div>
+
+              <button class="mt-4 w-full bg-[#2F5238] hover:bg-[#25422D] text-white py-2.5 rounded-xl font-mono text-xs font-bold shadow-md flex items-center justify-center space-x-1.5 transition">
+                <span>View Assigned Subjects ➔</span>
+              </button>
+            </div>
+          `).join('');
+        }
+
+      } else if (facultyCurrentStep === 'SUBJECTS') {
+        if (step3El) step3El.classList.remove('hidden');
+        if (backBtn) backBtn.classList.remove('hidden');
+
+        const deptObj = INSTITUTIONAL_COURSES.find(c => c.id === facultySelectedDept) || INSTITUTIONAL_COURSES[0];
+        const yearObj = ACADEMIC_YEARS_DEF[facultySelectedYear] || ACADEMIC_YEARS_DEF['SY'];
+
+        if (headerTitle) headerTitle.innerText = `Assigned Subjects • ${deptObj.code || deptObj.title} (${yearObj.id})`;
+
+        // Update Breadcrumb
+        if (sep1) sep1.classList.remove('hidden');
+        if (breadDept) {
+          breadDept.classList.remove('hidden');
+          breadDept.innerText = deptObj.code || deptObj.title;
+        }
+        if (sep2) sep2.classList.remove('hidden');
+        if (breadYear) {
+          breadYear.classList.remove('hidden');
+          breadYear.innerText = yearObj.title.split(' ')[0] || yearObj.id;
+        }
+
+        // Filter and sort subjects A-Z (Ascending Alphabetical Order)
+        const matchingSubjects = CURRICULUM_SUBJECTS.filter(s => {
+          const matchDept = s.dept === facultySelectedDept;
+          const matchYear = s.year === facultySelectedYear;
+          const matchFaculty = !s.facultyUsername || s.facultyUsername === activeUser || (activeUser && activeUser.includes(s.facultyUsername.split('.')[1]));
+          return matchDept && matchYear && matchFaculty;
+        });
+
+        // Ensure alphabetical ascending sort by subject title
+        matchingSubjects.sort((a, b) => a.title.localeCompare(b.title));
+
+        const countBadge = document.getElementById('facultySubjectCountBadge');
+        if (countBadge) countBadge.innerText = `${matchingSubjects.length} Assigned Subject${matchingSubjects.length === 1 ? '' : 's'}`;
+
+        const subjectHeading = document.getElementById('facultySubjectStepHeading');
+        if (subjectHeading) subjectHeading.innerText = `${deptObj.title} • ${yearObj.title}`;
+
+        const subjectGrid = document.getElementById('facultySubjectGrid');
+        if (subjectGrid) {
+          if (matchingSubjects.length === 0) {
+            subjectGrid.innerHTML = `
+              <div class="col-span-full p-8 rounded-2xl bg-white border border-[#E8E3DA] text-center space-y-2">
+                <i data-lucide="book-x" class="w-8 h-8 text-[#A3ADA5] mx-auto"></i>
+                <div class="font-bold text-sm text-[#1C241E]">No Subjects Assigned in this Cohort</div>
+                <p class="text-xs text-[#869288] font-mono">You do not have any teaching allocations scheduled for ${deptObj.title} (${yearObj.title}).</p>
+                <button onclick="facultyGoToStep('DEPARTMENTS')" class="mt-2 px-3.5 py-2 rounded-xl bg-[#2F5238] text-white text-xs font-mono font-bold shadow">
+                  Explore Other Departments
+                </button>
+              </div>
+            `;
+          } else {
+            subjectGrid.innerHTML = matchingSubjects.map((s, idx) => {
+              const pct = s.totalLectures > 0 ? Math.round((s.completedLectures / s.totalLectures) * 100) : 45;
+              return `
+                <div onclick="selectFacultySubject('${s.code}')" class="glass-panel p-5 rounded-2xl border border-[#E8E3DA] hover:border-[#2F5238] shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between group cursor-pointer bg-white/95 text-left">
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <span class="bg-[#F5F2EB] text-[#2F5238] border border-[#E8E3DA] font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                        TOPIC ${idx + 1}.1 • ${s.badge}
+                      </span>
+                      <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-[#2F5238] group-hover:bg-[#2F5238] group-hover:text-white transition-colors duration-200">
+                        <i data-lucide="${s.icon || 'book-open'}" class="w-4 h-4"></i>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 class="font-bold text-sm sm:text-base text-[#1C241E] group-hover:text-[#2F5238] transition leading-tight">
+                        ${s.title}
+                      </h3>
+                      <div class="flex items-center space-x-2 text-[10px] font-mono text-[#869288] mt-1">
+                        <span>Room ${s.room}</span>
+                        <span>•</span>
+                        <span>${pct}% Completed (${s.completedLectures}/${s.totalLectures})</span>
+                      </div>
+                    </div>
+                    
+                    <p class="text-xs text-[#5A655C] font-sans leading-relaxed line-clamp-2">
+                      ${s.description}
+                    </p>
+                  </div>
+
+                  <button class="mt-4 w-full bg-gradient-to-r from-emerald-700 to-[#2F5238] hover:from-emerald-600 hover:to-[#25422D] text-white py-2.5 rounded-xl font-mono text-xs font-bold shadow-md flex items-center justify-center space-x-1.5 transition">
+                    <span>Launch Attendance Kiosk ➔</span>
+                  </button>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+
+      } else if (facultyCurrentStep === 'CLASSROOM') {
+        if (step4El) step4El.classList.remove('hidden');
+        if (backBtn) backBtn.classList.remove('hidden');
+
+        const deptObj = INSTITUTIONAL_COURSES.find(c => c.id === facultySelectedDept) || INSTITUTIONAL_COURSES[0];
+        const yearObj = ACADEMIC_YEARS_DEF[facultySelectedYear] || ACADEMIC_YEARS_DEF['SY'];
+        const subjObj = CURRICULUM_SUBJECTS.find(s => s.code === facultySelectedSubject) || CURRICULUM_SUBJECTS[0];
+
+        if (headerTitle) headerTitle.innerText = `Live Session: ${subjObj.title} (${subjObj.room})`;
+
+        // Update Breadcrumb
+        if (sep1) sep1.classList.remove('hidden');
+        if (breadDept) {
+          breadDept.classList.remove('hidden');
+          breadDept.innerText = deptObj.code || deptObj.title;
+        }
+        if (sep2) sep2.classList.remove('hidden');
+        if (breadYear) {
+          breadYear.classList.remove('hidden');
+          breadYear.innerText = yearObj.title.split(' ')[0] || yearObj.id;
+        }
+        if (sep3) sep3.classList.remove('hidden');
+        if (breadSubject) {
+          breadSubject.classList.remove('hidden');
+          breadSubject.innerText = subjObj.title;
+        }
+
+        // Sync header banner inside Step 4
+        const bannerSubj = document.getElementById('activeSessionSubjectBanner');
+        const bannerMeta = document.getElementById('activeSessionMetaBanner');
+        if (bannerSubj) bannerSubj.innerText = `${subjObj.title} (${subjObj.code})`;
+        if (bannerMeta) bannerMeta.innerText = `${deptObj.title} • ${yearObj.title} • Room: ${subjObj.room}`;
+
+        // Sync active lecture elements
+        const titleEl = document.getElementById('activeLectureCourseTitle');
+        const topicEl = document.getElementById('activeLectureTopic');
+        const roomBadge = document.getElementById('activeLectureRoomBadge');
+        const kioskRoomTag = document.getElementById('kioskRoomTag');
+        const teacherSubjTitle = document.getElementById('teacherSubjectTitle');
+        const teacherRosterSub = document.getElementById('teacherRosterSub');
+        const indexPill = document.getElementById('activeLectureIndexPill');
+
+        if (titleEl) titleEl.innerText = subjObj.title;
+        if (topicEl) topicEl.innerText = `Topic: ${subjObj.topic || 'Syllabus Delivery'}`;
+        if (roomBadge) roomBadge.innerText = `Room ${subjObj.room}`;
+        if (kioskRoomTag) kioskRoomTag.innerText = subjObj.room;
+        if (teacherSubjTitle) teacherSubjTitle.innerText = subjObj.title;
+        if (teacherRosterSub) teacherRosterSub.innerText = `Teacher: ${activeSession ? activeSession.name : 'Faculty'} • Room: ${subjObj.room} • ${yearObj.title}`;
+        if (indexPill) {
+          const pct = subjObj.totalLectures > 0 ? Math.round((subjObj.completedLectures / subjObj.totalLectures) * 100) : 47;
+          indexPill.innerText = `📖 ${pct}% Syllabus Completed (Lecture ${subjObj.completedLectures} of ${subjObj.totalLectures})`;
+        }
+      }
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function selectFacultyDepartment(deptId) {
+      facultySelectedDept = deptId;
+      facultyCurrentStep = 'YEARS';
+      renderFacultyPortal();
+    }
+
+    function selectFacultyYear(yearId) {
+      facultySelectedYear = yearId;
+      facultyCurrentStep = 'SUBJECTS';
+      renderFacultyPortal();
+    }
+
+    function selectFacultySubject(subjectCode) {
+      facultySelectedSubject = subjectCode;
+      facultyCurrentStep = 'CLASSROOM';
+      
+      const activeLec = FACULTY_LECTURES.find(l => l.course_code === subjectCode || l.course_name.includes(subjectCode));
+      if (activeLec) {
+        currentActiveLectureId = activeLec.id;
+      }
+      renderFacultyPortal();
+      renderFacultyLectureUI();
+    }
+
+    function facultyGoBack() {
+      if (facultyCurrentStep === 'CLASSROOM') {
+        facultyCurrentStep = 'SUBJECTS';
+      } else if (facultyCurrentStep === 'SUBJECTS') {
+        facultyCurrentStep = 'YEARS';
+      } else if (facultyCurrentStep === 'YEARS') {
+        facultyCurrentStep = 'DEPARTMENTS';
+      }
+      renderFacultyPortal();
+    }
+
+    function facultyGoToStep(step) {
+      facultyCurrentStep = step;
+      renderFacultyPortal();
+    }
+
+    function facultyResetToStart() {
+      initFacultyPortal();
+    }
+
     function handleTeacherUnitChange(val) {
       if (!val) return;
       try {
         const unit = JSON.parse(val);
         document.getElementById('teacherSubjectTitle').innerText = unit.title;
         document.getElementById('kioskRoomTag').innerText = unit.room;
-        document.getElementById('teacherRosterSub').innerText = `Teacher: ${activeSession.name} • Room: ${unit.room} • Second Year`;
+        document.getElementById('teacherRosterSub').innerText = `Teacher: ${activeSession ? activeSession.name : 'Faculty'} • Room: ${unit.room} • Second Year`;
       } catch (e) {}
     }
 
