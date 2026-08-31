@@ -1537,40 +1537,6 @@
   <!-- MAIN CONTENT CONTAINER -->
   <main class="flex-1 max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
-    <!-- ACTIVE USER PROFILE BANNER -->
-    <div id="profileBanner" class="glass-panel p-3 sm:p-4 rounded-2xl border border-[#E8E3DA] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
-      
-      <div class="flex items-center space-x-3 min-w-0">
-        <div id="roleAvatar" class="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-[#2F5238]/10 border border-[#D5E4D8] flex items-center justify-center text-xl sm:text-2xl shrink-0">
-          🎓
-        </div>
-        <div class="min-w-0">
-          <div class="flex items-center space-x-2 flex-wrap gap-1">
-            <h2 id="profileName" class="font-bold text-[#1C241E] text-sm sm:text-base truncate">User Profile</h2>
-            <span id="roleBadge" class="bg-[#2F5238] text-white font-mono text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shrink-0">STUDENT</span>
-          </div>
-          <p id="profileDesc" class="text-[10px] sm:text-xs text-[#869288] mt-0.5 truncate">S.Y. B.Sc. Data Science • Smt. C.H.M. College</p>
-        </div>
-      </div>
-
-      <!-- Admin-only action chips (hidden for students, shown for faculty/coordinator/admin via JS) -->
-      <div id="adminBannerActions" class="hidden items-center space-x-2 shrink-0 flex-wrap gap-1">
-        <button onclick="openBulkImportModal()" class="text-[10px] sm:text-xs font-mono text-[#2F5238] bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-xl border border-indigo-500/30 flex items-center shadow transition">
-          <i data-lucide="upload" class="w-3.5 h-3.5 mr-1.5"></i>
-          <span>Import Class List</span>
-        </button>
-      </div>
-
-      <!-- Location chip (always visible) -->
-      <div class="flex items-center space-x-1 text-[10px] sm:text-xs font-mono text-[#869288] bg-[#F5F2EB] px-2.5 py-1.5 rounded-xl border border-[#E8E3DA] self-start sm:self-auto shrink-0">
-        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2F5238]"></i>
-        <span><b>Ulhasnagar</b></span>
-      </div>
-
-    </div>
-
-
-
     <!-- ============================================== -->
     <!-- VIEW 1: STUDENT VIEW (MOBILE OPTIMIZED) -->
     <!-- ============================================== -->
@@ -2153,6 +2119,38 @@
       <!-- STEP 1: DEPARTMENT / COURSE SELECTION TILES -->
       <!-- ============================================== -->
       <div id="facultyStep1_Departments" class="space-y-4">
+        <!-- ACTIVE USER PROFILE BANNER -->
+    <div id="profileBanner" class="glass-panel p-3 sm:p-4 rounded-2xl border border-[#E8E3DA] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+      
+      <div class="flex items-center space-x-3 min-w-0">
+        <div id="roleAvatar" class="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-[#2F5238]/10 border border-[#D5E4D8] flex items-center justify-center text-xl sm:text-2xl shrink-0">
+          🎓
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center space-x-2 flex-wrap gap-1">
+            <h2 id="profileName" class="font-bold text-[#1C241E] text-sm sm:text-base truncate">User Profile</h2>
+            <span id="roleBadge" class="bg-[#2F5238] text-white font-mono text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shrink-0">STUDENT</span>
+          </div>
+          <p id="profileDesc" class="text-[10px] sm:text-xs text-[#869288] mt-0.5 truncate">S.Y. B.Sc. Data Science • Smt. C.H.M. College</p>
+        </div>
+      </div>
+
+      <!-- Admin-only action chips (hidden for students, shown for faculty/coordinator/admin via JS) -->
+      <div id="adminBannerActions" class="hidden items-center space-x-2 shrink-0 flex-wrap gap-1">
+        <button onclick="openBulkImportModal()" class="text-[10px] sm:text-xs font-mono text-[#2F5238] bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-xl border border-indigo-500/30 flex items-center shadow transition">
+          <i data-lucide="upload" class="w-3.5 h-3.5 mr-1.5"></i>
+          <span>Import Class List</span>
+        </button>
+      </div>
+
+      <!-- Location chip (always visible) -->
+      <div class="flex items-center space-x-1 text-[10px] sm:text-xs font-mono text-[#869288] bg-[#F5F2EB] px-2.5 py-1.5 rounded-xl border border-[#E8E3DA] self-start sm:self-auto shrink-0">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#2F5238]"></i>
+        <span><b>Ulhasnagar</b></span>
+      </div>
+
+    </div>
+
         <div class="flex items-center justify-between">
           <div>
             <div class="flex items-center space-x-2">
