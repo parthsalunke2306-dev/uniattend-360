@@ -36,29 +36,35 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
   onUnlock,
 }) => {
   const toast = useToast();
-  const [activeTab, setActiveTab] = useState<'SIGNIN' | 'REGISTER'>('SIGNIN');
+  const [activeTab, setActiveTab] = useState<'SIGNIN' | 'REGISTER' | 'COURSEDETAILS'>('SIGNIN');
   
-  // Login Form Fields (matching hand-drawn sketch)
+  // Sign In States
   const [inputName, setInputName] = useState<string>(user?.name || 'Alex Chen');
   const [inputRollNo, setInputRollNo] = useState<string>(user?.identifier || 'CHMC-DS-2024-001');
   const [inputEmail, setInputEmail] = useState<string>(
     user?.identifier ? `${user.identifier.toLowerCase().replace(/[^a-z0-9]/g, '.')}@chmc.edu` : 'alex.chen@chmc.edu'
   );
-  const [inputPassword, setInputPassword] = useState<string>('CHMC@2026!');
-  const [showInputPassword, setShowInputPassword] = useState<boolean>(false);
+  const [inputPassword, setInputPassword] = useState('CHMC@2026!');
+  const [showInputPassword, setShowInputPassword] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
-  // Register Form Fields (matching second hand-drawn sketch)
-  const [regFirstName, setRegFirstName] = useState<string>('');
-  const [regMiddleName, setRegMiddleName] = useState<string>('');
-  const [regLastName, setRegLastName] = useState<string>('');
-  const [regEmail, setRegEmail] = useState<string>('');
-  const [regPassword, setRegPassword] = useState<string>('');
-  const [regConfirmPassword, setRegConfirmPassword] = useState<string>('');
-  const [showRegPassword, setShowRegPassword] = useState<boolean>(false);
-  const [showRegConfirmPassword, setShowRegConfirmPassword] = useState<boolean>(false);
+  // Register States
+  const [regFirstName, setRegFirstName] = useState('');
+  const [regMiddleName, setRegMiddleName] = useState('');
+  const [regLastName, setRegLastName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regConfirmPassword, setRegConfirmPassword] = useState('');
+  const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
   const [regCategory, setRegCategory] = useState<string>('STUDENT');
   const [regError, setRegError] = useState<string | null>(null);
+
+  // Course Details States
+  const [regCourse, setRegCourse] = useState('');
+  const [regYear, setRegYear] = useState('FY');
+  const [regDiv, setRegDiv] = useState('');
+  const [regUidNo, setRegUidNo] = useState('');
 
   // Sync with user prop if user changes
   useEffect(() => {
@@ -142,7 +148,7 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
     onUnlock('CREDENTIALS');
   };
 
-  // Handle Create Account Submission (Matching Sketch in Image 2)
+  // Handle Create Account Submission (Transition to Course Details)
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!regFirstName.trim() || !regLastName.trim()) {
@@ -163,6 +169,12 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
     }
 
     setRegError(null);
+    setActiveTab('COURSEDETAILS');
+  };
+
+  // Handle Course Details Submission (Final Step)
+  const handleCourseDetailsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     const fullName = [regFirstName.trim(), regMiddleName.trim(), regLastName.trim()].filter(Boolean).join(' ');
     toast.success('Account Created', `Welcome, ${regFirstName}! Role: ${regCategory}`);
     onUnlock('CREDENTIALS');
@@ -537,6 +549,99 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
               >
                 <span>Submit</span>
               </button>
+            </form>
+          </div>
+        )}
+
+        {/* TAB 3: COURSE DETAILS FORM (EXACT MATCH TO HAND-DRAWN SKETCH 2) */}
+        {activeTab === 'COURSEDETAILS' && (
+          <div className="space-y-4 text-left animate-in fade-in relative z-10">
+            <form onSubmit={handleCourseDetailsSubmit} className="space-y-4">
+              <div className="space-y-1 pb-1 border-b border-border">
+                <h3 className="text-sm font-sans font-medium text-text-primary">
+                  Hi <span className="font-bold text-forest">{regFirstName || '(username)'}</span>,
+                </h3>
+                <p className="text-[11px] font-sans text-text-secondary">
+                  please enter your course details
+                </p>
+              </div>
+
+              {/* Course */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-mono text-text-muted block">Course</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. B.Sc. Data Science" 
+                  required 
+                  value={regCourse}
+                  onChange={(e) => setRegCourse(e.target.value)}
+                  className="w-full bg-elevated border border-border rounded-xl px-3 py-2.5 text-xs text-text-primary font-sans placeholder-text-muted focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest transition"
+                />
+              </div>
+
+              {/* Year */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-mono text-text-muted block">Year</label>
+                <select 
+                  required
+                  value={regYear}
+                  onChange={(e) => setRegYear(e.target.value)}
+                  className="w-full bg-elevated border border-border rounded-xl px-3 py-2.5 text-xs text-text-primary font-sans appearance-none focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest transition cursor-pointer font-medium"
+                >
+                  <option value="FY">FY</option>
+                  <option value="SY">SY</option>
+                  <option value="TY">TY</option>
+                </select>
+              </div>
+
+              {/* Div */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-mono text-text-muted block">Div</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. A" 
+                  required 
+                  value={regDiv}
+                  onChange={(e) => setRegDiv(e.target.value)}
+                  className="w-full bg-elevated border border-border rounded-xl px-3 py-2.5 text-xs text-text-primary font-sans placeholder-text-muted focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest transition"
+                />
+              </div>
+
+              {/* Roll no. */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-mono text-text-muted block">Roll no.</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. 001" 
+                  required 
+                  value={regRollNo}
+                  onChange={(e) => setRegRollNo(e.target.value)}
+                  className="w-full bg-elevated border border-border rounded-xl px-3 py-2.5 text-xs text-text-primary font-sans placeholder-text-muted focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest transition"
+                />
+              </div>
+
+              {/* UID No. */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-mono text-text-muted block">UID No.</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. 1234567890" 
+                  required 
+                  value={regUidNo}
+                  onChange={(e) => setRegUidNo(e.target.value)}
+                  className="w-full bg-elevated border border-border rounded-xl px-3 py-2.5 text-xs text-text-primary font-sans placeholder-text-muted focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest transition"
+                />
+              </div>
+
+              {/* Next Button */}
+              <div className="flex justify-end pt-2">
+                <button 
+                  type="submit" 
+                  className="py-2.5 px-6 rounded-xl bg-forest hover:bg-forest-hover text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
+                >
+                  <span>Next</span>
+                </button>
+              </div>
             </form>
           </div>
         )}

@@ -567,6 +567,92 @@
         </form>
       </div>
 
+      <!-- 3. COURSE DETAILS PANEL (EXACT MATCH TO HAND-DRAWN SKETCH 2) -->
+      <div id="gateCourseDetailsBox" class="space-y-4 relative z-10 animate-in fade-in hidden text-left">
+        <form onsubmit="handleGateCourseDetailsSubmit(event)" class="space-y-4">
+          <div class="space-y-1 pb-1 border-b border-[#E8E3DA]">
+            <h3 class="text-sm font-sans font-medium text-[#1C241E]">
+              Hi <span id="courseDetailsUsernameDisplay" class="font-bold text-[#2F5238]">(username)</span>,
+            </h3>
+            <p class="text-[11px] font-sans text-[#5A655C]">
+              please enter your course details
+            </p>
+          </div>
+
+          <!-- Course -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-mono text-[#869288] block">Course</label>
+            <input 
+              type="text" 
+              id="gateRegCourse" 
+              placeholder="e.g. B.Sc. Data Science" 
+              required 
+              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+            >
+          </div>
+
+          <!-- Year -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-mono text-[#869288] block">Year</label>
+            <select 
+              id="gateRegYear" 
+              required
+              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans appearance-none focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition cursor-pointer font-medium"
+            >
+              <option value="FY">FY</option>
+              <option value="SY">SY</option>
+              <option value="TY">TY</option>
+            </select>
+          </div>
+
+          <!-- Div -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-mono text-[#869288] block">Div</label>
+            <input 
+              type="text" 
+              id="gateRegDiv" 
+              placeholder="e.g. A" 
+              required 
+              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+            >
+          </div>
+
+          <!-- Roll no. -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-mono text-[#869288] block">Roll no.</label>
+            <input 
+              type="text" 
+              id="gateRegRollNo" 
+              placeholder="e.g. 001" 
+              required 
+              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+            >
+          </div>
+
+          <!-- UID No. -->
+          <div class="space-y-1">
+            <label class="text-[11px] font-mono text-[#869288] block">UID No.</label>
+            <input 
+              type="text" 
+              id="gateRegUidNo" 
+              placeholder="e.g. 1234567890" 
+              required 
+              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+            >
+          </div>
+
+          <!-- Next Button -->
+          <div class="flex justify-end pt-2">
+            <button 
+              type="submit" 
+              class="py-2.5 px-6 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
+            >
+              <span>Next</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
     </div>
   </div>
 
@@ -3202,6 +3288,8 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    let pendingRegistrationData = null;
+
     function handleGateRegisterSubmit(e) {
       if (e) e.preventDefault();
       const firstName = (document.getElementById('gateRegFirstName')?.value || '').trim();
@@ -3247,29 +3335,57 @@
 
       if (errEl) errEl.classList.add('hidden');
 
+      pendingRegistrationData = {
+        firstName,
+        middleName,
+        lastName,
+        email,
+        pwd,
+        category
+      };
+
+      // Hide Register form, Show Course Details form
+      const boxReg = document.getElementById('gateRegisterBox');
+      const boxCourse = document.getElementById('gateCourseDetailsBox');
+      const usernameDisplay = document.getElementById('courseDetailsUsernameDisplay');
+      
+      if (usernameDisplay) usernameDisplay.innerText = firstName;
+      
+      if (boxReg) boxReg.classList.add('hidden');
+      if (boxCourse) boxCourse.classList.remove('hidden');
+    }
+
+    function handleGateCourseDetailsSubmit(e) {
+      if (e) e.preventDefault();
+      if (!pendingRegistrationData) return;
+
+      const course = (document.getElementById('gateRegCourse')?.value || '').trim();
+      const year = (document.getElementById('gateRegYear')?.value || '').trim();
+      const div = (document.getElementById('gateRegDiv')?.value || '').trim();
+      const rollNo = (document.getElementById('gateRegRollNo')?.value || '').trim();
+      const uidNo = (document.getElementById('gateRegUidNo')?.value || '').trim();
+
+      const { firstName, middleName, lastName, email, category } = pendingRegistrationData;
       const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
       const randomSuffix = Math.floor(100 + Math.random() * 900);
       
-      let idStr = '';
+      let idStr = rollNo || `CHMC-DS-2024-${randomSuffix}`;
       let avatar = '🎓';
       let badgeClass = 'bg-[#2F5238] text-white';
       let roleTitle = 'STUDENT';
       let desc = '';
 
       if (category === 'STUDENT') {
-        idStr = `CHMC-DS-2024-${randomSuffix}`;
         avatar = '🎓';
         badgeClass = 'bg-[#2F5238] text-white';
         roleTitle = 'STUDENT';
-        desc = `Second Year (S.Y. B.Sc. Data Science) • ${idStr} • Smt. C.H.M. College`;
+        desc = `${year} ${course} (Div ${div}) • ${idStr} • Smt. C.H.M. College`;
       } else if (category === 'TEACHER') {
-        idStr = `FAC-DS-${randomSuffix}`;
         avatar = '👨‍🏫';
         badgeClass = 'bg-emerald-600 text-white';
         roleTitle = 'TEACHER';
         desc = `Faculty Member • ${idStr} • Smt. C.H.M. College`;
       } else {
-        idStr = `coordinator.${firstName.toLowerCase()}`;
         avatar = '👔';
         badgeClass = 'bg-indigo-600 text-white';
         roleTitle = 'COORDINATOR';
@@ -3286,7 +3402,10 @@
         badge: roleTitle,
         badgeClass: badgeClass,
         department_code: 'DS',
-        desc: desc
+        desc: desc,
+        course_details: {
+          course, year, div, rollNo, uidNo
+        }
       };
 
       REGISTERED_PROFILES[idStr] = newProfile;
@@ -3309,6 +3428,11 @@
         subtitle: `Welcome, ${firstName}! Role: ${roleTitle}`, 
         type: "success" 
       });
+
+      // Clear pending data and reset view for next time
+      pendingRegistrationData = null;
+      const boxCourse = document.getElementById('gateCourseDetailsBox');
+      if (boxCourse) boxCourse.classList.add('hidden');
 
       completeAppUnlock('CREDENTIALS');
       renderDigitalRoster();
