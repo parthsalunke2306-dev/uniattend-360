@@ -311,9 +311,9 @@
               <input 
                 type="text" 
                 id="gateInputName" 
-                placeholder="Enter full name (e.g. Alex Chen)" 
+                placeholder="Enter full name" 
                 required 
-                value="Alex Chen"
+                value=""
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
               >
             </div>
@@ -329,9 +329,9 @@
               <input 
                 type="text" 
                 id="gateInputRollNo" 
-                placeholder="e.g. CHMC-DS-2024-001 or Faculty ID" 
+                placeholder="e.g. Roll no. or Faculty ID" 
                 required 
-                value="CHMC-DS-2024-001"
+                value=""
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
               >
             </div>
@@ -347,9 +347,9 @@
               <input 
                 type="email" 
                 id="gateInputEmail" 
-                placeholder="e.g. alex.chen@chmc.edu" 
+                placeholder="e.g. yourname@chmc.edu" 
                 required 
-                value="alex.chen@chmc.edu"
+                value=""
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
               >
             </div>
@@ -365,9 +365,9 @@
               <input 
                 type="password" 
                 id="gateInputPassword" 
-                placeholder="Enter password (CHMC@2026!)" 
+                placeholder="Enter your password" 
                 required 
-                value="CHMC@2026!"
+                value=""
                 class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-10 py-2.5 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
               >
               <button type="button" onclick="toggleGatePasswordVisibility('gateInputPassword', 'gatePasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
@@ -409,16 +409,10 @@
           </div>
         </form>
 
-        <!-- 1-Click Persona Quick-Fill Chips -->
+        <!-- Staff Access Quick Chips -->
         <div class="pt-2 border-t border-[#E8E3DA] space-y-1.5 text-left">
-          <span class="text-[9px] font-mono text-[#869288] uppercase tracking-wider block text-center">⚡ Quick-Fill Demo Profiles:</span>
+          <span class="text-[9px] font-mono text-[#869288] uppercase tracking-wider block text-center">⚡ Quick Staff Access:</span>
           <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-            <button type="button" onclick="fillGateLogin('Alex Chen', 'CHMC-DS-2024-001', 'alex.chen@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-[#2F5238] text-left truncate font-bold">
-              🎓 Alex Chen (001)
-            </button>
-            <button type="button" onclick="fillGateLogin('Aarav Sharma', 'CHMC-DS-2024-002', 'aarav.sharma@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-[#E8E3DA] text-[#2F5238] text-left truncate">
-              🎓 Aarav (002)
-            </button>
             <button type="button" onclick="fillGateLogin('Miss Razia Khan', 'faculty.razia', 'razia.khan@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-[#2F5238] text-left truncate">
               👩‍🏫 Miss Razia (Faculty)
             </button>
@@ -659,7 +653,7 @@
                   id="gateRegDiv" 
                   placeholder="e.g. A" 
                   required 
-                  value="A"
+                  value=""
                   class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono uppercase placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
                 >
               </div>
@@ -675,9 +669,9 @@
                 <input 
                   type="text" 
                   id="gateRegRollNo" 
-                  placeholder="e.g. CHMC-DS-2024-001 or 01" 
+                  placeholder="e.g. 01 or Roll No." 
                   required 
-                  value="CHMC-DS-2024-001"
+                  value=""
                   class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
                 >
               </div>
@@ -695,7 +689,7 @@
                   id="gateRegUidNo" 
                   placeholder="e.g. 20240192" 
                   required 
-                  value="20240192"
+                  value=""
                   class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
                 >
               </div>
@@ -1023,11 +1017,11 @@
         <div class="p-3 rounded-2xl bg-rose-950/20 border border-rose-500/30 space-y-1.5 text-xs font-mono">
           <div class="flex justify-between text-[#5A655C]">
             <span>Student Roll:</span>
-            <b id="resetModalStudentRoll" class="text-[#1C241E]">CHMC-DS-2024-001</b>
+            <b id="resetModalStudentRoll" class="text-[#1C241E]">-</b>
           </div>
           <div class="flex justify-between text-[#5A655C]">
             <span>Student Name:</span>
-            <b id="resetModalStudentName" class="text-[#1C241E]">Alex Chen</b>
+            <b id="resetModalStudentName" class="text-[#1C241E]">-</b>
           </div>
           <div class="flex justify-between text-[#5A655C]">
             <span>Locked Handset:</span>
@@ -1193,11 +1187,11 @@
       <div class="p-3 rounded-2xl bg-rose-950/30 border border-rose-500/40 space-y-1.5 text-xs font-mono text-[#5A655C]">
         <div class="flex justify-between">
           <span class="text-[#869288]">Target Roll Number:</span>
-          <b id="expelTargetRollNo" class="text-[#8D3F30] font-extrabold text-sm">CHMC-DS-2024-001</b>
+          <b id="expelTargetRollNo" class="text-[#8D3F30] font-extrabold text-sm">-</b>
         </div>
         <div class="flex justify-between">
           <span class="text-[#869288]">Student Name:</span>
-          <b id="expelTargetName" class="text-[#1C241E]">Alex Chen</b>
+          <b id="expelTargetName" class="text-[#1C241E]">-</b>
         </div>
         <div class="flex justify-between">
           <span class="text-[#869288]">Department:</span>
@@ -1226,7 +1220,7 @@
         <!-- 2-Step Confirmation Check -->
         <div class="p-3 rounded-2xl bg-[#F5F2EB] border border-rose-500/30 space-y-2">
           <label class="block text-[10px] text-[#5A655C]">
-            3. Type <b id="expelVerificationTargetText" class="text-[#8D3F30] font-mono underline">CHMC-DS-2024-001</b> below to authorize permanent deletion:
+            3. Type <b id="expelVerificationTargetText" class="text-[#8D3F30] font-mono underline">-</b> below to authorize permanent deletion:
           </label>
           <input type="text" id="expelConfirmInput" oninput="verifyExpelConfirmInput()" placeholder="Type roll number here to confirm..." class="w-full bg-[#F5F2EB] border border-rose-500/50 rounded-xl px-3 py-2 text-xs text-[#1C241E] font-mono uppercase focus:outline-none focus:border-rose-400">
         </div>
@@ -1289,8 +1283,8 @@
               <span id="spPasskeyActiveDot" class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-amber-400 border-2 border-slate-950" title="Passkey Status"></span>
             </div>
             <div class="min-w-0 space-y-0.5">
-              <h4 id="spFullNameDisplay" class="font-bold text-[#1C241E] text-sm sm:text-base truncate">Alex Chen</h4>
-              <div id="spRollDisplay" class="text-[11px] font-mono text-[#2F5238] font-bold">CHMC-DS-2024-001</div>
+              <h4 id="spFullNameDisplay" class="font-bold text-[#1C241E] text-sm sm:text-base truncate">Student Name</h4>
+              <div id="spRollDisplay" class="text-[11px] font-mono text-[#2F5238] font-bold">PRN / Roll No.</div>
               <div id="spEmailDisplay" class="text-[10px] font-mono text-[#869288] truncate">alex.chen@chmc.edu</div>
             </div>
           </div>
@@ -1334,7 +1328,7 @@
             </div>
             <div>
               <label class="block text-[9px] text-[#9AA49C] uppercase tracking-wider mb-0.5">College PRN / Roll</label>
-              <input type="text" id="spPrnReadonly" readonly value="CHMC-DS-2024-001" class="w-full bg-black/30 border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#2F5238] font-mono font-bold cursor-not-allowed">
+              <input type="text" id="spPrnReadonly" readonly value="-" class="w-full bg-black/30 border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-[11px] text-[#2F5238] font-mono font-bold cursor-not-allowed">
             </div>
           </div>
         </div>
@@ -1457,7 +1451,7 @@
             class="flex items-center space-x-2 pl-2 pr-3 py-1.5 rounded-full bg-[#F5F2EB] hover:bg-[#EAE5DA] border border-[#E8E3DA] transition focus:outline-none">
             <div id="headerUserAvatar" class="h-7 w-7 rounded-full bg-[#2F5238]/20 border border-[#D5E4D8] flex items-center justify-center text-sm shrink-0">🎓</div>
             <div class="hidden sm:block text-left min-w-0">
-              <div id="headerUserName" class="text-xs font-bold text-[#1C241E] truncate max-w-[100px]">Alex Chen</div>
+              <div id="headerUserName" class="text-xs font-bold text-[#1C241E] truncate max-w-[100px]">Staff</div>
               <div id="headerUserRole" class="text-[9px] font-mono text-[#2F5238] font-bold truncate">STUDENT</div>
             </div>
             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#869288] shrink-0"></i>
@@ -1468,7 +1462,7 @@
             
             <!-- Who is logged in -->
             <div class="px-4 py-2.5">
-              <div id="headerDropdownWelcome" class="text-xs font-bold text-[#1C241E]">Alex Chen</div>
+              <div id="headerDropdownWelcome" class="text-xs font-bold text-[#1C241E]">Welcome</div>
               <div id="headerDropdownCourse" class="text-[10px] text-[#869288] font-mono mt-0.5">S.Y. B.Sc. Data Science</div>
             </div>
 
@@ -1552,7 +1546,7 @@
         </div>
         <div class="min-w-0">
           <div class="flex items-center space-x-2 flex-wrap gap-1">
-            <h2 id="profileName" class="font-bold text-[#1C241E] text-sm sm:text-base truncate">Alex Chen</h2>
+            <h2 id="profileName" class="font-bold text-[#1C241E] text-sm sm:text-base truncate">User Profile</h2>
             <span id="roleBadge" class="bg-[#2F5238] text-white font-mono text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shrink-0">STUDENT</span>
           </div>
           <p id="profileDesc" class="text-[10px] sm:text-xs text-[#869288] mt-0.5 truncate">S.Y. B.Sc. Data Science • Smt. C.H.M. College</p>
@@ -4314,9 +4308,9 @@
 
     function loadStudentProfileIntoModal() {
       const s = activeSession || {
-        name: "Alex Chen",
-        identifier: "CHMC-DS-2024-001",
-        email: "alex.chen@chmc.edu",
+        name: "Student Name",
+        identifier: "ROLL-PENDING",
+        email: "student@chmc.edu",
         role: "STUDENT",
         avatar: "🎓",
         department: "Department of Data Science",
@@ -4325,7 +4319,7 @@
         batch_year: 2024
       };
 
-      const rollNo = s.identifier || "CHMC-DS-2024-001";
+      const rollNo = s.identifier || "ROLL-PENDING";
       const profile = REGISTERED_PROFILES[rollNo] || s;
 
       // Header preview
@@ -4462,7 +4456,7 @@
     }
 
     async function triggerPortalWebAuthnLink(isSilent = false) {
-      const rollNo = activeSession ? activeSession.identifier : "CHMC-DS-2024-001";
+      const rollNo = activeSession ? activeSession.identifier : "";
       const studentName = activeSession ? activeSession.name : "Student";
       const studentEmail = activeSession ? (activeSession.email || `${rollNo.toLowerCase()}@chmc.edu`) : `${rollNo.toLowerCase()}@chmc.edu`;
       const detectedDevName = detectPlatformAuthenticatorName();
@@ -4614,7 +4608,7 @@
     }
 
     async function testPortalBiometricAuth() {
-      const rollNo = activeSession ? activeSession.identifier : "CHMC-DS-2024-001";
+      const rollNo = activeSession ? activeSession.identifier : "";
       const lockInfo = STUDENT_DEVICE_LOCKS[rollNo];
 
       if (!lockInfo || !lockInfo.is_locked) {
@@ -4684,7 +4678,7 @@
     }
 
     async function saveStudentProfileChanges() {
-      const rollNo = activeSession ? activeSession.identifier : "CHMC-DS-2024-001";
+      const rollNo = activeSession ? activeSession.identifier : "";
       const phone = document.getElementById('spPhoneInput').value.trim();
       const altEmail = document.getElementById('spAltEmailInput').value.trim().toLowerCase();
       const bio = document.getElementById('spBioInput').value.trim();
@@ -6245,7 +6239,7 @@
       const isWithinPerimeter = calculatedDistance <= activeFacultyAnchor.radius_m;
 
       if (isWithinPerimeter) {
-        const studentRoll = activeSession ? activeSession.identifier : "CHMC-DS-2024-001";
+        const studentRoll = activeSession ? activeSession.identifier : "";
         const lockInfo = STUDENT_DEVICE_LOCKS[studentRoll] || { device_name: "Apple iPhone 15 Pro (Secure Enclave)", is_locked: true };
         resBox.className = "p-3 rounded-xl text-[11px] font-mono bg-emerald-500/15 text-[#2F5238] border border-emerald-500/50 shadow-lg";
         resBox.innerHTML = `
@@ -6264,8 +6258,8 @@
         // Out of perimeter breach!
         const now = new Date();
         const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const studentName = activeSession ? activeSession.name : "Alex Chen";
-        const studentRoll = activeSession ? activeSession.identifier : "CHMC-DS-2024-001";
+        const studentName = activeSession ? activeSession.name : "Student";
+        const studentRoll = activeSession ? activeSession.identifier : "";
 
         const incident = {
           id: `INC-${Math.floor(Math.random() * 9000 + 1000)}`,
@@ -6491,8 +6485,8 @@
     }
 
     async function loginWithGooglePasswordManager() {
-      const nameVal = document.getElementById('gateInputName')?.value.trim() || 'Alex Chen';
-      const rollVal = document.getElementById('gateInputRollNo')?.value.trim() || 'CHMC-DS-2024-001';
+      const nameVal = document.getElementById('gateInputName')?.value.trim() || 'User';
+      const rollVal = document.getElementById('gateInputRollNo')?.value.trim() || '';
       const emailVal = document.getElementById('gateInputEmail')?.value.trim().toLowerCase() || 'alex.chen@chmc.edu';
       const passVal = document.getElementById('gateInputPassword')?.value || 'CHMC@2026!';
 
@@ -6626,8 +6620,8 @@
       sessionStorage.removeItem('uniattend_session_unlocked');
 
       // Pre-fill fields from activeSession or default
-      const curName = activeSession?.name || 'Alex Chen';
-      const curRoll = activeSession?.identifier || 'CHMC-DS-2024-001';
+      const curName = activeSession?.name || 'User';
+      const curRoll = activeSession?.identifier || '';
       const curEmail = activeSession?.email || 'alex.chen@chmc.edu';
       fillGateLogin(curName, curRoll, curEmail, 'CHMC@2026!');
 

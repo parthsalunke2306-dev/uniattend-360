@@ -43,12 +43,12 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
   const [activeTab, setActiveTab] = useState<'SIGNIN' | 'REGISTER'>('SIGNIN');
   
   // Login Form Fields
-  const [inputName, setInputName] = useState<string>(user?.name || 'Alex Chen');
-  const [inputRollNo, setInputRollNo] = useState<string>(user?.identifier || 'CHMC-DS-2024-001');
+  const [inputName, setInputName] = useState<string>(user?.name || '');
+  const [inputRollNo, setInputRollNo] = useState<string>(user?.identifier || '');
   const [inputEmail, setInputEmail] = useState<string>(
-    user?.identifier ? `${user.identifier.toLowerCase().replace(/[^a-z0-9]/g, '.')}@chmc.edu` : 'alex.chen@chmc.edu'
+    user?.identifier ? `${user.identifier.toLowerCase().replace(/[^a-z0-9]/g, '.')}@chmc.edu` : ''
   );
-  const [inputPassword, setInputPassword] = useState<string>('CHMC@2026!');
+  const [inputPassword, setInputPassword] = useState<string>('');
   const [showLoginPassword, setShowLoginPassword] = useState<boolean>(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -68,9 +68,9 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
   // Register Form Fields (Step 2: Course Details)
   const [regCourse, setRegCourse] = useState<string>('B.Sc. Data Science');
   const [regYear, setRegYear] = useState<'FY' | 'SY' | 'TY'>('SY');
-  const [regDiv, setRegDiv] = useState<string>('A');
-  const [regRollNo, setRegRollNo] = useState<string>('CHMC-DS-2024-001');
-  const [regUidNo, setRegUidNo] = useState<string>('20240192');
+  const [regDiv, setRegDiv] = useState<string>('');
+  const [regRollNo, setRegRollNo] = useState<string>('');
+  const [regUidNo, setRegUidNo] = useState<string>('');
   const [step2Error, setStep2Error] = useState<string | null>(null);
 
   // Sync with user prop if user changes
