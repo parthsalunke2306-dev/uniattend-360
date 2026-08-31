@@ -1555,10 +1555,6 @@
 
       <!-- Admin-only action chips (hidden for students, shown for faculty/coordinator/admin via JS) -->
       <div id="adminBannerActions" class="hidden items-center space-x-2 shrink-0 flex-wrap gap-1">
-        <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[10px] sm:text-xs font-mono text-[#2F5238] bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center shadow transition">
-          <i data-lucide="user-plus" class="w-3.5 h-3.5 mr-1.5"></i>
-          <span>+ Enroll Student</span>
-        </button>
         <button onclick="openBulkImportModal()" class="text-[10px] sm:text-xs font-mono text-[#2F5238] bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-xl border border-indigo-500/30 flex items-center shadow transition">
           <i data-lucide="upload" class="w-3.5 h-3.5 mr-1.5"></i>
           <span>Import Class List</span>
@@ -2370,11 +2366,8 @@
             </div>
 
             <div class="flex flex-col sm:flex-row space-y-1.5 sm:space-y-0 sm:space-x-2 pt-1">
-              <button onclick="stopLectureAttendance()" class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-500 text-[#1C241E] font-bold py-2 rounded-xl text-xs font-mono shadow-md">
+              <button onclick="stopLectureAttendance()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-[#1C241E] font-bold py-2 rounded-xl text-xs font-mono shadow-md">
                 Save Attendance Record
-              </button>
-              <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="w-full sm:w-auto bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#2F5238] font-bold px-3 py-2 rounded-xl text-xs font-mono border border-[#D5E4D8]">
-                + Enroll Student
               </button>
             </div>
           </div>
@@ -2597,10 +2590,6 @@
                 <button onclick="openBulkImportModal()" class="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-[#2F5238] text-[10px] sm:text-[11px] font-mono font-bold shadow flex items-center transition">
                   <i data-lucide="upload" class="w-3 h-3 mr-1"></i>
                   <span>📥 Bulk Import CSV</span>
-                </button>
-                <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="px-2.5 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-[#2F5238] text-[10px] sm:text-[11px] font-mono font-bold shadow flex items-center transition">
-                  <i data-lucide="user-plus" class="w-3 h-3 mr-1"></i>
-                  <span>+ Enroll Student</span>
                 </button>
               </div>
             </div>
@@ -2906,17 +2895,11 @@
               </span>
             </div>
             <p class="text-[10px] sm:text-[11px] text-[#5A655C] mt-0.5">
-              Unrestricted administrative authority: Directly enroll students, permanently expel accounts, clear hardware device locks, and inspect audit ledgers.
+              Unrestricted administrative authority: Permanently expel accounts, clear hardware device locks, and inspect audit ledgers.
             </p>
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <!-- Direct Enroll Student Button -->
-            <button onclick="openPrincipalDirectEnrollModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-[#1C241E] font-mono text-xs font-bold shadow-lg shadow-sm/60 flex items-center space-x-1.5 transition">
-              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
-              <span>+ Direct Enroll Student</span>
-            </button>
-
             <!-- Bulk Ingest CSV Button -->
             <button onclick="openBulkImportModal()" class="px-3 py-2 rounded-xl bg-[#F5F2EB] hover:bg-[#F5F2EB] border border-[#E8E3DA] text-[#1C241E] font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
               <i data-lucide="file-up" class="w-3.5 h-3.5 text-[#2F5238]"></i>
@@ -2982,7 +2965,7 @@
                   <div class="flex flex-col items-center justify-center space-y-2 py-3">
                     <i data-lucide="users" class="w-8 h-8 text-[#A3ADA5] mb-1"></i>
                     <span class="font-bold text-[#5A655C]">No Student Records Found</span>
-                    <span class="text-[10px] text-[#9AA49C] max-w-sm">Use <b>+ Direct Enroll Student</b> to register a student into any department.</span>
+                    <span class="text-[10px] text-[#9AA49C] max-w-sm">No student records are currently available in the institutional database.</span>
                   </div>
                 </td>
               </tr>
@@ -4093,7 +4076,7 @@
               <div class="flex flex-col items-center justify-center space-y-2 py-3">
                 <i data-lucide="users" class="w-8 h-8 text-[#A3ADA5] mb-1"></i>
                 <span class="font-bold text-[#5A655C]">No Student Records Found</span>
-                <span class="text-[10px] text-[#9AA49C] max-w-sm">Use <b>+ Direct Enroll Student</b> or Ingest CSV to register students.</span>
+                <span class="text-[10px] text-[#9AA49C] max-w-sm">No student records currently found in the system.</span>
               </div>
             </td>
           </tr>
@@ -4732,7 +4715,7 @@
                 <div class="flex flex-col items-center justify-center space-y-2 py-3">
                   <i data-lucide="users" class="w-8 h-8 text-[#A3ADA5] mb-1"></i>
                   <span class="font-bold text-[#5A655C]">No Student Records Found (Clean Database)</span>
-                  <span class="text-[10px] text-[#9AA49C] max-w-sm">Test data was purged. Click <b class="text-[#2F5238]">+ Enroll Student</b> or use CSV Bulk Ingestion to register new students for this session.</span>
+                  <span class="text-[10px] text-[#9AA49C] max-w-sm">No student records are currently registered for this session. Use CSV Bulk Ingestion to import class rosters.</span>
                 </div>
               </td>
             </tr>
@@ -4745,7 +4728,7 @@
                 <div class="flex flex-col items-center justify-center space-y-2 py-3">
                   <i data-lucide="users" class="w-8 h-8 text-[#A3ADA5] mb-1"></i>
                   <span class="font-bold text-[#5A655C]">No Students Enrolled in Active Cohort</span>
-                  <span class="text-[10px] text-[#9AA49C] max-w-sm">Click <b class="text-[#2F5238]">+ Enroll Student</b> or <b class="text-[#2F5238]">📥 Bulk Import CSV</b> to populate the department ledger.</span>
+                  <span class="text-[10px] text-[#9AA49C] max-w-sm">Use <b class="text-[#2F5238]">📥 Bulk Import CSV</b> to populate the department ledger.</span>
                 </div>
               </td>
             </tr>

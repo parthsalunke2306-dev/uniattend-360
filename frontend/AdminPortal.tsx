@@ -215,14 +215,6 @@ export const AdminPortal: React.FC = () => {
                 className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-elevated border border-border text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-forest"
               />
             </div>
-
-            <button
-              onClick={() => setIsEnrollModalOpen(true)}
-              className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-forest hover:bg-forest-hover text-white text-xs font-bold shadow-md transition flex items-center justify-center space-x-1.5"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Direct Enroll Student</span>
-            </button>
           </div>
 
           {/* Student Roster Table */}
@@ -367,76 +359,6 @@ export const AdminPortal: React.FC = () => {
               </div>
               <span className="text-[10px] text-text-muted">09:00:00</span>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* DIRECT ENROLLMENT MODAL */}
-      {isEnrollModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-3xl border border-border shadow-organic-card max-w-md w-full p-6 space-y-5 animate-in fade-in">
-            <div>
-              <h3 className="text-lg font-serif font-bold text-text-primary">
-                Direct Expedited Student Enrollment
-              </h3>
-              <p className="text-xs text-text-secondary">
-                Principal Super-Admin Authority • Immediate Roster Ingestion
-              </p>
-            </div>
-
-            <form onSubmit={handleEnrollSubmit} className="space-y-4">
-              <div>
-                <label className="text-xs font-medium text-text-secondary block mb-1">Student Roll Number</label>
-                <input
-                  type="text"
-                  value={newRollNo}
-                  onChange={(e) => setNewRollNo(e.target.value)}
-                  placeholder="e.g. CHMC-DS-2024-006"
-                  className="w-full px-3 py-2 rounded-xl text-xs bg-elevated border border-border text-text-primary focus:outline-none focus:ring-2 focus:ring-forest font-mono uppercase"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-text-secondary block mb-1">Full Name</label>
-                <input
-                  type="text"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  placeholder="e.g. Ramesh Singh"
-                  className="w-full px-3 py-2 rounded-xl text-xs bg-elevated border border-border text-text-primary focus:outline-none focus:ring-2 focus:ring-forest"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-text-secondary block mb-1">Department</label>
-                <select
-                  value={newDept}
-                  onChange={(e) => setNewDept(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl text-xs bg-elevated border border-border text-text-primary focus:outline-none focus:ring-2 focus:ring-forest"
-                >
-                  <option value="Data Science">Department of Data Science (DS)</option>
-                  <option value="Computer Science">Department of Computer Science (CS)</option>
-                  <option value="Information Technology">Department of Information Technology (IT)</option>
-                  <option value="Artificial Intelligence">Department of AI & Data Science (AI-DS)</option>
-                </select>
-              </div>
-
-              <div className="flex items-center space-x-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsEnrollModalOpen(false)}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-elevated hover:bg-surface border border-border text-text-secondary transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-forest hover:bg-forest-hover text-white shadow-md transition"
-                >
-                  Enroll Student
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}
