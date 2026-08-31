@@ -2135,13 +2135,7 @@
         </div>
       </div>
 
-      <!-- Admin-only action chips (hidden for students, shown for faculty/coordinator/admin via JS) -->
-      <div id="adminBannerActions" class="hidden items-center space-x-2 shrink-0 flex-wrap gap-1">
-        <button onclick="openBulkImportModal()" class="text-[10px] sm:text-xs font-mono text-[#2F5238] bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-xl border border-indigo-500/30 flex items-center shadow transition">
-          <i data-lucide="upload" class="w-3.5 h-3.5 mr-1.5"></i>
-          <span>Import Class List</span>
-        </button>
-      </div>
+
 
       <!-- Location chip (always visible) -->
       <div class="flex items-center space-x-1 text-[10px] sm:text-xs font-mono text-[#869288] bg-[#F5F2EB] px-2.5 py-1.5 rounded-xl border border-[#E8E3DA] self-start sm:self-auto shrink-0">
@@ -2255,7 +2249,11 @@
           </div>
 
           <!-- Add New Class / Switch Session Actions -->
-          <div class="flex items-center space-x-2 shrink-0 self-start md:self-auto">
+          <div class="flex items-center space-x-2 shrink-0 self-start md:self-auto flex-wrap gap-y-1">
+            <button onclick="openBulkImportModal()" class="px-3 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-[#2F5238] border border-indigo-500/30 text-xs font-mono font-bold flex items-center space-x-1.5 shadow transition">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+              <span>Import Class List</span>
+            </button>
             <select id="facultyLectureDropdown" onchange="switchFacultyActiveLecture(this.value)" class="bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] max-w-[180px] sm:max-w-xs truncate">
             </select>
             <button onclick="openCreateLectureModal()" class="px-3 py-1.5 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white text-xs font-mono font-bold shadow-md flex items-center space-x-1.5 transition">
