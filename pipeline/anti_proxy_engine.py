@@ -1,7 +1,7 @@
 """
 Smart Classroom Anti-Proxy Engine for UniAttend Analytics.
 Implements Tri-Factor Anti-Proxy Verification:
-  1. Micro-Rotating Cryptographic Dynamic QR Tokens (8s TTL with TOTP / HMAC-SHA256)
+  1. Micro-Rotating Cryptographic Dynamic QR Tokens (5s TTL with TOTP / HMAC-SHA256)
   2. Mobile High-Precision GPS Geofencing (50-meter classroom radius)
   3. Single-Device Hardware Fingerprint Binding (1 Phone = 1 Student Lock)
   4. Real-time Anomaly & Proxy Attempt Interception
@@ -40,7 +40,7 @@ DEFAULT_CLASSROOM_GEO = {
 class AntiProxyEngine:
     """Core cryptographic and spatial engine for dynamic device-centric proxy-proof classroom attendance."""
 
-    def __init__(self, token_ttl_seconds: int = 8, secret_key: str = SECRET_SALT):
+    def __init__(self, token_ttl_seconds: int = 5, secret_key: str = SECRET_SALT):
         self.token_ttl_seconds = token_ttl_seconds
         self.secret_key = secret_key
         # Tracks {session_id: {device_fingerprint: student_id_str}}
@@ -110,7 +110,7 @@ class AntiProxyEngine:
     def generate_active_token(self, session_id: str, room_code: str, custom_time: Optional[float] = None) -> Dict[str, Any]:
         """
         Generates a time-bound cryptographic token and 6-digit PIN for the current window.
-        Refreshes every `token_ttl_seconds` (e.g. 8 seconds).
+        Refreshes every `token_ttl_seconds` (e.g. 5 seconds).
         """
         now = custom_time if custom_time is not None else time.time()
         time_slot = int(now // self.token_ttl_seconds)

@@ -193,7 +193,7 @@ def get_lecture_details(lecture_id: str):
 def start_lecture_attendance(lecture_id: str, req: Optional[LifecycleActionRequest] = None):
     """
     Transitions lecture to ACTIVE state.
-    Starts 8-second dynamic QR streaming and rolling 6-digit TOTP broadcast.
+    Starts 5-second dynamic QR streaming and rolling 6-digit TOTP broadcast.
     """
     try:
         user = req.user_name if req else None
@@ -260,7 +260,7 @@ def get_active_kiosk_token(
 ):
     """
     Generates a micro-rotating cryptographic dynamic QR token and 6-digit security PIN.
-    Refreshes every 8 seconds.
+    Refreshes every 5 seconds.
     """
     token_data = anti_proxy_engine.generate_active_token(session_id=session_id, room_code=room_code)
     qr_b64 = anti_proxy_engine.generate_qr_image_base64(token_data)
@@ -322,7 +322,7 @@ def verify_student_checkin(req: StudentCheckInRequest):
     """
     Validates a student check-in through lifecycle state validation and all 4 Anti-Proxy security shields:
       0. Lifecycle State Enforcement (must be ACTIVE; PAUSED/SCHEDULED/COMPLETED are blocked)
-      1. Cryptographic Token / PIN Freshness (within 8s TTL + drift tolerance)
+      1. Cryptographic Token / PIN Freshness (within 5s TTL + drift tolerance)
       2. Dynamic Haversine Geofence to Faculty Device Anchor (<= radius_m)
       3. Single-Device Hardware Binding (1 Phone = 1 Student)
       4. Duplicate Scan Prevention

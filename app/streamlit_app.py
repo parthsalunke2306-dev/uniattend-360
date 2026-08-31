@@ -651,7 +651,7 @@ def main():
                     <div class='metric-card'>
                         <b>Classroom:</b> {room_geo['name']} ({room_checkin})<br/>
                         <b>Allowed Geofence Radius:</b> {room_geo['radius_m']} meters<br/>
-                        <b>Token Refresh Interval:</b> 8 Seconds<br/>
+                        <b>Token Refresh Interval:</b> 5 Seconds<br/>
                         <b>Device Hardware Binding:</b> Locked to {dev_id}
                     </div>
                     """, unsafe_allow_html=True)

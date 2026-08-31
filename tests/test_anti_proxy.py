@@ -21,7 +21,7 @@ from pipeline.anti_proxy_engine import AntiProxyEngine, DEFAULT_CLASSROOM_GEO
 
 @pytest.fixture
 def engine():
-    return AntiProxyEngine(token_ttl_seconds=8)
+    return AntiProxyEngine(token_ttl_seconds=5)
 
 
 def test_token_and_qr_generation(engine):
@@ -59,10 +59,10 @@ def test_manual_6digit_pin_verification_success(engine):
 
 
 def test_manual_6digit_pin_drift_tolerance(engine):
-    """Verifies student submission of 6-digit PIN from previous 8s cycle (T-1) succeeds."""
+    """Verifies student submission of 6-digit PIN from previous 5s cycle (T-1) succeeds."""
     class_geo = DEFAULT_CLASSROOM_GEO["LH-101"]
     now = time.time()
-    prev_time = now - 7.0  # Previous window
+    prev_time = now - 4.0  # Previous 5s window
     prev_token_data = engine.generate_active_token(session_id="SESS-101", room_code="LH-101", custom_time=prev_time)
     prev_pin = prev_token_data["rolling_pin"]
 
@@ -75,7 +75,7 @@ def test_manual_6digit_pin_drift_tolerance(engine):
         student_lon=class_geo["lon"],
         device_fingerprint="DEVICE-PHONE-ALPHA-99",
         room_code="LH-101",
-        custom_time=now + 2.0
+        custom_time=now + 1.0
     )
 
     assert result["is_success"] is True
