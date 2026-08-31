@@ -3267,19 +3267,24 @@
       }
     };
 
+    const PROFILES_STORAGE_VERSION = 'v4_clean_production';
+
     function getStoredProfiles() {
+      const storageVer = localStorage.getItem('uniattend_360_storage_ver');
+      if (storageVer !== PROFILES_STORAGE_VERSION) {
+        // Automatically flush legacy test data from client browser cache
+        localStorage.removeItem('uniattend_360_profiles');
+        localStorage.removeItem('uniattend_360_audit_ledger');
+        localStorage.removeItem('uniattend_360_lectures');
+        localStorage.removeItem('uniattend_360_session');
+        localStorage.setItem('uniattend_360_storage_ver', PROFILES_STORAGE_VERSION);
+        return { ...DEFAULT_PROFILES };
+      }
       const stored = localStorage.getItem('uniattend_360_profiles');
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          const cleanCustom = {};
-          Object.keys(parsed).forEach(k => {
-            // Exclude legacy purged test students
-            if (!k.startsWith('CHMC-DS-2024-00')) {
-              cleanCustom[k] = parsed[k];
-            }
-          });
-          return { ...DEFAULT_PROFILES, ...cleanCustom };
+          return { ...DEFAULT_PROFILES, ...parsed };
         } catch (e) {}
       }
       return { ...DEFAULT_PROFILES };
@@ -3297,14 +3302,8 @@
       if (saved) {
         try {
           const parsedSession = JSON.parse(saved);
-          // If saved session was a purged test student, redirect to faculty
-          if (parsedSession && parsedSession.identifier && parsedSession.identifier.startsWith('CHMC-DS-2024-00')) {
-            localStorage.removeItem('uniattend_360_session');
-            quickAuth('faculty.razia');
-          } else {
-            activeSession = parsedSession;
-            applySession(activeSession);
-          }
+          activeSession = parsedSession;
+          applySession(activeSession);
         } catch (e) {
           handleLogout();
         }
@@ -3442,26 +3441,25 @@
         greetingEl.textContent = `Hi ${firstName},`;
       }
 
-      // Pre-fill Step 2 course suggestions based on role
+      // Initialize Step 2 inputs cleanly without mock values
       const courseInp = document.getElementById('gateRegCourse');
       const rollInp = document.getElementById('gateRegRollNo');
       const uidInp = document.getElementById('gateRegUidNo');
-      const randomSuffix = Math.floor(100 + Math.random() * 900);
 
       if (category === 'STUDENT') {
         if (courseInp && !courseInp.value) courseInp.value = 'B.Sc. Data Science';
-        if (rollInp) rollInp.value = `CHMC-DS-2024-${randomSuffix}`;
-        if (uidInp) uidInp.value = `20240${randomSuffix}`;
+        if (rollInp && !rollInp.value) rollInp.value = '';
+        if (uidInp && !uidInp.value) uidInp.value = '';
         selectGateYear('SY');
       } else if (category === 'TEACHER') {
-        if (courseInp) courseInp.value = 'Department of Data Science';
-        if (rollInp) rollInp.value = `FAC-DS-${randomSuffix}`;
-        if (uidInp) uidInp.value = `FAC${randomSuffix}`;
+        if (courseInp && !courseInp.value) courseInp.value = 'Department of Data Science';
+        if (rollInp && !rollInp.value) rollInp.value = '';
+        if (uidInp && !uidInp.value) uidInp.value = '';
         selectGateYear('SY');
       } else {
-        if (courseInp) courseInp.value = 'Data Science & Analytics';
-        if (rollInp) rollInp.value = `coordinator.${firstName.toLowerCase()}`;
-        if (uidInp) uidInp.value = `COORD${randomSuffix}`;
+        if (courseInp && !courseInp.value) courseInp.value = 'Department of Data Science';
+        if (rollInp && !rollInp.value) rollInp.value = '';
+        if (uidInp && !uidInp.value) uidInp.value = '';
         selectGateYear('SY');
       }
 
@@ -3515,9 +3513,7 @@
       if (errEl) errEl.classList.add('hidden');
 
       const { firstName, middleName, lastName, fullName, email, category } = regStep1Data;
-      const randomSuffix = Math.floor(100 + Math.random() * 900);
-      
-      let idStr = rollNo || (category === 'STUDENT' ? `CHMC-DS-2024-${randomSuffix}` : `FAC-DS-${randomSuffix}`);
+      let idStr = rollNo;
       let avatar = '🎓';
       let badgeClass = 'bg-[#2F5238] text-white';
       let roleTitle = 'STUDENT';
@@ -4109,7 +4105,7 @@
       tbody.innerHTML = filteredStudents.map((s, idx) => {
         const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "None (Unbound)", is_locked: false };
         const isLocked = lockInfo.is_locked;
-        const attRate = (88.5 + (idx % 3) * 2.4).toFixed(1);
+        const attRate = s.attendance_rate !== undefined ? s.attendance_rate : null;
         const deptDisplay = s.department || "Dept. of Data Science";
         const deptCode = s.department_code || "DS";
         const sem = s.semester || 3;
@@ -4129,8 +4125,8 @@
               <div class="text-[9px] text-[#869288] truncate max-w-[140px]">${deptDisplay}</div>
             </td>
             <td class="p-2.5 text-center">
-              <span class="bg-emerald-500/20 text-[#2F5238] font-bold px-2 py-0.5 rounded text-[10px] border border-emerald-500/30">
-                ${attRate}%
+              <span class="${attRate !== null && attRate < 75 ? 'bg-amber-500/20 text-[#C28222] border-amber-500/30' : 'bg-emerald-500/20 text-[#2F5238] border-emerald-500/30'} font-bold px-2 py-0.5 rounded text-[10px] border">
+                ${attRate !== null ? attRate + '%' : '—'}
               </span>
             </td>
             <td class="p-2.5">
@@ -4765,24 +4761,25 @@
 
       if (tbody) {
         tbody.innerHTML = students.map((s, idx) => {
-          const isBlocked = idx === 2;
-          const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "Enclave Handset", is_locked: true };
+          const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "Enclave Handset", is_locked: false };
           const isLocked = lockInfo.is_locked;
+          const statusText = s.status || "🟢 ENROLLED";
+          const distText = s.distance ? `${s.distance}m` : "—";
           return `
-            <tr class="${isBlocked ? 'bg-rose-500/5' : 'bg-emerald-500/5'}">
+            <tr class="hover:bg-[#F5F2EB]/60 transition">
               <td class="p-2.5 font-bold text-[#1C241E] text-[11px]">${s.identifier}</td>
               <td class="p-2.5 text-[#1C241E] font-sans font-semibold text-[11px]">${s.name}</td>
               <td class="p-2.5">
-                <span class="${isBlocked ? 'bg-rose-500/20 text-[#8D3F30]' : 'bg-emerald-500/20 text-[#2F5238]'} font-bold px-1.5 py-0.5 rounded text-[9px] border ${isBlocked ? 'border-rose-500/30' : 'border-emerald-500/30'}">
-                  ${isBlocked ? '🚨 PROXY BLOCKED' : '🟢 VERIFIED'}
+                <span class="bg-emerald-500/20 text-[#2F5238] font-bold px-1.5 py-0.5 rounded text-[9px] border border-emerald-500/30">
+                  ${statusText}
                 </span>
               </td>
-              <td class="p-2.5 ${isBlocked ? 'text-[#8D3F30]' : 'text-[#2F5238]'} text-[10px] font-bold">
-                ${isBlocked ? '1.8 km (Home)' : (6.5 + idx * 0.4).toFixed(1) + 'm'}
+              <td class="p-2.5 text-[#5A655C] text-[10px] font-medium">
+                ${distText}
               </td>
               <td class="p-2.5 text-[10px]">
                 ${isLocked 
-                  ? `<span class="text-[#2F5238] bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔒 ${lockInfo.device_name}</span>`
+                  ? `<span class="text-[#2F5238] bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔒 ${lockInfo.device_name || 'Enclave Bound'}</span>`
                   : `<span class="text-[#C28222] bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔓 Unbound (Ready)</span>`
                 }
               </td>
@@ -4798,22 +4795,22 @@
 
       if (coordTbody) {
         coordTbody.innerHTML = students.map((s, idx) => {
-          const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "Enclave Handset", is_locked: true };
+          const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "Enclave Handset", is_locked: false };
           const isLocked = lockInfo.is_locked;
-          const attRate = (88.5 + (idx % 3) * 2.4).toFixed(1);
+          const attRate = s.attendance_rate !== undefined ? s.attendance_rate : null;
           return `
             <tr class="hover:bg-[#F5F2EB]/60 transition">
               <td class="p-2.5 font-bold text-[#1C241E] text-[11px]">${s.identifier}</td>
               <td class="p-2.5 text-[#1C241E] font-semibold text-[11px]">${s.name}</td>
               <td class="p-2.5">
-                <span class="bg-emerald-500/20 text-[#2F5238] font-bold px-2 py-0.5 rounded text-[9px] border border-emerald-500/30">
-                  🟢 ELIGIBLE (${attRate}%)
+                <span class="${attRate !== null && attRate < 75 ? 'bg-amber-500/20 text-[#C28222] border-amber-500/30' : 'bg-emerald-500/20 text-[#2F5238] border-emerald-500/30'} font-bold px-2 py-0.5 rounded text-[9px] border">
+                  ${attRate !== null ? (attRate >= 75 ? `🟢 ELIGIBLE (${attRate}%)` : `⚠️ AT RISK (${attRate}%)`) : '⚪ ENROLLED'}
                 </span>
               </td>
-              <td class="p-2.5 text-[#2F5238] font-bold text-[11px]">${attRate}%</td>
+              <td class="p-2.5 text-[#2F5238] font-bold text-[11px]">${attRate !== null ? attRate + '%' : '—'}</td>
               <td class="p-2.5 text-[10px]">
                 ${isLocked 
-                  ? `<span class="text-[#2F5238] bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔒 ${lockInfo.device_name}</span>`
+                  ? `<span class="text-[#2F5238] bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔒 ${lockInfo.device_name || 'Enclave Bound'}</span>`
                   : `<span class="text-[#C28222] bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">🔓 Unbound</span>`
                 }
               </td>
@@ -4828,7 +4825,8 @@
       }
 
       if (countBadge) {
-        countBadge.innerText = `Verified: ${Math.max(1, students.length - 1)} / ${students.length} Present`;
+        const verifiedCount = students.filter(s => s.status === 'VERIFIED').length;
+        countBadge.innerText = `Verified: ${verifiedCount} / ${students.length} Present`;
       }
       
       renderPrincipalStudentLedger();
@@ -5891,23 +5889,7 @@
       source: "DEVICE_GPS"
     };
 
-    let PROXY_INCIDENTS = [
-      {
-        id: "INC-0001",
-        session_id: "LEC-DS201-20260823-14",
-        student_id_str: "CHMC-DS-2024-004",
-        student_name: "Rohan Gupta",
-        attack_type: "REMOTE_WHATSAPP_PROXY",
-        student_lat: 19.23800,
-        student_lon: 73.17200,
-        distance_meters: 1820.5,
-        max_allowed_radius_m: 20.0,
-        device_fingerprint: "DEV-ROH-992...",
-        failure_reason: "Outside Faculty Perimeter: 1.82 km away (Max allowed: 20.0m from instructor).",
-        is_acknowledged: false,
-        timestamp: "09:04:12"
-      }
-    ];
+    let PROXY_INCIDENTS = [];
 
     function calculateHaversineMeters(lat1, lon1, lat2, lon2) {
       const R = 6371000;
@@ -6544,17 +6526,18 @@
         targetProfile = REGISTERED_PROFILES[matchedKey];
       } else {
         const isTeacher = rollVal.toUpperCase().startsWith('FAC') || rollVal.toUpperCase().startsWith('TEA');
+        const fallbackId = rollVal ? rollVal.toUpperCase() : (nameVal ? nameVal.toUpperCase().replace(/\s+/g, '_') : 'NEW_USER');
         targetProfile = {
           role: isTeacher ? 'TEACHER' : 'STUDENT',
           name: nameVal || (rollVal ? `User ${rollVal}` : 'UniAttend User'),
-          identifier: rollVal.toUpperCase() || 'CHMC-DS-2024-001',
+          identifier: fallbackId,
           email: emailVal || `${(nameVal || 'user').toLowerCase().replace(/\s+/g, '.')}@chmc.edu`,
           username: (rollVal || nameVal || 'user').toLowerCase().replace(/[^a-z0-9]/g, '.'),
           avatar: isTeacher ? '👩‍🏫' : '🎓',
           badge: isTeacher ? 'TEACHER' : 'STUDENT',
           badgeClass: isTeacher ? 'bg-emerald-600 text-white' : 'bg-[#2F5238] text-white',
           department_code: 'DS',
-          desc: `${isTeacher ? 'Faculty Member' : 'Data Science Student'} • ${rollVal || 'CHMC-DS-2024-001'} • Smt. C.H.M. College`
+          desc: `${isTeacher ? 'Faculty Member' : 'Data Science Student'} • ${fallbackId} • Smt. C.H.M. College`
         };
         REGISTERED_PROFILES[targetProfile.identifier] = targetProfile;
       }

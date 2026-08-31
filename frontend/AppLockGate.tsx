@@ -155,10 +155,6 @@ export const AppLockGate: React.FC<AppLockGateProps> = ({
     }
 
     setRegError(null);
-    const randomSuffix = Math.floor(100 + Math.random() * 900);
-    if (!regRollNo || regRollNo === 'CHMC-DS-2024-001') {
-      setRegRollNo(regCategory === 'STUDENT' ? `CHMC-DS-2024-${randomSuffix}` : `FAC-DS-${randomSuffix}`);
-    }
     setRegStep(2);
   };
 
