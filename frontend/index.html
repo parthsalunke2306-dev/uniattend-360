@@ -3354,7 +3354,7 @@
       }
     };
 
-    const PROFILES_STORAGE_VERSION = 'v4_clean_production';
+    const PROFILES_STORAGE_VERSION = 'v5_clean_zero_sync';
 
     function getStoredProfiles() {
       const storageVer = localStorage.getItem('uniattend_360_storage_ver');
@@ -6417,11 +6417,19 @@
     ];
 
     function getStoredLectures() {
+      const storageVer = localStorage.getItem('uniattend_360_storage_ver');
+      if (storageVer !== PROFILES_STORAGE_VERSION) {
+        localStorage.removeItem('uniattend_360_lectures');
+        return [...DEFAULT_LECTURES];
+      }
       const stored = localStorage.getItem('uniattend_360_lectures');
       if (stored) {
-        try { return JSON.parse(stored); } catch (e) {}
+        try { 
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
       }
-      return DEFAULT_LECTURES;
+      return [...DEFAULT_LECTURES];
     }
 
     function saveLectures(lectures) {
@@ -6527,13 +6535,19 @@
 
     function renderFacultyLectureUI() {
       const active = getActiveLecture();
-      if (!active) return;
+      let subjObj = null;
+      if (facultySelectedSubject && typeof FACULTY_CURRICULUM_DATA !== 'undefined') {
+        subjObj = FACULTY_CURRICULUM_DATA.find(s => s.code === facultySelectedSubject);
+      }
+
+      const compLectures = subjObj ? (subjObj.completedLectures || 0) : (active ? (active.lecture_index || 0) : 0);
+      const totalLectures = subjObj ? (subjObj.totalLectures || 30) : (active ? (active.total_allotted_lectures || 30) : 30);
+      const pct = totalLectures > 0 ? Math.round((compLectures / totalLectures) * 100) : 0;
 
       // Update Header Badges
       const indexPill = document.getElementById('activeLectureIndexPill');
       if (indexPill) {
-        const pct = active.total_allotted_lectures > 0 ? Math.round((active.lecture_index / active.total_allotted_lectures) * 100) : 0;
-        indexPill.innerText = `📖 ${pct}% Syllabus Completed (Lecture ${active.lecture_index} of ${active.total_allotted_lectures})`;
+        indexPill.innerText = `📖 ${pct}% Syllabus Completed (Lecture ${compLectures} of ${totalLectures})`;
       }
 
       const roomBadge = document.getElementById('activeLectureRoomBadge');
