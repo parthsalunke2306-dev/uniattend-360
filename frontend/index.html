@@ -3702,6 +3702,7 @@
     function openSecurityHub() {
       document.getElementById('securityHubModal').classList.remove('hidden');
       renderActiveSessions();
+      if (typeof pushModalState === 'function') pushModalState('securityHubModal');
     }
 
     function closeSecurityHub() {
@@ -3710,6 +3711,7 @@
 
     function openBulkImportModal() {
       document.getElementById('bulkImportModal').classList.remove('hidden');
+      if (typeof pushModalState === 'function') pushModalState('bulkImportModal');
     }
 
     function closeBulkImportModal() {
@@ -3718,6 +3720,7 @@
 
     function openPublicGuide() {
       document.getElementById('publicTestingGuideModal').classList.remove('hidden');
+      if (typeof pushModalState === 'function') pushModalState('publicTestingGuideModal');
     }
 
     function closePublicGuide() {
@@ -3819,6 +3822,7 @@
       
       const modal = document.getElementById('emergencyDeviceResetModal');
       if (modal) modal.classList.remove('hidden');
+      if (typeof pushModalState === 'function') pushModalState('emergencyDeviceResetModal');
       if (window.lucide) lucide.createIcons();
     }
 
@@ -4067,6 +4071,7 @@
 
       const modal = document.getElementById('principalExpelStudentModal');
       if (modal) modal.classList.remove('hidden');
+      if (typeof pushModalState === 'function') pushModalState('principalExpelStudentModal');
       if (window.lucide) lucide.createIcons();
     }
 
@@ -4319,6 +4324,7 @@
       const modal = document.getElementById('studentProfileModal');
       if (modal) modal.classList.remove('hidden');
       loadStudentProfileIntoModal();
+      if (typeof pushModalState === 'function') pushModalState('studentProfileModal');
       if (window.lucide) lucide.createIcons();
     }
 
@@ -5003,6 +5009,7 @@
 
       if (session.role === 'STUDENT') {
         document.getElementById('viewStudent').classList.remove('hidden');
+        if (typeof replaceNavigationState === 'function') replaceNavigationState({ view: 'student' }, '#student-portal');
         // Auto-initialize camera viewport when in Camera mode
         const tabCam = document.getElementById('tabScannerCamera');
         if (tabCam && !tabCam.classList.contains('text-[#869288]')) {
@@ -5030,8 +5037,10 @@
           }
         } else if (session.role === 'COORDINATOR') {
           document.getElementById('viewCoordinator').classList.remove('hidden');
+          if (typeof replaceNavigationState === 'function') replaceNavigationState({ view: 'coordinator' }, '#coordinator-portal');
         } else if (session.role === 'PRINCIPAL' || session.role === 'ADMIN') {
           document.getElementById('viewPrincipal').classList.remove('hidden');
+          if (typeof replaceNavigationState === 'function') replaceNavigationState({ view: 'principal' }, '#principal-portal');
         }
       }
 
@@ -5339,13 +5348,137 @@
     let facultySelectedDept = null;
     let facultySelectedYear = null;
     let facultySelectedSubject = null;
+    let isHandlingPopState = false;
 
-    function initFacultyPortal() {
+    // ==============================================
+    // SPA ROUTER & BROWSER HISTORY MANAGEMENT (Back/Forward Support)
+    // ==============================================
+    function getCurrentFacultyNavHash(step, dept, year, subject) {
+      if (step === 'CLASSROOM' && subject) {
+        return `#faculty-kiosk-${subject.toLowerCase()}`;
+      } else if (step === 'SUBJECTS' && dept && year) {
+        return `#faculty-subjects-${dept.toLowerCase()}-${year.toLowerCase()}`;
+      } else if (step === 'YEARS' && dept) {
+        return `#faculty-year-${dept.toLowerCase()}`;
+      }
+      return '#faculty-departments';
+    }
+
+    function pushNavigationState(stateObj, hash) {
+      if (isHandlingPopState) return;
+      try {
+        window.history.pushState(stateObj, '', hash || window.location.hash);
+      } catch (e) {
+        console.warn('History pushState error:', e);
+      }
+    }
+
+    function replaceNavigationState(stateObj, hash) {
+      if (isHandlingPopState) return;
+      try {
+        window.history.replaceState(stateObj, '', hash || window.location.hash);
+      } catch (e) {
+        console.warn('History replaceState error:', e);
+      }
+    }
+
+    function pushModalState(modalId) {
+      pushNavigationState({
+        modal: modalId,
+        view: activeSession ? (activeSession.role.startsWith('TEACHER') ? 'teacher' : activeSession.role.toLowerCase()) : 'teacher',
+        step: facultyCurrentStep,
+        dept: facultySelectedDept,
+        year: facultySelectedYear,
+        subject: facultySelectedSubject
+      }, window.location.hash);
+    }
+
+    function closeAllModalsIfOpen(exceptModalId = null) {
+      const allModalIds = [
+        'bulkImportModal',
+        'publicTestingGuideModal',
+        'securityHubModal',
+        'createLectureModal',
+        'emergencyDeviceResetModal',
+        'principalDirectEnrollModal',
+        'principalExpelStudentModal',
+        'studentProfileModal'
+      ];
+
+      allModalIds.forEach(id => {
+        if (id !== exceptModalId) {
+          const el = document.getElementById(id);
+          if (el && !el.classList.contains('hidden')) {
+            el.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    function restoreFacultyStateFromHash() {
+      const hash = window.location.hash || '';
+      if (!hash.startsWith('#faculty-')) return false;
+
+      if (hash.startsWith('#faculty-kiosk-')) {
+        const rawCode = hash.replace('#faculty-kiosk-', '').toUpperCase();
+        const found = CURRICULUM_SUBJECTS.find(s => s.code.toLowerCase() === rawCode.toLowerCase() || rawCode.includes(s.code.toLowerCase()));
+        if (found) {
+          facultySelectedDept = found.dept;
+          facultySelectedYear = found.year;
+          facultySelectedSubject = found.code;
+          facultyCurrentStep = 'CLASSROOM';
+          
+          const activeLec = FACULTY_LECTURES.find(l => l.course_code === found.code || l.course_name.includes(found.code));
+          if (activeLec) currentActiveLectureId = activeLec.id;
+          
+          renderFacultyPortal();
+          renderFacultyLectureUI();
+          return true;
+        }
+      } else if (hash.startsWith('#faculty-subjects-')) {
+        const parts = hash.replace('#faculty-subjects-', '').split('-');
+        if (parts.length >= 2) {
+          const deptId = parts[0].toUpperCase();
+          const yearId = parts[1].toUpperCase();
+          facultySelectedDept = deptId;
+          facultySelectedYear = yearId;
+          facultySelectedSubject = null;
+          facultyCurrentStep = 'SUBJECTS';
+          renderFacultyPortal();
+          return true;
+        }
+      } else if (hash.startsWith('#faculty-year-')) {
+        const deptId = hash.replace('#faculty-year-', '').toUpperCase();
+        if (deptId) {
+          facultySelectedDept = deptId;
+          facultySelectedYear = null;
+          facultySelectedSubject = null;
+          facultyCurrentStep = 'YEARS';
+          renderFacultyPortal();
+          return true;
+        }
+      } else if (hash === '#faculty-departments') {
+        facultyCurrentStep = 'DEPARTMENTS';
+        facultySelectedDept = null;
+        facultySelectedYear = null;
+        facultySelectedSubject = null;
+        renderFacultyPortal();
+        return true;
+      }
+      return false;
+    }
+
+    function initFacultyPortal(restoreFromUrl = true) {
+      if (restoreFromUrl && window.location.hash && window.location.hash.startsWith('#faculty-')) {
+        const restored = restoreFacultyStateFromHash();
+        if (restored) return;
+      }
       facultyCurrentStep = 'DEPARTMENTS';
       facultySelectedDept = null;
       facultySelectedYear = null;
       facultySelectedSubject = null;
       renderFacultyPortal();
+      replaceNavigationState({ view: 'teacher', step: 'DEPARTMENTS', dept: null, year: null, subject: null }, '#faculty-departments');
     }
 
     function renderFacultyPortal() {
@@ -5633,12 +5766,26 @@
       facultySelectedDept = deptId;
       facultyCurrentStep = 'YEARS';
       renderFacultyPortal();
+      pushNavigationState({ 
+        view: 'teacher', 
+        step: 'YEARS', 
+        dept: deptId, 
+        year: null, 
+        subject: null 
+      }, getCurrentFacultyNavHash('YEARS', deptId, null, null));
     }
 
     function selectFacultyYear(yearId) {
       facultySelectedYear = yearId;
       facultyCurrentStep = 'SUBJECTS';
       renderFacultyPortal();
+      pushNavigationState({ 
+        view: 'teacher', 
+        step: 'SUBJECTS', 
+        dept: facultySelectedDept, 
+        year: yearId, 
+        subject: null 
+      }, getCurrentFacultyNavHash('SUBJECTS', facultySelectedDept, yearId, null));
     }
 
     function selectFacultySubject(subjectCode) {
@@ -5651,26 +5798,53 @@
       }
       renderFacultyPortal();
       renderFacultyLectureUI();
+      pushNavigationState({ 
+        view: 'teacher', 
+        step: 'CLASSROOM', 
+        dept: facultySelectedDept, 
+        year: facultySelectedYear, 
+        subject: subjectCode 
+      }, getCurrentFacultyNavHash('CLASSROOM', facultySelectedDept, facultySelectedYear, subjectCode));
     }
 
     function facultyGoBack() {
-      if (facultyCurrentStep === 'CLASSROOM') {
-        facultyCurrentStep = 'SUBJECTS';
-      } else if (facultyCurrentStep === 'SUBJECTS') {
-        facultyCurrentStep = 'YEARS';
-      } else if (facultyCurrentStep === 'YEARS') {
-        facultyCurrentStep = 'DEPARTMENTS';
+      if (window.history && window.history.length > 1) {
+        window.history.back();
+      } else {
+        if (facultyCurrentStep === 'CLASSROOM') {
+          facultyGoToStep('SUBJECTS');
+        } else if (facultyCurrentStep === 'SUBJECTS') {
+          facultyGoToStep('YEARS');
+        } else if (facultyCurrentStep === 'YEARS') {
+          facultyGoToStep('DEPARTMENTS');
+        }
       }
-      renderFacultyPortal();
     }
 
     function facultyGoToStep(step) {
-      facultyCurrentStep = step;
-      renderFacultyPortal();
+      if (step === 'DEPARTMENTS') {
+        facultyCurrentStep = 'DEPARTMENTS';
+        facultySelectedDept = null;
+        facultySelectedYear = null;
+        facultySelectedSubject = null;
+        renderFacultyPortal();
+        pushNavigationState({ view: 'teacher', step: 'DEPARTMENTS', dept: null, year: null, subject: null }, '#faculty-departments');
+      } else if (step === 'YEARS') {
+        facultyCurrentStep = 'YEARS';
+        facultySelectedYear = null;
+        facultySelectedSubject = null;
+        renderFacultyPortal();
+        pushNavigationState({ view: 'teacher', step: 'YEARS', dept: facultySelectedDept, year: null, subject: null }, getCurrentFacultyNavHash('YEARS', facultySelectedDept, null, null));
+      } else if (step === 'SUBJECTS') {
+        facultyCurrentStep = 'SUBJECTS';
+        facultySelectedSubject = null;
+        renderFacultyPortal();
+        pushNavigationState({ view: 'teacher', step: 'SUBJECTS', dept: facultySelectedDept, year: facultySelectedYear, subject: null }, getCurrentFacultyNavHash('SUBJECTS', facultySelectedDept, facultySelectedYear, null));
+      }
     }
 
     function facultyResetToStart() {
-      initFacultyPortal();
+      facultyGoToStep('DEPARTMENTS');
     }
 
     function handleTeacherUnitChange(val) {
@@ -6286,6 +6460,7 @@
         const dateInput = document.getElementById('lecDate');
         if (dateInput && !dateInput.value) dateInput.value = today;
         updateLectureProgressPill();
+        if (typeof pushModalState === 'function') pushModalState('createLectureModal');
         lucide.createIcons();
       }
     }
@@ -7376,6 +7551,69 @@
         if (!menu.contains(e.target) && !btn.contains(e.target)) {
           closeHeaderMenu();
         }
+      }
+    });
+
+    // Global Browser History Navigation Listener (PC browser back/forward & Mobile back gestures)
+    window.addEventListener('popstate', (event) => {
+      isHandlingPopState = true;
+      try {
+        const state = event.state;
+
+        // Close open modals unless this state specifically requests a modal
+        closeAllModalsIfOpen(state?.modal);
+
+        if (state && state.view === 'teacher') {
+          if (activeSession && activeSession.role && activeSession.role.startsWith('TEACHER')) {
+            document.getElementById('viewTeacher')?.classList.remove('hidden');
+            document.getElementById('viewStudent')?.classList.add('hidden');
+            document.getElementById('viewCoordinator')?.classList.add('hidden');
+            document.getElementById('viewPrincipal')?.classList.add('hidden');
+
+            facultySelectedDept = state.dept || null;
+            facultySelectedYear = state.year || null;
+            facultySelectedSubject = state.subject || null;
+            facultyCurrentStep = state.step || 'DEPARTMENTS';
+
+            renderFacultyPortal();
+
+            if (facultyCurrentStep === 'CLASSROOM' && facultySelectedSubject) {
+              const activeLec = FACULTY_LECTURES.find(l => l.course_code === facultySelectedSubject || l.course_name.includes(facultySelectedSubject));
+              if (activeLec) currentActiveLectureId = activeLec.id;
+              renderFacultyLectureUI();
+            }
+          }
+        } else if (state && state.view) {
+          const viewStudent = document.getElementById('viewStudent');
+          const viewTeacher = document.getElementById('viewTeacher');
+          const viewCoordinator = document.getElementById('viewCoordinator');
+          const viewPrincipal = document.getElementById('viewPrincipal');
+
+          if (state.view === 'coordinator' && viewCoordinator) {
+            viewCoordinator.classList.remove('hidden');
+            viewStudent?.classList.add('hidden');
+            viewTeacher?.classList.add('hidden');
+            viewPrincipal?.classList.add('hidden');
+          } else if (state.view === 'principal' && viewPrincipal) {
+            viewPrincipal.classList.remove('hidden');
+            viewStudent?.classList.add('hidden');
+            viewTeacher?.classList.add('hidden');
+            viewCoordinator?.classList.add('hidden');
+          } else if (state.view === 'student' && viewStudent) {
+            viewStudent.classList.remove('hidden');
+            viewTeacher?.classList.add('hidden');
+            viewCoordinator?.classList.add('hidden');
+            viewPrincipal?.classList.add('hidden');
+          }
+        } else {
+          // If state is null, restore state based on window hash
+          restoreFacultyStateFromHash();
+        }
+      } catch (err) {
+        console.error('Popstate routing error:', err);
+      } finally {
+        isHandlingPopState = false;
+        if (window.lucide) lucide.createIcons();
       }
     });
 
