@@ -432,225 +432,300 @@
         </div>
       </div>
 
-      <!-- 2. CREATE ACCOUNT FORM PANEL (EXACT MATCH TO HAND-DRAWN SKETCH) -->
+      <!-- 2. CREATE ACCOUNT FORM PANEL (STEP 1 & STEP 2 MULTI-STEP FLOW MATCHING SKETCH) -->
       <div id="gateRegisterBox" class="space-y-3 relative z-10 animate-in fade-in hidden">
-        <form onsubmit="handleGateRegisterSubmit(event)" class="space-y-3 text-left">
+        
+        <!-- STEP 1: BASIC ACCOUNT CREDENTIALS -->
+        <div id="gateRegisterStep1Box" class="space-y-3">
+          <form onsubmit="handleGateRegisterStep1Submit(event)" class="space-y-3 text-left">
+            
+            <!-- Row 1: Firstname, Middle name, Last name (3 columns) -->
+            <div class="grid grid-cols-3 gap-2">
+              <div class="space-y-1">
+                <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
+                  Firstname <span class="text-[#8D3F30]">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="gateRegFirstName" 
+                  placeholder="First name" 
+                  required 
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+              </div>
+
+              <div class="space-y-1">
+                <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
+                  Middle name
+                </label>
+                <input 
+                  type="text" 
+                  id="gateRegMiddleName" 
+                  placeholder="Middle" 
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+              </div>
+
+              <div class="space-y-1">
+                <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
+                  Last name <span class="text-[#8D3F30]">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="gateRegLastName" 
+                  placeholder="Last name" 
+                  required 
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+              </div>
+            </div>
+
+            <!-- Row 2: Email address -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+                Email address <span class="text-[#8D3F30]">*</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="mail" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+                <input 
+                  type="email" 
+                  id="gateRegEmail" 
+                  placeholder="e.g. alex.chen@chmc.edu" 
+                  required 
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+              </div>
+            </div>
+
+            <!-- Row 3: Password -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+                Password <span class="text-[#8D3F30]">*</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+                <input 
+                  type="password" 
+                  id="gateRegPassword" 
+                  placeholder="Enter password (min 6 chars)" 
+                  required 
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-9 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+                <button type="button" onclick="toggleRegPasswordVisibility('gateRegPassword', 'gateRegPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
+                  <i data-lucide="eye" id="gateRegPasswordEyeIcon" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Row 4: Confirm Password -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+                Confirm Password <span class="text-[#8D3F30]">*</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+                <input 
+                  type="password" 
+                  id="gateRegConfirmPassword" 
+                  placeholder="Re-enter password" 
+                  required 
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-9 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+                <button type="button" onclick="toggleRegPasswordVisibility('gateRegConfirmPassword', 'gateRegConfirmPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
+                  <i data-lucide="eye" id="gateRegConfirmPasswordEyeIcon" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Row 5: User category (Select / Dropdown) -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+                User category <span class="text-[#8D3F30]">*</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="users" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3 pointer-events-none"></i>
+                <select 
+                  id="gateRegUserCategory" 
+                  required
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-8 py-2 text-xs text-[#1C241E] font-sans appearance-none focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition cursor-pointer font-medium"
+                >
+                  <option value="STUDENT">🎓 Student</option>
+                  <option value="TEACHER">👨‍🏫 Faculty</option>
+                  <option value="COORDINATOR">👔 Course Coordinator</option>
+                </select>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#869288] absolute right-3 top-3 pointer-events-none"></i>
+              </div>
+            </div>
+
+            <!-- Error Alert Banner -->
+            <div id="gateRegisterError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[11px] font-mono text-center"></div>
+
+            <!-- Row 6: Submit Button (Proceed to Course Details Step) -->
+            <button 
+              type="submit" 
+              class="w-full py-3 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
+            >
+              <span>Submit</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- STEP 2: COURSE DETAILS TAB (EXACT MATCH TO HAND-DRAWN SKETCH IN IMAGE 2) -->
+        <div id="gateRegisterStep2Box" class="space-y-3 text-left animate-in fade-in hidden">
           
-          <!-- Row 1: Firstname, Middle name, Last name (3 columns) -->
-          <div class="grid grid-cols-3 gap-2">
-            <div class="space-y-1">
-              <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
-                Firstname <span class="text-[#8D3F30]">*</span>
-              </label>
-              <input 
-                type="text" 
-                id="gateRegFirstName" 
-                placeholder="First name" 
-                required 
-                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-              >
-            </div>
-
-            <div class="space-y-1">
-              <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
-                Middle name
-              </label>
-              <input 
-                type="text" 
-                id="gateRegMiddleName" 
-                placeholder="Middle" 
-                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-              >
-            </div>
-
-            <div class="space-y-1">
-              <label class="text-[11px] font-mono font-bold text-[#1C241E] block truncate">
-                Last name <span class="text-[#8D3F30]">*</span>
-              </label>
-              <input 
-                type="text" 
-                id="gateRegLastName" 
-                placeholder="Last name" 
-                required 
-                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-              >
-            </div>
-          </div>
-
-          <!-- Row 2: Email address -->
-          <div class="space-y-1">
-            <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
-              Email address <span class="text-[#8D3F30]">*</span>
-            </label>
-            <div class="relative">
-              <i data-lucide="mail" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
-              <input 
-                type="email" 
-                id="gateRegEmail" 
-                placeholder="e.g. alex.chen@chmc.edu" 
-                required 
-                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-              >
-            </div>
-          </div>
-
-          <!-- Row 3: Password -->
-          <div class="space-y-1">
-            <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
-              Password <span class="text-[#8D3F30]">*</span>
-            </label>
-            <div class="relative">
-              <i data-lucide="lock" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
-              <input 
-                type="password" 
-                id="gateRegPassword" 
-                placeholder="Enter password (min 6 chars)" 
-                required 
-                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-9 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-              >
-              <button type="button" onclick="toggleRegPasswordVisibility('gateRegPassword', 'gateRegPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
-                <i data-lucide="eye" id="gateRegPasswordEyeIcon" class="w-3.5 h-3.5"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Row 4: Confirm Password -->
-          <div class="space-y-1">
-            <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
-              Confirm Password <span class="text-[#8D3F30]">*</span>
-            </label>
-            <div class="relative">
-              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
-              <input 
-                type="password" 
-                id="gateRegConfirmPassword" 
-                placeholder="Re-enter password" 
-                required 
-                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-9 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-              >
-              <button type="button" onclick="toggleRegPasswordVisibility('gateRegConfirmPassword', 'gateRegConfirmPasswordEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#869288] hover:text-[#1C241E]">
-                <i data-lucide="eye" id="gateRegConfirmPasswordEyeIcon" class="w-3.5 h-3.5"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Row 5: User category (Select / Dropdown) -->
-          <div class="space-y-1">
-            <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
-              User category <span class="text-[#8D3F30]">*</span>
-            </label>
-            <div class="relative">
-              <i data-lucide="users" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3 pointer-events-none"></i>
-              <select 
-                id="gateRegUserCategory" 
-                required
-                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-8 py-2 text-xs text-[#1C241E] font-sans appearance-none focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition cursor-pointer font-medium"
-              >
-                <option value="STUDENT">🎓 Student</option>
-                <option value="TEACHER">👨‍🏫 Faculty</option>
-                <option value="COORDINATOR">👔 Course Coordinator</option>
-              </select>
-              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#869288] absolute right-3 top-3 pointer-events-none"></i>
-            </div>
-          </div>
-
-          <!-- Error Alert Banner -->
-          <div id="gateRegisterError" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[11px] font-mono text-center"></div>
-
-          <!-- Row 6: Submit Button (Matching Sketch) -->
-          <button 
-            type="submit" 
-            class="w-full py-3 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
-          >
-            <span>Submit</span>
-          </button>
-        </form>
-      </div>
-
-      <!-- 3. COURSE DETAILS PANEL (EXACT MATCH TO HAND-DRAWN SKETCH 2) -->
-      <div id="gateCourseDetailsBox" class="space-y-4 relative z-10 animate-in fade-in hidden text-left">
-        <form onsubmit="handleGateCourseDetailsSubmit(event)" class="space-y-4">
-          <div class="space-y-1 pb-1 border-b border-[#E8E3DA]">
-            <h3 class="text-sm font-sans font-medium text-[#1C241E]">
-              Hi <span id="courseDetailsUsernameDisplay" class="font-bold text-[#2F5238]">(username)</span>,
+          <!-- Greeting Header matching sketch: "Hi (username), please enter your course details" -->
+          <div class="space-y-0.5 pb-1.5 border-b border-[#E8E3DA]">
+            <h3 id="gateStep2Greeting" class="text-base sm:text-lg font-serif font-bold text-[#1C241E] tracking-tight">
+              Hi (username),
             </h3>
-            <p class="text-[11px] font-sans text-[#5A655C]">
+            <p id="gateStep2Subtitle" class="text-xs text-[#5A655C] font-sans">
               please enter your course details
             </p>
           </div>
 
-          <!-- Course -->
-          <div class="space-y-1">
-            <label class="text-[11px] font-mono text-[#869288] block">Course</label>
-            <input 
-              type="text" 
-              id="gateRegCourse" 
-              placeholder="e.g. B.Sc. Data Science" 
-              required 
-              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-            >
-          </div>
+          <form onsubmit="handleGateRegisterStep2Submit(event)" class="space-y-3">
+            
+            <!-- Field 1: Course -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+                Course <span class="text-[#8D3F30]">*</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+                <input 
+                  type="text" 
+                  id="gateRegCourse" 
+                  list="gateCourseList"
+                  placeholder="e.g. B.Sc. Data Science" 
+                  required 
+                  value="B.Sc. Data Science"
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+                <datalist id="gateCourseList">
+                  <option value="B.Sc. Data Science">
+                  <option value="B.Sc. Computer Science">
+                  <option value="B.Sc. Information Technology">
+                  <option value="B.Com (Accounting & Finance)">
+                  <option value="B.Com (Banking & Insurance)">
+                  <option value="B.M.S. (Management Studies)">
+                  <option value="B.A. (Mass Media / BAMMC)">
+                </datalist>
+              </div>
+            </div>
 
-          <!-- Year -->
-          <div class="space-y-1">
-            <label class="text-[11px] font-mono text-[#869288] block">Year</label>
-            <select 
-              id="gateRegYear" 
-              required
-              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans appearance-none focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition cursor-pointer font-medium"
-            >
-              <option value="FY">FY</option>
-              <option value="SY">SY</option>
-              <option value="TY">TY</option>
-            </select>
-          </div>
+            <!-- Field 2: Year (FY, SY, TY Selector matching sketch) -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+                Year <span class="text-[#8D3F30]">*</span>
+              </label>
+              <div class="grid grid-cols-3 gap-2">
+                <button 
+                  type="button" 
+                  id="gateYearBtn_FY" 
+                  onclick="selectGateYear('FY')" 
+                  class="py-2 px-2 rounded-xl text-xs font-mono font-bold border border-[#E8E3DA] bg-[#F5F2EB] text-[#869288] hover:text-[#1C241E] transition"
+                >
+                  FY
+                </button>
+                <button 
+                  type="button" 
+                  id="gateYearBtn_SY" 
+                  onclick="selectGateYear('SY')" 
+                  class="py-2 px-2 rounded-xl text-xs font-mono font-bold border border-[#2F5238] bg-[#2F5238] text-white shadow transition"
+                >
+                  SY
+                </button>
+                <button 
+                  type="button" 
+                  id="gateYearBtn_TY" 
+                  onclick="selectGateYear('TY')" 
+                  class="py-2 px-2 rounded-xl text-xs font-mono font-bold border border-[#E8E3DA] bg-[#F5F2EB] text-[#869288] hover:text-[#1C241E] transition"
+                >
+                  TY
+                </button>
+              </div>
+              <input type="hidden" id="gateRegYear" value="SY">
+            </div>
 
-          <!-- Div -->
-          <div class="space-y-1">
-            <label class="text-[11px] font-mono text-[#869288] block">Div</label>
-            <input 
-              type="text" 
-              id="gateRegDiv" 
-              placeholder="e.g. A" 
-              required 
-              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-            >
-          </div>
+            <!-- Field 3: Div -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+                Div <span class="text-[#8D3F30]">*</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+                <input 
+                  type="text" 
+                  id="gateRegDiv" 
+                  placeholder="e.g. A" 
+                  required 
+                  value="A"
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono uppercase placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+              </div>
+            </div>
 
-          <!-- Roll no. -->
-          <div class="space-y-1">
-            <label class="text-[11px] font-mono text-[#869288] block">Roll no.</label>
-            <input 
-              type="text" 
-              id="gateRegRollNo" 
-              placeholder="e.g. 001" 
-              required 
-              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-            >
-          </div>
+            <!-- Field 4: Roll no. -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+                Roll no. <span class="text-[#8D3F30]">*</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="id-card" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+                <input 
+                  type="text" 
+                  id="gateRegRollNo" 
+                  placeholder="e.g. CHMC-DS-2024-001 or 01" 
+                  required 
+                  value="CHMC-DS-2024-001"
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+              </div>
+            </div>
 
-          <!-- UID No. -->
-          <div class="space-y-1">
-            <label class="text-[11px] font-mono text-[#869288] block">UID No.</label>
-            <input 
-              type="text" 
-              id="gateRegUidNo" 
-              placeholder="e.g. 1234567890" 
-              required 
-              class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-            >
-          </div>
+            <!-- Field 5: UID No. -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-mono font-bold text-[#1C241E] block">
+                UID No. <span class="text-[#8D3F30]">*</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="hash" class="w-3.5 h-3.5 text-[#869288] absolute left-3 top-3"></i>
+                <input 
+                  type="text" 
+                  id="gateRegUidNo" 
+                  placeholder="e.g. 20240192" 
+                  required 
+                  value="20240192"
+                  class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-8 pr-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
+                >
+              </div>
+            </div>
 
-          <!-- Next Button -->
-          <div class="flex justify-end pt-2">
-            <button 
-              type="submit" 
-              class="py-2.5 px-6 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
-            >
-              <span>Next</span>
-            </button>
-          </div>
-        </form>
+            <!-- Error Alert Banner -->
+            <div id="gateStep2Error" class="hidden p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-[#8D3F30] text-[11px] font-mono text-center"></div>
+
+            <!-- Action Buttons: Back + Next (matching sketch) -->
+            <div class="flex items-center space-x-2 pt-1">
+              <button 
+                type="button" 
+                onclick="goBackToGateRegisterStep1()" 
+                class="py-2.5 px-3 rounded-xl bg-[#F5F2EB] hover:bg-[#EAE5DA] text-[#5A655C] hover:text-[#1C241E] font-bold text-xs font-mono border border-[#E8E3DA] transition"
+              >
+                ← Back
+              </button>
+              <button 
+                type="submit" 
+                id="btnGateStep2Next" 
+                class="flex-1 py-3 px-4 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs sm:text-sm font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150 transform active:scale-[0.99]"
+              >
+                <span>Next</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+          </form>
+        </div>
+
       </div>
 
     </div>
@@ -3244,11 +3319,15 @@
       renderDigitalRoster();
     }
 
+    let regStep1Data = null;
+
     function switchGateAuthTab(tab) {
       const btnIn = document.getElementById('gateTabBtnSignIn');
       const btnReg = document.getElementById('gateTabBtnRegister');
       const boxIn = document.getElementById('gateSignInBox');
       const boxReg = document.getElementById('gateRegisterBox');
+      const step1Box = document.getElementById('gateRegisterStep1Box');
+      const step2Box = document.getElementById('gateRegisterStep2Box');
 
       if (tab === 'SIGNIN') {
         if (btnIn) btnIn.className = "flex-1 py-2 rounded-lg font-bold transition duration-150 bg-[#2F5238] hover:bg-[#25422D] text-white shadow";
@@ -3260,12 +3339,29 @@
         if (btnIn) btnIn.className = "flex-1 py-2 rounded-lg text-[#869288] hover:text-[#1C241E] font-bold transition duration-150";
         if (boxReg) boxReg.classList.remove('hidden');
         if (boxIn) boxIn.classList.add('hidden');
+        if (step1Box) step1Box.classList.remove('hidden');
+        if (step2Box) step2Box.classList.add('hidden');
       }
       if (window.lucide) lucide.createIcons();
     }
 
     function switchAuthTab(tab) {
       switchGateAuthTab(tab);
+    }
+
+    function selectGateYear(year) {
+      const yearInp = document.getElementById('gateRegYear');
+      if (yearInp) yearInp.value = year;
+
+      ['FY', 'SY', 'TY'].forEach(y => {
+        const btn = document.getElementById(`gateYearBtn_${y}`);
+        if (!btn) return;
+        if (y === year) {
+          btn.className = "py-2 px-2 rounded-xl text-xs font-mono font-bold border border-[#2F5238] bg-[#2F5238] text-white shadow transition";
+        } else {
+          btn.className = "py-2 px-2 rounded-xl text-xs font-mono font-bold border border-[#E8E3DA] bg-[#F5F2EB] text-[#869288] hover:text-[#1C241E] transition";
+        }
+      });
     }
 
     function toggleRegPasswordVisibility(inputId, iconId) {
@@ -3288,9 +3384,8 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    let pendingRegistrationData = null;
-
-    function handleGateRegisterSubmit(e) {
+    // Step 1: Validate Basic Credentials and Advance to Course Details
+    function handleGateRegisterStep1Submit(e) {
       if (e) e.preventDefault();
       const firstName = (document.getElementById('gateRegFirstName')?.value || '').trim();
       const middleName = (document.getElementById('gateRegMiddleName')?.value || '').trim();
@@ -3335,61 +3430,118 @@
 
       if (errEl) errEl.classList.add('hidden');
 
-      pendingRegistrationData = {
+      // Store Step 1 State
+      regStep1Data = {
         firstName,
         middleName,
         lastName,
+        fullName: [firstName, middleName, lastName].filter(Boolean).join(' '),
         email,
         pwd,
         category
       };
 
-      // Hide Register form, Show Course Details form
-      const boxReg = document.getElementById('gateRegisterBox');
-      const boxCourse = document.getElementById('gateCourseDetailsBox');
-      const usernameDisplay = document.getElementById('courseDetailsUsernameDisplay');
-      
-      if (usernameDisplay) usernameDisplay.innerText = firstName;
-      
-      if (boxReg) boxReg.classList.add('hidden');
-      if (boxCourse) boxCourse.classList.remove('hidden');
+      // Populate Step 2 Greeting: "Hi (username), please enter your course details" (Matching Sketch)
+      const greetingEl = document.getElementById('gateStep2Greeting');
+      if (greetingEl) {
+        greetingEl.textContent = `Hi ${firstName},`;
+      }
+
+      // Pre-fill Step 2 course suggestions based on role
+      const courseInp = document.getElementById('gateRegCourse');
+      const rollInp = document.getElementById('gateRegRollNo');
+      const uidInp = document.getElementById('gateRegUidNo');
+      const randomSuffix = Math.floor(100 + Math.random() * 900);
+
+      if (category === 'STUDENT') {
+        if (courseInp && !courseInp.value) courseInp.value = 'B.Sc. Data Science';
+        if (rollInp) rollInp.value = `CHMC-DS-2024-${randomSuffix}`;
+        if (uidInp) uidInp.value = `20240${randomSuffix}`;
+        selectGateYear('SY');
+      } else if (category === 'TEACHER') {
+        if (courseInp) courseInp.value = 'Department of Data Science';
+        if (rollInp) rollInp.value = `FAC-DS-${randomSuffix}`;
+        if (uidInp) uidInp.value = `FAC${randomSuffix}`;
+        selectGateYear('SY');
+      } else {
+        if (courseInp) courseInp.value = 'Data Science & Analytics';
+        if (rollInp) rollInp.value = `coordinator.${firstName.toLowerCase()}`;
+        if (uidInp) uidInp.value = `COORD${randomSuffix}`;
+        selectGateYear('SY');
+      }
+
+      // Transition to Step 2
+      const step1Box = document.getElementById('gateRegisterStep1Box');
+      const step2Box = document.getElementById('gateRegisterStep2Box');
+      if (step1Box) step1Box.classList.add('hidden');
+      if (step2Box) step2Box.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
     }
 
-    function handleGateCourseDetailsSubmit(e) {
-      if (e) e.preventDefault();
-      if (!pendingRegistrationData) return;
+    function goBackToGateRegisterStep1() {
+      const step1Box = document.getElementById('gateRegisterStep1Box');
+      const step2Box = document.getElementById('gateRegisterStep2Box');
+      if (step2Box) step2Box.classList.add('hidden');
+      if (step1Box) step1Box.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
 
-      const course = (document.getElementById('gateRegCourse')?.value || '').trim();
-      const year = (document.getElementById('gateRegYear')?.value || '').trim();
-      const div = (document.getElementById('gateRegDiv')?.value || '').trim();
+    // Step 2: Save Course Details & Complete Registration
+    function handleGateRegisterStep2Submit(e) {
+      if (e) e.preventDefault();
+      if (!regStep1Data) {
+        goBackToGateRegisterStep1();
+        return;
+      }
+
+      const course = (document.getElementById('gateRegCourse')?.value || 'B.Sc. Data Science').trim();
+      const year = document.getElementById('gateRegYear')?.value || 'SY';
+      const div = (document.getElementById('gateRegDiv')?.value || 'A').trim().toUpperCase();
       const rollNo = (document.getElementById('gateRegRollNo')?.value || '').trim();
       const uidNo = (document.getElementById('gateRegUidNo')?.value || '').trim();
+      const errEl = document.getElementById('gateStep2Error');
 
-      const { firstName, middleName, lastName, email, category } = pendingRegistrationData;
-      const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+      if (!course) {
+        if (errEl) {
+          errEl.innerText = "Please enter your Course name.";
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (!rollNo) {
+        if (errEl) {
+          errEl.innerText = "Please enter your Roll number.";
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (errEl) errEl.classList.add('hidden');
+
+      const { firstName, middleName, lastName, fullName, email, category } = regStep1Data;
       const randomSuffix = Math.floor(100 + Math.random() * 900);
       
-      let idStr = rollNo || `CHMC-DS-2024-${randomSuffix}`;
+      let idStr = rollNo || (category === 'STUDENT' ? `CHMC-DS-2024-${randomSuffix}` : `FAC-DS-${randomSuffix}`);
       let avatar = '🎓';
       let badgeClass = 'bg-[#2F5238] text-white';
       let roleTitle = 'STUDENT';
-      let desc = '';
+      let desc = `${year} (${course}) • Div ${div} • Roll: ${rollNo} • UID: ${uidNo || 'N/A'} • Smt. C.H.M. College`;
 
       if (category === 'STUDENT') {
         avatar = '🎓';
         badgeClass = 'bg-[#2F5238] text-white';
         roleTitle = 'STUDENT';
-        desc = `${year} ${course} (Div ${div}) • ${idStr} • Smt. C.H.M. College`;
       } else if (category === 'TEACHER') {
         avatar = '👨‍🏫';
         badgeClass = 'bg-emerald-600 text-white';
         roleTitle = 'TEACHER';
-        desc = `Faculty Member • ${idStr} • Smt. C.H.M. College`;
+        desc = `Faculty Member • ${course} • ${idStr} • Smt. C.H.M. College`;
       } else {
         avatar = '👔';
         badgeClass = 'bg-indigo-600 text-white';
         roleTitle = 'COORDINATOR';
-        desc = `Course Coordinator • Smt. C.H.M. College`;
+        desc = `Course Coordinator • ${course} • Smt. C.H.M. College`;
       }
 
       const newProfile = {
@@ -3402,10 +3554,12 @@
         badge: roleTitle,
         badgeClass: badgeClass,
         department_code: 'DS',
-        desc: desc,
-        course_details: {
-          course, year, div, rollNo, uidNo
-        }
+        course: course,
+        year: year,
+        division: div,
+        roll_no: rollNo,
+        uid_no: uidNo,
+        desc: desc
       };
 
       REGISTERED_PROFILES[idStr] = newProfile;
@@ -3424,22 +3578,21 @@
       applySession(activeSession);
 
       showToast({ 
-        title: "Account Created", 
-        subtitle: `Welcome, ${firstName}! Role: ${roleTitle}`, 
+        title: "Account & Course Enrolled", 
+        subtitle: `Welcome, ${firstName}! Enrolled in ${year} ${course} (Div ${div})`, 
         type: "success" 
       });
-
-      // Clear pending data and reset view for next time
-      pendingRegistrationData = null;
-      const boxCourse = document.getElementById('gateCourseDetailsBox');
-      if (boxCourse) boxCourse.classList.add('hidden');
 
       completeAppUnlock('CREDENTIALS');
       renderDigitalRoster();
     }
 
+    function handleGateRegisterSubmit(e) {
+      handleGateRegisterStep1Submit(e);
+    }
+
     function handleRegisterSubmit(e) {
-      handleGateRegisterSubmit(e);
+      handleGateRegisterStep1Submit(e);
     }
 
     function openLoginModal(tab = 'SIGNIN') {
