@@ -1555,13 +1555,6 @@
 
       <!-- Admin-only action chips (hidden for students, shown for faculty/coordinator/admin via JS) -->
       <div id="adminBannerActions" class="hidden items-center space-x-2 shrink-0 flex-wrap gap-1">
-        <!-- Role quick-switcher (demo only, for admin) -->
-        <div class="hidden lg:flex items-center space-x-1 p-1 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-[10px] font-mono">
-          <button onclick="quickAuth('faculty.razia')" class="px-2 py-1 rounded-lg hover:bg-white text-[#5A655C] hover:text-[#1C241E] transition">👩‍🏫 Faculty</button>
-          <button onclick="quickAuth('coord.shiji')" class="px-2 py-1 rounded-lg hover:bg-white text-[#5A655C] hover:text-[#1C241E] transition">🏢 Coordinator</button>
-          <button onclick="quickAuth('admin.principal')" class="px-2 py-1 rounded-lg hover:bg-white text-[#5A655C] hover:text-[#1C241E] transition">🏛️ Principal</button>
-        </div>
-
         <button onclick="openLoginModal(); switchAuthTab('REGISTER');" class="text-[10px] sm:text-xs font-mono text-[#2F5238] bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center shadow transition">
           <i data-lucide="user-plus" class="w-3.5 h-3.5 mr-1.5"></i>
           <span>+ Enroll Student</span>
@@ -2929,16 +2922,6 @@
               <i data-lucide="file-up" class="w-3.5 h-3.5 text-[#2F5238]"></i>
               <span>📥 Ingest CSV</span>
             </button>
-
-            <!-- Quick Jump Dropdown / Buttons -->
-            <div class="flex items-center space-x-1.5 pl-1 border-l border-[#E8E3DA]">
-              <button onclick="quickAuth('faculty.razia')" title="Launch Teacher Kiosk" class="p-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-[#2F5238] font-mono text-[10px] font-bold">
-                👩‍🏫 Faculty
-              </button>
-              <button onclick="quickAuth('coordinator.ds')" title="Open Coordinator Tree" class="p-2 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/40 text-[#2F5238] font-mono text-[10px] font-bold">
-                👔 HOD
-              </button>
-            </div>
           </div>
         </div>
       </div>
