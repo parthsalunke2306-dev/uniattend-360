@@ -421,8 +421,11 @@
             <button type="button" onclick="fillGateLogin('Mrs. Shiji Johnson', 'coordinator.ds', 'shiji.johnson@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-[#2F5238] text-left truncate">
               👔 Mrs. Shiji (HOD)
             </button>
-            <button type="button" onclick="fillGateLogin('Dr. Manju Lalwani Pathak', 'principal.chmc', 'principal@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-[#2F5238] text-left truncate font-bold col-span-2 text-center">
-              👑 Dr. Manju Lalwani Pathak (Principal & Super Admin)
+            <button type="button" onclick="fillGateLogin('Mr. Sanjay Mehta', 'admin.staff', 'admin.staff@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-800 text-left truncate font-semibold">
+              📋 Mr. Sanjay (Admin Staff)
+            </button>
+            <button type="button" onclick="fillGateLogin('Dr. Manju Lalwani Pathak', 'principal.chmc', 'principal@chmc.edu', 'CHMC@2026!')" class="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-[#2F5238] text-left truncate font-bold text-center">
+              👑 Dr. Manju (Principal)
             </button>
           </div>
         </div>
@@ -433,6 +436,23 @@
         
         <!-- STEP 1: BASIC ACCOUNT CREDENTIALS -->
         <div id="gateRegisterStep1Box" class="space-y-3">
+          
+          <!-- Centralized Student Onboarding Notice -->
+          <div class="p-3 rounded-2xl bg-teal-500/10 border border-teal-500/30 space-y-1.5 text-left">
+            <div class="flex items-center space-x-2 text-teal-900 font-bold text-xs">
+              <span class="text-sm">📋</span>
+              <span>Centralized Student Registration</span>
+            </div>
+            <p class="text-[10px] text-[#5A655C] leading-relaxed">
+              Student accounts are created and provisioned exclusively by the <b>College Admin Staff / Student Admissions Section</b> to verify official roll numbers and prevent proxy accounts.
+            </p>
+            <div class="flex items-center justify-between pt-0.5 text-[10px] font-mono">
+              <span class="text-[#869288]">Already enrolled?</span>
+              <button type="button" onclick="switchGateAuthTab('SIGNIN')" class="text-teal-800 font-bold hover:underline">
+                Sign In with Admin Credentials →
+              </button>
+            </div>
+          </div>
           <form onsubmit="handleGateRegisterStep1Submit(event)" class="space-y-3 text-left">
             
             <!-- Row 1: Firstname, Middle name, Last name (3 columns) -->
@@ -1156,6 +1176,167 @@
             <span>👑 EXECUTE DIRECT ENROLLMENT</span>
           </button>
         </div>
+  </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- ADMIN STAFF DIRECT STUDENT ONBOARDING MODAL -->
+  <!-- ============================================== -->
+  <div id="adminDirectEnrollModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-teal-500/40 shadow-2xl space-y-4 relative bg-[#FAFAF7] text-left">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-[#E8E3DA] pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="h-9 w-9 rounded-2xl bg-teal-600/20 border border-teal-500/40 flex items-center justify-center text-teal-800 text-base shadow-inner">
+            📋
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-[#1C241E] flex items-center">
+              <span>Admin Staff Student Onboarding</span>
+              <span class="ml-2 bg-teal-500/20 text-teal-900 border border-teal-500/30 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded">STUDENT SECTION</span>
+            </h3>
+            <p class="text-[10px] text-[#869288] font-mono">Create authenticated student profile & assign initial login credentials</p>
+          </div>
+        </div>
+        <button onclick="closeAdminDirectEnrollModal()" class="p-1.5 rounded-xl bg-[#F5F2EB] hover:bg-[#EAE5DA] text-[#869288] hover:text-[#1C241E] border border-[#E8E3DA] transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Enrollment Form -->
+      <form id="adminDirectEnrollForm" onsubmit="event.preventDefault(); executeAdminStaffDirectEnrollment();" class="space-y-3 text-left">
+        
+        <!-- Department Selector -->
+        <div>
+          <label class="block text-[11px] font-mono text-[#5A655C] mb-1 font-semibold">1. Target Academic Department <span class="text-[#8D3F30]">*</span></label>
+          <select id="adminEnrollDept" onchange="autoSuggestRollNumber()" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] font-mono">
+            <option value="DS" selected>Department of Data Science (DS) - S.Y. B.Sc.</option>
+            <option value="CS">Department of Computer Science (CS)</option>
+            <option value="IT">Department of Information Technology (IT)</option>
+            <option value="AIDS">Department of AI & Machine Learning (AI&DS)</option>
+          </select>
+        </div>
+
+        <!-- Student Full Name & Roll Number -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-[11px] font-mono text-[#5A655C] mb-1 font-semibold">2. Full Name (Student) <span class="text-[#8D3F30]">*</span></label>
+            <input type="text" id="adminEnrollFullName" required placeholder="e.g. Ramesh Singh" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs text-[#1C241E] placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono text-[#5A655C] mb-1 font-semibold">3. Official Roll Number <span class="text-[#8D3F30]">*</span></label>
+            <input type="text" id="adminEnrollRollNo" required placeholder="e.g. CHMC-DS-2024-006" oninput="updateInitialPasswordPreview()" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] uppercase">
+          </div>
+        </div>
+
+        <!-- UID Number & Institutional Email -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-[11px] font-mono text-[#5A655C] mb-1 font-semibold">4. University UID / PRN</label>
+            <input type="text" id="adminEnrollUidNo" placeholder="e.g. 2024016400987654" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono text-[#5A655C] mb-1 font-semibold">5. Student Official Email <span class="text-[#8D3F30]">*</span></label>
+            <input type="email" id="adminEnrollEmail" required placeholder="ramesh.singh@chmc.edu" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs text-[#1C241E] placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+          </div>
+        </div>
+
+        <!-- Academic Year, Division & Initial Password -->
+        <div class="grid grid-cols-3 gap-2 text-xs font-mono">
+          <div>
+            <label class="block text-[10px] text-[#869288] mb-1 font-semibold">Year</label>
+            <select id="adminEnrollYear" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238]">
+              <option value="FY">F.Y. (1st Yr)</option>
+              <option value="SY" selected>S.Y. (2nd Yr)</option>
+              <option value="TY">T.Y. (3rd Yr)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-[#869288] mb-1 font-semibold">Division</label>
+            <select id="adminEnrollDiv" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-[#1C241E] focus:outline-none focus:border-[#2F5238]">
+              <option value="A" selected>Div A</option>
+              <option value="B">Div B</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-[#869288] mb-1 font-semibold">Initial Password</label>
+            <input type="text" id="adminEnrollPassword" value="CHMC@2026!" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1.5 text-xs text-[#1C241E] font-mono focus:outline-none focus:border-[#2F5238]">
+          </div>
+        </div>
+
+        <!-- Security & Device Enclave Binding Callout -->
+        <div class="p-2.5 rounded-2xl bg-teal-500/10 border border-teal-500/30 text-[10px] font-mono text-teal-900 flex items-start space-x-2">
+          <span class="text-sm">🔒</span>
+          <div>
+            <b>Centralized Security Architecture:</b> Account will be generated with a temporary initial password. The student will be prompted to change password and permanently bind their smartphone on their first login.
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-[#E8E3DA]">
+          <button type="button" onclick="closeAdminDirectEnrollModal()" class="px-3.5 py-2 rounded-xl bg-[#F5F2EB] hover:bg-[#EAE5DA] text-[#5A655C] text-xs font-mono font-bold transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white text-xs font-mono font-bold shadow flex items-center space-x-1.5 transition">
+            <span>✨ Create & Enroll Account</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- FIRST LOGIN SETUP & HARDWARE DEVICE BINDING MODAL -->
+  <!-- ============================================== -->
+  <div id="firstLoginSetupModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-[#2F5238]/40 shadow-2xl space-y-4 relative bg-[#FAFAF7] text-left">
+      
+      <div class="text-center space-y-1 pb-2 border-b border-[#E8E3DA]">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-2xl flex items-center justify-center mx-auto mb-2 shadow-inner">
+          🎓
+        </div>
+        <h3 class="text-base sm:text-lg font-serif font-bold text-[#1C241E]" id="firstLoginStudentGreeting">Welcome, Student!</h3>
+        <p class="text-xs text-[#5A655C] font-mono">First-Time Student Onboarding & Device Security Setup</p>
+      </div>
+
+      <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-[11px] font-mono text-amber-900 space-y-1">
+        <div class="font-bold flex items-center space-x-1">
+          <span>⚠️</span>
+          <span>Admin Initial Password Detected</span>
+        </div>
+        <p class="text-[10px] text-[#5A655C]">Your account was created by the College Admin Staff. For security, you must set your personal password and register this handset.</p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); submitFirstLoginSetup();" class="space-y-3 text-left">
+        <div class="space-y-1">
+          <label class="text-[11px] font-mono font-bold text-[#1C241E] block">New Permanent Password <span class="text-[#8D3F30]">*</span></label>
+          <input type="password" id="firstLoginNewPassword" required placeholder="Enter new password (min 6 chars)" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs font-mono text-[#1C241E] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[11px] font-mono font-bold text-[#1C241E] block">Confirm New Password <span class="text-[#8D3F30]">*</span></label>
+          <input type="password" id="firstLoginConfirmPassword" required placeholder="Re-enter new password" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-3 py-2 text-xs font-mono text-[#1C241E] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+        </div>
+
+        <!-- Hardware Lock Enclave Notice -->
+        <div class="p-3 rounded-2xl bg-[#2F5238]/10 border border-[#2F5238]/30 space-y-1">
+          <div class="flex items-center space-x-1.5 text-xs font-bold text-[#2F5238]">
+            <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+            <span>Hardware Enclave Lock (Anti-Proxy)</span>
+          </div>
+          <p class="text-[10px] text-[#5A655C] leading-relaxed">
+            This browser/device will be cryptographically locked to your Roll Number. Future attendance can <b>only</b> be marked from this handset.
+          </p>
+          <div class="pt-1 flex items-center justify-between text-[9px] font-mono text-[#2F5238]">
+            <span>Device Fingerprint:</span>
+            <span class="font-bold bg-white/70 px-1.5 py-0.5 rounded border border-[#E8E3DA]" id="firstLoginDeviceBadge">DETECTING...</span>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold text-xs font-mono shadow-md flex items-center justify-center space-x-2 transition duration-150">
+          <span>🔒 Set Password & Lock Device</span>
+        </button>
       </form>
     </div>
   </div>
@@ -2871,6 +3052,161 @@
     </div>
 
     <!-- ============================================== -->
+    <!-- VIEW 5: ADMIN STAFF • STUDENT DATA & ADMISSIONS MANAGEMENT SUITE -->
+    <!-- ============================================== -->
+    <div id="viewAdminStaff" class="space-y-4 sm:space-y-6 hidden">
+      
+      <!-- 1. Top Admin Staff KPIs & Admissions Metric Deck -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+        <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-teal-600 flex flex-col justify-between shadow-md">
+          <span class="text-[9px] sm:text-[10px] font-mono text-teal-800 uppercase tracking-wider font-semibold">Admissions Office</span>
+          <h3 class="text-sm sm:text-base font-bold text-[#1C241E] mt-0.5">Smt. C.H.M. College</h3>
+          <span class="text-[9px] text-teal-700 font-mono">📋 Mr. Sanjay Mehta (Admin Office)</span>
+        </div>
+
+        <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-[#2F5238] flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between">
+            <span class="text-[9px] sm:text-[10px] font-mono text-[#2F5238] uppercase tracking-wider font-semibold">Total Students</span>
+            <span class="bg-teal-500/20 text-teal-900 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-teal-500/30">ALL COHORTS</span>
+          </div>
+          <div class="my-1">
+            <h3 id="adminStaffTotalStudents" class="text-xl sm:text-2xl font-extrabold font-mono text-[#1C241E] tracking-tight">0 Enrolled</h3>
+            <p id="adminStaffCohortSubtext" class="text-[9px] text-[#869288] font-mono">Batch 2024–2027 • All Programs</p>
+          </div>
+          <div class="w-full bg-[#F5F2EB] h-1.5 rounded-full overflow-hidden">
+            <div id="adminStaffCohortBar" class="bg-gradient-to-r from-teal-500 to-[#2F5238] h-full rounded-full" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-amber-500 flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between">
+            <span class="text-[9px] sm:text-[10px] font-mono text-amber-800 uppercase tracking-wider font-semibold">Hardware Enclave</span>
+            <span id="adminStaffDeviceBoundBadge" class="bg-emerald-500/20 text-[#2F5238] text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">0 BOUND</span>
+          </div>
+          <h3 id="adminStaffUnboundCount" class="text-sm sm:text-base font-bold text-amber-900 mt-0.5">0 Unbound</h3>
+          <span class="text-[9px] text-[#869288] font-mono">Pending First Mobile Check-In</span>
+        </div>
+
+        <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-indigo-500 flex flex-col justify-between shadow-md">
+          <span class="text-[9px] sm:text-[10px] font-mono text-indigo-800 uppercase tracking-wider font-semibold">Credentials Health</span>
+          <h3 id="adminStaffCredStatus" class="text-sm sm:text-base font-bold text-indigo-900 mt-0.5">Centralized</h3>
+          <span class="text-[9px] text-indigo-700 font-mono">Admin Provisioned • 1-Device Lock</span>
+        </div>
+      </div>
+
+      <!-- 2. Admin Staff Student Provisioning & Action Deck -->
+      <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-teal-500/40 space-y-3 bg-gradient-to-r from-teal-950/10 via-emerald-950/10 to-[#F5F2EB] shadow-xl">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-lg">📋</span>
+              <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm">
+                Student Account Creation & Admissions Provisioning Hub
+              </h3>
+              <span class="bg-teal-500/20 text-teal-900 border border-teal-500/30 text-[9px] font-mono font-bold px-2 py-0.5 rounded">
+                ADMIN STAFF CONSOLE
+              </span>
+            </div>
+            <p class="text-[10px] sm:text-[11px] text-[#5A655C] mt-0.5">
+              Official student account creation is strictly managed by college admin staff. Students log in using admin-assigned credentials and bind their authorized handset on first login.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Onboard Single Student Button -->
+            <button onclick="openAdminDirectEnrollModal()" class="px-3.5 py-2 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-mono text-xs font-bold flex items-center space-x-1.5 transition shadow">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+              <span>➕ Onboard Single Student</span>
+            </button>
+
+            <!-- Bulk Ingest CSV/Excel Button -->
+            <button onclick="openBulkImportModal()" class="px-3 py-2 rounded-xl bg-[#F5F2EB] hover:bg-[#EAE5DA] border border-[#E8E3DA] text-[#1C241E] font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
+              <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-[#2F5238]"></i>
+              <span>📥 Bulk Admissions Ingest</span>
+            </button>
+
+            <!-- Generate Initial Credentials Report Button -->
+            <button onclick="downloadInitialCredentialsSheet()" class="px-3 py-2 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-800 font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
+              <i data-lucide="key" class="w-3.5 h-3.5 text-teal-700"></i>
+              <span>🔑 Credentials Report</span>
+            </button>
+
+            <!-- Export Master Student Directory (Excel) -->
+            <button onclick="exportAdminStudentMasterExcel()" class="px-3 py-2 rounded-xl bg-[#2F5238]/10 hover:bg-[#2F5238]/20 border border-[#2F5238]/30 text-[#2F5238] font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>📊 Export Excel</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Master Student Data Management & Account Governance Table -->
+      <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-[#E8E3DA] shadow-lg">
+        
+        <!-- Table Header & Filter Controls -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E8E3DA] pb-3">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="users" class="w-4 h-4 text-teal-700"></i>
+            <div>
+              <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm">Centralized Student Data & Credential Governance Ledger</h3>
+              <p class="text-[10px] font-mono text-[#869288]">Real-time student profiles across all departments • Hardware enclave locks & credential resets</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Search Input -->
+            <div class="relative">
+              <input type="text" id="adminStaffStudentSearchInput" oninput="renderAdminStaffStudentLedger()" placeholder="Search roll, name, email, UID..." class="bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-7 pr-3 py-1 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] w-40 sm:w-56">
+              <i data-lucide="search" class="w-3.5 h-3.5 text-[#869288] absolute left-2 top-2"></i>
+            </div>
+
+            <!-- Department Filter -->
+            <select id="adminStaffDeptFilter" onchange="renderAdminStaffStudentLedger()" class="bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1 text-xs text-[#1C241E] font-mono focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+              <option value="ALL" selected>All Departments</option>
+              <option value="DS">Data Science (DS)</option>
+              <option value="CS">Computer Science (CS)</option>
+              <option value="IT">Information Tech (IT)</option>
+              <option value="AIDS">AI & DS (AIDS)</option>
+            </select>
+
+            <!-- Status Filter -->
+            <select id="adminStaffStatusFilter" onchange="renderAdminStaffStudentLedger()" class="bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl px-2.5 py-1 text-xs text-[#1C241E] font-mono focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238]">
+              <option value="ALL" selected>All Statuses</option>
+              <option value="BOUND">🔒 Device Bound</option>
+              <option value="UNBOUND">🔓 Unbound / Pending Login</option>
+            </select>
+
+            <!-- Count Badge -->
+            <span id="adminStaffLedgerCountBadge" class="text-[10px] font-mono text-teal-900 bg-teal-500/20 px-2.5 py-1 rounded-xl border border-teal-500/30 font-bold">
+              0 Students
+            </span>
+          </div>
+        </div>
+
+        <!-- Student Ledger Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-[11px] font-mono">
+            <thead>
+              <tr class="border-b border-[#E8E3DA] text-[#869288] bg-[#F5F2EB]/40">
+                <th class="p-2.5">Student / Roll ID</th>
+                <th class="p-2.5">Full Name & Contact</th>
+                <th class="p-2.5">Dept / Academic Year</th>
+                <th class="p-2.5">Credential Status</th>
+                <th class="p-2.5">Hardware Enclave Lock</th>
+                <th class="p-2.5 text-center">Attendance %</th>
+                <th class="p-2.5 text-right">Admin Staff Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminStaffStudentTableBody" class="divide-y divide-stitch-border/50 text-[#1C241E]">
+              <!-- Dynamically populated by renderAdminStaffStudentLedger() -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
     <!-- VIEW 4: PRINCIPAL & SUPER ADMIN COMMAND SUITE (DR. MANJU LALWANI PATHAK) -->
     <!-- ============================================== -->
     <div id="viewPrincipal" class="space-y-4 sm:space-y-6 hidden">
@@ -3266,6 +3602,17 @@
         badgeClass: "bg-indigo-500 text-white",
         desc: "Course Coordinator • Department of Data Science (Smt. C.H.M. College)"
       },
+      "admin.staff": {
+        role: "ADMIN_STAFF",
+        name: "Mr. Sanjay Mehta",
+        identifier: "Admin Staff (Admissions)",
+        email: "admin.staff@chmc.edu",
+        username: "admin.staff",
+        avatar: "📋",
+        badge: "ADMIN STAFF",
+        badgeClass: "bg-teal-700 text-white font-bold",
+        desc: "Central Student Admissions & Data Management Office • Smt. C.H.M. College"
+      },
       "principal.chmc": {
         role: "ADMIN",
         name: "Dr. Manju Lalwani Pathak",
@@ -3279,7 +3626,7 @@
       }
     };
 
-    const PROFILES_STORAGE_VERSION = 'v6_timetable_google_sync';
+    const PROFILES_STORAGE_VERSION = 'v7_admin_staff_onboarding';
 
     function getStoredProfiles() {
       const storageVer = localStorage.getItem('uniattend_360_storage_ver');
@@ -4849,6 +5196,8 @@
       
       renderPrincipalStudentLedger();
       renderPrincipalAuditLedger();
+      if (typeof renderAdminStaffStudentLedger === 'function') renderAdminStaffStudentLedger();
+      if (typeof renderAdminStaffDashboard === 'function') renderAdminStaffDashboard();
       if (window.lucide) lucide.createIcons();
     }
 
@@ -4874,6 +5223,8 @@
       document.getElementById('viewTeacher').classList.add('hidden');
       document.getElementById('viewCoordinator').classList.add('hidden');
       document.getElementById('viewPrincipal').classList.add('hidden');
+      const viewAdmin = document.getElementById('viewAdminStaff');
+      if (viewAdmin) viewAdmin.classList.add('hidden');
 
       // Update profile banner
       document.getElementById('roleAvatar').innerText = session.avatar;
@@ -4918,6 +5269,10 @@
       if (session.role === 'STUDENT') {
         document.getElementById('viewStudent').classList.remove('hidden');
         if (typeof replaceNavigationState === 'function') replaceNavigationState({ view: 'student' }, '#student-portal');
+        // Check if student requires first-login password update or device binding
+        if (typeof checkAndTriggerFirstLoginSetup === 'function') {
+          checkAndTriggerFirstLoginSetup(session);
+        }
         // Auto-initialize camera viewport when in Camera mode
         const tabCam = document.getElementById('tabScannerCamera');
         if (tabCam && !tabCam.classList.contains('text-[#869288]')) {
@@ -4946,6 +5301,13 @@
         } else if (session.role === 'COORDINATOR') {
           document.getElementById('viewCoordinator').classList.remove('hidden');
           if (typeof replaceNavigationState === 'function') replaceNavigationState({ view: 'coordinator' }, '#coordinator-portal');
+        } else if (session.role === 'ADMIN_STAFF') {
+          const viewAdminStaffEl = document.getElementById('viewAdminStaff');
+          if (viewAdminStaffEl) {
+            viewAdminStaffEl.classList.remove('hidden');
+            if (typeof replaceNavigationState === 'function') replaceNavigationState({ view: 'admin-staff' }, '#admin-staff-portal');
+            if (typeof renderAdminStaffDashboard === 'function') renderAdminStaffDashboard();
+          }
         } else if (session.role === 'PRINCIPAL' || session.role === 'ADMIN') {
           document.getElementById('viewPrincipal').classList.remove('hidden');
           if (typeof replaceNavigationState === 'function') replaceNavigationState({ view: 'principal' }, '#principal-portal');
@@ -7825,22 +8187,33 @@
           const viewTeacher = document.getElementById('viewTeacher');
           const viewCoordinator = document.getElementById('viewCoordinator');
           const viewPrincipal = document.getElementById('viewPrincipal');
+          const viewAdminStaff = document.getElementById('viewAdminStaff');
 
           if (state.view === 'coordinator' && viewCoordinator) {
             viewCoordinator.classList.remove('hidden');
             viewStudent?.classList.add('hidden');
             viewTeacher?.classList.add('hidden');
             viewPrincipal?.classList.add('hidden');
+            viewAdminStaff?.classList.add('hidden');
+          } else if (state.view === 'admin-staff' && viewAdminStaff) {
+            viewAdminStaff.classList.remove('hidden');
+            viewStudent?.classList.add('hidden');
+            viewTeacher?.classList.add('hidden');
+            viewCoordinator?.classList.add('hidden');
+            viewPrincipal?.classList.add('hidden');
+            if (typeof renderAdminStaffDashboard === 'function') renderAdminStaffDashboard();
           } else if (state.view === 'principal' && viewPrincipal) {
             viewPrincipal.classList.remove('hidden');
             viewStudent?.classList.add('hidden');
             viewTeacher?.classList.add('hidden');
             viewCoordinator?.classList.add('hidden');
+            viewAdminStaff?.classList.add('hidden');
           } else if (state.view === 'student' && viewStudent) {
             viewStudent.classList.remove('hidden');
             viewTeacher?.classList.add('hidden');
             viewCoordinator?.classList.add('hidden');
             viewPrincipal?.classList.add('hidden');
+            viewAdminStaff?.classList.add('hidden');
           }
         } else {
           // If state is null, restore state based on window hash
@@ -8675,6 +9048,533 @@ function submitReschedule() {
         showAppLock();
       }
     });
+  
+
+    // ==============================================
+    // ADMIN STAFF: STUDENT DATA MANAGEMENT & CENTRALIZED PROVISIONING ENGINE
+    // ==============================================
+    function renderAdminStaffDashboard() {
+      const allStudents = Object.keys(REGISTERED_PROFILES)
+        .map(k => REGISTERED_PROFILES[k])
+        .filter(p => p.role === 'STUDENT');
+
+      const totalStudentsEl = document.getElementById('adminStaffTotalStudents');
+      const cohortBarEl = document.getElementById('adminStaffCohortBar');
+      const unboundEl = document.getElementById('adminStaffUnboundCount');
+      const deviceBoundBadge = document.getElementById('adminStaffDeviceBoundBadge');
+
+      if (totalStudentsEl) totalStudentsEl.innerText = `${allStudents.length} Enrolled`;
+      if (cohortBarEl) cohortBarEl.style.width = `${Math.min(100, allStudents.length * 20)}%`;
+
+      const boundCount = allStudents.filter(s => {
+        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { is_locked: false };
+        return lockInfo.is_locked || s.is_device_bound;
+      }).length;
+
+      const unboundCount = allStudents.length - boundCount;
+
+      if (unboundEl) unboundEl.innerText = `${unboundCount} Unbound`;
+      if (deviceBoundBadge) deviceBoundBadge.innerText = `${boundCount} BOUND`;
+
+      renderAdminStaffStudentLedger();
+    }
+
+    function renderAdminStaffStudentLedger() {
+      const tbody = document.getElementById('adminStaffStudentTableBody');
+      const searchInput = document.getElementById('adminStaffStudentSearchInput');
+      const deptFilter = document.getElementById('adminStaffDeptFilter');
+      const statusFilter = document.getElementById('adminStaffStatusFilter');
+      const countBadge = document.getElementById('adminStaffLedgerCountBadge');
+
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
+      const selectedDept = deptFilter ? deptFilter.value : "ALL";
+      const selectedStatus = statusFilter ? statusFilter.value : "ALL";
+
+      let allStudents = Object.keys(REGISTERED_PROFILES)
+        .map(k => REGISTERED_PROFILES[k])
+        .filter(p => p.role === 'STUDENT');
+
+      let filtered = allStudents.filter(s => {
+        const matchesQuery = !query || 
+          s.identifier.toLowerCase().includes(query) || 
+          s.name.toLowerCase().includes(query) || 
+          (s.email && s.email.toLowerCase().includes(query)) ||
+          (s.uid_no && s.uid_no.toLowerCase().includes(query));
+
+        const studentDept = s.department_code || "DS";
+        const matchesDept = (selectedDept === 'ALL') || (studentDept === selectedDept);
+
+        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { is_locked: false };
+        const isBound = lockInfo.is_locked || s.is_device_bound;
+        let matchesStatus = true;
+        if (selectedStatus === 'BOUND') matchesStatus = isBound;
+        if (selectedStatus === 'UNBOUND') matchesStatus = !isBound;
+
+        return matchesQuery && matchesDept && matchesStatus;
+      });
+
+      if (countBadge) {
+        countBadge.innerText = `${filtered.length} Students`;
+      }
+
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="p-8 text-center text-[#869288] font-mono text-xs">
+              <div class="flex flex-col items-center justify-center space-y-2 py-3">
+                <i data-lucide="users" class="w-8 h-8 text-[#A3ADA5] mb-1"></i>
+                <span class="font-bold text-[#5A655C]">No Student Records Match Filter</span>
+                <span class="text-[10px] text-[#9AA49C] max-w-sm">Use <b>➕ Onboard Single Student</b> or <b>📥 Bulk Admissions Ingest</b> to register student records.</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(s => {
+        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { device_name: "None (Unbound)", is_locked: false };
+        const isLocked = lockInfo.is_locked || s.is_device_bound;
+        const attRate = s.attendance_rate !== undefined ? s.attendance_rate : null;
+        const deptDisplay = s.department || "Dept. of Data Science";
+        const deptCode = s.department_code || "DS";
+        const sem = s.semester || (s.year === 'FY' ? 1 : s.year === 'SY' ? 3 : 5);
+        const yearDisplay = s.year || (sem <= 2 ? 'F.Y.' : sem <= 4 ? 'S.Y.' : 'T.Y.');
+        const divDisplay = s.division || 'A';
+        const isInitialPwd = s.must_change_password !== false;
+
+        return `
+          <tr class="hover:bg-[#F5F2EB]/60 transition">
+            <td class="p-2.5">
+              <div class="font-bold text-[#1C241E] text-xs font-mono">${s.identifier}</div>
+              <span class="text-[9px] text-[#869288] font-mono">UID: ${s.uid_no || 'Pending PRN'}</span>
+            </td>
+            <td class="p-2.5">
+              <div class="text-[#1C241E] font-sans font-semibold text-xs">${s.name}</div>
+              <div class="text-[10px] text-[#2F5238] font-mono">${s.email || (s.username + '@chmc.edu')}</div>
+            </td>
+            <td class="p-2.5">
+              <div class="text-[#1C241E] font-bold text-[11px]">${deptCode} • ${yearDisplay} (Div ${divDisplay})</div>
+              <div class="text-[9px] text-[#869288] truncate max-w-[130px]">${deptDisplay}</div>
+            </td>
+            <td class="p-2.5">
+              ${isInitialPwd
+                ? `<span class="bg-amber-500/15 text-amber-900 border border-amber-500/30 px-2 py-0.5 rounded text-[9px] font-bold inline-flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1"></span>Default Initial Pwd</span>`
+                : `<span class="bg-emerald-500/15 text-[#2F5238] border border-emerald-500/30 px-2 py-0.5 rounded text-[9px] font-bold inline-flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Password Active</span>`
+              }
+            </td>
+            <td class="p-2.5">
+              ${isLocked 
+                ? `<span class="text-[#2F5238] bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-bold inline-flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1"></span>🔒 ${lockInfo.device_name || s.device_name || 'Enclave Bound'}</span>`
+                : `<span class="text-amber-800 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded text-[10px] font-bold inline-flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1"></span>🔓 Unbound (Ready)</span>`
+              }
+            </td>
+            <td class="p-2.5 text-center">
+              <span class="${attRate !== null && attRate < 75 ? 'bg-amber-500/20 text-[#C28222] border-amber-500/30' : 'bg-emerald-500/20 text-[#2F5238] border-emerald-500/30'} font-bold px-2 py-0.5 rounded text-[10px] border">
+                ${attRate !== null ? attRate + '%' : '100% (New)'}
+              </span>
+            </td>
+            <td class="p-2.5 text-right space-x-1">
+              <button onclick="adminResetStudentPassword('${s.identifier}')" title="Reset to Initial Password" class="px-2 py-1 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-500/40 text-teal-800 text-[10px] font-mono font-bold transition">
+                🔑 Reset Pwd
+              </button>
+              <button onclick="openEmergencyDeviceResetModal('${s.identifier}', '${s.name}')" title="Reset Device Hardware Enclave Lock" class="px-2 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-800 text-[10px] font-mono font-bold transition">
+                🔄 Reset Lock
+              </button>
+              <button onclick="openPrincipalExpelModal('${s.identifier}', '${s.name}', '${deptDisplay}')" title="Delete / Offboard Student" class="px-2 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-[#8D3F30] text-[10px] font-mono font-bold transition">
+                ❌ Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function openAdminDirectEnrollModal() {
+      const modal = document.getElementById('adminDirectEnrollModal');
+      if (modal) modal.classList.remove('hidden');
+      autoSuggestRollNumber();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeAdminDirectEnrollModal() {
+      const modal = document.getElementById('adminDirectEnrollModal');
+      if (modal) modal.classList.add('hidden');
+      const form = document.getElementById('adminDirectEnrollForm');
+      if (form) form.reset();
+    }
+
+    function autoSuggestRollNumber() {
+      const deptCode = document.getElementById('adminEnrollDept')?.value || 'DS';
+      const year = document.getElementById('adminEnrollYear')?.value || 'SY';
+      const allStudents = Object.keys(REGISTERED_PROFILES).filter(k => k.startsWith(`CHMC-${deptCode}-`));
+      const nextNum = String(allStudents.length + 1).padStart(3, '0');
+      const suggested = `CHMC-${deptCode}-2024-${nextNum}`;
+      
+      const rollInput = document.getElementById('adminEnrollRollNo');
+      if (rollInput && !rollInput.value) {
+        rollInput.value = suggested;
+      }
+      updateInitialPasswordPreview();
+    }
+
+    function updateInitialPasswordPreview() {
+      const roll = (document.getElementById('adminEnrollRollNo')?.value || 'STUDENT').trim().toUpperCase();
+      const pwdInput = document.getElementById('adminEnrollPassword');
+      if (pwdInput && (!pwdInput.value || pwdInput.value === 'CHMC@2026!' || pwdInput.value.includes('@CHMC2026'))) {
+        pwdInput.value = `${roll.replace(/[^A-Z0-9]/g, '')}@CHMC2026`;
+      }
+    }
+
+    async function executeAdminStaffDirectEnrollment() {
+      const deptCode = document.getElementById('adminEnrollDept').value;
+      const fullName = document.getElementById('adminEnrollFullName').value.trim();
+      const rollNo = document.getElementById('adminEnrollRollNo').value.trim().toUpperCase();
+      const uidNo = (document.getElementById('adminEnrollUidNo').value || '').trim();
+      const email = document.getElementById('adminEnrollEmail').value.trim().toLowerCase();
+      const year = document.getElementById('adminEnrollYear').value;
+      const division = document.getElementById('adminEnrollDiv').value;
+      const initialPwd = document.getElementById('adminEnrollPassword').value.trim() || `${rollNo.replace(/[^A-Z0-9]/g, '')}@CHMC2026`;
+
+      if (!fullName || !rollNo || !email) {
+        showToast({ title: "Missing Required Fields", subtitle: "Name, Roll Number, and Email are required.", type: "warning" });
+        return;
+      }
+
+      const deptNames = {
+        "DS": "Department of Data Science",
+        "CS": "Department of Computer Science",
+        "IT": "Department of Information Technology",
+        "AIDS": "Department of AI & Machine Learning"
+      };
+      const deptName = deptNames[deptCode] || "Data Science";
+
+      // 1. Create client profile with must_change_password flag
+      const newProfile = {
+        role: 'STUDENT',
+        name: fullName,
+        identifier: rollNo,
+        roll_no: rollNo,
+        uid_no: uidNo,
+        email: email,
+        username: rollNo.toLowerCase().replace(/[^a-z0-9]/g, '.'),
+        department: deptName,
+        department_code: deptCode,
+        year: year,
+        division: division,
+        semester: year === 'FY' ? 1 : year === 'SY' ? 3 : 5,
+        batch_year: 2024,
+        avatar: "🎓",
+        badge: "STUDENT",
+        badgeClass: "bg-[#2F5238] text-white",
+        must_change_password: true,
+        initial_password: initialPwd,
+        is_device_bound: false,
+        device_fingerprint: null,
+        desc: `${deptName} • ${year} (Div ${division}) • Roll: ${rollNo} • Smt. C.H.M. College`
+      };
+
+      REGISTERED_PROFILES[rollNo] = newProfile;
+      const storedProfiles = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
+      storedProfiles[rollNo] = newProfile;
+      localStorage.setItem('uniattend_360_profiles', JSON.stringify(storedProfiles));
+
+      // 2. Hardware Enclave lock slot initialization
+      STUDENT_DEVICE_LOCKS[rollNo] = {
+        device_uuid: null,
+        device_name: "None (Unbound)",
+        is_locked: false,
+        enrolled_at: null
+      };
+
+      // 3. Log to Institutional Audit Ledger
+      addInstitutionalAuditLog(
+        "ADMIN_STAFF_STUDENT_ENROLLED",
+        "📋 Mr. Sanjay Mehta (Admin Office)",
+        rollNo,
+        "INFO",
+        `Admin Staff enrolled ${fullName} (${rollNo}) into ${deptName} (${year} Div ${division}) with temporary credentials.`
+      );
+
+      // 4. Synchronize with FastAPI backend API
+      try {
+        const token = activeSession ? activeSession.token : "";
+        fetch('/api/v1/admin/students/enroll', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            full_name: fullName,
+            email: email,
+            identifier: rollNo,
+            department_code: deptCode,
+            batch_year: 2024,
+            semester: year === 'FY' ? 1 : year === 'SY' ? 3 : 5,
+            initial_password: initialPwd,
+            expedited: true,
+            authorized_by: "Mr. Sanjay Mehta (Admin Office)"
+          })
+        }).then(r => r.json()).then(data => {
+          console.log("[ADMIN STAFF SYNC] Direct enrollment response:", data);
+        }).catch(err => console.log("[ADMIN STAFF SYNC] Offline fallback:", err));
+      } catch (err) {}
+
+      closeAdminDirectEnrollModal();
+      renderDigitalRoster();
+      renderAdminStaffDashboard();
+
+      showToast({ 
+        title: "Student Enrolled & Credentials Generated", 
+        subtitle: `${fullName} (${rollNo}) provisioned. Initial Pwd: ${initialPwd}`, 
+        type: "success" 
+      });
+    }
+
+    function adminResetStudentPassword(rollNo) {
+      const student = REGISTERED_PROFILES[rollNo];
+      if (!student) return;
+
+      const newTempPwd = `${rollNo.replace(/[^A-Z0-9]/g, '')}@CHMC2026`;
+      student.must_change_password = true;
+      student.initial_password = newTempPwd;
+
+      REGISTERED_PROFILES[rollNo] = student;
+      const stored = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
+      stored[rollNo] = student;
+      localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
+
+      addInstitutionalAuditLog(
+        "ADMIN_PASSWORD_RESET",
+        activeSession ? activeSession.name : "Mr. Sanjay Mehta (Admin Office)",
+        rollNo,
+        "WARNING",
+        `Admin Staff reset login credentials for ${student.name} (${rollNo}). Temporary password assigned.`
+      );
+
+      renderAdminStaffStudentLedger();
+      showToast({ 
+        title: "Password Reset Complete", 
+        subtitle: `New Temp Password for ${rollNo}: ${newTempPwd}`, 
+        type: "success" 
+      });
+    }
+
+    function downloadInitialCredentialsSheet() {
+      const students = Object.keys(REGISTERED_PROFILES)
+        .map(k => REGISTERED_PROFILES[k])
+        .filter(p => p.role === 'STUDENT');
+
+      if (students.length === 0) {
+        showToast({ title: "No Students Found", subtitle: "No student accounts to export.", type: "warning" });
+        return;
+      }
+
+      let csv = "Roll Number,Student Full Name,Email,Department,Year,Division,Initial Password,Activation Status,Hardware Lock Status\n";
+      students.forEach(s => {
+        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { is_locked: false };
+        const isLocked = lockInfo.is_locked || s.is_device_bound;
+        const initialPwd = s.initial_password || `${s.identifier.replace(/[^A-Z0-9]/g, '')}@CHMC2026`;
+        const actStatus = s.must_change_password !== false ? "PENDING_FIRST_LOGIN" : "ACTIVATED";
+        const lockStatus = isLocked ? "DEVICE_BOUND" : "UNBOUND";
+        csv += `"${s.identifier}","${s.name}","${s.email || ''}","${s.department || 'Data Science'}","${s.year || 'SY'}","${s.division || 'A'}","${initialPwd}","${actStatus}","${lockStatus}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `CHMC_Student_Credentials_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast({ title: "Credentials Sheet Downloaded", subtitle: `Exported credentials for ${students.length} students.`, type: "success" });
+    }
+
+    async function exportAdminStudentMasterExcel() {
+      const students = Object.keys(REGISTERED_PROFILES)
+        .map(k => REGISTERED_PROFILES[k])
+        .filter(p => p.role === 'STUDENT');
+
+      if (typeof ExcelJS === 'undefined') {
+        downloadInitialCredentialsSheet();
+        return;
+      }
+
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = 'Smt. C.H.M. College - Admin Admissions Office';
+      workbook.created = new Date();
+
+      const worksheet = workbook.addWorksheet('Student Master Directory');
+
+      worksheet.columns = [
+        { header: 'Roll No', key: 'roll_no', width: 22 },
+        { header: 'Full Name', key: 'name', width: 26 },
+        { header: 'UID / PRN', key: 'uid', width: 20 },
+        { header: 'Email', key: 'email', width: 28 },
+        { header: 'Department', key: 'dept', width: 26 },
+        { header: 'Year / Div', key: 'year_div', width: 14 },
+        { header: 'Account Status', key: 'status', width: 18 },
+        { header: 'Hardware Enclave Lock', key: 'device_lock', width: 24 },
+        { header: 'Attendance %', key: 'attendance', width: 16 }
+      ];
+
+      // Format Header Row
+      const headerRow = worksheet.getRow(1);
+      headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      headerRow.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF0D9488' } // Teal brand
+      };
+
+      students.forEach(s => {
+        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { is_locked: false, device_name: 'Unbound' };
+        const isLocked = lockInfo.is_locked || s.is_device_bound;
+        worksheet.addRow({
+          roll_no: s.identifier,
+          name: s.name,
+          uid: s.uid_no || 'N/A',
+          email: s.email || (s.username + '@chmc.edu'),
+          dept: s.department || 'Data Science',
+          year_div: `${s.year || 'SY'} - Div ${s.division || 'A'}`,
+          status: s.must_change_password !== false ? 'Pending 1st Login' : 'Active',
+          device_lock: isLocked ? `🔒 ${lockInfo.device_name || s.device_name || 'Bound'}` : '🔓 Unbound',
+          attendance: s.attendance_rate !== undefined ? `${s.attendance_rate}%` : '100%'
+        });
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `CHMC_Student_Master_Directory_${new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast({ title: "Master Excel Exported", subtitle: "Downloaded official student directory.", type: "success" });
+    }
+
+    // ==============================================
+    // FIRST-TIME LOGIN & HARDWARE DEVICE BINDING WORKFLOW
+    // ==============================================
+    let pendingFirstLoginSession = null;
+
+    function checkAndTriggerFirstLoginSetup(session) {
+      if (!session || session.role !== 'STUDENT') return false;
+      const profile = REGISTERED_PROFILES[session.identifier] || session;
+      
+      const isUnbound = !profile.is_device_bound && (!STUDENT_DEVICE_LOCKS[session.identifier] || !STUDENT_DEVICE_LOCKS[session.identifier].is_locked);
+      const mustChangePwd = profile.must_change_password === true;
+
+      if (mustChangePwd || isUnbound) {
+        pendingFirstLoginSession = session;
+        const modal = document.getElementById('firstLoginSetupModal');
+        const greeting = document.getElementById('firstLoginStudentGreeting');
+        const deviceBadge = document.getElementById('firstLoginDeviceBadge');
+
+        if (greeting) greeting.innerText = `Welcome, ${session.name}!`;
+        
+        // Detect current browser / device
+        const ua = navigator.userAgent;
+        let devName = "Mobile Handset";
+        if (ua.includes("Android")) devName = "Android Smartphone";
+        else if (ua.includes("iPhone")) devName = "Apple iPhone";
+        else if (ua.includes("Macintosh")) devName = "Apple MacBook";
+        else if (ua.includes("Windows")) devName = "Windows Device";
+        else devName = "Authenticated Web Browser";
+
+        if (deviceBadge) deviceBadge.innerText = devName;
+
+        if (modal) modal.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+        return true;
+      }
+      return false;
+    }
+
+    function submitFirstLoginSetup() {
+      if (!pendingFirstLoginSession) return;
+      const rollNo = pendingFirstLoginSession.identifier;
+      const newPwd = document.getElementById('firstLoginNewPassword')?.value || '';
+      const confirmPwd = document.getElementById('firstLoginConfirmPassword')?.value || '';
+
+      if (!newPwd || newPwd.length < 6) {
+        showToast({ title: "Password Too Short", subtitle: "New password must be at least 6 characters.", type: "warning" });
+        return;
+      }
+
+      if (newPwd !== confirmPwd) {
+        showToast({ title: "Passwords Do Not Match", subtitle: "Please verify and re-enter.", type: "warning" });
+        return;
+      }
+
+      const ua = navigator.userAgent;
+      let devName = "Handset Locked";
+      if (ua.includes("Android")) devName = "Android Smartphone";
+      else if (ua.includes("iPhone")) devName = "Apple iPhone";
+      else if (ua.includes("Macintosh")) devName = "Apple MacBook";
+      else if (ua.includes("Windows")) devName = "Windows PC (Enclave)";
+      else devName = "Web Browser";
+
+      const devUUID = "DEV-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+      // Update Student Profile
+      const student = REGISTERED_PROFILES[rollNo] || pendingFirstLoginSession;
+      student.must_change_password = false;
+      student.is_device_bound = true;
+      student.device_name = devName;
+      student.device_fingerprint = devUUID;
+      student.enrolled_at = new Date().toISOString();
+
+      REGISTERED_PROFILES[rollNo] = student;
+      const stored = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
+      stored[rollNo] = student;
+      localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
+
+      // Lock hardware enclave
+      STUDENT_DEVICE_LOCKS[rollNo] = {
+        device_uuid: devUUID,
+        device_name: devName,
+        is_locked: true,
+        enrolled_at: new Date().toISOString()
+      };
+
+      addInstitutionalAuditLog(
+        "STUDENT_FIRST_LOGIN_DEVICE_BOUND",
+        student.name,
+        rollNo,
+        "INFO",
+        `Student completed first-login password setup and locked attendance handset to ${devName} (${devUUID}).`
+      );
+
+      // Close modal
+      const modal = document.getElementById('firstLoginSetupModal');
+      if (modal) modal.classList.add('hidden');
+
+      // Update active session
+      activeSession = { ...activeSession, ...student };
+      localStorage.setItem('uniattend_360_session', JSON.stringify(activeSession));
+
+      showToast({ 
+        title: "Account Activated & Device Bound", 
+        subtitle: `Handset locked to ${devName}. You are ready for live check-in!`, 
+        type: "success" 
+      });
+
+      pendingFirstLoginSession = null;
+      renderDigitalRoster();
+    }
+
   </script>
 </body>
 </html>

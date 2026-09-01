@@ -31,6 +31,24 @@ ROLE_DEFINITIONS = {
             "override_attendance": True
         }
     },
+    "ADMIN_STAFF": {
+        "title": "Admin Staff / Student Admissions Section",
+        "icon": "📋",
+        "badge_color": "#0D9488",
+        "description": "College Administrative Staff: Centralized student data management, bulk roster onboarding, student profile & credential provisioning, and hardware lock resets.",
+        "permissions": {
+            "view_all_departments": True,
+            "view_campus_kpis": True,
+            "manage_departments": False,
+            "manage_users": True,
+            "manage_security_logs": True,
+            "export_university_reports": True,
+            "open_kiosk": False,
+            "view_student_simulator": True,
+            "audit_proxy_radar": True,
+            "override_attendance": False
+        }
+    },
     "PRINCIPAL": {
         "title": "Principal & Institutional Head",
         "icon": "🏛️",
