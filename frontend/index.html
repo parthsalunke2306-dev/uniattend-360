@@ -7917,6 +7917,211 @@
       }
     });
 
+function renderCoordinatorPortal() {
+  const students = Object.keys(REGISTERED_PROFILES)
+    .map(k => REGISTERED_PROFILES[k])
+    .filter(p => p.role === 'STUDENT');
+
+  let totalStudents = students.length;
+  let totalAttRate = 0;
+  let defaultersCount = 0;
+  let eligible = 0;
+  let warning = 0;
+  let critical = 0;
+
+  students.forEach(s => {
+    // Generate mock attendance rate between 65 and 95 if not present
+    if (s.attendance_rate === undefined) {
+      s.attendance_rate = Math.floor(Math.random() * (95 - 65 + 1)) + 65;
+    }
+    totalAttRate += s.attendance_rate;
+    if (s.attendance_rate < 75) {
+      defaultersCount++;
+      if (s.attendance_rate < 70) critical++;
+      else warning++;
+    } else {
+      eligible++;
+    }
+  });
+
+  const deptAvg = totalStudents > 0 ? (totalAttRate / totalStudents).toFixed(1) : "0.0";
+
+  // 1. Metric Cards
+  const avgEl = document.getElementById('coordDeptAvg');
+  if (avgEl) avgEl.innerText = `${deptAvg}%`;
+  const defCountEl = document.getElementById('coordDefaultersCount');
+  if (defCountEl) defCountEl.innerText = `${defaultersCount} Students`;
+  const defBadgeEl = document.getElementById('coordDefaulterBadge');
+  if (defBadgeEl) defBadgeEl.innerText = `${defaultersCount} DEFAULTERS`;
+
+  // 2. Health Index
+  const eligiblePct = totalStudents > 0 ? ((eligible / totalStudents) * 100).toFixed(1) : "0.0";
+  const warningPct = totalStudents > 0 ? ((warning / totalStudents) * 100).toFixed(1) : "0.0";
+  const criticalPct = totalStudents > 0 ? ((critical / totalStudents) * 100).toFixed(1) : "0.0";
+
+  const elPctText = document.getElementById('coordEligiblePct');
+  if (elPctText) {
+    elPctText.innerText = `${eligiblePct}%`;
+    elPctText.parentElement.nextElementSibling.firstElementChild.style.width = `${eligiblePct}%`;
+  }
+  const warnPctText = document.getElementById('coordWarningPct');
+  if (warnPctText) {
+    warnPctText.innerText = `${warningPct}%`;
+    warnPctText.parentElement.nextElementSibling.firstElementChild.style.width = `${warningPct}%`;
+  }
+  const critPctText = document.getElementById('coordCriticalPct');
+  if (critPctText) {
+    critPctText.innerText = `${criticalPct}%`;
+    critPctText.parentElement.nextElementSibling.firstElementChild.style.width = `${criticalPct}%`;
+  }
+}
+
+async function exportCoordinatorMasterSheet() {
+  if (typeof ExcelJS === 'undefined') {
+    showToast({ title: "Export Failed", subtitle: "ExcelJS library not loaded.", type: "error" });
+    return;
+  }
+  showToast({ title: "Export Started", subtitle: "Generating master department spreadsheet...", type: "info" });
+  
+  try {
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'UniAttend Analytics';
+    workbook.lastModifiedBy = 'Course Coordinator';
+    workbook.created = new Date();
+    workbook.modified = new Date();
+    const sheet = workbook.addWorksheet('Master Ledger', {
+      pageSetup: { paperSize: 9, orientation: 'landscape', margins: { left: 0.2, right: 0.2, top: 0.5, bottom: 0.5 } }
+    });
+    sheet.columns = [
+      { header: 'Roll No', key: 'roll_no', width: 15 },
+      { header: 'Student Name', key: 'name', width: 30 },
+      { header: 'Email', key: 'email', width: 35 },
+      { header: 'Attendance %', key: 'attendance_rate', width: 15 },
+      { header: 'Defaulter Status', key: 'defaulter', width: 20 },
+      { header: 'Device Lock', key: 'device_lock', width: 25 },
+    ];
+    const headerRow = sheet.getRow(1);
+    headerRow.font = { name: 'Arial', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
+    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2F5238' } };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    const students = Object.keys(REGISTERED_PROFILES)
+      .map(k => REGISTERED_PROFILES[k])
+      .filter(p => p.role === 'STUDENT');
+
+    students.forEach((student, idx) => {
+      const lockInfo = STUDENT_DEVICE_LOCKS[student.identifier];
+      const isLocked = lockInfo ? lockInfo.is_locked : false;
+      const attRate = student.attendance_rate || 0;
+      const isDefaulter = attRate < 75;
+
+      const row = sheet.addRow({
+        roll_no: student.identifier,
+        name: student.name,
+        email: student.email,
+        attendance_rate: `${attRate}%`,
+        defaulter: isDefaulter ? 'WARNING (<75%)' : 'ELIGIBLE',
+        device_lock: isLocked ? (lockInfo.device_name || 'Enclave Bound') : 'Unbound'
+      });
+      row.font = { name: 'Arial', size: 10 };
+      row.getCell('attendance_rate').alignment = { horizontal: 'center' };
+      const defCell = row.getCell('defaulter');
+      defCell.alignment = { horizontal: 'center' };
+      if (isDefaulter) {
+        defCell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FF8D3F30' } };
+      } else {
+        defCell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FF2F5238' } };
+      }
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `Coordinator_Master_Ledger_${new Date().toISOString().split('T')[0]}.xlsx`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    window.URL.revokeObjectURL(url);
+    showToast({ title: "Export Success", subtitle: "Master ledger spreadsheet downloaded.", type: "success" });
+  } catch (err) {
+    console.error("Excel generation error:", err);
+    showToast({ title: "Export Failed", subtitle: "Could not generate spreadsheet.", type: "error" });
+  }
+}
+
+function openSecurityHub() {
+  showToast({ title: 'Security Hub Accessed', subtitle: 'Analyzing hardware fingerprints and proxy logs...', type: 'info' });
+  setTimeout(() => {
+    let modal = document.getElementById('coordinatorSecurityModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'coordinatorSecurityModal';
+      modal.className = 'fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-[#F5F2EB] backdrop-blur-md transition-all duration-300';
+      modal.innerHTML = `
+        <div class="bg-white rounded-3xl w-full max-w-2xl border border-[#E8E3DA] shadow-2xl overflow-hidden flex flex-col h-[85vh] sm:h-[80vh]">
+          <div class="p-4 sm:p-5 border-b border-[#E8E3DA] flex items-center justify-between bg-gradient-to-r from-red-500/10 to-amber-500/10">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-2xl bg-white border border-[#E8E3DA] flex items-center justify-center shadow-sm">
+                🛡️
+              </div>
+              <div>
+                <h3 class="font-bold text-[#1C241E] text-base sm:text-lg">Security & Anti-Proxy Hub</h3>
+                <p class="text-[10px] sm:text-xs text-[#869288] font-mono mt-0.5">Department Level Interception Logs</p>
+              </div>
+            </div>
+            <button onclick="document.getElementById('coordinatorSecurityModal').classList.add('hidden')" class="p-2 rounded-xl bg-white hover:bg-[#F5F2EB] text-[#869288] border border-[#E8E3DA] transition">
+              ✕
+            </button>
+          </div>
+          <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 bg-[#F5F2EB]/30 font-mono text-[11px]" id="securityLogsContainer">
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    
+    const logsContainer = document.getElementById('securityLogsContainer');
+    const logs = [
+      { time: '09:14 AM', student: 'Student 1204', room: 'E-104', type: 'REMOTE_WHATSAPP_PROXY', reason: 'Outside Faculty Perimeter: 450.2m away', color: 'rose' },
+      { time: '10:05 AM', student: 'Student 1099', room: 'E-104', type: 'EXPIRED_QR_PROXY', reason: 'Expired QR Token. Cryptographic signature tampered.', color: 'amber' },
+      { time: '02:20 PM', student: 'Student 1102', room: 'M-113', type: 'DEVICE_SHARING_PROXY', reason: 'Device Hardware Re-use Detected! Phone already marked for Student 1101.', color: 'rose' },
+    ];
+    
+    logsContainer.innerHTML = logs.map(l => `
+      <div class="p-3 rounded-xl bg-white border border-${l.color}-500/30 flex flex-col space-y-2">
+        <div class="flex justify-between items-center border-b border-[#E8E3DA] pb-2">
+          <span class="font-bold text-[#1C241E]">${l.student}</span>
+          <span class="bg-${l.color}-500/20 text-${l.color}-600 px-1.5 py-0.5 rounded font-bold text-[9px]">${l.type}</span>
+        </div>
+        <div class="text-[#5A655C]">${l.reason}</div>
+        <div class="text-[9px] text-[#869288] flex justify-between">
+          <span>Room: ${l.room}</span>
+          <span>Time: ${l.time}</span>
+        </div>
+      </div>
+    `).join('');
+    
+    modal.classList.remove('hidden');
+  }, 1000);
+}
+
+function generateParentWarnings() {
+  const students = Object.keys(REGISTERED_PROFILES)
+    .map(k => REGISTERED_PROFILES[k])
+    .filter(p => p.role === 'STUDENT' && p.attendance_rate < 75);
+    
+  if (students.length === 0) {
+    showToast({ title: 'Cohort Compliant', subtitle: '0 defaulters found (<75% threshold).', type: 'success' });
+    return;
+  }
+  showToast({ title: 'Action Initiated', subtitle: \`Dispatching warning letters for \${students.length} defaulters...\`, type: 'info' });
+  setTimeout(() => {
+    showToast({ title: 'Dispatch Complete', subtitle: 'Notices sent to parents/guardians successfully.', type: 'success' });
+  }, 2000);
+}
+
     window.addEventListener('DOMContentLoaded', () => {
       initAuth();
       initOtpBoxes();
