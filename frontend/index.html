@@ -3174,25 +3174,43 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <!-- Onboard Single Student Button -->
-            <button onclick="openAdminDirectEnrollModal()" class="px-3.5 py-2 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-mono text-xs font-bold flex items-center space-x-1.5 transition shadow">
-              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
-              <span>➕ Onboard Single Student</span>
+            <!-- Onboard Student Button -->
+            <button onclick="openAdminDirectEnrollModal('STUDENT')" class="px-3 py-2 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-mono text-xs font-bold flex items-center space-x-1.5 transition shadow">
+              <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
+              <span>🎓 + Onboard Student</span>
+            </button>
+
+            <!-- Onboard Faculty Button -->
+            <button onclick="openAdminDirectEnrollModal('FACULTY')" class="px-3 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-mono text-xs font-bold flex items-center space-x-1.5 transition shadow">
+              <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+              <span>👨‍🏫 + Onboard Faculty</span>
+            </button>
+
+            <!-- Onboard Coordinator Button -->
+            <button onclick="openAdminDirectEnrollModal('COORDINATOR')" class="px-3 py-2 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white font-mono text-xs font-bold flex items-center space-x-1.5 transition shadow">
+              <i data-lucide="landmark" class="w-3.5 h-3.5"></i>
+              <span>🏛️ + Onboard Coord</span>
+            </button>
+
+            <!-- Onboard Admin Staff Button -->
+            <button onclick="openAdminDirectEnrollModal('ADMIN_STAFF')" class="px-3 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-mono text-xs font-bold flex items-center space-x-1.5 transition shadow">
+              <i data-lucide="building" class="w-3.5 h-3.5"></i>
+              <span>🏢 + Onboard Staff</span>
             </button>
 
             <!-- Bulk Ingest CSV/Excel Button -->
             <button onclick="openBulkImportModal()" class="px-3 py-2 rounded-xl bg-[#F5F2EB] hover:bg-[#EAE5DA] border border-[#E8E3DA] text-[#1C241E] font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
               <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-[#2F5238]"></i>
-              <span>📥 Bulk Admissions Ingest</span>
+              <span>📥 Bulk CSV</span>
             </button>
 
             <!-- Generate Initial Credentials Report Button -->
             <button onclick="downloadInitialCredentialsSheet()" class="px-3 py-2 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-800 font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
               <i data-lucide="key" class="w-3.5 h-3.5 text-teal-700"></i>
-              <span>🔑 Credentials Report</span>
+              <span>🔑 Credentials</span>
             </button>
 
-            <!-- Export Master Student Directory (Excel) -->
+            <!-- Export Master Directory (Excel) -->
             <button onclick="exportAdminStudentMasterExcel()" class="px-3 py-2 rounded-xl bg-[#2F5238]/10 hover:bg-[#2F5238]/20 border border-[#2F5238]/30 text-[#2F5238] font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
               <span>📊 Export Excel</span>
@@ -9341,10 +9359,10 @@ function submitReschedule() {
       if (window.lucide) lucide.createIcons();
     }
 
-    function openAdminDirectEnrollModal() {
+    function openAdminDirectEnrollModal(defaultCat = 'STUDENT') {
       const modal = document.getElementById('adminDirectEnrollModal');
       if (modal) modal.classList.remove('hidden');
-      setAdminEnrollCategory('STUDENT');
+      setAdminEnrollCategory(defaultCat);
       if (window.lucide) lucide.createIcons();
     }
 
@@ -9571,63 +9589,60 @@ function submitReschedule() {
     }
 
     function downloadInitialCredentialsSheet() {
-      const students = Object.keys(REGISTERED_PROFILES)
-        .map(k => REGISTERED_PROFILES[k])
-        .filter(p => p.role === 'STUDENT');
+      const allUsers = Object.keys(REGISTERED_PROFILES).map(k => REGISTERED_PROFILES[k]);
 
-      if (students.length === 0) {
-        showToast({ title: "No Students Found", subtitle: "No student accounts to export.", type: "warning" });
+      if (allUsers.length === 0) {
+        showToast({ title: "No Accounts Found", subtitle: "No user accounts to export.", type: "warning" });
         return;
       }
 
-      let csv = "Roll Number,Student Full Name,Email,Department,Year,Division,Initial Password,Activation Status,Hardware Lock Status\n";
-      students.forEach(s => {
-        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { is_locked: false };
-        const isLocked = lockInfo.is_locked || s.is_device_bound;
-        const initialPwd = s.initial_password || `${s.identifier.replace(/[^A-Z0-9]/g, '')}@CHMC2026`;
-        const actStatus = s.must_change_password !== false ? "PENDING_FIRST_LOGIN" : "ACTIVATED";
-        const lockStatus = isLocked ? "DEVICE_BOUND" : "UNBOUND";
-        csv += `"${s.identifier}","${s.name}","${s.email || ''}","${s.department || 'Data Science'}","${s.year || 'SY'}","${s.division || 'A'}","${initialPwd}","${actStatus}","${lockStatus}"\n`;
+      let csv = "Role,Category,Identifier / ID,Full Name,Official Email,Department,Designation / Academic Level,Initial Password,Credential Status,Hardware Enclave Lock\n";
+      allUsers.forEach(u => {
+        const lockInfo = STUDENT_DEVICE_LOCKS[u.identifier] || { is_locked: false };
+        const isLocked = lockInfo.is_locked || u.is_device_bound;
+        const initialPwd = u.initial_password || `${u.identifier.replace(/[^A-Z0-9]/g, '')}@CHMC2026`;
+        const actStatus = u.must_change_password !== false ? "PENDING_FIRST_LOGIN" : "ACTIVATED";
+        const lockStatus = u.role === 'STUDENT' ? (isLocked ? "DEVICE_BOUND" : "UNBOUND") : "2FA_PROTECTED";
+        const desigOrYear = u.role === 'STUDENT' ? `${u.year || 'SY'} - Div ${u.division || 'A'}` : (u.designation || u.role);
+        csv += `"${u.badge || u.role}","${u.category || u.role}","${u.identifier}","${u.name}","${u.email || ''}","${u.department || 'Data Science'}","${desigOrYear}","${initialPwd}","${actStatus}","${lockStatus}"\n`;
       });
 
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `CHMC_Student_Credentials_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute("download", `UniAttend_Institutional_Credentials_${new Date().toISOString().slice(0,10)}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      showToast({ title: "Credentials Sheet Downloaded", subtitle: `Exported credentials for ${students.length} students.`, type: "success" });
+      showToast({ title: "Credentials Sheet Downloaded", subtitle: "Exported credentials for students, faculty, and coordinators.", type: "success" });
     }
 
     async function exportAdminStudentMasterExcel() {
-      const students = Object.keys(REGISTERED_PROFILES)
-        .map(k => REGISTERED_PROFILES[k])
-        .filter(p => p.role === 'STUDENT');
-
       if (typeof ExcelJS === 'undefined') {
         downloadInitialCredentialsSheet();
         return;
       }
 
+      const allUsers = Object.keys(REGISTERED_PROFILES).map(k => REGISTERED_PROFILES[k]);
+
       const workbook = new ExcelJS.Workbook();
       workbook.creator = 'Smt. C.H.M. College - Admin Admissions Office';
       workbook.created = new Date();
 
-      const worksheet = workbook.addWorksheet('Student Master Directory');
+      const worksheet = workbook.addWorksheet('Institutional Master Directory');
 
       worksheet.columns = [
-        { header: 'Roll No', key: 'roll_no', width: 22 },
+        { header: 'Role', key: 'role', width: 14 },
+        { header: 'Official ID', key: 'identifier', width: 22 },
         { header: 'Full Name', key: 'name', width: 26 },
         { header: 'UID / PRN', key: 'uid', width: 20 },
-        { header: 'Email', key: 'email', width: 28 },
-        { header: 'Department', key: 'dept', width: 26 },
-        { header: 'Year / Div', key: 'year_div', width: 14 },
+        { header: 'Official Email', key: 'email', width: 28 },
+        { header: 'Department', key: 'dept', width: 28 },
+        { header: 'Year / Designation', key: 'year_div', width: 22 },
         { header: 'Account Status', key: 'status', width: 18 },
-        { header: 'Hardware Enclave Lock', key: 'device_lock', width: 24 },
-        { header: 'Attendance %', key: 'attendance', width: 16 }
+        { header: 'Hardware Enclave Lock', key: 'device_lock', width: 24 }
       ];
 
       // Format Header Row
@@ -9639,19 +9654,19 @@ function submitReschedule() {
         fgColor: { argb: 'FF0D9488' } // Teal brand
       };
 
-      students.forEach(s => {
-        const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { is_locked: false, device_name: 'Unbound' };
-        const isLocked = lockInfo.is_locked || s.is_device_bound;
+      allUsers.forEach(u => {
+        const lockInfo = STUDENT_DEVICE_LOCKS[u.identifier] || { is_locked: false, device_name: 'Unbound' };
+        const isLocked = lockInfo.is_locked || u.is_device_bound;
         worksheet.addRow({
-          roll_no: s.identifier,
-          name: s.name,
-          uid: s.uid_no || 'N/A',
-          email: s.email || (s.username + '@chmc.edu'),
-          dept: s.department || 'Data Science',
-          year_div: `${s.year || 'SY'} - Div ${s.division || 'A'}`,
-          status: s.must_change_password !== false ? 'Pending 1st Login' : 'Active',
-          device_lock: isLocked ? `🔒 ${lockInfo.device_name || s.device_name || 'Bound'}` : '🔓 Unbound',
-          attendance: s.attendance_rate !== undefined ? `${s.attendance_rate}%` : '100%'
+          role: u.badge || u.role,
+          identifier: u.identifier,
+          name: u.name,
+          uid: u.uid_no || 'N/A',
+          email: u.email || (u.username + '@chmc.edu'),
+          dept: u.department || 'Data Science',
+          year_div: u.role === 'STUDENT' ? `${u.year || 'SY'} - Div ${u.division || 'A'}` : (u.designation || u.role),
+          status: u.must_change_password !== false ? 'Pending 1st Login' : 'Active',
+          device_lock: u.role === 'STUDENT' ? (isLocked ? `🔒 ${lockInfo.device_name || u.device_name || 'Bound'}` : '🔓 Unbound') : '🛡️ 2FA Protected'
         });
       });
 
@@ -9660,12 +9675,12 @@ function submitReschedule() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `CHMC_Student_Master_Directory_${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.download = `UniAttend_Master_Institutional_Directory_${new Date().toISOString().slice(0,10)}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      showToast({ title: "Master Excel Exported", subtitle: "Downloaded official student directory.", type: "success" });
+      showToast({ title: "Master Directory Exported", subtitle: "Full institutional Excel directory downloaded successfully.", type: "success" });
     }
 
     // ==============================================
