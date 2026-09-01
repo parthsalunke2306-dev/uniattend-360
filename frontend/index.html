@@ -3283,7 +3283,7 @@
       }
     };
 
-    const PROFILES_STORAGE_VERSION = 'v5_clean_zero_sync';
+    const PROFILES_STORAGE_VERSION = 'v6_timetable_google_sync';
 
     function getStoredProfiles() {
       const storageVer = localStorage.getItem('uniattend_360_storage_ver');
@@ -8058,7 +8058,7 @@ function generateParentWarnings() {
     showToast({ title: 'Cohort Compliant', subtitle: '0 defaulters found (<75% threshold).', type: 'success' });
     return;
   }
-  showToast({ title: 'Action Initiated', subtitle: \`Dispatching warning letters for \${students.length} defaulters...\`, type: 'info' });
+  showToast({ title: 'Action Initiated', subtitle: `Dispatching warning letters for ${students.length} defaulters...`, type: 'info' });
   setTimeout(() => {
     showToast({ title: 'Dispatch Complete', subtitle: 'Notices sent to parents/guardians successfully.', type: 'success' });
   }, 2000);
