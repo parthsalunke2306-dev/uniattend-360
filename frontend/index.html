@@ -1325,6 +1325,74 @@
     </div>
   </div>
 
+  <!-- ============================================== -->
+  <!-- ADMIN STAFF ONBOARDING SUCCESS CONFIRMATION POPUP -->
+  <!-- ============================================== -->
+  <div id="adminEnrollSuccessModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md hidden transition-all duration-300">
+    <div class="glass-panel w-full max-w-md p-5 sm:p-6 rounded-3xl border border-emerald-500/50 shadow-2xl space-y-4 relative bg-[#FAFAF7] text-left animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Top Success Icon & Heading -->
+      <div class="text-center space-y-1 pb-3 border-b border-[#E8E3DA]">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-2xl flex items-center justify-center mx-auto mb-1.5 shadow-inner text-emerald-800">
+          ✅
+        </div>
+        <h3 class="text-base sm:text-lg font-bold text-[#1C241E] flex items-center justify-center space-x-1.5">
+          <span>Account Created & Saved!</span>
+        </h3>
+        <p class="text-xs text-[#5A655C] font-mono">Profile saved to database with temporary credentials</p>
+      </div>
+
+      <!-- Credential Summary Card -->
+      <div class="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-2 text-xs font-mono">
+        <div class="flex items-center justify-between border-b border-emerald-500/20 pb-2">
+          <span class="text-[#5A655C]">Account Role:</span>
+          <span id="succUserRoleBadge" class="bg-[#2F5238] text-white text-[10px] font-bold px-2 py-0.5 rounded-md font-mono">STUDENT</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-[#5A655C]">Full Name:</span>
+          <b id="succUserName" class="text-[#1C241E] truncate max-w-[200px]">-</b>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-[#5A655C]">Identifier / Roll ID:</span>
+          <b id="succUserIdentifier" class="text-[#1C241E] font-bold text-sm bg-white/70 px-2 py-0.5 rounded border border-[#E8E3DA]">-</b>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-[#5A655C]">Department:</span>
+          <span id="succUserDept" class="text-[#1C241E] truncate max-w-[180px]">-</span>
+        </div>
+        <div class="flex items-center justify-between pt-1 border-t border-emerald-500/20">
+          <span class="text-[#5A655C]">Temporary Password:</span>
+          <div class="flex items-center space-x-1">
+            <code id="succUserPassword" class="bg-white px-2 py-0.5 rounded border border-emerald-500/40 font-bold text-teal-900 text-xs">-</code>
+            <button type="button" onclick="copySuccessPassword()" class="p-1 rounded bg-[#EAE5DA] hover:bg-[#D5E4D8] text-[#1C241E] transition" title="Copy Password">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Callout -->
+      <div class="p-2.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-[10px] font-mono text-[#5A655C] flex items-start space-x-2">
+        <span class="text-sm">🔒</span>
+        <div>
+          <b>Next Steps:</b> Hand over these temporary credentials to the user. On their first login, they will be prompted to set their personal permanent password and register their device.
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button type="button" onclick="copyFullSuccessCredentials()" class="w-full py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-mono text-xs font-bold shadow flex items-center justify-center space-x-1.5 transition">
+          <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>
+          <span>Copy All Info</span>
+        </button>
+        <button type="button" onclick="closeAdminEnrollSuccessModal()" class="w-full py-2.5 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-mono text-xs font-bold shadow flex items-center justify-center space-x-1.5 transition">
+          <span>✓ Done</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- FIRST LOGIN SETUP & HARDWARE DEVICE BINDING MODAL -->
   <!-- ============================================== -->
   <div id="firstLoginSetupModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md hidden transition-all duration-300">
@@ -9366,6 +9434,56 @@ function submitReschedule() {
       if (window.lucide) lucide.createIcons();
     }
 
+    
+    function openAdminEnrollSuccessModal(profile) {
+      const modal = document.getElementById('adminEnrollSuccessModal');
+      if (!modal || !profile) return;
+
+      const badgeEl = document.getElementById('succUserRoleBadge');
+      const nameEl = document.getElementById('succUserName');
+      const idEl = document.getElementById('succUserIdentifier');
+      const deptEl = document.getElementById('succUserDept');
+      const pwdEl = document.getElementById('succUserPassword');
+
+      if (badgeEl) {
+        badgeEl.innerText = profile.badge || profile.role;
+        badgeEl.className = `${profile.badgeClass || 'bg-[#2F5238] text-white'} text-[10px] font-bold px-2 py-0.5 rounded-md font-mono`;
+      }
+      if (nameEl) nameEl.innerText = profile.name;
+      if (idEl) idEl.innerText = profile.identifier;
+      if (deptEl) deptEl.innerText = profile.department;
+      if (pwdEl) pwdEl.innerText = profile.initial_password;
+
+      modal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeAdminEnrollSuccessModal() {
+      const modal = document.getElementById('adminEnrollSuccessModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function copySuccessPassword() {
+      const pwd = document.getElementById('succUserPassword')?.innerText || '';
+      if (pwd && pwd !== '-') {
+        navigator.clipboard.writeText(pwd);
+        showToast({ title: "Password Copied", subtitle: pwd, type: "success" });
+      }
+    }
+
+    function copyFullSuccessCredentials() {
+      const name = document.getElementById('succUserName')?.innerText || '';
+      const id = document.getElementById('succUserIdentifier')?.innerText || '';
+      const dept = document.getElementById('succUserDept')?.innerText || '';
+      const pwd = document.getElementById('succUserPassword')?.innerText || '';
+      const role = document.getElementById('succUserRoleBadge')?.innerText || '';
+
+      const text = `UniAttend 360 - Account Credentials\n-----------------------------------\nRole: ${role}\nName: ${name}\nOfficial ID / Username: ${id}\nDepartment: ${dept}\nTemporary Password: ${pwd}\n-----------------------------------\nPlease login at UniAttend 360 and complete first-time security setup.`;
+
+      navigator.clipboard.writeText(text);
+      showToast({ title: "Full Credentials Copied", subtitle: `Login details for ${id} copied to clipboard.`, type: "success" });
+    }
+
     function closeAdminDirectEnrollModal() {
       const modal = document.getElementById('adminDirectEnrollModal');
       if (modal) modal.classList.add('hidden');
@@ -9551,6 +9669,8 @@ function submitReschedule() {
       closeAdminDirectEnrollModal();
       renderDigitalRoster();
       renderAdminStaffDashboard();
+
+      openAdminEnrollSuccessModal(newProfile);
 
       showToast({ 
         title: `${badge} Account Created & Saved to Database`, 
