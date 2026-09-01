@@ -280,4 +280,58 @@ def test_get_institutional_audit_ledger(principal_token):
     logs = response.json()
     assert isinstance(logs, list)
     assert len(logs) > 0
-    assert any(log["event_type"] in ["SUPERADMIN_STUDENT_ENROLLED", "SUPERADMIN_STUDENT_EXPELLED"] for log in logs)
+    assert any(log["event_type"] in ["SUPERADMIN_STUDENT_ENROLLED", "SUPERADMIN_STUDENT_EXPELLED", "ADMIN_USER_PROVISIONED"] for log in logs)
+
+
+def test_admin_provision_multi_category_users(principal_token):
+    """Verifies direct multi-category provisioning (Faculty & Admin Staff) with DB persistence."""
+    headers = {"Authorization": f"Bearer {principal_token}"}
+    
+    # 1. Provision Faculty
+    fac_payload = {
+        "category": "FACULTY",
+        "full_name": "Prof. Vikram Malhotra",
+        "email": "vikram.malhotra.test@chmc.edu",
+        "identifier": "FAC-TEST-991",
+        "department_code": "DS",
+        "designation": "Associate Professor",
+        "initial_password": "FacultyPass@2026!",
+        "authorized_by": "Mr. Sanjay Mehta (Admin Office)"
+    }
+    fac_res = client.post("/api/v1/admin/users/provision", json=fac_payload, headers=headers)
+    assert fac_res.status_code == 201
+    fac_data = fac_res.json()
+    assert fac_data["status"] == "SUCCESS"
+    assert fac_data["user"]["role"] == "TEACHER"
+    assert fac_data["user"]["identifier"] == "FAC-TEST-991"
+
+    # Verify Faculty in DB
+    with get_db_session() as session:
+        usr = session.query(UserAccount).filter_by(email="vikram.malhotra.test@chmc.edu").first()
+        assert usr is not None
+        assert usr.role == "TEACHER"
+
+    # 2. Provision Admin Staff Member
+    staff_payload = {
+        "category": "ADMIN_STAFF",
+        "full_name": "Mrs. Priya Deshmukh",
+        "email": "priya.deshmukh.test@chmc.edu",
+        "identifier": "STAFF-ADM-992",
+        "department_code": "DS",
+        "designation": "Senior Admissions Registrar",
+        "initial_password": "StaffPass@2026!",
+        "authorized_by": "Mr. Sanjay Mehta (Admin Office)"
+    }
+    staff_res = client.post("/api/v1/admin/users/provision", json=staff_payload, headers=headers)
+    assert staff_res.status_code == 201
+    staff_data = staff_res.json()
+    assert staff_data["status"] == "SUCCESS"
+    assert staff_data["user"]["role"] == "ADMIN_STAFF"
+    assert staff_data["user"]["identifier"] == "STAFF-ADM-992"
+
+    # Verify Staff in DB
+    with get_db_session() as session:
+        usr = session.query(UserAccount).filter_by(email="priya.deshmukh.test@chmc.edu").first()
+        assert usr is not None
+        assert usr.role == "ADMIN_STAFF"
+

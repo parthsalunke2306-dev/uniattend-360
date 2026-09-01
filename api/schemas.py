@@ -228,3 +228,19 @@ class AdminAuditLogEntry(BaseModel):
     created_at: str
 
 
+class AdminProvisionUserRequest(BaseModel):
+    category: str = Field(default="STUDENT", description="Account Category: STUDENT, FACULTY, COORDINATOR, ADMIN_STAFF")
+    full_name: str = Field(...)
+    email: str = Field(...)
+    identifier: str = Field(..., description="Roll Number, Faculty ID, or Staff ID")
+    department_code: Optional[str] = Field(default="DS", description="Department Code: DS, CS, IT, AIDS, ADMIN")
+    designation: Optional[str] = Field(default=None)
+    batch_year: Optional[int] = Field(default=2024)
+    semester: Optional[int] = Field(default=3)
+    division: Optional[str] = Field(default="A")
+    initial_password: Optional[str] = Field(default="CHMC@2026!")
+    expedited: Optional[bool] = Field(default=True)
+    authorized_by: Optional[str] = Field(default="Mr. Sanjay Mehta (Admin Office)")
+
+
+

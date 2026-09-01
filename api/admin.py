@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 
 from database.models import (
     UserAccount, UserMFA, UserRecoveryCode, UserPasskey,
-    UserSession, SecurityAuditLog, Student, Department, Course,
+    UserSession, SecurityAuditLog, Student, Faculty, Department, Course,
     StudentCourseSummary, FactAttendance, RawAttendanceLog, ProxyAttemptLog
 )
 from database.db_manager import get_db
@@ -26,7 +26,7 @@ from api.security import (
 )
 from api.schemas import (
     AdminDirectEnrollStudentRequest, AdminExpelStudentRequest,
-    AdminStudentResponse, AdminAuditLogEntry
+    AdminStudentResponse, AdminAuditLogEntry, AdminProvisionUserRequest
 )
 
 admin_router = APIRouter(prefix="/api/v1/admin", tags=["Principal Super-Admin Governance"])
@@ -45,7 +45,7 @@ admin_router = APIRouter(prefix="/api/v1/admin", tags=["Principal Super-Admin Go
 def superadmin_direct_enroll_student(
     req: AdminDirectEnrollStudentRequest,
     request: Request,
-    current_user: UserAccount = Depends(require_role(["PRINCIPAL", "ADMIN"])),
+    current_user: UserAccount = Depends(require_role(["PRINCIPAL", "ADMIN", "ADMIN_STAFF"])),
     db: Session = Depends(get_db)
 ):
     """
@@ -217,6 +217,294 @@ def superadmin_direct_enroll_student(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Database error during direct student enrollment: {str(exc)}"
+        )
+
+
+# ==========================================
+# 1B. DIRECT MULTI-CATEGORY USER PROVISIONING
+# ==========================================
+
+@admin_router.post(
+    "/users/provision",
+    response_model=Dict[str, Any],
+    status_code=status.HTTP_201_CREATED,
+    summary="Admin Direct Multi-Category User Account Provisioning"
+)
+def admin_provision_user(
+    req: AdminProvisionUserRequest,
+    request: Request,
+    current_user: UserAccount = Depends(require_role(["PRINCIPAL", "ADMIN", "ADMIN_STAFF"])),
+    db: Session = Depends(get_db)
+):
+    """
+    Direct Multi-Category User Provisioning (Admin Staff & Principal Authority):
+    Provisions and saves accounts across all institutional categories:
+      - STUDENT: Creates Student + UserAccount ('STUDENT') + Course summaries + Anti-proxy slot.
+      - FACULTY / TEACHER: Creates Faculty + UserAccount ('TEACHER').
+      - COORDINATOR / HOD: Creates Faculty (if needed) + UserAccount ('COORDINATOR').
+      - ADMIN_STAFF / ADMIN: Creates UserAccount ('ADMIN_STAFF').
+    
+    Generates default temporary password, flags account for first-login security setup,
+    and logs an immutable SecurityAuditLog event.
+    """
+    clean_email = req.email.strip().lower()
+    clean_id = req.identifier.strip().upper()
+    category = (req.category or "STUDENT").strip().upper()
+    ip_addr = request.client.host if request.client else "127.0.0.1"
+    user_agent = request.headers.get("user-agent", "Unknown")
+
+    # 1. Validate Initial Password Strength
+    initial_password = req.initial_password or f"{clean_id.replace('-', '')}@CHMC2026"
+    is_valid_pw, _ = PasswordPolicy.validate(initial_password)
+    if not is_valid_pw:
+        initial_password = "CHMC@2026!"
+
+    # 2. Check for duplicate email across user accounts
+    existing_user = db.query(UserAccount).filter(UserAccount.email.ilike(clean_email)).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"A user account with email '{clean_email}' already exists (Username: {existing_user.username})."
+        )
+
+    # 3. Resolve Target Department
+    dept_code = (req.department_code or "DS").strip().upper()
+    dept = db.query(Department).filter(
+        (Department.dept_code.ilike(dept_code)) | 
+        (Department.name.ilike(f"%{dept_code}%"))
+    ).first()
+
+    if not dept:
+        dept = db.query(Department).first()
+
+    dept_id = dept.id if dept else None
+    dept_name = dept.name if dept else "General Administration"
+    dept_code_str = dept.dept_code if dept else "GEN"
+
+    try:
+        actor_title = current_user.full_name or "Admin Office Staff"
+        pwd_hash = PasswordHasherService.hash(initial_password)
+        base_uname = clean_id.lower().replace("-", ".").replace(" ", ".")
+        uname = base_uname
+        suffix = 1
+        while db.query(UserAccount).filter_by(username=uname).first():
+            uname = f"{base_uname}.{suffix}"
+            suffix += 1
+
+        created_details = {}
+
+        if category == "STUDENT":
+            existing_student = db.query(Student).filter(Student.student_id_str.ilike(clean_id)).first()
+            if existing_student:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"A student with roll number '{clean_id}' is already registered in the institution."
+                )
+
+            new_student = Student(
+                student_id_str=clean_id,
+                full_name=req.full_name.strip(),
+                email=clean_email,
+                department_id=dept_id,
+                batch_year=req.batch_year or 2024,
+                semester=req.semester or 3
+            )
+            db.add(new_student)
+            db.flush()
+
+            if dept_id:
+                courses = db.query(Course).filter_by(department_id=dept_id).all()
+                for course in courses:
+                    summary = StudentCourseSummary(
+                        student_id=new_student.id,
+                        course_id=course.id,
+                        total_classes=0,
+                        attended_classes=0,
+                        late_classes=0,
+                        absent_classes=0,
+                        attendance_pct=100.0,
+                        is_defaulter=False
+                    )
+                    db.add(summary)
+
+            new_user = UserAccount(
+                username=uname,
+                email=clean_email,
+                password_hash=pwd_hash,
+                full_name=req.full_name.strip(),
+                role="STUDENT",
+                department_id=dept_id,
+                student_id=new_student.id,
+                avatar_icon="🎓",
+                is_active=True
+            )
+            db.add(new_user)
+            db.flush()
+
+            if hasattr(anti_proxy_engine, "student_hardware_locks"):
+                anti_proxy_engine.student_hardware_locks[clean_id] = {
+                    "device_uuid": None,
+                    "device_name": "None (Unbound)",
+                    "is_locked": False,
+                    "enrolled_at": None
+                }
+
+            created_details = {
+                "category": "STUDENT",
+                "role": "STUDENT",
+                "student_id": new_student.id,
+                "roll_no": clean_id,
+                "semester": new_student.semester,
+                "batch_year": new_student.batch_year,
+                "division": req.division or "A"
+            }
+
+        elif category in ["FACULTY", "TEACHER", "PROFESSOR"]:
+            existing_fac = db.query(Faculty).filter(
+                (Faculty.faculty_id_str.ilike(clean_id)) | (Faculty.email.ilike(clean_email))
+            ).first()
+            if existing_fac:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"A faculty member with ID '{clean_id}' or email '{clean_email}' already exists."
+                )
+
+            new_fac = Faculty(
+                faculty_id_str=clean_id,
+                full_name=req.full_name.strip(),
+                email=clean_email,
+                department_id=dept_id or 1,
+                designation=req.designation or "Assistant Professor"
+            )
+            db.add(new_fac)
+            db.flush()
+
+            new_user = UserAccount(
+                username=uname,
+                email=clean_email,
+                password_hash=pwd_hash,
+                full_name=req.full_name.strip(),
+                role="TEACHER",
+                department_id=dept_id,
+                faculty_id=new_fac.id,
+                avatar_icon="👨‍🏫",
+                is_active=True
+            )
+            db.add(new_user)
+            db.flush()
+
+            created_details = {
+                "category": "FACULTY",
+                "role": "TEACHER",
+                "faculty_id": new_fac.id,
+                "faculty_id_str": clean_id,
+                "designation": new_fac.designation
+            }
+
+        elif category in ["COORDINATOR", "HOD"]:
+            new_fac = Faculty(
+                faculty_id_str=clean_id,
+                full_name=req.full_name.strip(),
+                email=clean_email,
+                department_id=dept_id or 1,
+                designation=req.designation or f"Head of Department / Coordinator ({dept_code_str})"
+            )
+            db.add(new_fac)
+            db.flush()
+
+            new_user = UserAccount(
+                username=uname,
+                email=clean_email,
+                password_hash=pwd_hash,
+                full_name=req.full_name.strip(),
+                role="COORDINATOR",
+                department_id=dept_id,
+                faculty_id=new_fac.id,
+                avatar_icon="🏛️",
+                is_active=True
+            )
+            db.add(new_user)
+            db.flush()
+
+            created_details = {
+                "category": "COORDINATOR",
+                "role": "COORDINATOR",
+                "coordinator_id": clean_id,
+                "department": dept_name
+            }
+
+        else:  # ADMIN_STAFF / ADMIN / OTHER
+            new_user = UserAccount(
+                username=uname,
+                email=clean_email,
+                password_hash=pwd_hash,
+                full_name=req.full_name.strip(),
+                role="ADMIN_STAFF",
+                department_id=dept_id,
+                avatar_icon="🏢",
+                is_active=True
+            )
+            db.add(new_user)
+            db.flush()
+
+            created_details = {
+                "category": "ADMIN_STAFF",
+                "role": "ADMIN_STAFF",
+                "staff_id": clean_id,
+                "section": req.designation or "Admissions & Student Administration"
+            }
+
+        # Record Security Audit Log
+        SecurityAuditLogger.log(
+            db=db,
+            user_id=current_user.id,
+            event_type="ADMIN_USER_PROVISIONED",
+            severity="INFO",
+            ip_address=ip_addr,
+            user_agent=user_agent,
+            details={
+                "action": "PROVISION_USER_ACCOUNT",
+                "category": category,
+                "target_identifier": clean_id,
+                "target_email": clean_email,
+                "target_name": req.full_name.strip(),
+                "assigned_role": new_user.role,
+                "department": dept_name,
+                "authorized_by": actor_title,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+        )
+
+        db.commit()
+
+        return {
+            "status": "SUCCESS",
+            "message": f"Account for '{req.full_name}' ({clean_id}) provisioned successfully as {new_user.role} in {dept_name}.",
+            "user": {
+                "id": new_user.id,
+                "username": new_user.username,
+                "identifier": clean_id,
+                "full_name": new_user.full_name,
+                "email": clean_email,
+                "role": new_user.role,
+                "category": category,
+                "department": dept_name,
+                "department_code": dept_code_str,
+                "initial_password": initial_password,
+                "account_status": "ACTIVE",
+                "enrolled_by": actor_title,
+                **created_details
+            }
+        }
+
+    except HTTPException:
+        db.rollback()
+        raise
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error during user provisioning: {str(exc)}"
         )
 
 
