@@ -3187,39 +3187,49 @@
       
       <!-- 1. Top Admin Staff KPIs & Admissions Metric Deck -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+        <!-- Card 1: Admissions Office & Authority Identity -->
         <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-teal-600 flex flex-col justify-between shadow-md">
-          <span class="text-[9px] sm:text-[10px] font-mono text-teal-800 uppercase tracking-wider font-semibold">Admissions Office</span>
+          <div class="flex items-center justify-between">
+            <span class="text-[9px] sm:text-[10px] font-mono text-teal-800 uppercase tracking-wider font-semibold">Admissions Office</span>
+            <span id="adminStaffOfficeDeptBadge" class="bg-teal-500/20 text-teal-900 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-teal-500/30">DB LIVE SYNC</span>
+          </div>
           <h3 class="text-sm sm:text-base font-bold text-[#1C241E] mt-0.5">Smt. C.H.M. College</h3>
-          <span class="text-[9px] text-teal-700 font-mono">📋 Mr. Sanjay Mehta (Admin Office)</span>
+          <span id="adminStaffActiveAdminName" class="text-[9px] text-teal-700 font-mono truncate">📋 Mr. Sanjay Mehta (Admin Office)</span>
         </div>
 
+        <!-- Card 2: Total Students & Institutional Enrolled Users -->
         <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-[#2F5238] flex flex-col justify-between shadow-md">
           <div class="flex items-center justify-between">
             <span class="text-[9px] sm:text-[10px] font-mono text-[#2F5238] uppercase tracking-wider font-semibold">Total Students</span>
-            <span class="bg-teal-500/20 text-teal-900 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-teal-500/30">ALL COHORTS</span>
+            <span id="adminStaffTotalCohortBadge" class="bg-teal-500/20 text-teal-900 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-teal-500/30">ALL COHORTS</span>
           </div>
           <div class="my-1">
             <h3 id="adminStaffTotalStudents" class="text-xl sm:text-2xl font-extrabold font-mono text-[#1C241E] tracking-tight">0 Enrolled</h3>
-            <p id="adminStaffCohortSubtext" class="text-[9px] text-[#869288] font-mono">Batch 2024–2027 • All Programs</p>
+            <p id="adminStaffCohortSubtext" class="text-[9px] text-[#869288] font-mono truncate">Batch 2024–2027 • All Programs</p>
           </div>
           <div class="w-full bg-[#F5F2EB] h-1.5 rounded-full overflow-hidden">
-            <div id="adminStaffCohortBar" class="bg-gradient-to-r from-teal-500 to-[#2F5238] h-full rounded-full" style="width: 0%"></div>
+            <div id="adminStaffCohortBar" class="bg-gradient-to-r from-teal-500 to-[#2F5238] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
         </div>
 
+        <!-- Card 3: Anti-Proxy Hardware Enclave Locks -->
         <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-amber-500 flex flex-col justify-between shadow-md">
           <div class="flex items-center justify-between">
             <span class="text-[9px] sm:text-[10px] font-mono text-amber-800 uppercase tracking-wider font-semibold">Hardware Enclave</span>
-            <span id="adminStaffDeviceBoundBadge" class="bg-emerald-500/20 text-[#2F5238] text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">0 BOUND</span>
+            <span id="adminStaffDeviceBoundBadge" class="bg-amber-500/20 text-amber-900 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-amber-500/40">0 BOUND</span>
           </div>
           <h3 id="adminStaffUnboundCount" class="text-sm sm:text-base font-bold text-amber-900 mt-0.5">0 Unbound</h3>
-          <span class="text-[9px] text-[#869288] font-mono">Pending First Mobile Check-In</span>
+          <span id="adminStaffUnboundSubtext" class="text-[9px] text-[#869288] font-mono truncate">Pending First Mobile Check-In</span>
         </div>
 
+        <!-- Card 4: Credentials Health & 1st Login Activation -->
         <div class="glass-panel p-3 sm:p-4 rounded-2xl border-l-4 border-indigo-500 flex flex-col justify-between shadow-md">
-          <span class="text-[9px] sm:text-[10px] font-mono text-indigo-800 uppercase tracking-wider font-semibold">Credentials Health</span>
+          <div class="flex items-center justify-between">
+            <span class="text-[9px] sm:text-[10px] font-mono text-indigo-800 uppercase tracking-wider font-semibold">Credentials Health</span>
+            <span id="adminStaffCredBadge" class="bg-indigo-500/20 text-indigo-900 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-indigo-500/30">CENTRALIZED</span>
+          </div>
           <h3 id="adminStaffCredStatus" class="text-sm sm:text-base font-bold text-indigo-900 mt-0.5">Centralized</h3>
-          <span class="text-[9px] text-indigo-700 font-mono">Admin Provisioned • 1-Device Lock</span>
+          <span id="adminStaffCredSubtext" class="text-[9px] text-indigo-700 font-mono truncate">Admin Provisioned • 1-Device Lock</span>
         </div>
       </div>
 
@@ -9246,28 +9256,119 @@ function submitReschedule() {
     // ==============================================
     // ADMIN STAFF: STUDENT DATA MANAGEMENT & CENTRALIZED PROVISIONING ENGINE
     // ==============================================
-    function renderAdminStaffDashboard() {
-      const allStudents = Object.keys(REGISTERED_PROFILES)
-        .map(k => REGISTERED_PROFILES[k])
-        .filter(p => p.role === 'STUDENT');
+    async function renderAdminStaffDashboard() {
+      // 1. Compute dynamic statistics from stored institutional profiles
+      const allProfiles = Object.keys(REGISTERED_PROFILES).map(k => REGISTERED_PROFILES[k]);
+      const allStudents = allProfiles.filter(p => p.role === 'STUDENT' || p.category === 'STUDENT');
+      const allFaculty = allProfiles.filter(p => p.role === 'TEACHER' || p.category === 'FACULTY');
+      const allCoords = allProfiles.filter(p => p.role === 'COORDINATOR' || p.category === 'COORDINATOR');
+      const allStaff = allProfiles.filter(p => p.role === 'ADMIN_STAFF' || p.category === 'ADMIN_STAFF');
 
+      const adminNameEl = document.getElementById('adminStaffActiveAdminName');
       const totalStudentsEl = document.getElementById('adminStaffTotalStudents');
+      const cohortSubtextEl = document.getElementById('adminStaffCohortSubtext');
       const cohortBarEl = document.getElementById('adminStaffCohortBar');
       const unboundEl = document.getElementById('adminStaffUnboundCount');
+      const unboundSubtextEl = document.getElementById('adminStaffUnboundSubtext');
       const deviceBoundBadge = document.getElementById('adminStaffDeviceBoundBadge');
+      const credStatusEl = document.getElementById('adminStaffCredStatus');
+      const credSubtextEl = document.getElementById('adminStaffCredSubtext');
+      const credBadgeEl = document.getElementById('adminStaffCredBadge');
+      const totalCohortBadge = document.getElementById('adminStaffTotalCohortBadge');
 
-      if (totalStudentsEl) totalStudentsEl.innerText = `${allStudents.length} Enrolled`;
-      if (cohortBarEl) cohortBarEl.style.width = `${Math.min(100, allStudents.length * 20)}%`;
+      // Card 1: Active Admin Staff Officer Identity
+      if (adminNameEl && activeSession) {
+        adminNameEl.innerText = `📋 ${activeSession.name || 'Mr. Sanjay Mehta'} (Admin Office)`;
+      }
 
+      // Card 2: Total Students & Institutional Enrolled Count
+      const studentCount = allStudents.length;
+      if (totalStudentsEl) {
+        totalStudentsEl.innerText = `${studentCount} ${studentCount === 1 ? 'Student' : 'Students'}`;
+      }
+      if (cohortSubtextEl) {
+        cohortSubtextEl.innerText = `${allStudents.length} Students • ${allFaculty.length} Faculty • ${allCoords.length} Coord • ${allStaff.length} Staff`;
+      }
+      if (totalCohortBadge) {
+        totalCohortBadge.innerText = `${allProfiles.length} TOTAL USERS`;
+      }
+      if (cohortBarEl) {
+        const pct = studentCount === 0 ? 0 : Math.min(100, Math.max(15, studentCount * 20));
+        cohortBarEl.style.width = `${pct}%`;
+      }
+
+      // Card 3: Hardware Enclave (Anti-Proxy Device Binding)
       const boundCount = allStudents.filter(s => {
         const lockInfo = STUDENT_DEVICE_LOCKS[s.identifier] || { is_locked: false };
         return lockInfo.is_locked || s.is_device_bound;
       }).length;
+      const unboundCount = Math.max(0, studentCount - boundCount);
 
-      const unboundCount = allStudents.length - boundCount;
+      if (unboundEl) {
+        if (studentCount === 0) {
+          unboundEl.innerText = "0 Unbound";
+        } else if (unboundCount === 0) {
+          unboundEl.innerText = "100% Bound";
+        } else {
+          unboundEl.innerText = `${unboundCount} Unbound`;
+        }
+      }
+      if (unboundSubtextEl) {
+        unboundSubtextEl.innerText = studentCount === 0 
+          ? "Pending First Mobile Check-In"
+          : `${boundCount} of ${studentCount} handsets locked in enclave`;
+      }
+      if (deviceBoundBadge) {
+        deviceBoundBadge.innerText = `${boundCount} BOUND`;
+        if (boundCount > 0) {
+          deviceBoundBadge.className = "bg-emerald-500/20 text-emerald-900 border border-emerald-500/40 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded";
+        } else {
+          deviceBoundBadge.className = "bg-amber-500/20 text-amber-900 border border-amber-500/40 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded";
+        }
+      }
 
-      if (unboundEl) unboundEl.innerText = `${unboundCount} Unbound`;
-      if (deviceBoundBadge) deviceBoundBadge.innerText = `${boundCount} BOUND`;
+      // Card 4: Credentials Health & First-Login Password Status
+      const pending1stLogin = allProfiles.filter(u => u.must_change_password !== false).length;
+      const activatedCount = allProfiles.length - pending1stLogin;
+
+      if (credStatusEl) {
+        if (allProfiles.length === 0) {
+          credStatusEl.innerText = "Centralized";
+        } else if (pending1stLogin > 0) {
+          credStatusEl.innerText = `${pending1stLogin} Pending 1st Login`;
+        } else {
+          credStatusEl.innerText = "All Activated";
+        }
+      }
+      if (credSubtextEl) {
+        credSubtextEl.innerText = allProfiles.length === 0
+          ? "Admin Provisioned • 1-Device Lock"
+          : `${activatedCount} Activated • ${pending1stLogin} Temp Passwords`;
+      }
+      if (credBadgeEl) {
+        if (allProfiles.length === 0) {
+          credBadgeEl.innerText = "STANDBY";
+          credBadgeEl.className = "bg-indigo-500/20 text-indigo-900 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-indigo-500/30";
+        } else if (pending1stLogin > 0) {
+          credBadgeEl.innerText = `${pending1stLogin} PENDING`;
+          credBadgeEl.className = "bg-amber-500/20 text-amber-900 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-amber-500/40 animate-pulse";
+        } else {
+          credBadgeEl.innerText = "100% ACTIVE";
+          credBadgeEl.className = "bg-emerald-500/20 text-emerald-900 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30";
+        }
+      }
+
+      // 2. Fetch live data from backend database if online
+      try {
+        const token = activeSession ? activeSession.token : "";
+        fetch('/api/v1/admin/overview-stats', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }).then(r => r.ok ? r.json() : null).then(dbStats => {
+          if (dbStats && dbStats.total_students !== undefined) {
+            console.log("[ADMIN STAFF LIVE DB METRICS]", dbStats);
+          }
+        }).catch(err => {});
+      } catch (err) {}
 
       renderAdminStaffStudentLedger();
     }

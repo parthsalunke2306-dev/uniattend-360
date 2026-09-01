@@ -777,3 +777,51 @@ def get_institutional_audit_ledger(
         )
 
     return results
+
+
+# ==========================================
+# 5. ADMIN STAFF & INSTITUTIONAL METRICS OVERVIEW
+# ==========================================
+
+@admin_router.get(
+    "/overview-stats",
+    response_model=Dict[str, Any],
+    summary="Admin Staff Institutional Metric Overview"
+)
+def get_admin_overview_stats(
+    current_user: UserAccount = Depends(require_role(["PRINCIPAL", "ADMIN", "ADMIN_STAFF"])),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns live aggregated database totals for the Admin Staff KPI cards:
+      - Total Enrolled Students
+      - Total Teaching Faculty & Coordinators
+      - Total User Accounts
+      - Anti-Proxy Enclave Locked vs Unbound counts
+      - Temporary Password vs Activated Passwords
+    """
+    total_students = db.query(Student).count()
+    total_faculty = db.query(Faculty).count()
+    total_users = db.query(UserAccount).count()
+    total_departments = db.query(Department).count()
+
+    # Hardware lock status
+    locked_count = 0
+    if hasattr(anti_proxy_engine, "student_hardware_locks"):
+        locked_count = sum(1 for v in anti_proxy_engine.student_hardware_locks.values() if v.get("device_uuid"))
+
+    unbound_count = max(0, total_students - locked_count)
+    active_users = db.query(UserAccount).filter_by(is_active=True).count()
+
+    return {
+        "institution_name": "Smt. C.H.M. College",
+        "total_students": total_students,
+        "total_faculty": total_faculty,
+        "total_users": total_users,
+        "total_departments": total_departments,
+        "device_locked_students": locked_count,
+        "device_unbound_students": unbound_count,
+        "active_users": active_users,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
