@@ -2081,6 +2081,9 @@
 
       </div>
 
+      <!-- STUDENT WEEKLY TIMETABLE & GOOGLE CALENDAR SYNC -->
+      <div id="studentTimetableContainer" class="mt-4"></div>
+
     </div>
 
     <!-- ============================================== -->
@@ -2160,6 +2163,9 @@
         <div id="facultyDeptGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
           <!-- Dynamically populated by renderFacultyPortal() -->
         </div>
+
+        <!-- FACULTY TODAY'S TEACHING SCHEDULE & QUICK RESCHEDULE -->
+        <div id="facultyTimetableContainer" class="mt-4"></div>
       </div>
 
       <!-- ============================================== -->
@@ -2603,78 +2609,8 @@
         <!-- Left / Main Command Column (8 Columns on Desktop) -->
         <div class="xl:col-span-8 space-y-4 sm:space-y-5">
           
-          <!-- Live Real-Time Classroom & Lecture Monitor Grid -->
-          <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-[#E8E3DA]">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E8E3DA] pb-3">
-              <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm tracking-tight">Today's Live Classes</h3>
-              </div>
-              <span class="text-[10px] font-mono text-[#869288] bg-[#F5F2EB] px-2 py-0.5 rounded-lg border border-[#E8E3DA] self-start sm:self-auto">
-                🕒 Today's Timetable Schedule
-              </span>
-            </div>
-
-            <!-- 3 Live Teaching Tiles -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              
-              <!-- Tile 1: Miss Razia Khan -->
-              <div class="p-3 rounded-xl bg-white border border-emerald-500/30 relative overflow-hidden space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="bg-emerald-500/20 text-[#2F5238] text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border border-emerald-500/40 flex items-center">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>
-                    LIVE NOW
-                  </span>
-                  <span class="text-[9px] font-mono text-[#869288]">Room E-104</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-[#1C241E] text-xs">Data Mining (Theory)</h4>
-                  <p class="text-[10px] text-[#2F5238] font-sans mt-0.5">Miss Razia Khan</p>
-                </div>
-                <div class="pt-1 border-t border-[#E8E3DA] flex items-center justify-between text-[9px] font-mono text-[#869288]">
-                  <span>09:00 AM - 10:00 AM</span>
-                  <span class="text-[#869288] font-bold">Lec 0/30 (0%)</span>
-                </div>
-              </div>
-
-              <!-- Tile 2: Mr. Anshul Chimnani -->
-              <div class="p-3 rounded-xl bg-white border border-[#E8E3DA] relative overflow-hidden space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="bg-[#F5F2EB] text-[#869288] text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border border-[#E8E3DA]">
-                    NEXT UP
-                  </span>
-                  <span class="text-[9px] font-mono text-[#869288]">Room E-104</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-[#1C241E] text-xs">Data Warehousing</h4>
-                  <p class="text-[10px] text-[#2F5238] font-sans mt-0.5">Mr. Anshul Chimnani</p>
-                </div>
-                <div class="pt-1 border-t border-[#E8E3DA] flex items-center justify-between text-[9px] font-mono text-[#869288]">
-                  <span>10:00 AM - 11:00 AM</span>
-                  <span class="text-[#869288] font-bold">Lec 0/30 (0%)</span>
-                </div>
-              </div>
-
-              <!-- Tile 3: Miss Kalyani Patil -->
-              <div class="p-3 rounded-xl bg-white border border-[#E8E3DA] relative overflow-hidden space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="bg-indigo-500/20 text-[#2F5238] text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border border-indigo-500/30">
-                    LAB SESSION
-                  </span>
-                  <span class="text-[9px] font-mono text-[#869288]">Lab M-113</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-[#1C241E] text-xs">DAA Practical</h4>
-                  <p class="text-[10px] text-[#2F5238] font-sans mt-0.5">Miss Kalyani Patil</p>
-                </div>
-                <div class="pt-1 border-t border-[#E8E3DA] flex items-center justify-between text-[9px] font-mono text-[#869288]">
-                  <span>02:15 PM - 04:15 PM</span>
-                  <span class="text-[#869288] font-bold">Lab 0/15 (0%)</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
+          <!-- Interactive Department Timetable Master Grid -->
+          <div id="coordTimetableContainer" class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-[#E8E3DA]"></div>
 
           <!-- Department Curriculum & Faculty Teaching Matrix -->
           <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-[#E8E3DA]">
@@ -5022,6 +4958,10 @@
 
       updateProfileBadgeIndicators(session);
       renderDigitalRoster();
+      if (typeof renderStudentTimetable === 'function') renderStudentTimetable();
+      if (typeof renderFacultyTimetable === 'function') renderFacultyTimetable();
+      if (typeof renderCoordinatorPortal === 'function') renderCoordinatorPortal();
+      if (typeof renderCoordinatorTimetableGrid === 'function') renderCoordinatorTimetableGrid();
       lucide.createIcons();
     }
 
@@ -5534,6 +5474,7 @@
             </div>
           `).join('');
         }
+        if (typeof renderFacultyTimetable === 'function') renderFacultyTimetable();
 
       } else if (facultyCurrentStep === 'YEARS') {
         if (step2El) step2El.classList.remove('hidden');
@@ -7974,6 +7915,7 @@ function renderCoordinatorPortal() {
     critPctText.innerText = `${criticalPct}%`;
     critPctText.parentElement.nextElementSibling.firstElementChild.style.width = `${criticalPct}%`;
   }
+  if (typeof renderCoordinatorTimetableGrid === 'function') renderCoordinatorTimetableGrid();
 }
 
 async function exportCoordinatorMasterSheet() {
@@ -8122,6 +8064,581 @@ function generateParentWarnings() {
   }, 2000);
 }
 
+
+// =======================================================
+// UNIFIED WEEKLY TIMETABLE & GOOGLE CALENDAR ENGINE
+// =======================================================
+
+const DEFAULT_WEEKLY_TIMETABLE = {
+  "Monday": [
+    { id: "MON-1", time: "09:00 AM - 10:00 AM", startTime: "09:00", endTime: "10:00", subject: "Data Mining (Theory)", code: "DS201-DM", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" },
+    { id: "MON-2", time: "10:00 AM - 11:00 AM", startTime: "10:00", endTime: "11:00", subject: "Linear Algebra", code: "DS202-LA", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" },
+    { id: "MON-3", time: "11:15 AM - 12:15 PM", startTime: "11:15", endTime: "12:15", subject: "Data Warehousing", code: "DS203-DW", type: "TH", room: "Room E-104", faculty: "Mr. Anshul Chimnani", facultyKey: "faculty.anshul", status: "SCHEDULED" },
+    { id: "MON-4", time: "02:15 PM - 04:15 PM", startTime: "14:15", endTime: "16:15", subject: "DAA Practical (Lab)", code: "DS204-DAA-PR", type: "PR", room: "Lab M-113", faculty: "Miss Kalyani Patil", facultyKey: "faculty.kalyani", status: "SCHEDULED" }
+  ],
+  "Tuesday": [
+    { id: "TUE-1", time: "09:00 AM - 10:00 AM", startTime: "09:00", endTime: "10:00", subject: "Data Warehousing", code: "DS203-DW", type: "TH", room: "Room E-104", faculty: "Mr. Anshul Chimnani", facultyKey: "faculty.anshul", status: "SCHEDULED" },
+    { id: "TUE-2", time: "10:00 AM - 11:00 AM", startTime: "10:00", endTime: "11:00", subject: "Algorithms (DAA Theory)", code: "DS204-DAA", type: "TH", room: "Room E-104", faculty: "Miss Kalyani Patil", facultyKey: "faculty.kalyani", status: "SCHEDULED" },
+    { id: "TUE-3", time: "11:15 AM - 01:15 PM", startTime: "11:15", endTime: "13:15", subject: "Data Mining Practical (Lab)", code: "DS201-DM-PR", type: "PR", room: "Lab M-113", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" },
+    { id: "TUE-4", time: "02:15 PM - 03:15 PM", startTime: "14:15", endTime: "15:15", subject: "Foundation of Research (TH)", code: "DS205-FOR", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" }
+  ],
+  "Wednesday": [
+    { id: "WED-1", time: "09:00 AM - 10:00 AM", startTime: "09:00", endTime: "10:00", subject: "Algorithms (DAA Theory)", code: "DS204-DAA", type: "TH", room: "Room E-104", faculty: "Miss Kalyani Patil", facultyKey: "faculty.kalyani", status: "SCHEDULED" },
+    { id: "WED-2", time: "10:00 AM - 11:00 AM", startTime: "10:00", endTime: "11:00", subject: "Linear Algebra", code: "DS202-LA", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" },
+    { id: "WED-3", time: "11:15 AM - 01:15 PM", startTime: "11:15", endTime: "13:15", subject: "Research Lab (FOR-PR)", code: "DS205-FOR-PR", type: "PR", room: "Lab M-103", faculty: "Mr. Anshul Chimnani", facultyKey: "faculty.anshul", status: "SCHEDULED" },
+    { id: "WED-4", time: "02:15 PM - 03:15 PM", startTime: "14:15", endTime: "15:15", subject: "Data Mining (Theory)", code: "DS201-DM", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" }
+  ],
+  "Thursday": [
+    { id: "THU-1", time: "09:00 AM - 10:00 AM", startTime: "09:00", endTime: "10:00", subject: "Linear Algebra", code: "DS202-LA", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" },
+    { id: "THU-2", time: "10:00 AM - 11:00 AM", startTime: "10:00", endTime: "11:00", subject: "Data Mining (Theory)", code: "DS201-DM", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" },
+    { id: "THU-3", time: "11:15 AM - 12:15 PM", startTime: "11:15", endTime: "12:15", subject: "Data Warehousing", code: "DS203-DW", type: "TH", room: "Room E-104", faculty: "Mr. Anshul Chimnani", facultyKey: "faculty.anshul", status: "SCHEDULED" },
+    { id: "THU-4", time: "02:15 PM - 04:15 PM", startTime: "14:15", endTime: "16:15", subject: "DAA Practical (Lab)", code: "DS204-DAA-PR", type: "PR", room: "Lab M-113", faculty: "Miss Kalyani Patil", facultyKey: "faculty.kalyani", status: "SCHEDULED" }
+  ],
+  "Friday": [
+    { id: "FRI-1", time: "09:00 AM - 10:00 AM", startTime: "09:00", endTime: "10:00", subject: "Foundation of Research (TH)", code: "DS205-FOR", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" },
+    { id: "FRI-2", time: "10:00 AM - 11:00 AM", startTime: "10:00", endTime: "11:00", subject: "Algorithms (DAA Theory)", code: "DS204-DAA", type: "TH", room: "Room E-104", faculty: "Miss Kalyani Patil", facultyKey: "faculty.kalyani", status: "SCHEDULED" },
+    { id: "FRI-3", time: "11:15 AM - 01:15 PM", startTime: "11:15", endTime: "13:15", subject: "Data Mining Practical (Lab)", code: "DS201-DM-PR", type: "PR", room: "Lab M-113", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" },
+    { id: "FRI-4", time: "02:15 PM - 03:15 PM", startTime: "14:15", endTime: "15:15", subject: "Linear Algebra", code: "DS202-LA", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" }
+  ],
+  "Saturday": [
+    { id: "SAT-1", time: "09:00 AM - 11:00 AM", startTime: "09:00", endTime: "11:00", subject: "Research Lab (FOR-PR)", code: "DS205-FOR-PR", type: "PR", room: "Lab M-103", faculty: "Mr. Anshul Chimnani", facultyKey: "faculty.anshul", status: "SCHEDULED" },
+    { id: "SAT-2", time: "11:15 AM - 12:15 PM", startTime: "11:15", endTime: "12:15", subject: "Data Warehousing", code: "DS203-DW", type: "TH", room: "Room E-104", faculty: "Mr. Anshul Chimnani", facultyKey: "faculty.anshul", status: "SCHEDULED" },
+    { id: "SAT-3", time: "12:15 PM - 01:15 PM", startTime: "12:15", endTime: "13:15", subject: "Remedial & Guidance Session", code: "DS201-DM", type: "TH", room: "Room E-104", faculty: "Miss Razia Khan", facultyKey: "faculty.razia", status: "SCHEDULED" }
+  ]
+};
+
+const TIMETABLE_STORAGE_KEY = 'uniattend_timetable_overrides_v1';
+
+function getTimetableOverrides() {
+  try {
+    const raw = localStorage.getItem(TIMETABLE_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveTimetableOverrides(overrides) {
+  try {
+    localStorage.setItem(TIMETABLE_STORAGE_KEY, JSON.stringify(overrides));
+  } catch (e) {
+    console.error("Failed to save timetable overrides", e);
+  }
+}
+
+function getActiveScheduleForDay(dayName) {
+  const defaults = DEFAULT_WEEKLY_TIMETABLE[dayName] || [];
+  const overrides = getTimetableOverrides();
+  const todayDateStr = new Date().toISOString().split('T')[0];
+  
+  return defaults.map(slot => {
+    const overrideKey = `${dayName}_${slot.id}`;
+    const dateOverrideKey = `${todayDateStr}_${slot.id}`;
+    const activeOverride = overrides[dateOverrideKey] || overrides[overrideKey];
+    if (activeOverride) {
+      return { ...slot, ...activeOverride, isOverridden: true };
+    }
+    return { ...slot, isOverridden: false };
+  });
+}
+
+function getCurrentDayName() {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const d = new Date();
+  const day = days[d.getDay()];
+  return (day === "Sunday") ? "Monday" : day;
+}
+
+let selectedTimetableDay = getCurrentDayName();
+
+// =======================================================
+// GOOGLE CALENDAR EVENT URL BUILDER & ICS GENERATOR
+// =======================================================
+
+function formatGoogleDate(dateObj) {
+  return dateObj.toISOString().replace(/-|:|\.\d+/g, '');
+}
+
+function getNextDateForDay(dayName, timeStr) {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const targetDayIdx = days.indexOf(dayName);
+  const now = new Date();
+  const currentDayIdx = now.getDay();
+  let diff = targetDayIdx - currentDayIdx;
+  if (diff < 0) diff += 7;
+  
+  const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff);
+  if (timeStr) {
+    const [hrs, mins] = timeStr.split(':').map(Number);
+    targetDate.setHours(hrs, mins, 0, 0);
+  }
+  return targetDate;
+}
+
+function generateGoogleCalendarUrl(slot, dayName) {
+  const targetDay = dayName || selectedTimetableDay || getCurrentDayName();
+  const startDate = getNextDateForDay(targetDay, slot.startTime || "09:00");
+  const endDate = getNextDateForDay(targetDay, slot.endTime || "10:00");
+  
+  const startIso = formatGoogleDate(startDate);
+  const endIso = formatGoogleDate(endDate);
+  
+  const title = `[UniAttend] ${slot.subject} (${slot.code})`;
+  const details = `Subject: ${slot.subject}\\nCourse Code: ${slot.code}\\nFaculty: ${slot.faculty}\\nRoom: ${slot.room}\\nInstitution: Smt. C.H.M. College (Data Science Department)\\nAttendance Anti-Proxy Dynamic Geofence active.`;
+  const location = `${slot.room}, Smt. C.H.M. College, Ulhasnagar`;
+  
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startIso}/${endIso}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(location)}&recur=RRULE:FREQ=WEEKLY`;
+}
+
+function openGoogleCalendarForSlot(slotId, dayName) {
+  const schedule = getActiveScheduleForDay(dayName || selectedTimetableDay);
+  const slot = schedule.find(s => s.id === slotId);
+  if (!slot) {
+    showToast({ title: "Slot Not Found", subtitle: "Could not locate timetable session.", type: "error" });
+    return;
+  }
+  const url = generateGoogleCalendarUrl(slot, dayName || selectedTimetableDay);
+  window.open(url, '_blank');
+  showToast({ title: "Opening Google Calendar", subtitle: `Adding ${slot.subject} to your schedule...`, type: "info" });
+}
+
+function downloadDepartmentICS(filterFacultyKey = null) {
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  let events = [];
+  
+  days.forEach(day => {
+    const schedule = getActiveScheduleForDay(day);
+    schedule.forEach(slot => {
+      if (filterFacultyKey && slot.facultyKey !== filterFacultyKey) return;
+      
+      const startDate = getNextDateForDay(day, slot.startTime);
+      const endDate = getNextDateForDay(day, slot.endTime);
+      
+      const dtStart = formatGoogleDate(startDate);
+      const dtEnd = formatGoogleDate(endDate);
+      const uid = `uniattend-${slot.id}-${Date.now()}@chmc.edu`;
+      
+      events.push(`BEGIN:VEVENT
+UID:${uid}
+DTSTAMP:${formatGoogleDate(new Date())}
+DTSTART:${dtStart}
+DTEND:${dtEnd}
+RRULE:FREQ=WEEKLY
+SUMMARY:[UniAttend] ${slot.subject} (${slot.code})
+DESCRIPTION:Lecturer: ${slot.faculty} | Room: ${slot.room} | Smt. C.H.M. College
+LOCATION:${slot.room}, Smt. C.H.M. College, Ulhasnagar
+STATUS:CONFIRMED
+END:VEVENT`);
+    });
+  });
+
+  const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//UniAttend Analytics//Smt. C.H.M. College Timetable//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:UniAttend S.Y. Data Science Timetable
+X-WR-TIMEZONE:Asia/Kolkata
+${events.join('\n')}
+END:VCALENDAR`;
+
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `UniAttend_Schedule_${filterFacultyKey || 'Department'}.ics`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+  
+  showToast({ title: "Calendar Exported", subtitle: "Import the downloaded .ics file directly into Google Calendar.", type: "success" });
+}
+
+// =======================================================
+// STUDENT PORTAL TIMETABLE RENDERING
+// =======================================================
+
+function selectStudentTimetableDay(dayName) {
+  selectedTimetableDay = dayName;
+  renderStudentTimetable();
+}
+
+function renderStudentTimetable() {
+  const container = document.getElementById('studentTimetableContainer');
+  if (!container) return;
+  
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const currentDay = getCurrentDayName();
+  const schedule = getActiveScheduleForDay(selectedTimetableDay);
+  
+  // Render Day Tabs
+  const dayTabsHtml = days.map(d => {
+    const isSelected = d === selectedTimetableDay;
+    const isToday = d === currentDay;
+    return `
+      <button onclick="selectStudentTimetableDay('${d}')" class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl font-mono text-[10px] sm:text-xs font-semibold transition shrink-0 flex items-center space-x-1 ${isSelected ? 'bg-[#2F5238] text-white shadow-sm font-bold' : 'bg-[#F5F2EB] text-[#5A655C] hover:bg-[#E8E3DA] border border-[#E8E3DA]'}">
+        <span>${d.substring(0, 3)}</span>
+        ${isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>' : ''}
+      </button>
+    `;
+  }).join('');
+
+  // Render Slots
+  const slotsHtml = schedule.length === 0 ? `
+    <div class="p-4 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-center text-[#869288] text-xs font-mono">
+      No lectures scheduled for ${selectedTimetableDay}.
+    </div>
+  ` : schedule.map((s, idx) => {
+    const isRescheduled = s.isOverridden || s.status === 'RESCHEDULED';
+    return `
+      <div class="p-3 sm:p-3.5 rounded-xl bg-white border ${isRescheduled ? 'border-amber-500/50 bg-amber-500/5' : 'border-[#E8E3DA]'} hover:border-[#2F5238]/40 transition space-y-2 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-1.5 min-w-0">
+            <span class="font-bold text-[#1C241E] text-xs sm:text-sm truncate">${s.subject}</span>
+            <span class="${s.type === 'PR' ? 'bg-emerald-500/20 text-[#2F5238] border-emerald-500/30' : 'bg-blue-500/20 text-blue-800 border-blue-500/30'} text-[8px] font-mono font-bold px-1.5 py-0.2 rounded border">
+              ${s.type}
+            </span>
+            ${isRescheduled ? '<span class="bg-amber-500/20 text-amber-800 border border-amber-500/40 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded animate-pulse">UPDATED</span>' : ''}
+          </div>
+          <button onclick="openGoogleCalendarForSlot('${s.id}', '${selectedTimetableDay}')" title="Add to Google Calendar" class="p-1 rounded-lg bg-[#F5F2EB] hover:bg-emerald-500/20 text-[#2F5238] border border-[#E8E3DA] transition flex items-center space-x-1 text-[9px] font-mono font-bold">
+            <span>📅 Add</span>
+          </button>
+        </div>
+        <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-[#5A655C]">
+          <span class="flex items-center space-x-1">
+            <span>🕒</span>
+            <b class="text-[#1C241E]">${s.time}</b>
+          </span>
+          <span class="text-[#869288]">${s.room}</span>
+        </div>
+        <div class="pt-1.5 border-t border-[#E8E3DA] flex items-center justify-between text-[9px] sm:text-[10px] font-mono text-[#869288]">
+          <span>Instructor: <b class="text-[#2F5238]">${s.faculty}</b></span>
+          <span class="text-[#869288]">${s.code}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3.5 border border-[#E8E3DA] shadow-md">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E8E3DA] pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#2F5238]"></span>
+          <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm tracking-tight">Weekly Lecture Timetable</h3>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="downloadDepartmentICS()" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-[#2F5238] border border-emerald-500/30 text-[10px] font-mono font-bold flex items-center space-x-1 transition">
+            <span>📅 Sync Google Calendar (.ics)</span>
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center space-x-1.5 overflow-x-auto pb-1">
+        ${dayTabsHtml}
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        ${slotsHtml}
+      </div>
+    </div>
+  `;
+}
+
+// =======================================================
+// FACULTY PORTAL TIMETABLE RENDERING
+// =======================================================
+
+function renderFacultyTimetable() {
+  const container = document.getElementById('facultyTimetableContainer');
+  if (!container) return;
+  
+  const currentFaculty = activeSession ? activeSession.username : 'faculty.razia';
+  const dayName = getCurrentDayName();
+  const schedule = getActiveScheduleForDay(dayName);
+  
+  const myTodaySlots = schedule.filter(s => s.facultyKey === currentFaculty || s.faculty.includes(activeSession?.name || 'Razia'));
+  
+  const slotsHtml = myTodaySlots.length === 0 ? `
+    <div class="p-3.5 rounded-xl bg-[#F5F2EB] border border-[#E8E3DA] text-center text-[#869288] text-xs font-mono">
+      No lectures allocated for you today (${dayName}). Check weekly schedule for upcoming sessions.
+    </div>
+  ` : myTodaySlots.map(s => {
+    const isRescheduled = s.isOverridden || s.status === 'RESCHEDULED';
+    return `
+      <div class="p-3 rounded-xl bg-white border ${isRescheduled ? 'border-amber-500/50 bg-amber-500/5' : 'border-[#E8E3DA]'} flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-[#1C241E] text-xs">${s.subject}</span>
+            <span class="bg-[#F5F2EB] text-[#869288] text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border border-[#E8E3DA]">${s.code}</span>
+            ${isRescheduled ? '<span class="bg-amber-500/20 text-amber-800 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded">RESCHEDULED</span>' : ''}
+          </div>
+          <div class="text-[10px] font-mono text-[#5A655C]">
+            <span>🕒 ${s.time}</span> • <span>📍 ${s.room}</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 self-end sm:self-auto">
+          <button onclick="openGoogleCalendarForSlot('${s.id}', '${dayName}')" class="px-2 py-1 rounded-lg bg-[#F5F2EB] hover:bg-emerald-500/20 text-[#2F5238] border border-[#E8E3DA] text-[9px] font-mono font-bold transition">
+            📅 Google Cal
+          </button>
+          <button onclick="openRescheduleModal('${s.id}', '${dayName}')" class="px-2 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 border border-amber-500/30 text-[9px] font-mono font-bold transition">
+            ⚡ Reschedule
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3 border border-[#E8E3DA] shadow-sm">
+      <div class="flex items-center justify-between border-b border-[#E8E3DA] pb-2.5">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="calendar" class="w-4 h-4 text-[#2F5238]"></i>
+          <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm">Today's Teaching Schedule (${dayName})</h3>
+        </div>
+        <button onclick="downloadDepartmentICS('${currentFaculty}')" class="px-2.5 py-1 rounded-lg bg-[#2F5238]/10 hover:bg-[#2F5238]/20 text-[#2F5238] border border-[#2F5238]/30 text-[10px] font-mono font-bold flex items-center space-x-1 transition">
+          <span>📅 Add All to Google Calendar</span>
+        </button>
+      </div>
+      <div class="space-y-2">
+        ${slotsHtml}
+      </div>
+    </div>
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
+// =======================================================
+// COORDINATOR / HOD MASTER TIMETABLE & RESCHEDULE ENGINE
+// =======================================================
+
+let coordTimetableDay = getCurrentDayName();
+
+function selectCoordTimetableDay(dayName) {
+  coordTimetableDay = dayName;
+  renderCoordinatorTimetableGrid();
+}
+
+function renderCoordinatorTimetableGrid() {
+  const container = document.getElementById('coordTimetableContainer');
+  if (!container) return;
+  
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const currentDay = getCurrentDayName();
+  const schedule = getActiveScheduleForDay(coordTimetableDay);
+  
+  const dayTabsHtml = days.map(d => {
+    const isSelected = d === coordTimetableDay;
+    const isToday = d === currentDay;
+    return `
+      <button onclick="selectCoordTimetableDay('${d}')" class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl font-mono text-[10px] sm:text-xs font-semibold transition shrink-0 flex items-center space-x-1 ${isSelected ? 'bg-indigo-600 text-white shadow-sm font-bold' : 'bg-[#F5F2EB] text-[#5A655C] hover:bg-[#E8E3DA] border border-[#E8E3DA]'}">
+        <span>${d}</span>
+        ${isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1 animate-pulse"></span>' : ''}
+      </button>
+    `;
+  }).join('');
+
+  const slotsHtml = schedule.map(s => {
+    const isRescheduled = s.isOverridden || s.status === 'RESCHEDULED';
+    return `
+      <div class="p-3 rounded-xl bg-white border ${isRescheduled ? 'border-amber-500/50 bg-amber-500/5' : 'border-[#E8E3DA]'} space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="bg-[#F5F2EB] text-[#1C241E] text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border border-[#E8E3DA]">
+            🕒 ${s.time}
+          </span>
+          <span class="text-[9px] font-mono text-[#869288] bg-[#F5F2EB] px-1.5 py-0.5 rounded border border-[#E8E3DA]">${s.room}</span>
+        </div>
+        <div>
+          <h4 class="font-bold text-[#1C241E] text-xs">${s.subject}</h4>
+          <p class="text-[10px] text-[#2F5238] font-sans mt-0.5 flex items-center justify-between">
+            <span>👤 ${s.faculty}</span>
+            <span class="font-mono text-[9px] text-[#869288]">${s.code}</span>
+          </p>
+        </div>
+        ${isRescheduled ? `
+          <div class="p-1 rounded bg-amber-500/10 border border-amber-500/20 text-[8.5px] font-mono text-amber-800 flex items-center justify-between">
+            <span>⚡ Overridden for ${coordTimetableDay}</span>
+          </div>
+        ` : ''}
+        <div class="pt-2 border-t border-[#E8E3DA] flex items-center justify-between gap-1.5">
+          <button onclick="openGoogleCalendarForSlot('${s.id}', '${coordTimetableDay}')" class="flex-1 py-1 rounded-lg bg-[#F5F2EB] hover:bg-emerald-500/20 text-[#2F5238] border border-[#E8E3DA] text-[9px] font-mono font-bold transition flex items-center justify-center space-x-1">
+            <span>📅 Google Cal</span>
+          </button>
+          <button onclick="openRescheduleModal('${s.id}', '${coordTimetableDay}')" class="flex-1 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 border border-indigo-500/30 text-[9px] font-mono font-bold transition flex items-center justify-center space-x-1">
+            <span>🔄 Reschedule</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E8E3DA] pb-3">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="calendar-range" class="w-4 h-4 text-[#2F5238]"></i>
+          <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm">Department Timetable Master Schedule</h3>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="resetTimetablePresets()" class="px-2.5 py-1 rounded-lg bg-[#F5F2EB] hover:bg-rose-500/20 text-[#8D3F30] border border-[#E8E3DA] text-[10px] font-mono font-bold transition">
+            ↺ Reset to Default
+          </button>
+          <button onclick="downloadDepartmentICS()" class="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-800 border border-indigo-500/40 text-[10px] font-mono font-bold flex items-center space-x-1 transition">
+            <span>📅 Export Master Calendar (.ics)</span>
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center space-x-1.5 overflow-x-auto pb-1">
+        ${dayTabsHtml}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        ${slotsHtml}
+      </div>
+    </div>
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
+function resetTimetablePresets() {
+  localStorage.removeItem(TIMETABLE_STORAGE_KEY);
+  showToast({ title: "Timetable Reset", subtitle: "All default weekly presets restored.", type: "success" });
+  renderCoordinatorTimetableGrid();
+  renderStudentTimetable();
+  renderFacultyTimetable();
+}
+
+// =======================================================
+// RESCHEDULE / SUBSTITUTE ALLOCATION MODAL
+// =======================================================
+
+let activeRescheduleSlot = null;
+let activeRescheduleDay = null;
+
+function openRescheduleModal(slotId, dayName) {
+  activeRescheduleDay = dayName || selectedTimetableDay;
+  const schedule = getActiveScheduleForDay(activeRescheduleDay);
+  activeRescheduleSlot = schedule.find(s => s.id === slotId);
+  if (!activeRescheduleSlot) return;
+
+  let modal = document.getElementById('timetableRescheduleModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'timetableRescheduleModal';
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md hidden transition-all duration-300';
+    modal.innerHTML = `
+      <div class="bg-white rounded-3xl w-full max-w-lg border border-[#E8E3DA] shadow-2xl overflow-hidden p-5 sm:p-6 space-y-4 text-left">
+        <div class="flex items-center justify-between border-b border-[#E8E3DA] pb-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">⚡</span>
+            <div>
+              <h3 class="font-bold text-[#1C241E] text-sm sm:text-base">Reschedule / Reassign Lecture</h3>
+              <p class="text-[10px] text-[#869288] font-mono mt-0.5">Overrides weekly preset for active day</p>
+            </div>
+          </div>
+          <button onclick="closeRescheduleModal()" class="p-1.5 rounded-xl bg-[#F5F2EB] text-[#869288] hover:text-[#1C241E] transition">✕</button>
+        </div>
+
+        <form id="rescheduleForm" onsubmit="event.preventDefault(); submitReschedule();" class="space-y-3 font-mono text-xs">
+          <div>
+            <label class="text-[10px] text-[#869288]">Target Subject & Day</label>
+            <div id="rescheduleSubjectDisplay" class="p-2 rounded-xl bg-[#F5F2EB] font-bold text-[#1C241E] mt-1 border border-[#E8E3DA]">--</div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[10px] text-[#869288]">New Start Time</label>
+              <input type="text" id="rescheduleStartTime" placeholder="09:00 AM" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl p-2 text-xs text-[#1C241E] mt-1">
+            </div>
+            <div>
+              <label class="text-[10px] text-[#869288]">New End Time</label>
+              <input type="text" id="rescheduleEndTime" placeholder="10:00 AM" required class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl p-2 text-xs text-[#1C241E] mt-1">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[10px] text-[#869288]">Classroom / Lab</label>
+              <select id="rescheduleRoom" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl p-2 text-xs text-[#1C241E] mt-1">
+                <option value="Room E-104">Room E-104 (Extension)</option>
+                <option value="Lab M-113">Lab M-113 (Main)</option>
+                <option value="Lab M-103">Lab M-103 (Main)</option>
+                <option value="Auditorium">Auditorium CHM</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] text-[#869288]">Assign Instructor / Substitute</label>
+              <select id="rescheduleFaculty" class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl p-2 text-xs text-[#1C241E] mt-1">
+                <option value="Miss Razia Khan|faculty.razia">Miss Razia Khan</option>
+                <option value="Mr. Anshul Chimnani|faculty.anshul">Mr. Anshul Chimnani</option>
+                <option value="Miss Kalyani Patil|faculty.kalyani">Miss Kalyani Patil</option>
+                <option value="Mrs. Shiji Johnson (HOD)|coordinator.ds">Mrs. Shiji Johnson (HOD)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-[#E8E3DA] flex items-center space-x-2">
+            <button type="button" onclick="closeRescheduleModal()" class="flex-1 py-2 rounded-xl bg-[#F5F2EB] text-[#5A655C] font-semibold transition">Cancel</button>
+            <button type="submit" class="flex-1 py-2 rounded-xl bg-[#2F5238] hover:bg-[#25422D] text-white font-bold transition shadow">Save & Update Calendar</button>
+          </div>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  document.getElementById('rescheduleSubjectDisplay').innerText = `${activeRescheduleSlot.subject} (${activeRescheduleSlot.code}) • ${activeRescheduleDay}`;
+  const times = activeRescheduleSlot.time.split(' - ');
+  document.getElementById('rescheduleStartTime').value = times[0] || '09:00 AM';
+  document.getElementById('rescheduleEndTime').value = times[1] || '10:00 AM';
+  document.getElementById('rescheduleRoom').value = activeRescheduleSlot.room || 'Room E-104';
+
+  modal.classList.remove('hidden');
+}
+
+function closeRescheduleModal() {
+  const modal = document.getElementById('timetableRescheduleModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function submitReschedule() {
+  if (!activeRescheduleSlot || !activeRescheduleDay) return;
+
+  const startVal = document.getElementById('rescheduleStartTime').value.trim();
+  const endVal = document.getElementById('rescheduleEndTime').value.trim();
+  const roomVal = document.getElementById('rescheduleRoom').value;
+  const facultyRaw = document.getElementById('rescheduleFaculty').value.split('|');
+  const facultyName = facultyRaw[0];
+  const facultyKey = facultyRaw[1];
+
+  const overrides = getTimetableOverrides();
+  const todayDateStr = new Date().toISOString().split('T')[0];
+  const overrideKey = `${todayDateStr}_${activeRescheduleSlot.id}`;
+
+  overrides[overrideKey] = {
+    time: `${startVal} - ${endVal}`,
+    startTime: startVal.includes(':') ? startVal.replace(/\s*[AP]M/i, '').padStart(5, '0') : activeRescheduleSlot.startTime,
+    endTime: endVal.includes(':') ? endVal.replace(/\s*[AP]M/i, '').padStart(5, '0') : activeRescheduleSlot.endTime,
+    room: roomVal,
+    faculty: facultyName,
+    facultyKey: facultyKey,
+    status: 'RESCHEDULED',
+    updatedAt: new Date().toISOString()
+  };
+
+  saveTimetableOverrides(overrides);
+  closeRescheduleModal();
+
+  showToast({
+    title: "Session Rescheduled",
+    subtitle: `${activeRescheduleSlot.subject} updated to ${startVal} in ${roomVal}. Calendar links synced.`,
+    type: "success"
+  });
+
+  // Re-render all views
+  renderStudentTimetable();
+  renderFacultyTimetable();
+  renderCoordinatorTimetableGrid();
+}
+
+
     window.addEventListener('DOMContentLoaded', () => {
       initAuth();
       initOtpBoxes();
@@ -8129,6 +8646,9 @@ function generateParentWarnings() {
       updateFacultyAnchorDisplay();
       renderProxyIncidentsFeed();
       updateKioskClockAndPin();
+      if (typeof renderStudentTimetable === 'function') renderStudentTimetable();
+      if (typeof renderFacultyTimetable === 'function') renderFacultyTimetable();
+      if (typeof renderCoordinatorTimetableGrid === 'function') renderCoordinatorTimetableGrid();
       if (window.lucide) {
         lucide.createIcons();
       }
