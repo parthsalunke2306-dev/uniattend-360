@@ -1356,8 +1356,15 @@
   <!-- ============================================== -->
   <div id="firstLoginSetupModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md hidden transition-all duration-300">
     <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-[#2F5238]/40 shadow-2xl space-y-4 relative bg-[#FAFAF7] text-left">
-      
-      <div class="text-center space-y-1 pb-2 border-b border-[#E8E3DA]">
+      <!-- Dismiss Modal Button -->
+      <button 
+        type="button" 
+        onclick="closeFirstLoginSetupModal()" 
+        class="absolute top-4 right-4 p-2 rounded-xl text-[#5A655C] hover:text-[#1C241E] hover:bg-[#E8E3DA]/50 transition z-10"
+        title="Close"
+      >
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
         <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-2xl flex items-center justify-center mx-auto mb-2 shadow-inner">
           🎓
         </div>
@@ -8250,26 +8257,45 @@
         }
       }
 
+      const isTemporaryAdminPassword = (passVal === 'CHMC@2026!');
+
       let targetProfile = null;
       if (matchedKey) {
         targetProfile = REGISTERED_PROFILES[matchedKey];
       } else {
         const isTeacher = rollVal.toUpperCase().startsWith('FAC') || rollVal.toUpperCase().startsWith('TEA');
+        const emailPrefix = emailVal ? emailVal.split('@')[0] : '';
+        const derivedName = nameVal || (rollVal ? `User ${rollVal}` : (emailPrefix ? emailPrefix.replace(/[._0-9]+/g, ' ').trim().replace(/\b\w/g, l => l.toUpperCase()) : 'Student'));
         const fallbackId = rollVal ? rollVal.toUpperCase() : (nameVal ? nameVal.toUpperCase().replace(/\s+/g, '_') : (emailVal ? emailVal.split('@')[0].toUpperCase() : 'NEW_USER'));
         targetProfile = {
           role: isTeacher ? 'TEACHER' : 'STUDENT',
-          name: nameVal || (rollVal ? `User ${rollVal}` : 'UniAttend User'),
+          name: derivedName,
           identifier: fallbackId,
           email: emailVal || `${(nameVal || 'user').toLowerCase().replace(/\s+/g, '.')}@chmc.edu`,
-          username: (rollVal || nameVal || 'user').toLowerCase().replace(/[^a-z0-9]/g, '.'),
+          username: (rollVal || nameVal || emailPrefix || 'user').toLowerCase().replace(/[^a-z0-9]/g, '.'),
           avatar: isTeacher ? '👩‍🏫' : '🎓',
           badge: isTeacher ? 'TEACHER' : 'STUDENT',
           badgeClass: isTeacher ? 'bg-emerald-600 text-white' : 'bg-[#2F5238] text-white',
           department_code: 'DS',
-          desc: `${isTeacher ? 'Faculty Member' : 'Data Science Student'} • ${fallbackId} • Smt. C.H.M. College`
+          desc: `${isTeacher ? 'Faculty Member' : 'Data Science Student'} • ${fallbackId} • Smt. C.H.M. College`,
+          must_change_password: isTemporaryAdminPassword,
+          is_device_bound: !isTemporaryAdminPassword,
+          device_name: isTemporaryAdminPassword ? null : "Primary Mobile Handset (Linked)"
         };
         REGISTERED_PROFILES[targetProfile.identifier] = targetProfile;
       }
+
+      // If user logged in using their personal updated password, ensure must_change_password is false
+      if (!isTemporaryAdminPassword) {
+        targetProfile.must_change_password = false;
+        targetProfile.is_device_bound = true;
+        if (!targetProfile.device_name) targetProfile.device_name = "Primary Mobile Handset (Linked)";
+      }
+
+      // Persist profile to localStorage
+      const stored = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
+      stored[targetProfile.identifier] = targetProfile;
+      localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
 
       if (errEl) errEl.classList.add('hidden');
 
@@ -9975,18 +10001,29 @@ function submitReschedule() {
       if (!session || session.role !== 'STUDENT') return false;
       const profile = REGISTERED_PROFILES[session.identifier] || session;
       
-      // 1. If local session/profile is already confirmed bound and password changed, skip immediately!
-      if (profile.is_device_bound === true && profile.must_change_password === false) {
+      // 1. If password has already been updated (must_change_password === false), skip immediately!
+      if (profile.must_change_password === false) {
         return false;
       }
 
-      // 2. Always verify with central institutional backend (Cross-Device Sync)
+      // 2. Detect device environment
+      const ua = navigator.userAgent;
+      const isDesktop = ua.includes("Windows") || ua.includes("Macintosh") || (ua.includes("Linux") && !ua.includes("Android"));
+
+      // On desktop computers, never trap user in handset lock modal if their password is not the initial admin password
+      if (isDesktop && (profile.must_change_password === false || !profile.initial_password_active)) {
+        profile.must_change_password = false;
+        profile.is_device_bound = true;
+        return false;
+      }
+
+      // 3. Always verify with central institutional backend (Cross-Device Sync)
       try {
         const idToCheck = session.identifier || session.email || session.username;
         const res = await fetch(`/api/v1/auth/user-status/${encodeURIComponent(idToCheck)}`);
         if (res.ok) {
           const remote = await res.json();
-          if (remote && remote.is_device_bound && remote.must_change_password === false) {
+          if (remote && (remote.is_device_bound || remote.must_change_password === false)) {
             // Already configured on another device (e.g. mobile phone)!
             profile.must_change_password = false;
             profile.is_device_bound = true;
@@ -10012,8 +10049,6 @@ function submitReschedule() {
             const modal = document.getElementById('firstLoginSetupModal');
             if (modal) modal.classList.add('hidden');
 
-            const ua = navigator.userAgent;
-            const isDesktop = ua.includes("Windows") || ua.includes("Macintosh") || (ua.includes("Linux") && !ua.includes("Android"));
             if (isDesktop) {
               showToast({
                 title: "Enclave Security Active",
@@ -10028,11 +10063,11 @@ function submitReschedule() {
         console.log("[USER-STATUS SYNC] Offline/local mode active:", err);
       }
 
-      // 3. If genuinely unbound on all devices, prompt first-login security setup
-      const isUnbound = !profile.is_device_bound && (!STUDENT_DEVICE_LOCKS[session.identifier] || !STUDENT_DEVICE_LOCKS[session.identifier].is_locked);
-      const mustChangePwd = profile.must_change_password !== false;
+      // 4. Prompt setup ONLY if explicitly required (i.e. logged in with Admin Initial Password)
+      const mustChangePwd = (profile.must_change_password === true);
+      const isUnboundOnMobile = !isDesktop && (!profile.is_device_bound && (!STUDENT_DEVICE_LOCKS[session.identifier] || !STUDENT_DEVICE_LOCKS[session.identifier].is_locked));
 
-      if (mustChangePwd || isUnbound) {
+      if (mustChangePwd || isUnboundOnMobile) {
         pendingFirstLoginSession = session;
         const modal = document.getElementById('firstLoginSetupModal');
         const greeting = document.getElementById('firstLoginStudentGreeting');
@@ -10040,8 +10075,6 @@ function submitReschedule() {
 
         if (greeting) greeting.innerText = `Welcome, ${session.name || 'Student'}!`;
         
-        // Detect current browser / device
-        const ua = navigator.userAgent;
         let devName = "Mobile Handset";
         if (ua.includes("Android")) devName = "Android Smartphone";
         else if (ua.includes("iPhone")) devName = "Apple iPhone";
@@ -10056,6 +10089,20 @@ function submitReschedule() {
         return true;
       }
       return false;
+    }
+
+    function closeFirstLoginSetupModal() {
+      const modal = document.getElementById('firstLoginSetupModal');
+      if (modal) modal.classList.add('hidden');
+      if (pendingFirstLoginSession) {
+        const student = REGISTERED_PROFILES[pendingFirstLoginSession.identifier] || pendingFirstLoginSession;
+        student.must_change_password = false;
+        student.is_device_bound = true;
+        REGISTERED_PROFILES[pendingFirstLoginSession.identifier] = student;
+        const stored = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
+        stored[pendingFirstLoginSession.identifier] = student;
+        localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
+      }
     }
 
     async function submitFirstLoginSetup() {
