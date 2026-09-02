@@ -303,42 +303,6 @@
       <div id="gateSignInBox" class="space-y-3.5 relative z-10 animate-in fade-in">
         <form id="gateLoginForm" onsubmit="handleGateLoginSubmit(event)" class="space-y-3 text-left">
           
-          <!-- Field 1: Name * -->
-          <div class="space-y-1">
-            <label class="text-xs font-mono font-bold text-[#1C241E] block">
-              Name <span class="text-[#8D3F30]">*</span>
-            </label>
-            <div class="relative">
-              <i data-lucide="user" class="w-4 h-4 text-[#869288] absolute left-3 top-3"></i>
-              <input 
-                type="text" 
-                id="gateInputName" 
-                placeholder="Enter full name" 
-                required 
-                value=""
-                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C241E] font-sans placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-              >
-            </div>
-          </div>
-
-          <!-- Field 2: Roll no * -->
-          <div class="space-y-1">
-            <label class="text-xs font-mono font-bold text-[#1C241E] block">
-              Roll no <span class="text-[#8D3F30]">*</span>
-            </label>
-            <div class="relative">
-              <i data-lucide="id-card" class="w-4 h-4 text-[#869288] absolute left-3 top-3"></i>
-              <input 
-                type="text" 
-                id="gateInputRollNo" 
-                placeholder="e.g. Roll no. or Faculty ID" 
-                required 
-                value=""
-                class="w-full bg-[#F5F2EB] border border-[#E8E3DA] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C241E] font-mono placeholder-[#869288] focus:outline-none focus:border-[#2F5238] focus:ring-1 focus:ring-[#2F5238] transition"
-              >
-            </div>
-          </div>
-
           <!-- Field 3: Email * -->
           <div class="space-y-1">
             <label class="text-xs font-mono font-bold text-[#1C241E] block">
@@ -8241,7 +8205,7 @@
         targetProfile = REGISTERED_PROFILES[matchedKey];
       } else {
         const isTeacher = rollVal.toUpperCase().startsWith('FAC') || rollVal.toUpperCase().startsWith('TEA');
-        const fallbackId = rollVal ? rollVal.toUpperCase() : (nameVal ? nameVal.toUpperCase().replace(/\s+/g, '_') : 'NEW_USER');
+        const fallbackId = rollVal ? rollVal.toUpperCase() : (nameVal ? nameVal.toUpperCase().replace(/\s+/g, '_') : (emailVal ? emailVal.split('@')[0].toUpperCase() : 'NEW_USER'));
         targetProfile = {
           role: isTeacher ? 'TEACHER' : 'STUDENT',
           name: nameVal || (rollVal ? `User ${rollVal}` : 'UniAttend User'),
