@@ -9,9 +9,14 @@ import joblib
 import pandas as pd
 import numpy as np
 from typing import Dict, Any, List, Optional
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, roc_auc_score, accuracy_score
+try:
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import classification_report, roc_auc_score, accuracy_score
+    SKLEARN_AVAILABLE = True
+except ImportError:
+    SKLEARN_AVAILABLE = False
+    RandomForestClassifier = None
 from sqlalchemy.orm import Session
 
 from database.models import Course, Student, StudentCourseSummary

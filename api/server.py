@@ -43,12 +43,23 @@ from api.schemas import (
 from api.auth import auth_router, passkey_router
 from api.admin import admin_router
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        init_db()
+    except Exception as e:
+        print(f"[STARTUP] Notice during DB init: {e}")
+    yield
+
 app = FastAPI(
     title="UniAttend 360 Enterprise REST API",
     description="High-Throughput Academic Attendance, Tri-Factor Anti-Proxy Verification & Machine Learning Intelligence API.",
     version="2.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 # Register Authentication, RBAC, Passkey & Principal Super-Admin Routers
@@ -64,6 +75,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 # ==========================================

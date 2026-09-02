@@ -36,3 +36,4 @@ htmlcov/
 Thumbs.db
 
 .vercel
+output/
