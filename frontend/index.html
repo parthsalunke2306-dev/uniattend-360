@@ -4346,7 +4346,7 @@
       const reasonEl = document.getElementById('resetModalReason');
       const reason = reasonEl ? reasonEl.value : "Phone upgraded / Hardware lost";
 
-      // Update local state
+      // 1. Update local in-memory device locks
       STUDENT_DEVICE_LOCKS[rollNo] = {
         device_uuid: null,
         device_name: "None (Unbound)",
@@ -4354,21 +4354,52 @@
         enrolled_at: null
       };
 
-      // Call backend API if running
+      // 2. Update local registered profiles & persistent cache
+      if (typeof REGISTERED_PROFILES !== 'undefined' && REGISTERED_PROFILES[rollNo]) {
+        REGISTERED_PROFILES[rollNo].is_device_bound = false;
+        REGISTERED_PROFILES[rollNo].device_name = null;
+        REGISTERED_PROFILES[rollNo].device_fingerprint = null;
+      }
+      try {
+        const stored = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
+        if (stored[rollNo]) {
+          stored[rollNo].is_device_bound = false;
+          stored[rollNo].device_name = null;
+          stored[rollNo].device_fingerprint = null;
+          localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
+        }
+      } catch (err) {
+        console.warn('[RESET LOCK] localStorage update error:', err);
+      }
+
+      // 3. Call backend API to purge PostgreSQL passkeys, sessions, and device binding
+      const actorName = (typeof activeSession !== 'undefined' && activeSession && activeSession.name) 
+        ? activeSession.name 
+        : "Mr. Sanjay Mehta (Admin Staff)";
+
       fetch('/api/v1/attendance/device/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           student_id_str: rollNo,
-          authorized_by: activeSession ? activeSession.name : "Miss Razia Khan",
+          authorized_by: actorName,
           reason: reason
         })
-      }).catch(err => console.log('Backend sync offline:', err));
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('[DEVICE RESET] Success:', data);
+        showToast({ title: "Device Lock Cleared", subtitle: `${rollNo} may bind a new handset on next login.`, type: "success" });
+      })
+      .catch(err => {
+        console.log('[DEVICE RESET] Backend offline/cached:', err);
+        showToast({ title: "Device Lock Cleared (Local)", subtitle: `${rollNo} may re-bind phone.`, type: "info" });
+      });
 
       closeEmergencyDeviceResetModal();
-      renderDigitalRoster();
-
-      showToast({ title: "Device Lock Cleared", subtitle: `${rollNo} may re-bind phone.`, type: "success" });
+      if (typeof renderDigitalRoster === 'function') renderDigitalRoster();
+      if (typeof renderPrincipalStudentLedger === 'function') renderPrincipalStudentLedger();
+      if (typeof renderAdminStaffStudentLedger === 'function') renderAdminStaffStudentLedger();
     }
 
     async function triggerWebAuthnEnrollment() {

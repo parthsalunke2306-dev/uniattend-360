@@ -20,7 +20,8 @@ if PROJECT_ROOT not in sys.path:
 
 from database.models import (
     University, College, Department, Course, Faculty, Student, 
-    TimetableSession, RawAttendanceLog, FactAttendance, StudentCourseSummary, UserAccount
+    TimetableSession, RawAttendanceLog, FactAttendance, StudentCourseSummary, UserAccount,
+    UserPasskey, UserSession, SecurityAuditLog
 )
 from database.db_manager import get_db_session, init_db
 from pipeline.anti_proxy_engine import anti_proxy_engine, DEFAULT_CLASSROOM_GEO
@@ -410,12 +411,79 @@ def verify_student_checkin(req: StudentCheckInRequest):
 def reset_student_device_lock(req: ResetStudentDeviceRequest):
     """
     Emergency Administrative Reset:
-    Allows Faculty, HOD, or Admin to reset a student's hardware device lock (e.g. phone lost or upgraded).
+    Allows Faculty, HOD, or Admin to reset a student's hardware device lock & WebAuthn passkeys (e.g. phone lost or upgraded).
     """
+    # 1. Clear in-memory anti-proxy engine
+    clean_id = req.student_id_str.strip()
+    clean_lower = clean_id.lower()
+    clean_hyphen = clean_lower.replace(".", "-")
+    clean_dotted = clean_lower.replace("-", ".")
+
     result = anti_proxy_engine.reset_student_device(
-        student_id_str=req.student_id_str,
+        student_id_str=clean_id,
         authorized_by=req.authorized_by
     )
+    # Also clear variants in anti-proxy engine
+    anti_proxy_engine.student_hardware_locks.pop(clean_hyphen, None)
+    anti_proxy_engine.student_hardware_locks.pop(clean_dotted, None)
+
+    # 2. Purge PostgreSQL database credentials, passkeys, and active sessions
+    db_reset = False
+    passkeys_purged = 0
+    sessions_revoked = 0
+
+    try:
+        with get_db_session() as session:
+            user = session.query(UserAccount).filter(
+                (UserAccount.username.ilike(clean_lower)) |
+                (UserAccount.username.ilike(clean_hyphen)) |
+                (UserAccount.username.ilike(clean_dotted)) |
+                (UserAccount.email.ilike(clean_lower))
+            ).first()
+
+            if not user:
+                student = session.query(Student).filter(
+                    (Student.student_id_str.ilike(clean_id)) |
+                    (Student.student_id_str.ilike(clean_hyphen)) |
+                    (Student.student_id_str.ilike(clean_dotted))
+                ).first()
+                if student:
+                    user = session.query(UserAccount).filter_by(student_id=student.id).first()
+                    if not user:
+                        user = session.query(UserAccount).filter(UserAccount.email.ilike(student.email)).first()
+
+            if user:
+                # Purge biometric passkeys and active sessions
+                passkeys_purged = session.query(UserPasskey).filter_by(user_id=user.id).delete()
+                sessions_revoked = session.query(UserSession).filter_by(user_id=user.id).delete()
+
+                user.is_device_bound = False
+                user.bound_device_name = None
+                user.bound_device_uuid = None
+                user.updated_at = datetime.now()
+
+                import json
+                audit = SecurityAuditLog(
+                    user_id=user.id,
+                    event_type="ADMIN_DEVICE_RESET",
+                    severity="WARNING",
+                    ip_address="127.0.0.1",
+                    details=json.dumps({
+                        "student_id_str": req.student_id_str,
+                        "authorized_by": req.authorized_by,
+                        "reason": getattr(req, "reason", "Admin device reset"),
+                        "passkeys_purged": passkeys_purged,
+                        "sessions_revoked": sessions_revoked
+                    })
+                )
+                session.add(audit)
+                db_reset = True
+    except Exception as e:
+        print(f"[RESET_DEVICE_DB] Notice: {e}")
+
+    result["db_reset"] = db_reset
+    result["passkeys_purged"] = passkeys_purged
+    result["sessions_revoked"] = sessions_revoked
     return result
 
 

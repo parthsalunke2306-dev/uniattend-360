@@ -84,7 +84,20 @@ export const AdminPortal: React.FC = () => {
     }
   };
 
-  const handleResetDevice = (rollNo: string, name: string) => {
+  const handleResetDevice = async (rollNo: string, name: string) => {
+    try {
+      await fetch('/api/v1/attendance/device/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          student_id_str: rollNo,
+          authorized_by: 'Mr. Sanjay Mehta (Admin Staff)',
+          reason: 'Phone upgraded / Hardware lost'
+        })
+      });
+    } catch (err) {
+      console.warn('Backend reset offline/cached:', err);
+    }
     setStudents(
       students.map((s) => (s.rollNo === rollNo ? { ...s, deviceStatus: 'UNBOUND' } : s))
     );

@@ -644,6 +644,106 @@ def superadmin_expel_student(
 
 
 # ==========================================
+# 2B. ADMINISTRATIVE PASSKEY & DEVICE RESET
+# ==========================================
+
+@admin_router.post(
+    "/students/{student_id_str}/reset-device",
+    response_model=Dict[str, Any],
+    status_code=status.HTTP_200_OK,
+    summary="Admin Student Passkey & Biometric Device Reset"
+)
+def admin_reset_student_device(
+    student_id_str: str,
+    request: Request,
+    reason: Optional[str] = "Phone upgraded / Hardware lost",
+    current_user: UserAccount = Depends(require_role(["PRINCIPAL", "ADMIN", "ADMIN_STAFF", "HOD"])),
+    db: Session = Depends(get_db)
+):
+    """
+    Emergency Administrative Passkey & Biometric Device Reset:
+    Unlinks a student's prior physical handset or biometric passkey when they upgrade or lose their device.
+    Purges UserPasskey records, revokes active sessions, and resets is_device_bound to False.
+    Next login requires binding their new phone.
+    """
+    clean_id = student_id_str.strip()
+    clean_lower = clean_id.lower()
+    clean_hyphen = clean_lower.replace(".", "-")
+    clean_dotted = clean_lower.replace("-", ".")
+
+    # 1. Reset in-memory anti-proxy engine
+    anti_proxy_engine.reset_student_device(clean_id, authorized_by=current_user.full_name)
+    anti_proxy_engine.student_hardware_locks.pop(clean_hyphen, None)
+    anti_proxy_engine.student_hardware_locks.pop(clean_dotted, None)
+
+    # 2. Find student / user account
+    user = db.query(UserAccount).filter(
+        (UserAccount.username.ilike(clean_lower)) |
+        (UserAccount.username.ilike(clean_hyphen)) |
+        (UserAccount.username.ilike(clean_dotted)) |
+        (UserAccount.email.ilike(clean_lower))
+    ).first()
+
+    if not user:
+        student = db.query(Student).filter(
+            (Student.student_id_str.ilike(clean_id)) |
+            (Student.student_id_str.ilike(clean_hyphen)) |
+            (Student.student_id_str.ilike(clean_dotted))
+        ).first()
+        if student:
+            user = db.query(UserAccount).filter_by(student_id=student.id).first()
+            if not user:
+                user = db.query(UserAccount).filter(UserAccount.email.ilike(student.email)).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Student account '{student_id_str}' not found in institutional directory."
+        )
+
+    # 3. Purge passkeys & sessions
+    passkeys_purged = db.query(UserPasskey).filter_by(user_id=user.id).delete()
+    sessions_revoked = db.query(UserSession).filter_by(user_id=user.id).delete()
+
+    user.is_device_bound = False
+    user.bound_device_name = None
+    user.bound_device_uuid = None
+    user.updated_at = datetime.now()
+
+    # 4. Security Audit Log
+    ip_addr = request.client.host if request.client else "127.0.0.1"
+    audit = SecurityAuditLog(
+        user_id=user.id,
+        event_type="ADMIN_DEVICE_RESET",
+        severity="WARNING",
+        ip_address=ip_addr,
+        details=json.dumps({
+            "student_id_str": clean_id,
+            "authorized_by": f"{current_user.full_name} ({current_user.role})",
+            "reason": reason,
+            "passkeys_purged": passkeys_purged,
+            "sessions_revoked": sessions_revoked,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+    )
+    db.add(audit)
+    db.commit()
+
+    return {
+        "status": "SUCCESS",
+        "message": f"Biometric passkey and hardware lock unlinked for student '{user.full_name}' ({clean_id}).",
+        "details": {
+            "student": user.full_name,
+            "identifier": clean_id,
+            "authorized_by": current_user.full_name,
+            "passkeys_purged": passkeys_purged,
+            "sessions_revoked": sessions_revoked,
+            "next_step": "Student will be prompted to register their new handset on next login."
+        }
+    }
+
+
+# ==========================================
 # 3. MASTER INSTITUTIONAL STUDENT GOVERNANCE LEDGER
 # ==========================================
 
