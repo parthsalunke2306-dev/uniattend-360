@@ -23,14 +23,24 @@ DATABASE_URL = os.environ.get("UNIATTEND_DATABASE_URL", DEFAULT_DB_URL)
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Configure engine (SQLite requires check_same_thread=False for multi-threaded apps)
-connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
-engine = create_engine(
-    DATABASE_URL,
-    connect_args=connect_args,
-    echo=False,  # Set to True for SQL query debugging
-    pool_pre_ping=True
-)
+# Configure engine with production connection pooling
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        echo=False,
+        pool_pre_ping=True
+    )
+else:
+    # Production PostgreSQL / Supabase pool configuration
+    engine = create_engine(
+        DATABASE_URL,
+        echo=False,
+        pool_pre_ping=True,
+        pool_size=10,
+        max_overflow=20,
+        pool_recycle=300
+    )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

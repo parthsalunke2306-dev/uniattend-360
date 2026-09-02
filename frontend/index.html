@@ -1651,6 +1651,8 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[#5A655C] pt-1">
                 <div>• <b>Hardware Model:</b> <span id="spLinkedDevName" class="text-[#1C241E]">Apple iPhone (Secure Enclave)</span></div>
                 <div>• <b>Protection Level:</b> <span class="text-[#2F5238] font-bold">Biometric Secured</span></div>
+                <div>• <b>Enclave Credential:</b> <span id="spLinkedCredId" class="text-[#1C241E] font-semibold">cred_pk_9f7a2026</span></div>
+                <div>• <b>Enrolled On:</b> <span id="spLinkedDate" class="text-[#1C241E] font-semibold">Sept 2, 2026</span></div>
               </div>
             </div>
             <div class="flex flex-wrap gap-2">
@@ -2391,7 +2393,10 @@
           </h2>
         </div>
 
-
+        <button id="facultyBackStepBtn" onclick="facultyGoBackOneStep()" class="hidden items-center space-x-1 px-3 py-1.5 rounded-xl border border-[#E8E3DA] bg-white hover:bg-[#F5F2EB] text-xs font-mono font-semibold text-[#1C241E] shadow-sm transition">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Back</span>
+        </button>
       </div>
 
       <!-- ============================================== -->
@@ -4114,8 +4119,9 @@
     }
 
     function handleStep1Submit(e) {
-      e.preventDefault();
-      const idInput = document.getElementById('loginIdentifier').value.trim().toLowerCase();
+      if (e) e.preventDefault();
+      const idInputEl = document.getElementById('loginIdentifier') || document.getElementById('gateInputEmail');
+      const idInput = idInputEl ? idInputEl.value.trim().toLowerCase() : '';
       
       const foundKey = Object.keys(REGISTERED_PROFILES).find(k => {
         const p = REGISTERED_PROFILES[k];
@@ -4129,9 +4135,11 @@
       });
 
       if (!foundKey) {
-        const errEl = document.getElementById('loginError');
-        errEl.innerText = "❌ Invalid email/username or password.";
-        errEl.classList.remove('hidden');
+        const errEl = document.getElementById('loginError') || document.getElementById('gateLoginError');
+        if (errEl) {
+          errEl.innerText = "❌ Invalid email/username or password.";
+          errEl.classList.remove('hidden');
+        }
         return;
       }
 
@@ -6225,6 +6233,10 @@
           facultyGoToStep('DEPARTMENTS');
         }
       }
+    }
+
+    function facultyGoBackOneStep() {
+      facultyGoBack();
     }
 
     function facultyGoToStep(step) {
@@ -8322,7 +8334,11 @@
     }
 
     function switchLockAccount() {
-      showLoginStage();
+      const lockScreen = document.getElementById('appBiometricLockScreen');
+      if (lockScreen) lockScreen.classList.add('hidden');
+      isAppBiometricLocked = false;
+      sessionStorage.removeItem('uniattend_session_unlocked');
+      handleLogout();
     }
 
     // 3-Dot Header Actions Dropdown Controller
@@ -9522,6 +9538,70 @@ function submitReschedule() {
       }).join('');
 
       if (window.lucide) lucide.createIcons();
+    }
+
+    function setAdminEnrollCategory(cat = 'STUDENT') {
+      const hiddenInput = document.getElementById('adminEnrollCategory');
+      if (hiddenInput) hiddenInput.value = cat;
+
+      // 1. Update Category Selector Buttons
+      const categories = ['STUDENT', 'FACULTY', 'COORDINATOR', 'ADMIN_STAFF'];
+      categories.forEach(c => {
+        const btn = document.getElementById(`btnEnrollCat_${c}`);
+        if (btn) {
+          if (c === cat) {
+            btn.className = "py-1.5 px-2 rounded-xl text-[11px] font-mono font-bold transition flex items-center justify-center space-x-1 bg-[#2F5238] text-white shadow-sm";
+          } else {
+            btn.className = "py-1.5 px-2 rounded-xl text-[11px] font-mono font-bold transition flex items-center justify-center space-x-1 text-[#5A655C] hover:text-[#1C241E] hover:bg-white/50";
+          }
+        }
+      });
+
+      // 2. Toggle UI Form Fields based on Category
+      const uidContainer = document.getElementById('adminEnrollUidContainer');
+      const desigContainer = document.getElementById('adminEnrollDesignationContainer');
+      const studentFields = document.getElementById('adminEnrollStudentSpecificFields');
+      const staffFields = document.getElementById('adminEnrollStaffSpecificFields');
+      const nameLabel = document.getElementById('adminEnrollNameLabel');
+      const idLabel = document.getElementById('adminEnrollIdLabel');
+      const rollInput = document.getElementById('adminEnrollRollNo');
+
+      if (cat === 'STUDENT') {
+        if (uidContainer) uidContainer.classList.remove('hidden');
+        if (desigContainer) desigContainer.classList.add('hidden');
+        if (studentFields) studentFields.classList.remove('hidden');
+        if (staffFields) staffFields.classList.add('hidden');
+        if (nameLabel) nameLabel.innerHTML = '3. Full Name (Student) <span class="text-[#8D3F30]">*</span>';
+        if (idLabel) idLabel.innerHTML = '4. Official Roll Number <span class="text-[#8D3F30]">*</span>';
+        if (rollInput) rollInput.placeholder = 'e.g. CHMC-DS-2024-006';
+      } else if (cat === 'FACULTY') {
+        if (uidContainer) uidContainer.classList.add('hidden');
+        if (desigContainer) desigContainer.classList.remove('hidden');
+        if (studentFields) studentFields.classList.add('hidden');
+        if (staffFields) staffFields.classList.remove('hidden');
+        if (nameLabel) nameLabel.innerHTML = '3. Full Name (Faculty Member) <span class="text-[#8D3F30]">*</span>';
+        if (idLabel) idLabel.innerHTML = '4. Faculty ID / Employee Code <span class="text-[#8D3F30]">*</span>';
+        if (rollInput) rollInput.placeholder = 'e.g. FAC-DS-101';
+      } else if (cat === 'COORDINATOR') {
+        if (uidContainer) uidContainer.classList.add('hidden');
+        if (desigContainer) desigContainer.classList.remove('hidden');
+        if (studentFields) studentFields.classList.add('hidden');
+        if (staffFields) staffFields.classList.remove('hidden');
+        if (nameLabel) nameLabel.innerHTML = '3. Full Name (Coordinator / HOD) <span class="text-[#8D3F30]">*</span>';
+        if (idLabel) idLabel.innerHTML = '4. Coordinator ID <span class="text-[#8D3F30]">*</span>';
+        if (rollInput) rollInput.placeholder = 'e.g. COORD-DS-01';
+      } else if (cat === 'ADMIN_STAFF') {
+        if (uidContainer) uidContainer.classList.add('hidden');
+        if (desigContainer) desigContainer.classList.remove('hidden');
+        if (studentFields) studentFields.classList.add('hidden');
+        if (staffFields) staffFields.classList.remove('hidden');
+        if (nameLabel) nameLabel.innerHTML = '3. Full Name (Admin Staff Member) <span class="text-[#8D3F30]">*</span>';
+        if (idLabel) idLabel.innerHTML = '4. Staff ID / Employee Code <span class="text-[#8D3F30]">*</span>';
+        if (rollInput) rollInput.placeholder = 'e.g. STAFF-ADMIN-01';
+      }
+
+      if (typeof autoSuggestRollNumber === 'function') autoSuggestRollNumber();
+      if (typeof updateInitialPasswordPreview === 'function') updateInitialPasswordPreview();
     }
 
     function openAdminDirectEnrollModal(defaultCat = 'STUDENT') {

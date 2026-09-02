@@ -22,14 +22,14 @@ class ActiveTokenResponse(BaseModel):
 
 
 class StudentCheckInRequest(BaseModel):
-    session_id: str = Field(..., example="LIVE_SESS_1_LH-101")
-    student_id_str: str = Field(..., example="ANU-ENG-CSE-2024-001")
-    student_name: str = Field(..., example="Alex Chen")
-    input_token_or_pin: str = Field(..., example="8492")
-    student_lat: float = Field(..., example=28.54508)
-    student_lon: float = Field(..., example=77.19270)
-    device_fingerprint: str = Field(..., example="DEVICE-UUID-001")
-    room_code: str = Field(default="LH-101", example="LH-101")
+    session_id: str = Field(..., examples=["LIVE_SESS_1_LH-101"])
+    student_id_str: str = Field(..., examples=["ANU-ENG-CSE-2024-001"])
+    student_name: str = Field(..., examples=["Alex Chen"])
+    input_token_or_pin: str = Field(..., examples=["8492"])
+    student_lat: float = Field(..., examples=[28.54508])
+    student_lon: float = Field(..., examples=[77.19270])
+    device_fingerprint: str = Field(..., examples=["DEVICE-UUID-001"])
+    room_code: str = Field(default="LH-101", examples=["LH-101"])
 
 
 class StudentCheckInResponse(BaseModel):
@@ -46,12 +46,12 @@ class StudentCheckInResponse(BaseModel):
 
 
 class UpdateFacultyAnchorRequest(BaseModel):
-    session_id: str = Field(..., example="LEC-DS201-20260823-14")
-    faculty_lat: float = Field(..., example=19.22170)
-    faculty_lon: float = Field(..., example=73.16460)
-    accuracy_m: float = Field(default=3.0, example=3.0)
-    radius_m: float = Field(default=10.0, example=10.0)
-    anchor_source: str = Field(default="DEVICE_GPS", example="DEVICE_GPS")
+    session_id: str = Field(..., examples=["LEC-DS201-20260823-14"])
+    faculty_lat: float = Field(..., examples=[19.22170])
+    faculty_lon: float = Field(..., examples=[73.16460])
+    accuracy_m: float = Field(default=3.0, examples=[3.0])
+    radius_m: float = Field(default=10.0, examples=[10.0])
+    anchor_source: str = Field(default="DEVICE_GPS", examples=["DEVICE_GPS"])
 
 
 class ProxyAttemptResponse(BaseModel):
@@ -74,11 +74,11 @@ class ProxyAttemptResponse(BaseModel):
 
 
 class SimulationRequest(BaseModel):
-    current_held: int = Field(..., example=24)
-    current_attended: int = Field(..., example=16)
-    upcoming_to_attend: int = Field(default=5, example=5)
-    upcoming_to_miss: int = Field(default=0, example=0)
-    target_pct: float = Field(default=75.0, example=75.0)
+    current_held: int = Field(..., examples=[24])
+    current_attended: int = Field(..., examples=[16])
+    upcoming_to_attend: int = Field(default=5, examples=[5])
+    upcoming_to_miss: int = Field(default=0, examples=[0])
+    target_pct: float = Field(default=75.0, examples=[75.0])
 
 
 class SimulationResponse(BaseModel):
@@ -90,14 +90,14 @@ class SimulationResponse(BaseModel):
 
 
 class RiskPredictionRequest(BaseModel):
-    current_attendance_pct: float = Field(..., example=62.0)
-    early_attendance_pct: float = Field(default=78.0, example=78.0)
-    momentum_slope: float = Field(default=-16.0, example=-16.0)
-    friday_absence_rate: float = Field(default=0.55, example=0.55)
-    morning_absence_rate: float = Field(default=0.40, example=0.40)
-    late_ratio: float = Field(default=0.30, example=0.30)
-    max_absent_streak: int = Field(default=4, example=4)
-    course_credits: int = Field(default=4, example=4)
+    current_attendance_pct: float = Field(..., examples=[62.0])
+    early_attendance_pct: float = Field(default=78.0, examples=[78.0])
+    momentum_slope: float = Field(default=-16.0, examples=[-16.0])
+    friday_absence_rate: float = Field(default=0.55, examples=[0.55])
+    morning_absence_rate: float = Field(default=0.40, examples=[0.40])
+    late_ratio: float = Field(default=0.30, examples=[0.30])
+    max_absent_streak: int = Field(default=4, examples=[4])
+    course_credits: int = Field(default=4, examples=[4])
 
 
 # ==========================================
@@ -105,18 +105,18 @@ class RiskPredictionRequest(BaseModel):
 # ==========================================
 
 class CreateLectureRequest(BaseModel):
-    faculty_name: str = Field(default="Miss Razia Khan", example="Miss Razia Khan")
-    course_name: str = Field(..., example="Data Mining (Theory)")
-    course_code: str = Field(default="DS201-DM", example="DS201-DM")
-    room_code: str = Field(default="E-104", example="E-104")
-    scheduled_date: str = Field(..., example="2026-08-23")
-    start_time: str = Field(default="09:00 AM", example="09:00 AM")
-    end_time: str = Field(default="10:00 AM", example="10:00 AM")
-    lecture_index: int = Field(..., ge=1, example=14)
-    total_allotted_lectures: int = Field(default=30, ge=1, example=30)
-    topic: Optional[str] = Field(None, example="Frequent Itemset Mining & Apriori Algorithm")
-    geofence_radius_m: float = Field(default=10.0, example=10.0)
-    total_enrolled: int = Field(default=5, example=5)
+    faculty_name: str = Field(default="Miss Razia Khan", examples=["Miss Razia Khan"])
+    course_name: str = Field(..., examples=["Data Mining (Theory)"])
+    course_code: str = Field(default="DS201-DM", examples=["DS201-DM"])
+    room_code: str = Field(default="E-104", examples=["E-104"])
+    scheduled_date: str = Field(..., examples=["2026-08-23"])
+    start_time: str = Field(default="09:00 AM", examples=["09:00 AM"])
+    end_time: str = Field(default="10:00 AM", examples=["10:00 AM"])
+    lecture_index: int = Field(..., ge=1, examples=[14])
+    total_allotted_lectures: int = Field(default=30, ge=1, examples=[30])
+    topic: Optional[str] = Field(None, examples=["Frequent Itemset Mining & Apriori Algorithm"])
+    geofence_radius_m: float = Field(default=10.0, examples=[10.0])
+    total_enrolled: int = Field(default=5, examples=[5])
 
 
 class LectureResponse(BaseModel):
@@ -148,8 +148,8 @@ class LectureResponse(BaseModel):
 
 
 class LifecycleActionRequest(BaseModel):
-    user_name: Optional[str] = Field(default=None, example="Miss Razia Khan")
-    role: Optional[str] = Field(default="TEACHER", example="TEACHER")
+    user_name: Optional[str] = Field(default=None, examples=["Miss Razia Khan"])
+    role: Optional[str] = Field(default="TEACHER", examples=["TEACHER"])
 
 
 # ==========================================
@@ -157,15 +157,15 @@ class LifecycleActionRequest(BaseModel):
 # ==========================================
 
 class ResetStudentDeviceRequest(BaseModel):
-    student_id_str: str = Field(..., example="CHMC-DS-2024-001")
-    authorized_by: str = Field(default="Miss Razia Khan", example="Miss Razia Khan")
-    reason: Optional[str] = Field(default="Phone upgraded / Hardware lost", example="Phone upgraded")
+    student_id_str: str = Field(..., examples=["CHMC-DS-2024-001"])
+    authorized_by: str = Field(default="Miss Razia Khan", examples=["Miss Razia Khan"])
+    reason: Optional[str] = Field(default="Phone upgraded / Hardware lost", examples=["Phone upgraded"])
 
 
 class BindStudentDeviceRequest(BaseModel):
-    student_id_str: str = Field(..., example="CHMC-DS-2024-001")
-    device_uuid: str = Field(..., example="DEV-IPHONE15PRO-SECURE-ENCLAVE")
-    device_name: Optional[str] = Field(default="Apple iPhone 15 Pro", example="Apple iPhone 15 Pro")
+    student_id_str: str = Field(..., examples=["CHMC-DS-2024-001"])
+    device_uuid: str = Field(..., examples=["DEV-IPHONE15PRO-SECURE-ENCLAVE"])
+    device_name: Optional[str] = Field(default="Apple iPhone 15 Pro", examples=["Apple iPhone 15 Pro"])
 
 
 class StudentDeviceStatusResponse(BaseModel):
@@ -179,22 +179,22 @@ class StudentDeviceStatusResponse(BaseModel):
 # ==========================================
 
 class AdminDirectEnrollStudentRequest(BaseModel):
-    full_name: str = Field(..., example="Aarav Sharma")
-    email: str = Field(..., example="aarav.sharma@chmc.edu")
-    identifier: str = Field(..., description="Student Roll Number (e.g. CHMC-DS-2024-006)", example="CHMC-DS-2024-006")
-    department_code: str = Field(default="DS", description="Department Code: DS, CS, IT, AIDS", example="DS")
-    batch_year: Optional[int] = Field(default=2024, example=2024)
-    semester: Optional[int] = Field(default=3, example=3)
-    initial_password: Optional[str] = Field(default="CHMC@2026!", example="CHMC@2026!")
+    full_name: str = Field(..., examples=["Aarav Sharma"])
+    email: str = Field(..., examples=["aarav.sharma@chmc.edu"])
+    identifier: str = Field(..., description="Student Roll Number (e.g. CHMC-DS-2024-006)", examples=["CHMC-DS-2024-006"])
+    department_code: str = Field(default="DS", description="Department Code: DS, CS, IT, AIDS", examples=["DS"])
+    batch_year: Optional[int] = Field(default=2024, examples=[2024])
+    semester: Optional[int] = Field(default=3, examples=[3])
+    initial_password: Optional[str] = Field(default="CHMC@2026!", examples=["CHMC@2026!"])
     expedited: Optional[bool] = Field(default=True)
-    authorized_by: Optional[str] = Field(default="Dr. Manju Lalwani Pathak (Principal)", example="Dr. Manju Lalwani Pathak (Principal)")
+    authorized_by: Optional[str] = Field(default="Dr. Manju Lalwani Pathak (Principal)", examples=["Dr. Manju Lalwani Pathak (Principal)"])
 
 
 class AdminExpelStudentRequest(BaseModel):
-    reason: str = Field(..., description="Institutional reason for expulsion or deletion", example="Disciplinary expulsion per College Academic Disciplinary Committee")
-    expulsion_type: Optional[str] = Field(default="DISCIPLINARY", example="DISCIPLINARY") # DISCIPLINARY, ADMISSION_CANCELLED, TRANSFER_OFFBOARDING, TEST_PURGE
-    authorized_by: Optional[str] = Field(default="Dr. Manju Lalwani Pathak (Principal)", example="Dr. Manju Lalwani Pathak (Principal)")
-    confirm_roll_no: str = Field(..., description="Roll number verification check", example="CHMC-DS-2024-006")
+    reason: str = Field(..., description="Institutional reason for expulsion or deletion", examples=["Disciplinary expulsion per College Academic Disciplinary Committee"])
+    expulsion_type: Optional[str] = Field(default="DISCIPLINARY", examples=["DISCIPLINARY"]) # DISCIPLINARY, ADMISSION_CANCELLED, TRANSFER_OFFBOARDING, TEST_PURGE
+    authorized_by: Optional[str] = Field(default="Dr. Manju Lalwani Pathak (Principal)", examples=["Dr. Manju Lalwani Pathak (Principal)"])
+    confirm_roll_no: str = Field(..., description="Roll number verification check", examples=["CHMC-DS-2024-006"])
 
 
 class AdminStudentResponse(BaseModel):

@@ -42,13 +42,13 @@ passkey_router = APIRouter(prefix="/api/auth/passkey", tags=["WebAuthn Hardware 
 # ==========================================
 
 class LoginRequest(BaseModel):
-    name: Optional[str] = Field(default=None, description="User Full Name", example="Alex Chen")
-    roll_no: Optional[str] = Field(default=None, description="Roll Number / Faculty ID", example="CHMC-DS-2024-001")
-    email: Optional[str] = Field(default=None, description="Email address", example="alex.chen@chmc.edu")
-    identifier: Optional[str] = Field(default=None, description="Roll No, Faculty ID, or Email", example="captain.ds@chmc.edu")
-    password: str = Field(..., example="CHMC@2026!")
-    device_fingerprint: str = Field(default="DEV-BROWSER-CHROME-001", example="DEV-BROWSER-CHROME-001")
-    device_name: Optional[str] = Field(default="Web Browser", example="MacBook Pro - Chrome")
+    name: Optional[str] = Field(default=None, description="User Full Name", examples=["Alex Chen"])
+    roll_no: Optional[str] = Field(default=None, description="Roll Number / Faculty ID", examples=["CHMC-DS-2024-001"])
+    email: Optional[str] = Field(default=None, description="Email address", examples=["alex.chen@chmc.edu"])
+    identifier: Optional[str] = Field(default=None, description="Roll No, Faculty ID, or Email", examples=["captain.ds@chmc.edu"])
+    password: str = Field(..., examples=["CHMC@2026!"])
+    device_fingerprint: str = Field(default="DEV-BROWSER-CHROME-001", examples=["DEV-BROWSER-CHROME-001"])
+    device_name: Optional[str] = Field(default="Web Browser", examples=["MacBook Pro - Chrome"])
     remember_device: Optional[bool] = Field(default=False)
 
 
@@ -61,7 +61,7 @@ class BiometricVerificationRequest(BaseModel):
 
 class MFAVerificationRequest(BaseModel):
     temp_token: str = Field(..., description="5-minute intermediate token from Step 1")
-    otp_code: str = Field(..., description="6-digit TOTP code", example="123456")
+    otp_code: str = Field(..., description="6-digit TOTP code", examples=["123456"])
     device_fingerprint: str = Field(default="DEV-BROWSER-CHROME-001")
     device_name: Optional[str] = Field(default="Web Browser")
     trust_device: Optional[bool] = Field(default=False)
@@ -69,7 +69,7 @@ class MFAVerificationRequest(BaseModel):
 
 class RecoveryCodeRequest(BaseModel):
     temp_token: str = Field(..., description="5-minute intermediate token from Step 1")
-    recovery_code: str = Field(..., description="Emergency backup code", example="9B2F-7K4M")
+    recovery_code: str = Field(..., description="Emergency backup code", examples=["9B2F-7K4M"])
     device_fingerprint: str = Field(default="DEV-BROWSER-CHROME-001")
 
 
@@ -79,12 +79,12 @@ class PasswordChangeRequest(BaseModel):
 
 
 class RegisterRequest(BaseModel):
-    full_name: str = Field(..., example="Ramesh Singh")
-    email: str = Field(..., example="ramesh.singh@gmail.com")
-    role: str = Field(default="STUDENT", example="STUDENT")  # STUDENT or TEACHER
-    identifier: str = Field(..., description="Roll No (e.g. CHMC-DS-2024-006) or Faculty ID", example="CHMC-DS-2024-006")
-    password: str = Field(..., example="SecurePass@2026!")
-    department_code: Optional[str] = Field(default="DS", example="DS")
+    full_name: str = Field(..., examples=["Ramesh Singh"])
+    email: str = Field(..., examples=["ramesh.singh@gmail.com"])
+    role: str = Field(default="STUDENT", examples=["STUDENT"])  # STUDENT or TEACHER
+    identifier: str = Field(..., description="Roll No (e.g. CHMC-DS-2024-006) or Faculty ID", examples=["CHMC-DS-2024-006"])
+    password: str = Field(..., examples=["SecurePass@2026!"])
+    department_code: Optional[str] = Field(default="DS", examples=["DS"])
     device_fingerprint: Optional[str] = Field(default="DEV-BROWSER-CHROME-NEW")
     device_name: Optional[str] = Field(default="Web Browser")
 
