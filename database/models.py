@@ -336,6 +336,12 @@ class UserAccount(Base):
     mfa_enabled = Column(Boolean, default=False, nullable=False)
     mfa_type = Column(String(30), default="TOTP")  # TOTP, WEBAUTHN, EMAIL_FALLBACK
     
+    # First-Login Security & Hardware Enclave Binding
+    must_change_password = Column(Boolean, default=False, nullable=False)
+    is_device_bound = Column(Boolean, default=False, nullable=False)
+    bound_device_name = Column(String(150), nullable=True)
+    bound_device_uuid = Column(String(150), nullable=True)
+    
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 

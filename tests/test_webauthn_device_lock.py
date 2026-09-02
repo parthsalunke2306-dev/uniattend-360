@@ -1,4 +1,4 @@
-﻿"""
+"""
 Unit & Integration Tests for WebAuthn Hardware Passkeys & Strict 1-Device-Per-Student Lock.
 Verifies:
   1. Primary hardware device registration and binding.
@@ -188,3 +188,42 @@ def test_rest_api_device_endpoints(client):
     # 4. Verify unlocked
     status_resp_after = client.get("/api/v1/attendance/device/status/CHMC-DS-2024-005")
     assert status_resp_after.json()["is_locked"] is False
+
+
+def test_cross_device_user_status_and_first_login_setup(client):
+    """Verifies that first-login setup saves to database and user-status endpoint syncs across devices."""
+    roll_no = "CHMC-DS-2024-099"
+    
+    # Check initial status (unbound)
+    init_status = client.get(f"/api/v1/auth/user-status/{roll_no}")
+    assert init_status.status_code == 200
+    assert init_status.json()["is_device_bound"] is False
+
+    # Perform First-Time Setup on Mobile Handset
+    setup_resp = client.post("/api/v1/auth/first-login-setup", json={
+        "identifier": roll_no,
+        "new_password": "PermanentSecurePass@2026!",
+        "device_uuid": "MOBILE-IPHONE-ENCLAVE-UUID-777",
+        "device_name": "Apple iPhone 15 Pro",
+        "webauthn_credential": {
+            "id": "cred_test_webauthn_123",
+            "rawId": "637265645f74657374",
+            "type": "public-key"
+        }
+    })
+    assert setup_resp.status_code == 200
+    data = setup_resp.json()
+    assert data["status"] == "SUCCESS"
+    assert data["is_device_bound"] is True
+    assert data["must_change_password"] is False
+    assert data["device_name"] == "Apple iPhone 15 Pro"
+
+    # Now verify from a second client/device (e.g. Windows browser opening user-status)
+    windows_query = client.get(f"/api/v1/auth/user-status/{roll_no}")
+    assert windows_query.status_code == 200
+    w_data = windows_query.json()
+    assert w_data["is_device_bound"] is True
+    assert w_data["must_change_password"] is False
+    assert w_data["bound_device_name"] == "Apple iPhone 15 Pro"
+    assert w_data["bound_device_uuid"] == "MOBILE-IPHONE-ENCLAVE-UUID-777"
+

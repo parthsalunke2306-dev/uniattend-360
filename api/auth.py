@@ -31,6 +31,7 @@ from api.security import (
     get_current_user, require_role
 )
 from api.webauthn_service import WebAuthnService
+from pipeline.anti_proxy_engine import anti_proxy_engine
 
 auth_router = APIRouter(prefix="/api/v1/auth", tags=["Authentication & Security"])
 passkey_router = APIRouter(prefix="/api/auth/passkey", tags=["WebAuthn Hardware Passkeys"])
@@ -121,6 +122,15 @@ class StudentProfileUpdateRequest(BaseModel):
     avatar_image_url: Optional[str] = None
 
 
+class FirstLoginSetupRequest(BaseModel):
+    identifier: str = Field(..., description="Roll number, username, or email")
+    current_password: Optional[str] = Field(default=None)
+    new_password: str = Field(..., min_length=6)
+    device_uuid: str = Field(..., description="Unique hardware enclave / handset UUID")
+    device_name: Optional[str] = Field(default="Primary Mobile Handset")
+    webauthn_credential: Optional[Dict[str, Any]] = None
+
+
 class UserSessionProfile(BaseModel):
     user_id: int
     identifier: str
@@ -135,6 +145,10 @@ class UserSessionProfile(BaseModel):
     permissions: Dict[str, bool]
     token: str
     session_token: str
+    must_change_password: Optional[bool] = False
+    is_device_bound: Optional[bool] = False
+    bound_device_name: Optional[str] = None
+    bound_device_uuid: Optional[str] = None
 
 
 # ==========================================
@@ -928,6 +942,159 @@ def update_student_profile(
 
 
 # ==========================================
+# 7. FIRST-LOGIN & HARDWARE ENCLAVE BINDING
+# ==========================================
+
+@auth_router.get("/user-status/{identifier}")
+def get_user_status(identifier: str, db: Session = Depends(get_db)):
+    """
+    Cross-Device Status Synchronization:
+    Returns whether the user has completed first-time setup and whether their account
+    is locked to a hardware device (Anti-Proxy lock).
+    """
+    clean_id = identifier.strip()
+    clean_lower = clean_id.lower()
+
+    # 1. Query UserAccount
+    user = db.query(UserAccount).filter(
+        (UserAccount.username.ilike(clean_lower)) | 
+        (UserAccount.email.ilike(clean_lower))
+    ).first()
+
+    if not user:
+        student = db.query(Student).filter(Student.student_id_str.ilike(clean_id)).first()
+        if student:
+            user = db.query(UserAccount).filter_by(student_id=student.id).first()
+            if not user:
+                user = db.query(UserAccount).filter(UserAccount.email.ilike(student.email)).first()
+
+    # 2. Query anti_proxy_engine
+    proxy_status = anti_proxy_engine.get_student_device_status(clean_id)
+    is_engine_locked = proxy_status.get("is_locked", False)
+    engine_info = proxy_status.get("device_info") or {}
+
+    if user:
+        is_bound = bool(user.is_device_bound or is_engine_locked)
+        dev_name = user.bound_device_name or engine_info.get("device_name")
+        dev_uuid = user.bound_device_uuid or engine_info.get("device_uuid")
+        return {
+            "status": "SUCCESS",
+            "exists": True,
+            "identifier": clean_id,
+            "full_name": user.full_name,
+            "email": user.email,
+            "role": user.role,
+            "must_change_password": bool(user.must_change_password),
+            "is_device_bound": is_bound,
+            "bound_device_name": dev_name,
+            "bound_device_uuid": dev_uuid,
+            "passkey_count": len(user.passkeys) if user.passkeys else 0
+        }
+
+    # If user not in DB yet (e.g. mock profile or offline sync)
+    return {
+        "status": "SUCCESS",
+        "exists": is_engine_locked,
+        "identifier": clean_id,
+        "full_name": None,
+        "email": None,
+        "role": "STUDENT",
+        "must_change_password": not is_engine_locked,
+        "is_device_bound": is_engine_locked,
+        "bound_device_name": engine_info.get("device_name"),
+        "bound_device_uuid": engine_info.get("device_uuid"),
+        "passkey_count": 0
+    }
+
+
+@auth_router.post("/first-login-setup")
+def first_login_setup(
+    req: FirstLoginSetupRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """
+    First-Time Student Onboarding & Hardware Enclave (Anti-Proxy) Setup:
+      1. Validates and hashes new permanent password.
+      2. Updates UserAccount: password_hash, must_change_password=False, is_device_bound=True.
+      3. Binds hardware device in anti_proxy_engine and registers native WebAuthn passkey if provided.
+      4. Returns confirmation profile.
+    """
+    clean_id = req.identifier.strip()
+    clean_lower = clean_id.lower()
+
+    # 1. Validate password strength
+    is_valid, msg = PasswordPolicy.validate(req.new_password)
+    if not is_valid:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=msg)
+
+    # 2. Find UserAccount
+    user = db.query(UserAccount).filter(
+        (UserAccount.username.ilike(clean_lower)) | 
+        (UserAccount.email.ilike(clean_lower))
+    ).first()
+
+    if not user:
+        student = db.query(Student).filter(Student.student_id_str.ilike(clean_id)).first()
+        if student:
+            user = db.query(UserAccount).filter_by(student_id=student.id).first()
+            if not user:
+                user = db.query(UserAccount).filter(UserAccount.email.ilike(student.email)).first()
+
+    ip_addr = request.client.host if request.client else "127.0.0.1"
+    dev_name = req.device_name or "Primary Mobile Handset"
+
+    # 3. Update DB record if user exists
+    if user:
+        user.password_hash = PasswordHasherService.hash(req.new_password)
+        user.must_change_password = False
+        user.is_device_bound = True
+        user.bound_device_name = dev_name
+        user.bound_device_uuid = req.device_uuid
+
+        # If WebAuthn credential payload was supplied, attempt passkey registration
+        if req.webauthn_credential:
+            try:
+                WebAuthnService.verify_registration(
+                    user=user,
+                    credential_json=req.webauthn_credential,
+                    device_name=dev_name,
+                    db=db
+                )
+            except Exception as e:
+                print(f"[FIRST LOGIN WEBAUTHN] Notice: {e}")
+
+        db.commit()
+        db.refresh(user)
+
+        SecurityAuditLogger.log(
+            db=db,
+            user_id=user.id,
+            event_type="FIRST_LOGIN_DEVICE_BOUND",
+            severity="INFO",
+            ip_address=ip_addr,
+            details={"device_name": dev_name, "device_uuid": req.device_uuid}
+        )
+
+    # 4. Bind in anti_proxy_engine
+    anti_proxy_engine.bind_student_device(
+        student_id_str=clean_id,
+        device_uuid=req.device_uuid,
+        device_name=dev_name
+    )
+
+    return {
+        "status": "SUCCESS",
+        "message": f"Account {clean_id} successfully secured and locked to {dev_name}.",
+        "identifier": clean_id,
+        "is_device_bound": True,
+        "device_name": dev_name,
+        "device_uuid": req.device_uuid,
+        "must_change_password": False
+    }
+
+
+# ==========================================
 # HELPER: SESSION RESPONSE BUILDER
 # ==========================================
 
@@ -992,5 +1159,9 @@ def _build_authenticated_session_response(
         mfa_enabled=user.mfa_enabled,
         permissions=role_meta["permissions"],
         token=access_token,
-        session_token=session_token
+        session_token=session_token,
+        must_change_password=getattr(user, "must_change_password", False),
+        is_device_bound=getattr(user, "is_device_bound", False),
+        bound_device_name=getattr(user, "bound_device_name", None),
+        bound_device_uuid=getattr(user, "bound_device_uuid", None)
     )

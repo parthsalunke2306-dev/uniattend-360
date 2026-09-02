@@ -36,8 +36,25 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db():
-    """Create all database tables defined in the metadata."""
+    """Create all database tables defined in the metadata and migrate missing columns."""
     Base.metadata.create_all(bind=engine)
+    try:
+        from sqlalchemy import inspect, text
+        inspector = inspect(engine)
+        if "user_accounts" in inspector.get_table_names():
+            existing_cols = {c["name"] for c in inspector.get_columns("user_accounts")}
+            with engine.begin() as conn:
+                bool_default = "FALSE"
+                if "must_change_password" not in existing_cols:
+                    conn.execute(text(f"ALTER TABLE user_accounts ADD COLUMN must_change_password BOOLEAN DEFAULT {bool_default}"))
+                if "is_device_bound" not in existing_cols:
+                    conn.execute(text(f"ALTER TABLE user_accounts ADD COLUMN is_device_bound BOOLEAN DEFAULT {bool_default}"))
+                if "bound_device_name" not in existing_cols:
+                    conn.execute(text("ALTER TABLE user_accounts ADD COLUMN bound_device_name VARCHAR(150)"))
+                if "bound_device_uuid" not in existing_cols:
+                    conn.execute(text("ALTER TABLE user_accounts ADD COLUMN bound_device_uuid VARCHAR(150)"))
+    except Exception as e:
+        print(f"[DB MIGRATION] Notice: {e}")
     print(f"[DB] Initialized database schema at: {DATABASE_URL}")
 
 

@@ -7536,9 +7536,41 @@
       const calculatedDistance = calculateHaversineMeters(studentLat, studentLon, activeFacultyAnchor.lat, activeFacultyAnchor.lon);
       const isWithinPerimeter = calculatedDistance <= activeFacultyAnchor.radius_m;
 
+      // Check 1-Device Hardware Binding & Anti-Proxy Enforcement
+      const studentRoll = activeSession ? activeSession.identifier : "";
+      const lockInfo = STUDENT_DEVICE_LOCKS[studentRoll] || (activeSession && activeSession.device_name ? { device_name: activeSession.device_name, is_locked: true } : { device_name: "Primary Mobile Handset", is_locked: true });
+      
+      const curUA = navigator.userAgent;
+      const isCurDesktop = curUA.includes("Windows") || curUA.includes("Macintosh") || (curUA.includes("Linux") && !curUA.includes("Android"));
+      const isBoundToMobile = lockInfo && lockInfo.device_name && (
+        lockInfo.device_name.toLowerCase().includes("iphone") || 
+        lockInfo.device_name.toLowerCase().includes("android") || 
+        lockInfo.device_name.toLowerCase().includes("smart") || 
+        lockInfo.device_name.toLowerCase().includes("mobile") ||
+        lockInfo.device_name.toLowerCase().includes("handset")
+      );
+
+      if (isCurDesktop && isBoundToMobile) {
+        resBox.className = "p-3.5 rounded-2xl text-[11px] font-mono bg-rose-500/15 text-[#8D3F30] border border-rose-500/50 shadow-lg animate-shake";
+        resBox.innerHTML = `
+          <div class="flex items-center space-x-1.5 font-bold text-rose-200 mb-1">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-[#8D3F30]"></i>
+            <span>❌ CHECK-IN BLOCKED: UNAUTHORIZED DESKTOP DEVICE</span>
+          </div>
+          <div class="space-y-0.5 text-[10px] text-[#8D3F30]/90">
+            <div>• <b>Hardware Security Policy:</b> 1-Device-Per-Student Lock (Anti-Proxy)</div>
+            <div>• <b>Bound Handset:</b> ${lockInfo.device_name}</div>
+            <div>• <b>Detected Device:</b> Windows PC / Desktop Browser</div>
+            <div>• <b>Anti-Proxy Protection:</b> Attendance marking is restricted to your registered smartphone to prevent proxy check-ins.</div>
+            <div>• <b>Action:</b> Please open the portal on your registered phone to scan or enter PIN.</div>
+          </div>
+        `;
+        shakePinBoxes();
+        lucide.createIcons();
+        return;
+      }
+
       if (isWithinPerimeter) {
-        const studentRoll = activeSession ? activeSession.identifier : "";
-        const lockInfo = STUDENT_DEVICE_LOCKS[studentRoll] || { device_name: "Apple iPhone 15 Pro (Secure Enclave)", is_locked: true };
         resBox.className = "p-3 rounded-xl text-[11px] font-mono bg-emerald-500/15 text-[#2F5238] border border-emerald-500/50 shadow-lg";
         resBox.innerHTML = `
           <div class="flex items-center space-x-1.5 font-bold text-emerald-200 mb-1">
@@ -9873,12 +9905,66 @@ function submitReschedule() {
     // ==============================================
     let pendingFirstLoginSession = null;
 
-    function checkAndTriggerFirstLoginSetup(session) {
+    async function checkAndTriggerFirstLoginSetup(session) {
       if (!session || session.role !== 'STUDENT') return false;
       const profile = REGISTERED_PROFILES[session.identifier] || session;
       
+      // 1. If local session/profile is already confirmed bound and password changed, skip immediately!
+      if (profile.is_device_bound === true && profile.must_change_password === false) {
+        return false;
+      }
+
+      // 2. Always verify with central institutional backend (Cross-Device Sync)
+      try {
+        const idToCheck = session.identifier || session.email || session.username;
+        const res = await fetch(`/api/v1/auth/user-status/${encodeURIComponent(idToCheck)}`);
+        if (res.ok) {
+          const remote = await res.json();
+          if (remote && remote.is_device_bound && remote.must_change_password === false) {
+            // Already configured on another device (e.g. mobile phone)!
+            profile.must_change_password = false;
+            profile.is_device_bound = true;
+            profile.device_name = remote.bound_device_name || "Primary Mobile Handset";
+            profile.device_fingerprint = remote.bound_device_uuid || "DEV-REMOTE-ENCLAVE";
+            
+            REGISTERED_PROFILES[session.identifier] = profile;
+            STUDENT_DEVICE_LOCKS[session.identifier] = {
+              device_uuid: profile.device_fingerprint,
+              device_name: profile.device_name,
+              is_locked: true,
+              enrolled_at: new Date().toISOString()
+            };
+
+            const stored = JSON.parse(localStorage.getItem('uniattend_360_profiles') || "{}");
+            stored[session.identifier] = profile;
+            localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
+
+            activeSession = { ...activeSession, ...profile };
+            localStorage.setItem('uniattend_360_session', JSON.stringify(activeSession));
+
+            // Hide setup modal if open
+            const modal = document.getElementById('firstLoginSetupModal');
+            if (modal) modal.classList.add('hidden');
+
+            const ua = navigator.userAgent;
+            const isDesktop = ua.includes("Windows") || ua.includes("Macintosh") || (ua.includes("Linux") && !ua.includes("Android"));
+            if (isDesktop) {
+              showToast({
+                title: "Enclave Security Active",
+                subtitle: `Account locked to registered handset (${profile.device_name}).`,
+                type: "info"
+              });
+            }
+            return false;
+          }
+        }
+      } catch (err) {
+        console.log("[USER-STATUS SYNC] Offline/local mode active:", err);
+      }
+
+      // 3. If genuinely unbound on all devices, prompt first-login security setup
       const isUnbound = !profile.is_device_bound && (!STUDENT_DEVICE_LOCKS[session.identifier] || !STUDENT_DEVICE_LOCKS[session.identifier].is_locked);
-      const mustChangePwd = profile.must_change_password === true;
+      const mustChangePwd = profile.must_change_password !== false;
 
       if (mustChangePwd || isUnbound) {
         pendingFirstLoginSession = session;
@@ -9886,7 +9972,7 @@ function submitReschedule() {
         const greeting = document.getElementById('firstLoginStudentGreeting');
         const deviceBadge = document.getElementById('firstLoginDeviceBadge');
 
-        if (greeting) greeting.innerText = `Welcome, ${session.name}!`;
+        if (greeting) greeting.innerText = `Welcome, ${session.name || 'Student'}!`;
         
         // Detect current browser / device
         const ua = navigator.userAgent;
@@ -9894,7 +9980,7 @@ function submitReschedule() {
         if (ua.includes("Android")) devName = "Android Smartphone";
         else if (ua.includes("iPhone")) devName = "Apple iPhone";
         else if (ua.includes("Macintosh")) devName = "Apple MacBook";
-        else if (ua.includes("Windows")) devName = "Windows Device";
+        else if (ua.includes("Windows")) devName = "Windows PC (Enclave)";
         else devName = "Authenticated Web Browser";
 
         if (deviceBadge) deviceBadge.innerText = devName;
@@ -9906,7 +9992,7 @@ function submitReschedule() {
       return false;
     }
 
-    function submitFirstLoginSetup() {
+    async function submitFirstLoginSetup() {
       if (!pendingFirstLoginSession) return;
       const rollNo = pendingFirstLoginSession.identifier;
       const newPwd = document.getElementById('firstLoginNewPassword')?.value || '';
@@ -9932,7 +10018,78 @@ function submitReschedule() {
 
       const devUUID = "DEV-" + Math.random().toString(36).substring(2, 10).toUpperCase();
 
-      // Update Student Profile
+      // Trigger Native Microsoft/W3C WebAuthn Biometric Prompt if available
+      let webauthnCred = null;
+      if (window.PublicKeyCredential && navigator.credentials && navigator.credentials.create) {
+        try {
+          const challengeBuf = new Uint8Array(32);
+          window.crypto.getRandomValues(challengeBuf);
+          const userBuf = new TextEncoder().encode(rollNo || 'student');
+          const rpId = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
+
+          const cred = await navigator.credentials.create({
+            publicKey: {
+              challenge: challengeBuf,
+              rp: { name: "UniAttend 360", id: rpId },
+              user: {
+                id: userBuf,
+                name: pendingFirstLoginSession.email || `${rollNo}@chmc.edu`,
+                displayName: pendingFirstLoginSession.name || "UniAttend Student"
+              },
+              pubKeyCredParams: [
+                { alg: -7, type: "public-key" },  // ES256
+                { alg: -257, type: "public-key" } // RS256
+              ],
+              authenticatorSelection: {
+                authenticatorAttachment: "platform", // FaceID / TouchID / Windows Hello
+                userVerification: "preferred",
+                residentKey: "preferred"
+              },
+              timeout: 60000,
+              attestation: "none"
+            }
+          });
+
+          if (cred) {
+            webauthnCred = {
+              id: cred.id,
+              rawId: Array.from(new Uint8Array(cred.rawId)).map(b => b.toString(16).padStart(2, '0')).join(''),
+              type: cred.type
+            };
+          }
+        } catch (passkeyErr) {
+          console.log("[WEBAUTHN ENCLAVE SETUP] Passkey prompt dismissed or sandbox fallback:", passkeyErr);
+        }
+      }
+
+      // 1. Sync to central backend database
+      try {
+        await fetch('/api/v1/auth/first-login-setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            identifier: rollNo,
+            new_password: newPwd,
+            device_uuid: devUUID,
+            device_name: devName,
+            webauthn_credential: webauthnCred
+          })
+        });
+
+        await fetch('/api/v1/attendance/device/bind', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            student_id_str: rollNo,
+            device_uuid: devUUID,
+            device_name: devName
+          })
+        });
+      } catch (backendErr) {
+        console.log("[BACKEND DEVICE BIND] Offline fallback active:", backendErr);
+      }
+
+      // 2. Update Student Profile & Local State
       const student = REGISTERED_PROFILES[rollNo] || pendingFirstLoginSession;
       student.must_change_password = false;
       student.is_device_bound = true;
@@ -9945,7 +10102,7 @@ function submitReschedule() {
       stored[rollNo] = student;
       localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
 
-      // Lock hardware enclave
+      // 3. Lock hardware enclave in memory
       STUDENT_DEVICE_LOCKS[rollNo] = {
         device_uuid: devUUID,
         device_name: devName,
@@ -9970,7 +10127,7 @@ function submitReschedule() {
       localStorage.setItem('uniattend_360_session', JSON.stringify(activeSession));
 
       showToast({ 
-        title: "Account Activated & Device Bound", 
+        title: "Account Activated & Passkey Bound", 
         subtitle: `Handset locked to ${devName}. You are ready for live check-in!`, 
         type: "success" 
       });

@@ -474,16 +474,17 @@ class AntiProxyEngine:
 
     def get_student_device_status(self, student_id_str: str) -> Dict[str, Any]:
         """Returns the hardware lock and binding status for a student account."""
-        if student_id_str in self.student_hardware_locks:
+        lock = self.student_hardware_locks.get(student_id_str)
+        if lock and lock.get("device_uuid") and lock.get("is_locked", True):
             return {
                 "student_id_str": student_id_str,
                 "is_locked": True,
-                "device_info": self.student_hardware_locks[student_id_str]
+                "device_info": lock
             }
         return {
             "student_id_str": student_id_str,
             "is_locked": False,
-            "device_info": None
+            "device_info": lock if lock and lock.get("device_uuid") else None
         }
 
     def reset_student_device(self, student_id_str: str, authorized_by: str = "Faculty Admin") -> Dict[str, Any]:
