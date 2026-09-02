@@ -340,9 +340,24 @@ def seed_chmc_user_accounts(session: Session):
             role="HOD",
             university_id=uni.id,
             department_id=dept.id,
-            avatar_icon="👔"
+            avatar_icon="👩‍🏫"
         )
         session.add(c_user)
+
+    # 2b. Central Admissions & Admin Staff: Mr. Sanjay Mehta
+    a_user = session.query(UserAccount).filter_by(username="admin.staff").first()
+    if not a_user:
+        a_user = UserAccount(
+            username="admin.staff",
+            email="admin.staff@chmc.edu",
+            password_hash=default_pw_hash,
+            full_name="Mr. Sanjay Mehta (Admin Staff)",
+            role="ADMIN_STAFF",
+            university_id=uni.id,
+            department_id=dept.id,
+            avatar_icon="👨‍💼"
+        )
+        session.add(a_user)
 
     # 3. Faculty Accounts
     all_faculty = session.query(Faculty).all()

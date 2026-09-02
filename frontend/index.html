@@ -3849,6 +3849,61 @@
     let activeGeofenceRadius = 10;
     let parsedCSVStudents = [];
 
+    async function syncWithDatabaseBackend() {
+      try {
+        const rawProfiles = localStorage.getItem('uniattend_360_profiles');
+        const rawLogs = localStorage.getItem('uniattend_360_audit_ledger');
+        const profiles = rawProfiles ? JSON.parse(rawProfiles) : {};
+        const logs = rawLogs ? JSON.parse(rawLogs) : [];
+
+        const syncPayload = {
+          profiles: profiles,
+          audit_logs: logs,
+          client_version: PROFILES_STORAGE_VERSION
+        };
+
+        const res = await fetch('/api/v1/sync/client-state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(syncPayload)
+        });
+
+        if (res.ok) {
+          const syncResult = await res.json();
+          console.log('[DATABASE SYNC BRIDGE] Successfully synchronized client state with Supabase:', syncResult);
+
+          // Fetch canonical users from database to refresh in-memory and local view
+          const usersRes = await fetch('/api/v1/users');
+          if (usersRes.ok) {
+            const remoteUsers = await usersRes.json();
+            if (Array.isArray(remoteUsers) && remoteUsers.length > 0) {
+              remoteUsers.forEach(u => {
+                const uname = u.username || u.email;
+                if (!REGISTERED_PROFILES[uname]) {
+                  REGISTERED_PROFILES[uname] = {
+                    role: u.role,
+                    name: u.full_name,
+                    email: u.email,
+                    username: u.username,
+                    is_device_bound: u.is_device_bound || false,
+                    must_change_password: u.must_change_password || false,
+                    badge: u.role,
+                    desc: u.full_name
+                  };
+                } else {
+                  REGISTERED_PROFILES[uname].is_device_bound = (u.is_device_bound !== undefined) ? u.is_device_bound : REGISTERED_PROFILES[uname].is_device_bound;
+                  REGISTERED_PROFILES[uname].must_change_password = (u.must_change_password !== undefined) ? u.must_change_password : REGISTERED_PROFILES[uname].must_change_password;
+                }
+              });
+              renderDigitalRoster();
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[DATABASE SYNC BRIDGE] Offline/Fallback mode active:', err);
+      }
+    }
+
     function initAuth() {
       REGISTERED_PROFILES = getStoredProfiles();
       const saved = localStorage.getItem('uniattend_360_session');
@@ -3864,6 +3919,7 @@
         quickAuth('faculty.razia');
       }
       renderDigitalRoster();
+      syncWithDatabaseBackend();
     }
 
     let regStep1Data = null;

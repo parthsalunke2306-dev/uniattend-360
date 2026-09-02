@@ -42,6 +42,7 @@ from api.schemas import (
 )
 from api.auth import auth_router, passkey_router
 from api.admin import admin_router
+from api.sync import sync_router
 
 from contextlib import asynccontextmanager
 
@@ -66,6 +67,7 @@ app = FastAPI(
 app.include_router(auth_router)
 app.include_router(passkey_router)
 app.include_router(admin_router)
+app.include_router(sync_router)
 
 # Enable CORS for frontend integration (Vercel, Localhost, Mobile)
 app.add_middleware(
