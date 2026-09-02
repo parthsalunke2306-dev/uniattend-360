@@ -926,7 +926,7 @@
         </div>
 
         <!-- Lecture Index X of N Budgeting -->
-        <div class="p-3 rounded-2xl bg-purple-950/30 border border-[#D5E4D8] space-y-2">
+        <div class="p-3 rounded-2xl bg-[#EDF4EF] border border-[#2F5238]/20 space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-mono text-[#2F5238] font-bold uppercase tracking-wider flex items-center">
               <i data-lucide="layers" class="w-3 h-3 mr-1 text-[#2F5238]"></i>
@@ -1044,18 +1044,18 @@
   <!-- PRINCIPAL SUPER-ADMIN DIRECT ENROLLMENT MODAL -->
   <!-- ============================================== -->
   <div id="principalDirectEnrollModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-indigo-500/40 shadow-2xl space-y-4 relative bg-gradient-to-b from-slate-900 to-indigo-950/40">
+    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-[#2F5238]/40 shadow-2xl space-y-4 relative bg-gradient-to-b from-[#FAFAF7] to-[#EDF4EF]">
       
       <!-- Modal Header -->
       <div class="flex items-center justify-between border-b border-[#E8E3DA] pb-3">
         <div class="flex items-center space-x-2.5">
-          <div class="h-9 w-9 rounded-2xl bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center text-[#2F5238] text-base shadow-inner">
+          <div class="h-9 w-9 rounded-2xl bg-[#2F5238]/10 border border-[#2F5238]/30 flex items-center justify-center text-[#2F5238] text-base shadow-inner">
             👑
           </div>
           <div>
             <h3 class="text-sm font-bold text-[#1C241E] flex items-center">
               <span>Principal Direct Student Provisioning</span>
-              <span class="ml-2 bg-indigo-500/20 text-[#2F5238] border border-indigo-500/30 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded">SUPER ADMIN</span>
+              <span class="ml-2 bg-[#2F5238]/10 text-[#2F5238] border border-[#2F5238]/30 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded">SUPER ADMIN</span>
             </h3>
             <p class="text-[10px] text-[#869288] font-mono">Instant multi-department enrollment without coordinator bottlenecks</p>
           </div>
@@ -1123,7 +1123,7 @@
         </div>
 
         <!-- Super-Admin Override Security Notice -->
-        <div class="p-2.5 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-[10px] font-mono text-indigo-200 flex items-start space-x-2">
+        <div class="p-2.5 rounded-2xl bg-[#EDF4EF] border border-[#2F5238]/30 text-[10px] font-mono text-[#2F5238] flex items-start space-x-2">
           <span class="text-sm">🛡️</span>
           <div>
             <b>Super-Admin Authority:</b> Automatic initialization of departmental subject units, Argon2id credentials, and hardware enclave enrollment slot. Action will be cryptographically logged to the institutional audit ledger.
@@ -1473,7 +1473,7 @@
   <!-- PRINCIPAL SUPER-ADMIN STUDENT EXPULSION MODAL -->
   <!-- ============================================== -->
   <div id="principalExpelStudentModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#F5F2EB] backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-rose-500/50 shadow-2xl space-y-3.5 relative bg-gradient-to-b from-slate-950 to-rose-950/40 neon-border-rose">
+    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-rose-500/50 shadow-2xl space-y-3.5 relative bg-gradient-to-b from-[#FAFAF7] to-rose-50 neon-border-rose">
       
       <!-- Modal Header -->
       <div class="flex items-center justify-between border-b border-rose-500/30 pb-2.5">
@@ -2609,16 +2609,16 @@
         </div>
 
         <!-- 2. ATTENDANCE LIFECYCLE CONTROL STRIP (START / PAUSE / RESUME / STOP) -->
-        <div class="glass-panel p-3 sm:p-4 rounded-2xl border border-[#E8E3DA] bg-gradient-to-r from-slate-950/80 via-slate-900/90 to-purple-950/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="glass-panel p-3 sm:p-4 rounded-2xl border border-[#2F5238]/20 bg-gradient-to-r from-[#F5F2EB] via-[#FAFAF7] to-[#EDF4EF] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center space-x-3">
             <div class="flex items-center space-x-2">
-              <span class="text-[10px] font-mono text-[#869288] uppercase tracking-wider font-semibold">Session Status:</span>
+              <span class="text-[10px] font-mono text-[#2F5238] uppercase tracking-wider font-semibold">Session Status:</span>
               <span id="lifecycleStatusBadge" class="bg-emerald-500/20 text-[#2F5238] font-mono text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center shadow">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
                 <span>RUNNING — ACCEPTING CHECK-INS</span>
               </span>
             </div>
-            <span id="lifecycleSubtext" class="hidden md:inline text-[10px] font-mono text-[#869288]">
+            <span id="lifecycleSubtext" class="hidden md:inline text-[10px] font-mono text-[#5A655C]">
               QR code and PIN are now visible to students
             </span>
           </div>
@@ -2692,8 +2692,8 @@
             </div>
 
             <!-- Rolling PIN HUD (High-Contrast Back-Row Legibility) -->
-            <div class="p-3 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-950 border-2 border-emerald-500/50 shadow-xl">
-              <div class="flex items-center justify-between text-[8px] font-mono text-[#869288] uppercase tracking-wider mb-0.5">
+            <div class="p-3 rounded-2xl bg-gradient-to-tr from-[#EDF4EF] to-[#F5F2EB] border-2 border-[#2F5238]/30 shadow-md">
+              <div class="flex items-center justify-between text-[8px] font-mono text-[#5A655C] uppercase tracking-wider mb-0.5">
                 <span>Class PIN (for students far from screen)</span>
                 <span class="text-[#2F5238] font-bold bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/30">6-DIGIT CODE</span>
               </div>
@@ -3441,7 +3441,7 @@
       </div>
 
       <!-- 2. Principal Super-Admin Direct Authority Action Deck -->
-      <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-indigo-500/40 space-y-3 bg-gradient-to-r from-indigo-950/40 to-purple-950/40 shadow-xl">
+      <div class="glass-panel p-4 sm:p-5 rounded-2xl border border-[#2F5238]/30 space-y-3 bg-gradient-to-r from-[#EDF4EF] to-[#F5F2EB] shadow-md">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div>
             <div class="flex items-center space-x-2">
@@ -3449,7 +3449,7 @@
               <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm">
                 Principal Super-Admin Authority & Fast-Track Console
               </h3>
-              <span class="bg-indigo-500/20 text-[#2F5238] border border-indigo-500/30 text-[9px] font-mono font-bold px-2 py-0.5 rounded">
+              <span class="bg-[#2F5238]/10 text-[#2F5238] border border-[#2F5238]/30 text-[9px] font-mono font-bold px-2 py-0.5 rounded">
                 TOP-LEVEL RBAC
               </span>
             </div>
@@ -3603,10 +3603,10 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-stitch-border/50 text-[#1C241E]">
-              <tr class="hover:bg-[#F5F2EB]/30 bg-indigo-950/20">
+              <tr class="hover:bg-[#EDF4EF]/60 bg-[#EDF4EF]/30">
                 <td class="p-2.5 font-bold text-[#1C241E]">👑 Dr. Manju Lalwani Pathak</td>
                 <td class="p-2.5 text-[#2F5238]">principal@chmc.edu</td>
-                <td class="p-2.5"><span class="bg-indigo-500/30 text-indigo-200 px-2 py-0.5 rounded font-bold text-[9px]">SUPER ADMIN</span></td>
+                <td class="p-2.5"><span class="bg-[#2F5238]/10 text-[#2F5238] px-2 py-0.5 rounded font-bold text-[9px] border border-[#2F5238]/30">SUPER ADMIN</span></td>
                 <td class="p-2.5 text-[#2F5238]">Argon2id Salted</td>
                 <td class="p-2.5 text-[#2F5238]">TOTP + Passkey</td>
                 <td class="p-2.5 text-right text-[#2F5238] font-bold">● ACTIVE</td>
