@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.exc import IntegrityError
 from api.server import app
 from database.db_manager import get_db_session
-from database.models import UserAccount, Passkey, Student, SecurityAuditLog
+from database.models import UserAccount, Passkey, Student, SecurityAuditLog, FactAttendance
 from api.security import create_jwt_access_token
 
 client = TestClient(app)
@@ -55,11 +55,9 @@ def test_passkey_db_unique_constraint(test_student_and_admin):
     """
     uid = test_student_and_admin["student_id"]
     with get_db_session() as session:
-        # Clear any prior passkeys
         session.query(Passkey).filter_by(user_id=uid).delete()
         session.commit()
 
-        # Insert first passkey
         pk1 = Passkey(
             user_id=uid,
             credential_id="cred_id_primary_phone_001",
@@ -70,7 +68,7 @@ def test_passkey_db_unique_constraint(test_student_and_admin):
         session.add(pk1)
         session.commit()
 
-        # Attempt to insert a second passkey for the same user_id
+        # Attempt duplicate insert
         pk2 = Passkey(
             user_id=uid,
             credential_id="cred_id_secondary_proxy_002",
@@ -84,11 +82,7 @@ def test_passkey_db_unique_constraint(test_student_and_admin):
         session.rollback()
 
 
-def test_generate_registration_options_403_when_device_already_registered(test_student_and_admin):
-    """
-    /generate-registration-options: Check if the user already exists in the passkeys table.
-    If yes, return a 403 error ('Device already registered').
-    """
+def test_standard_register_options_403_when_device_already_registered(test_student_and_admin):
     uname = test_student_and_admin["student_username"]
     uid = test_student_and_admin["student_id"]
 
@@ -97,13 +91,13 @@ def test_generate_registration_options_403_when_device_already_registered(test_s
         u.is_device_bound = True
         session.commit()
 
-    # Request options for user that already has a registered device
-    response = client.post("/generate-registration-options", json={"identifier": uname})
+    # Test standardized path
+    response = client.post("/api/auth/webauthn/register-options", json={"identifier": uname})
     assert response.status_code == 403
     assert "Device already registered" in response.json()["detail"]
 
 
-def test_generate_registration_options_success_for_new_device(test_student_and_admin):
+def test_standard_register_options_success_for_new_device(test_student_and_admin):
     uname = test_student_and_admin["student_username"]
     uid = test_student_and_admin["student_id"]
 
@@ -113,22 +107,20 @@ def test_generate_registration_options_success_for_new_device(test_student_and_a
         u.is_device_bound = False
         session.commit()
 
-    response = client.post("/generate-registration-options", json={"identifier": uname})
+    response = client.post("/api/auth/webauthn/register-options", json={"identifier": uname})
     assert response.status_code == 200
     data = response.json()
     assert "challenge" in data
     assert "rp" in data or "rpId" in data
 
 
-def test_verify_registration_and_db_binding(test_student_and_admin):
+def test_standard_verify_registration_and_db_binding(test_student_and_admin):
     uname = test_student_and_admin["student_username"]
     uid = test_student_and_admin["student_id"]
 
-    # First call generate options to initialize challenge
-    client.post("/generate-registration-options", json={"identifier": uname})
+    client.post("/api/auth/webauthn/register-options", json={"identifier": uname})
 
-    # Verify registration
-    verify_resp = client.post("/verify-registration", json={
+    verify_resp = client.post("/api/auth/webauthn/verify-registration", json={
         "identifier": uname,
         "credential": {"id": "mock_cred_uuid_12345", "rawId": "mock_cred_uuid_12345"},
         "device_name": "Samsung Galaxy S24"
@@ -146,43 +138,51 @@ def test_verify_registration_and_db_binding(test_student_and_admin):
         assert pk.counter == 0
 
 
-def test_generate_authentication_options_retrieves_user_credential(test_student_and_admin):
+def test_standard_login_options_retrieves_user_credential(test_student_and_admin):
     uname = test_student_and_admin["student_username"]
-    resp = client.post("/generate-authentication-options", json={"identifier": uname})
+    resp = client.post("/api/auth/webauthn/login-options", json={"identifier": uname})
     assert resp.status_code == 200
     data = resp.json()
     assert "challenge" in data
     assert "allowCredentials" in data
-    # Enforces 1:1 hardware device
     allow_creds = data["allowCredentials"]
     assert len(allow_creds) >= 1
     assert any("mock_cred_uuid_12345" in str(c.get("id")) for c in allow_creds)
 
 
-def test_verify_authentication_increments_counter(test_student_and_admin):
+def test_standard_verify_authentication_and_attendance_linkage(test_student_and_admin):
     uname = test_student_and_admin["student_username"]
     uid = test_student_and_admin["student_id"]
 
-    client.post("/generate-authentication-options", json={"identifier": uname})
+    client.post("/api/auth/webauthn/login-options", json={"identifier": uname})
 
-    auth_resp = client.post("/verify-authentication", json={
+    auth_resp = client.post("/api/auth/webauthn/verify-authentication", json={
         "identifier": uname,
-        "credential": {"id": "mock_cred_uuid_12345"}
+        "credential": {"id": "mock_cred_uuid_12345"},
+        "session_id": "LEC-TEST-DS201"
     })
     assert auth_resp.status_code == 200
-    assert auth_resp.json()["verified"] is True
+    res_data = auth_resp.json()
+    assert res_data["verified"] is True
+    assert res_data["biometrically_verified"] is True
 
     with get_db_session() as session:
         pk = session.query(Passkey).filter_by(user_id=uid).first()
         assert pk.counter >= 1
         assert pk.last_used_at is not None
 
+        # Check attendance record biometrically_verified flag
+        att = session.query(FactAttendance).filter_by(user_id=uid).first()
+        assert att is not None
+        assert att.biometrically_verified is True
+        assert att.passkey_id == pk.id
 
-def test_student_device_reset_request(test_student_and_admin):
+
+def test_devices_request_reset_flow(test_student_and_admin):
     uname = test_student_and_admin["student_username"]
     uid = test_student_and_admin["student_id"]
 
-    resp = client.post("/request-device-reset", json={
+    resp = client.post("/api/devices/request-reset", json={
         "identifier": uname,
         "reason": "Lost smartphone on local train"
     })
@@ -196,7 +196,7 @@ def test_student_device_reset_request(test_student_and_admin):
 
 def test_admin_pending_resets_queue(test_student_and_admin):
     admin_token = test_student_and_admin["admin_token"]
-    resp = client.get("/admin/pending-resets", headers={"Authorization": f"Bearer {admin_token}"})
+    resp = client.get("/api/admin/pending-resets", headers={"Authorization": f"Bearer {admin_token}"})
     assert resp.status_code == 200
     list_items = resp.json()
     assert any(item["username"] == test_student_and_admin["student_username"] for item in list_items)
@@ -207,7 +207,7 @@ def test_admin_approve_reset_transaction(test_student_and_admin):
     uid = test_student_and_admin["student_id"]
     admin_token = test_student_and_admin["admin_token"]
 
-    resp = client.post("/admin/approve-reset", headers={"Authorization": f"Bearer {admin_token}"}, json={
+    resp = client.post("/api/admin/approve-reset", headers={"Authorization": f"Bearer {admin_token}"}, json={
         "student_id_str": uname,
         "reason": "Verified police FIR for lost phone"
     })
@@ -229,11 +229,9 @@ def test_admin_reject_reset(test_student_and_admin):
     uid = test_student_and_admin["student_id"]
     admin_token = test_student_and_admin["admin_token"]
 
-    # Student requests reset again
-    client.post("/request-device-reset", json={"identifier": uname, "reason": "Testing reject"})
+    client.post("/api/devices/request-reset", json={"identifier": uname, "reason": "Testing reject"})
 
-    # Admin rejects
-    resp = client.post("/admin/reject-reset", headers={"Authorization": f"Bearer {admin_token}"}, json={
+    resp = client.post("/api/admin/reject-reset", headers={"Authorization": f"Bearer {admin_token}"}, json={
         "student_id_str": uname,
         "reason": "Unsubstantiated request"
     })

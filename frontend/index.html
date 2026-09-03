@@ -2770,7 +2770,7 @@
               </div>
               <div id="kioskPinDisplay" class="font-mono font-black text-3xl sm:text-4xl text-[#2F5238] tracking-[0.22em] my-1 pin-hud">------</div>
               <div class="flex items-center justify-between text-[9px] font-mono text-[#2F5238]/90 pt-0.5 border-t border-emerald-500/20">
-                <span>⏱️ Sync: 5s Window</span>
+                <span>⏱️ Sync: 10s Window</span>
                 <span>📍 <span id="kioskGeofenceTag">20m</span> Perimeter Lock</span>
               </div>
             </div>
@@ -8323,9 +8323,9 @@
       }
 
       const now = Date.now();
-      const currentSlot = Math.floor(now / 5000);
-      const msIntoSlot = now % 5000;
-      const secondsRemaining = Math.max(1, Math.ceil((5000 - msIntoSlot) / 1000));
+      const currentSlot = Math.floor(now / 10000);
+      const msIntoSlot = now % 10000;
+      const secondsRemaining = Math.max(1, Math.ceil((10000 - msIntoSlot) / 1000));
       const currentPin = getPinForSlot(currentSlot);
 
       const timerEl = document.getElementById('kioskTimer');
@@ -8335,7 +8335,7 @@
       if (timerRing) {
         // Circumference for r=11 is 2 * PI * 11 = 69.115
         const circumference = 69.1;
-        const progressFraction = (5000 - msIntoSlot) / 5000;
+        const progressFraction = (10000 - msIntoSlot) / 5000;
         const offset = circumference * (1 - progressFraction);
         timerRing.style.strokeDashoffset = offset.toFixed(1);
       }
@@ -10664,6 +10664,18 @@ function submitReschedule() {
     // WEBAUTHN (FIDO2) 1:1 DEVICE BINDING & ADMIN-APPROVED RESET WORKFLOW
     // ============================================================================
 
+    
+    function checkPersistentResetBanner() {
+      const banner = document.getElementById('studentResetPendingBanner');
+      const gateBadge = document.getElementById('gateResetStatusBadge');
+      if (activeSession && activeSession.device_reset_status === 'PENDING') {
+        if (banner) banner.classList.remove('hidden');
+        if (gateBadge) gateBadge.classList.remove('hidden');
+      } else {
+        if (banner) banner.classList.add('hidden');
+      }
+    }
+
     function openStudentLostDeviceModal() {
       const modal = document.getElementById('studentLostDeviceModal');
       const rollInput = document.getElementById('lostDeviceInputRoll');
@@ -10691,7 +10703,7 @@ function submitReschedule() {
       }
 
       try {
-        const res = await fetch('/request-device-reset', {
+        const res = await fetch('/api/devices/request-reset', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ identifier: roll, reason: reason })
@@ -10733,7 +10745,7 @@ function submitReschedule() {
       if (!rollNo) throw new Error("Missing student identifier.");
 
       // 1. Request registration options from backend (Enforces 403 if already bound)
-      const res = await fetch('/generate-registration-options', {
+      const res = await fetch('/api/auth/webauthn/register-options', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: rollNo })
@@ -10762,7 +10774,7 @@ function submitReschedule() {
       }
 
       // 3. Verify registration on backend (Enforces DB UNIQUE constraint)
-      const verifyRes = await fetch('/verify-registration', {
+      const verifyRes = await fetch('/api/auth/webauthn/verify-registration', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -10787,7 +10799,7 @@ function submitReschedule() {
 
       try {
         // 1. Fetch user-specific assertion options
-        const res = await fetch('/generate-authentication-options', {
+        const res = await fetch('/api/auth/webauthn/login-options', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ identifier: rollNo })
@@ -10810,7 +10822,7 @@ function submitReschedule() {
         }
 
         // 3. Verify signature on backend
-        const verifyRes = await fetch('/verify-authentication', {
+        const verifyRes = await fetch('/api/auth/webauthn/verify-authentication', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

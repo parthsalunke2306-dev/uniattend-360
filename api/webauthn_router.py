@@ -42,7 +42,7 @@ except (ImportError, Exception):
         pad = "=" * ((4 - len(s) % 4) % 4)
         return base64.urlsafe_b64decode(s + pad)
 
-from database.models import UserAccount, Passkey, UserPasskey, Student, SecurityAuditLog
+from database.models import UserAccount, Passkey, UserPasskey, Student, SecurityAuditLog, FactAttendance, LectureSession
 from database.db_manager import get_db
 from pipeline.anti_proxy_engine import anti_proxy_engine
 from api.security import require_role, get_current_user
@@ -136,6 +136,7 @@ class StudentResetRequest(BaseModel):
 # 1. WEBAUTHN CORE ROUTES
 # ==========================================
 
+@webauthn_router.post("/api/auth/webauthn/register-options")
 @webauthn_router.post("/generate-registration-options")
 @webauthn_router.post("/api/v1/webauthn/generate-registration-options")
 def generate_reg_options(req: RegOptionsRequest, request: Request, db: Session = Depends(get_db)):
@@ -200,6 +201,7 @@ def generate_reg_options(req: RegOptionsRequest, request: Request, db: Session =
     return json.loads(options_to_json(options))
 
 
+@webauthn_router.post("/api/auth/webauthn/verify-registration")
 @webauthn_router.post("/verify-registration")
 @webauthn_router.post("/api/v1/webauthn/verify-registration")
 def verify_reg(req: VerifyRegRequest, request: Request, db: Session = Depends(get_db)):
@@ -269,6 +271,7 @@ def verify_reg(req: VerifyRegRequest, request: Request, db: Session = Depends(ge
     }
 
 
+@webauthn_router.post("/api/auth/webauthn/login-options")
 @webauthn_router.post("/generate-authentication-options")
 @webauthn_router.post("/api/v1/webauthn/generate-authentication-options")
 def generate_auth_options(req: AuthOptionsRequest, request: Request, db: Session = Depends(get_db)):
@@ -320,6 +323,7 @@ def generate_auth_options(req: AuthOptionsRequest, request: Request, db: Session
     return json.loads(options_to_json(options))
 
 
+@webauthn_router.post("/api/auth/webauthn/verify-authentication")
 @webauthn_router.post("/verify-authentication")
 @webauthn_router.post("/api/v1/webauthn/verify-authentication")
 def verify_auth(req: VerifyAuthRequest, request: Request, db: Session = Depends(get_db)):
@@ -339,17 +343,53 @@ def verify_auth(req: VerifyAuthRequest, request: Request, db: Session = Depends(
 
     challenge_data = _CHALLENGES.pop(f"auth_{user.id}", None)
 
-    # Increment counter
+    # Increment counter to detect replay/cloning
     if hasattr(passkey, "counter"):
         passkey.counter += 1
     elif hasattr(passkey, "sign_count"):
         passkey.sign_count += 1
     passkey.last_used_at = datetime.now()
+
+    # Link biometric verification to attendance record if session_id provided
+    if req.session_id:
+        from datetime import date
+        today = date.today()
+        student = db.query(Student).filter_by(id=user.student_id).first() if user.student_id else None
+        att_rec = db.query(FactAttendance).filter(
+            (FactAttendance.user_id == user.id) | (FactAttendance.student_id == (student.id if student else -1)),
+            (FactAttendance.lecture_session_id == req.session_id) | (FactAttendance.session_date == today)
+        ).first()
+
+        if att_rec:
+            att_rec.status = "PRESENT"
+            att_rec.checkin_time = datetime.now()
+            att_rec.biometrically_verified = True
+            att_rec.passkey_id = passkey.id
+            att_rec.user_id = user.id
+            att_rec.validation_notes = f"Verified by W3C FIDO2 hardware biometric signature (counter: {passkey.counter})"
+        else:
+            new_att = FactAttendance(
+                user_id=user.id,
+                student_id=student.id if student else 1,
+                course_id=1,
+                timetable_session_id=1,
+                lecture_session_id=req.session_id,
+                session_date=today,
+                checkin_time=datetime.now(),
+                status="PRESENT",
+                biometrically_verified=True,
+                passkey_id=passkey.id,
+                confidence_score=1.0,
+                validation_notes=f"Verified by W3C FIDO2 hardware biometric signature (counter: {passkey.counter})"
+            )
+            db.add(new_att)
+
     db.commit()
 
     return {
         "status": "SUCCESS",
         "verified": True,
+        "biometrically_verified": True,
         "student_name": user.full_name,
         "identifier": req.identifier,
         "message": f"Biometric signature verified. 1:1 hardware device authenticated for {user.full_name}."
@@ -360,6 +400,7 @@ def verify_auth(req: VerifyAuthRequest, request: Request, db: Session = Depends(
 # 2. RESET FLOW ROUTES
 # ==========================================
 
+@webauthn_router.post("/api/devices/request-reset")
 @webauthn_router.post("/request-device-reset")
 @webauthn_router.post("/api/v1/webauthn/request-device-reset")
 def request_device_reset(req: StudentResetRequest, request: Request, db: Session = Depends(get_db)):
@@ -388,6 +429,7 @@ def request_device_reset(req: StudentResetRequest, request: Request, db: Session
     }
 
 
+@webauthn_router.post("/api/admin/approve-reset")
 @webauthn_router.post("/admin/approve-reset")
 @webauthn_router.post("/api/v1/admin/approve-reset")
 def admin_approve_reset(
@@ -440,6 +482,7 @@ def admin_approve_reset(
     }
 
 
+@webauthn_router.post("/api/admin/reject-reset")
 @webauthn_router.post("/admin/reject-reset")
 @webauthn_router.post("/api/v1/admin/reject-reset")
 def admin_reject_reset(
@@ -479,6 +522,7 @@ def admin_reject_reset(
     }
 
 
+@webauthn_router.get("/api/admin/pending-resets")
 @webauthn_router.get("/admin/pending-resets")
 @webauthn_router.get("/api/v1/admin/pending-resets")
 def list_pending_resets(

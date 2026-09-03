@@ -40,7 +40,7 @@ DEFAULT_CLASSROOM_GEO = {
 class AntiProxyEngine:
     """Core cryptographic and spatial engine for dynamic device-centric proxy-proof classroom attendance."""
 
-    def __init__(self, token_ttl_seconds: int = 5, secret_key: str = SECRET_SALT):
+    def __init__(self, token_ttl_seconds: int = 10, secret_key: str = SECRET_SALT):
         self.token_ttl_seconds = token_ttl_seconds
         self.secret_key = secret_key
         # Tracks {session_id: {device_fingerprint: student_id_str}}
