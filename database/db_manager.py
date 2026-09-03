@@ -65,6 +65,17 @@ def init_db():
                     conn.execute(text("ALTER TABLE user_accounts ADD COLUMN bound_device_uuid VARCHAR(150)"))
                 if "device_reset_status" not in existing_cols:
                     conn.execute(text("ALTER TABLE user_accounts ADD COLUMN device_reset_status VARCHAR(20) DEFAULT 'NONE'"))
+        if "silver_fact_attendance" in inspector.get_table_names():
+            sfa_cols = {c["name"] for c in inspector.get_columns("silver_fact_attendance")}
+            with engine.begin() as conn:
+                if "user_id" not in sfa_cols:
+                    conn.execute(text("ALTER TABLE silver_fact_attendance ADD COLUMN user_id INTEGER REFERENCES user_accounts(id) ON DELETE CASCADE"))
+                if "lecture_session_id" not in sfa_cols:
+                    conn.execute(text("ALTER TABLE silver_fact_attendance ADD COLUMN lecture_session_id VARCHAR(100) REFERENCES lecture_sessions(id) ON DELETE SET NULL"))
+                if "biometrically_verified" not in sfa_cols:
+                    conn.execute(text("ALTER TABLE silver_fact_attendance ADD COLUMN biometrically_verified BOOLEAN DEFAULT FALSE NOT NULL"))
+                if "passkey_id" not in sfa_cols:
+                    conn.execute(text("ALTER TABLE silver_fact_attendance ADD COLUMN passkey_id INTEGER REFERENCES passkeys(id) ON DELETE SET NULL"))
     except Exception as e:
         print(f"[DB MIGRATION] Notice: {e}")
     print(f"[DB] Initialized database schema at: {DATABASE_URL}")

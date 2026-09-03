@@ -240,8 +240,10 @@ class FactAttendance(Base):
     __tablename__ = "silver_fact_attendance"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    timetable_session_id = Column(Integer, ForeignKey("timetable_sessions.id"), nullable=False)
+    timetable_session_id = Column(Integer, ForeignKey("timetable_sessions.id"), nullable=True)
+    lecture_session_id = Column(String(100), ForeignKey("lecture_sessions.id", ondelete="SET NULL"), nullable=True)
     student_id = Column(Integer, ForeignKey("students.id"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("user_accounts.id", ondelete="CASCADE"), nullable=True, index=True)
     course_id = Column(Integer, ForeignKey("courses.id"), nullable=False, index=True)
     session_date = Column(Date, nullable=False, index=True)
     checkin_time = Column(DateTime, nullable=True)
@@ -251,6 +253,8 @@ class FactAttendance(Base):
     is_late = Column(Boolean, default=False)
     is_proxy_suspected = Column(Boolean, default=False)
     confidence_score = Column(Float, default=1.0)
+    biometrically_verified = Column(Boolean, default=False, nullable=False)
+    passkey_id = Column(Integer, ForeignKey("passkeys.id", ondelete="SET NULL"), nullable=True)
     validation_notes = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.now)
 
@@ -258,12 +262,15 @@ class FactAttendance(Base):
     __table_args__ = (
         UniqueConstraint("student_id", "timetable_session_id", "session_date", name="uq_student_session_date"),
         Index("idx_fact_student_course_date", "student_id", "course_id", "session_date"),
+        Index("idx_fact_user_biometric", "user_id", "biometrically_verified"),
     )
 
     # Relationships
     student = relationship("Student", back_populates="attendance_facts")
     course = relationship("Course", back_populates="attendance_facts")
     session = relationship("TimetableSession", back_populates="attendance_facts")
+    user = relationship("UserAccount", backref="attendance_records")
+    passkey = relationship("Passkey", backref="attendance_verifications")
 
 
 # ==========================================
