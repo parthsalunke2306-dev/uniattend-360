@@ -28,6 +28,10 @@
       "dest": "api/index.py"
     },
     {
+      "src": "/(generate-registration-options|verify-registration|generate-authentication-options|verify-authentication|request-device-reset|admin/approve-reset|admin/reject-reset|admin/pending-resets)",
+      "dest": "api/index.py"
+    },
+    {
       "src": "/(.*)",
       "dest": "/frontend/index.html"
     }

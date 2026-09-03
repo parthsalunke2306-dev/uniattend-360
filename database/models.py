@@ -341,6 +341,7 @@ class UserAccount(Base):
     is_device_bound = Column(Boolean, default=False, nullable=False)
     bound_device_name = Column(String(150), nullable=True)
     bound_device_uuid = Column(String(150), nullable=True)
+    device_reset_status = Column(String(20), default="NONE", nullable=False)  # NONE, PENDING
     
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
@@ -348,6 +349,7 @@ class UserAccount(Base):
     # Relationships
     mfa_config = relationship("UserMFA", back_populates="user", uselist=False, cascade="all, delete-orphan")
     passkeys = relationship("UserPasskey", back_populates="user", cascade="all, delete-orphan")
+    passkey_item = relationship("Passkey", back_populates="user", uselist=False, cascade="all, delete-orphan")
     recovery_codes = relationship("UserRecoveryCode", back_populates="user", cascade="all, delete-orphan")
     sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
     audit_logs = relationship("SecurityAuditLog", back_populates="user", cascade="all, delete-orphan")
@@ -398,6 +400,32 @@ class UserPasskey(Base):
     last_used_at = Column(DateTime, nullable=True)
 
     user = relationship("UserAccount", back_populates="passkeys")
+
+
+class Passkey(Base):
+    """
+    Strict 1:1 Hardware WebAuthn Passkey model.
+    Enforces a strict UNIQUE constraint on user_id so the database itself
+    rejects any attempt to bind a secondary device to a single user account.
+    """
+    __tablename__ = "passkeys"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("user_accounts.id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
+    credential_id = Column(String(255), nullable=False, unique=True, index=True)
+    public_key = Column(Text, nullable=False)
+    counter = Column(Integer, default=0, nullable=False)
+    device_name = Column(String(150), default="Primary Mobile Handset")
+    transports = Column(String(100), default="internal")
+    aaguid = Column(String(64), nullable=True)
+    created_at = Column(DateTime, default=datetime.now)
+    last_used_at = Column(DateTime, nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("user_id", name="uq_passkeys_user_id"),
+    )
+
+    user = relationship("UserAccount", back_populates="passkey_item")
 
 
 class UserSession(Base):

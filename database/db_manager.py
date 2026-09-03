@@ -63,6 +63,8 @@ def init_db():
                     conn.execute(text("ALTER TABLE user_accounts ADD COLUMN bound_device_name VARCHAR(150)"))
                 if "bound_device_uuid" not in existing_cols:
                     conn.execute(text("ALTER TABLE user_accounts ADD COLUMN bound_device_uuid VARCHAR(150)"))
+                if "device_reset_status" not in existing_cols:
+                    conn.execute(text("ALTER TABLE user_accounts ADD COLUMN device_reset_status VARCHAR(20) DEFAULT 'NONE'"))
     except Exception as e:
         print(f"[DB MIGRATION] Notice: {e}")
     print(f"[DB] Initialized database schema at: {DATABASE_URL}")

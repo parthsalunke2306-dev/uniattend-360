@@ -38,9 +38,12 @@ const INITIAL_STUDENT_DIRECTORY: InstitutionalStudent[] = [
 
 export const AdminPortal: React.FC = () => {
   const toast = useToast();
-  const [activeTab, setActiveTab] = useState<'LIVE' | 'STUDENTS' | 'REPORTS' | 'AUDIT'>('STUDENTS');
+  const [activeTab, setActiveTab] = useState<'LIVE' | 'STUDENTS' | 'REPORTS' | 'AUDIT' | 'RESETS'>('STUDENTS');
   const [searchTerm, setSearchTerm] = useState('');
   const [students, setStudents] = useState<InstitutionalStudent[]>(INITIAL_STUDENT_DIRECTORY);
+  const [pendingResets, setPendingResets] = useState<any[]>([
+    { username: 'CHMC-DS-2024-001', full_name: 'Alex Chen', role: 'STUDENT', bound_device_name: 'Apple iPhone 14 Pro', requested_at: '10 mins ago' }
+  ]);
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
   const [newRollNo, setNewRollNo] = useState('');
   const [newName, setNewName] = useState('');
@@ -102,6 +105,38 @@ export const AdminPortal: React.FC = () => {
       students.map((s) => (s.rollNo === rollNo ? { ...s, deviceStatus: 'UNBOUND' } : s))
     );
     toast.success('Device Unbound', `${name} can link a new handset.`);
+  };
+
+  const handleApproveReset = async (studentIdStr: string) => {
+    try {
+      const res = await fetch('/admin/approve-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_id_str: studentIdStr, reason: 'Admin approved upgrade/replacement' })
+      });
+      if (res.ok) {
+        toast.success('Reset Approved', `${studentIdStr} may now pair their new device.`);
+        setPendingResets((prev) => prev.filter((r) => r.username !== studentIdStr));
+      }
+    } catch (e) {
+      toast.error('Network Error', 'Could not approve device reset.');
+    }
+  };
+
+  const handleRejectReset = async (studentIdStr: string) => {
+    try {
+      const res = await fetch('/admin/reject-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_id_str: studentIdStr, reason: 'Admin rejected reset' })
+      });
+      if (res.ok) {
+        toast.info('Reset Rejected', `${studentIdStr}'s existing passkey remains intact.`);
+        setPendingResets((prev) => prev.filter((r) => r.username !== studentIdStr));
+      }
+    } catch (e) {
+      toast.error('Network Error', 'Could not reject device reset.');
+    }
   };
 
   return (
@@ -171,6 +206,18 @@ export const AdminPortal: React.FC = () => {
           >
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Audit Ledger</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('RESETS')}
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+              activeTab === 'RESETS'
+                ? 'bg-surface text-forest shadow-sm border border-border/60'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-ochre" />
+            <span>Device Resets</span>
           </button>
         </div>
       </div>
@@ -373,6 +420,58 @@ export const AdminPortal: React.FC = () => {
               <span className="text-[10px] text-text-muted">09:00:00</span>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* 5. TAB 4: DEVICE RESET APPROVAL QUEUE (FIDO2 WebAuthn 1:1 Binding) */}
+      {activeTab === 'RESETS' && (
+        <div className="p-6 rounded-3xl bg-surface border border-border shadow-organic-card space-y-4">
+          <div className="flex items-center justify-between border-b border-border/70 pb-3">
+            <div>
+              <h3 className="text-sm font-bold text-text-primary font-serif">Device Reset Approval Queue</h3>
+              <p className="text-xs text-text-secondary">Approve lost or upgraded smartphones. Strictly enforced 1:1 hardware passkey uniqueness.</p>
+            </div>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sage-bg text-forest border border-sage/30">
+              {pendingResets.length} Pending
+            </span>
+          </div>
+
+          {pendingResets.length === 0 ? (
+            <div className="p-4 rounded-xl bg-sage-bg/40 border border-sage/30 text-xs font-mono text-forest flex items-center justify-between">
+              <span>All student passkeys in sync. No pending reset requests.</span>
+              <span className="text-[10px] text-text-muted">Database UNIQUE Constraint Active</span>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {pendingResets.map((r, idx) => (
+                <div key={idx} className="p-4 rounded-2xl bg-elevated border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-bold text-text-primary">{r.full_name}</span>
+                      <span className="px-2 py-0.5 rounded bg-sage-bg text-forest font-bold text-[10px]">{r.username}</span>
+                    </div>
+                    <p className="text-[11px] text-text-secondary">
+                      Current Handset: <b>{r.bound_device_name}</b> • Status: <span className="text-clay font-bold">PENDING_APPROVAL</span>
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleApproveReset(r.username)}
+                      className="px-3.5 py-1.5 rounded-xl bg-forest hover:bg-[#25422D] text-white font-bold text-xs transition shadow-sm"
+                    >
+                      Approve Reset
+                    </button>
+                    <button
+                      onClick={() => handleRejectReset(r.username)}
+                      className="px-3.5 py-1.5 rounded-xl bg-clay/10 hover:bg-clay/20 text-clay font-bold text-xs border border-clay/30 transition"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
