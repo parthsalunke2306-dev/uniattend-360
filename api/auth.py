@@ -87,6 +87,11 @@ class RegisterRequest(BaseModel):
     department_code: Optional[str] = Field(default="DS", examples=["DS"])
     device_fingerprint: Optional[str] = Field(default="DEV-BROWSER-CHROME-NEW")
     device_name: Optional[str] = Field(default="Web Browser")
+    semester: Optional[int] = Field(default=3)
+    batch_year: Optional[int] = Field(default=2024)
+    division: Optional[str] = Field(default="A")
+    course_name: Optional[str] = Field(default="B.Sc. Data Science")
+    uid_no: Optional[str] = None
 
 
 class BulkImportStudentItem(BaseModel):
@@ -285,11 +290,18 @@ def register_new_user(req: RegisterRequest, request: Request, db: Session = Depe
     if not is_valid:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=msg)
 
-    # 2. Check for duplicate email
+    # 2. Check for duplicate email or username
     if db.query(UserAccount).filter(UserAccount.email.ilike(clean_email)).first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"An account with email '{clean_email}' already exists. Please log in."
+        )
+
+    uname = clean_id.lower().replace("-", ".").replace(" ", ".")
+    if db.query(UserAccount).filter(UserAccount.username.ilike(uname)).first():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"An account with ID '{clean_id}' already exists. Please log in."
         )
 
     # 3. Locate Department
@@ -306,7 +318,6 @@ def register_new_user(req: RegisterRequest, request: Request, db: Session = Depe
         role_normalized = "STUDENT"
 
     pwd_hash = PasswordHasherService.hash(req.password)
-    uname = clean_id.lower().replace("-", ".").replace(" ", ".")
 
     if role_normalized == "STUDENT":
         # Check duplicate roll number
@@ -319,8 +330,8 @@ def register_new_user(req: RegisterRequest, request: Request, db: Session = Depe
                 full_name=req.full_name,
                 email=clean_email,
                 department_id=dept_id,
-                batch_year=2024,
-                semester=3
+                batch_year=req.batch_year or 2024,
+                semester=req.semester or 3
             )
             db.add(new_student)
             db.commit()

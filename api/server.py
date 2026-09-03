@@ -41,7 +41,7 @@ from api.schemas import (
     UpdateFacultyAnchorRequest, ProxyAttemptResponse,
     ResetStudentDeviceRequest, BindStudentDeviceRequest, StudentDeviceStatusResponse
 )
-from api.auth import auth_router, passkey_router
+from api.auth import auth_router, passkey_router, register_new_user, UserSessionProfile
 from api.admin import admin_router
 from api.sync import sync_router
 from api.webauthn_router import webauthn_router
@@ -71,6 +71,10 @@ app.include_router(passkey_router)
 app.include_router(admin_router)
 app.include_router(sync_router)
 app.include_router(webauthn_router)
+
+# Direct registration route aliases
+app.post("/api/auth/register", response_model=UserSessionProfile, tags=["Authentication & Security"])(register_new_user)
+app.post("/register", response_model=UserSessionProfile, tags=["Authentication & Security"])(register_new_user)
 
 # Enable CORS for frontend integration (Vercel, Localhost, Mobile)
 app.add_middleware(

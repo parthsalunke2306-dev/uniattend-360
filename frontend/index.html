@@ -4193,8 +4193,8 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    // Step 2: Save Course Details & Complete Registration
-    function handleGateRegisterStep2Submit(e) {
+    // Step 2: Save Course Details & Complete Registration via Supabase Backend API
+    async function handleGateRegisterStep2Submit(e) {
       if (e) e.preventDefault();
       if (!regStep1Data) {
         goBackToGateRegisterStep1();
@@ -4207,6 +4207,8 @@
       const rollNo = (document.getElementById('gateRegRollNo')?.value || '').trim();
       const uidNo = (document.getElementById('gateRegUidNo')?.value || '').trim();
       const errEl = document.getElementById('gateStep2Error');
+      const btnSubmit = document.getElementById('btnGateStep2Next');
+      const originalBtnText = btnSubmit ? btnSubmit.innerHTML : '<span>Submit</span>';
 
       if (!course) {
         if (errEl) {
@@ -4226,7 +4228,7 @@
 
       if (errEl) errEl.classList.add('hidden');
 
-      const { firstName, middleName, lastName, fullName, email, category } = regStep1Data;
+      const { firstName, middleName, lastName, fullName, email, pwd, category } = regStep1Data;
       let idStr = rollNo;
       let avatar = '🎓';
       let badgeClass = 'bg-[#2F5238] text-white';
@@ -4249,14 +4251,67 @@
         desc = `Course Coordinator • ${course} • Smt. C.H.M. College`;
       }
 
+      // Show loading feedback
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<span class="inline-block animate-spin mr-1.5">⟳</span><span>Saving to Cloud Database...</span>`;
+      }
+
+      let serverResponse = null;
+      try {
+        const sem = year === 'FY' ? 1 : year === 'SY' ? 3 : 5;
+        const batch = year === 'FY' ? 2025 : year === 'SY' ? 2024 : 2023;
+        const devFp = typeof getDeviceFingerprint === 'function' ? getDeviceFingerprint() : ('DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase());
+        const devNm = typeof detectedDevName !== 'undefined' ? detectedDevName : 'Web Browser';
+
+        const registerPayload = {
+          full_name: fullName,
+          email: email,
+          role: category,
+          identifier: rollNo,
+          password: pwd,
+          department_code: 'DS',
+          device_fingerprint: devFp,
+          device_name: devNm,
+          semester: sem,
+          batch_year: batch,
+          division: div,
+          course_name: course,
+          uid_no: uidNo
+        };
+
+        const res = await fetch('/api/v1/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(registerPayload)
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.detail || data.message || "Failed to register account in database.");
+        }
+        serverResponse = data;
+      } catch (apiErr) {
+        console.error("[REGISTER_ERROR]", apiErr);
+        if (errEl) {
+          errEl.innerText = apiErr.message || "Registration failed. Please check your details.";
+          errEl.classList.remove('hidden');
+        }
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = originalBtnText;
+        }
+        return;
+      }
+
       const newProfile = {
-        role: roleTitle,
-        name: fullName,
-        identifier: idStr,
-        email: email,
-        username: idStr.toLowerCase().replace(/[^a-z0-9]/g, '.'),
+        role: serverResponse.role || roleTitle,
+        name: serverResponse.full_name || fullName,
+        identifier: serverResponse.identifier || idStr,
+        email: serverResponse.email || email,
+        username: serverResponse.identifier || idStr.toLowerCase().replace(/[^a-z0-9]/g, '.'),
         avatar: avatar,
-        badge: roleTitle,
+        badge: serverResponse.role || roleTitle,
         badgeClass: badgeClass,
         department_code: 'DS',
         course: course,
@@ -4264,7 +4319,12 @@
         division: div,
         roll_no: rollNo,
         uid_no: uidNo,
-        desc: desc
+        desc: desc,
+        user_id: serverResponse.user_id,
+        token: serverResponse.token,
+        session_token: serverResponse.session_token,
+        is_device_bound: Boolean(serverResponse.is_device_bound),
+        device_reset_status: serverResponse.device_reset_status || 'NONE'
       };
 
       REGISTERED_PROFILES[idStr] = newProfile;
@@ -4272,21 +4332,24 @@
       stored[idStr] = newProfile;
       localStorage.setItem('uniattend_360_profiles', JSON.stringify(stored));
 
-      // Establish active session
+      // Establish active session with real server-authenticated tokens
       activeSession = {
         key: idStr,
-        ...newProfile,
-        token: "jwt_token_secure_" + Date.now(),
-        session_token: "sess_" + Math.random().toString(36).substring(2)
+        ...newProfile
       };
       localStorage.setItem('uniattend_360_session', JSON.stringify(activeSession));
       applySession(activeSession);
 
       showToast({ 
-        title: "Account & Course Enrolled", 
-        subtitle: `Welcome, ${firstName}! Enrolled in ${year} ${course} (Div ${div})`, 
+        title: "Account Permanently Registered!", 
+        subtitle: `Welcome, ${firstName}! Your student account has been saved to Supabase.`, 
         type: "success" 
       });
+
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = originalBtnText;
+      }
 
       completeAppUnlock('CREDENTIALS');
       renderDigitalRoster();
