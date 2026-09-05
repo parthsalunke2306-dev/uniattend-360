@@ -279,6 +279,18 @@
   
     /* NEUMORPHISM OVERRIDES */
 
+    .neu-sm-btn {
+      background: #FBFBF7 !important;
+      border: none !important;
+      box-shadow: 3px 3px 6px #dfdfdb, -3px -3px 6px #ffffff !important;
+      transition: all 0.2s ease-in-out !important;
+    }
+    .neu-sm-btn:active, button.neu-sm-btn:active {
+      box-shadow: inset 2px 2px 4px #dfdfdb, inset -2px -2px 4px #ffffff !important;
+      transform: scale(0.97) !important;
+    }
+
+
     .neu-header {
       background: #FBFBF7 !important;
       border: none !important;
@@ -473,7 +485,7 @@
             <p class="text-[10px] text-[#869288] font-mono">Upload batch from CSV / Excel</p>
           </div>
         </div>
-        <button onclick="closeBulkImportModal()" class="p-1.5 rounded-lg bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#869288] hover:text-white">
+        <button onclick="closeBulkImportModal()" class="p-1.5 rounded-lg neu-sm-btn text-[#869288]">
           <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
@@ -519,7 +531,7 @@
             <p class="text-[10px] text-[#869288] font-mono">Test live attendance on laptop & phone</p>
           </div>
         </div>
-        <button onclick="closePublicGuide()" class="p-1.5 rounded-lg bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#869288] hover:text-white">
+        <button onclick="closePublicGuide()" class="p-1.5 rounded-lg neu-sm-btn text-[#869288]">
           <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
@@ -569,7 +581,7 @@
             <p class="text-[10px] text-[#869288] font-mono">Manage MFA, Passkeys, and Active Sessions</p>
           </div>
         </div>
-        <button onclick="closeSecurityHub()" class="p-1.5 rounded-lg bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#869288] hover:text-white">
+        <button onclick="closeSecurityHub()" class="p-1.5 rounded-lg neu-sm-btn text-[#869288]">
           <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
@@ -631,7 +643,7 @@
             <p class="text-[10px] text-[#869288] font-mono">Lecture Index Budgeting (X of N) & Attendance Provisioning</p>
           </div>
         </div>
-        <button onclick="closeCreateLectureModal()" class="p-1.5 rounded-lg bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#869288] hover:text-white">
+        <button onclick="closeCreateLectureModal()" class="p-1.5 rounded-lg neu-sm-btn text-[#869288]">
           <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
@@ -710,7 +722,7 @@
         </div>
 
         <div class="flex space-x-2 pt-2">
-          <button type="button" onclick="closeCreateLectureModal()" class="flex-1 bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#5A655C] font-mono py-2 rounded-xl text-xs">
+          <button type="button" onclick="closeCreateLectureModal()" class="flex-1 neu-sm-btn text-[#5A655C] font-mono py-2 rounded-xl text-xs">
             Cancel
           </button>
           <button type="submit" class="flex-2 neu-btn text-[#4E6B52] font-bold py-2 rounded-xl text-xs font-mono shadow-lg flex items-center justify-center space-x-1.5">
@@ -737,7 +749,7 @@
             <p class="text-[10px] text-[#869288] font-mono">1-Device Lock Hardware Override & Reset</p>
           </div>
         </div>
-        <button onclick="closeEmergencyDeviceResetModal()" class="p-1.5 rounded-lg bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#869288] hover:text-white">
+        <button onclick="closeEmergencyDeviceResetModal()" class="p-1.5 rounded-lg neu-sm-btn text-[#869288]">
           <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
@@ -773,7 +785,7 @@
         </div>
 
         <div class="flex space-x-2 pt-1">
-          <button type="button" onclick="closeEmergencyDeviceResetModal()" class="flex-1 bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#5A655C] font-mono py-2 rounded-xl text-xs font-bold border border-[#E8E3DA]">
+          <button type="button" onclick="closeEmergencyDeviceResetModal()" class="flex-1 neu-sm-btn text-[#5A655C] font-mono py-2 rounded-xl text-xs font-bold border border-[#E8E3DA]">
             Cancel
           </button>
           <button type="button" onclick="confirmEmergencyDeviceReset()" class="flex-1 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 text-[#1C241E] font-mono py-2 rounded-xl text-xs font-bold shadow-lg shadow-rose-950/40">
@@ -857,7 +869,7 @@
             <p class="text-[10px] text-[#869288] font-mono">Instant multi-department enrollment without coordinator bottlenecks</p>
           </div>
         </div>
-        <button onclick="closePrincipalDirectEnrollModal()" class="p-1.5 rounded-xl bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#869288] hover:text-white border border-[#E8E3DA] transition">
+        <button onclick="closePrincipalDirectEnrollModal()" class="p-1.5 rounded-xl neu-sm-btn text-[#869288] border border-[#E8E3DA] transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -929,7 +941,7 @@
 
         <!-- Buttons -->
         <div class="flex space-x-2.5 pt-1">
-          <button type="button" onclick="closePrincipalDirectEnrollModal()" class="flex-1 bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#5A655C] font-mono py-2 rounded-xl text-xs font-semibold border border-[#E8E3DA] transition">
+          <button type="button" onclick="closePrincipalDirectEnrollModal()" class="flex-1 neu-sm-btn text-[#5A655C] font-mono py-2 rounded-xl text-xs font-semibold border border-[#E8E3DA] transition">
             Cancel
           </button>
           <button type="submit" class="flex-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-[#1C241E] font-mono py-2 rounded-xl text-xs font-bold shadow-lg shadow-sm/50 flex items-center justify-center space-x-1.5 transition">
@@ -1286,7 +1298,7 @@
             <p class="text-[10px] text-[#8D3F30]/80 font-mono">Permanent revocation of credentials, passkeys, and enrollment records</p>
           </div>
         </div>
-        <button onclick="closePrincipalExpelModal()" class="p-1.5 rounded-xl bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#869288] hover:text-white border border-[#E8E3DA] transition">
+        <button onclick="closePrincipalExpelModal()" class="p-1.5 rounded-xl neu-sm-btn text-[#869288] border border-[#E8E3DA] transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -1339,7 +1351,7 @@
 
         <!-- Action Buttons -->
         <div class="flex space-x-2.5 pt-1">
-          <button type="button" onclick="closePrincipalExpelModal()" class="flex-1 bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#5A655C] font-mono py-2 rounded-xl text-xs font-semibold border border-[#E8E3DA] transition">
+          <button type="button" onclick="closePrincipalExpelModal()" class="flex-1 neu-sm-btn text-[#5A655C] font-mono py-2 rounded-xl text-xs font-semibold border border-[#E8E3DA] transition">
             Cancel
           </button>
           <button id="expelExecuteBtn" type="button" disabled onclick="executePrincipalExpulsion()" class="flex-2 bg-rose-600/40 text-[#869288] cursor-not-allowed font-mono py-2 rounded-xl text-xs font-bold shadow-lg flex items-center justify-center space-x-1.5 transition">
@@ -1519,7 +1531,7 @@
 
         <!-- Sticky Modal Footer -->
         <div class="flex items-center space-x-2.5 pt-2 border-t border-[#E8E3DA]">
-          <button type="button" onclick="closeStudentProfileModal()" class="flex-1 bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#5A655C] font-mono py-2 rounded-xl text-xs font-semibold border border-[#E8E3DA] transition">
+          <button type="button" onclick="closeStudentProfileModal()" class="flex-1 neu-sm-btn text-[#5A655C] font-mono py-2 rounded-xl text-xs font-semibold border border-[#E8E3DA] transition">
             Cancel
           </button>
           <button type="submit" id="spSaveBtn" class="flex-2 neu-btn text-[#4E6B52] font-mono py-2 rounded-xl text-xs font-bold shadow-lg shadow-sm flex items-center justify-center space-x-1.5 transition">
@@ -2279,7 +2291,7 @@
 
 
       <!-- Location chip (always visible) -->
-      <div class="flex items-center space-x-1 text-[10px] sm:text-xs font-mono text-[#869288] bg-[#F5F2EB] px-2.5 py-1.5 rounded-xl border border-[#E8E3DA] self-start sm:self-auto shrink-0">
+      <div class="flex items-center space-x-1 text-[10px] sm:text-xs font-mono text-[#869288] neu-sm-btn px-2.5 py-1.5 rounded-xl self-start sm:self-auto shrink-0">
         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#4E6B52]"></i>
         <span><b>Ulhasnagar</b></span>
       </div>
@@ -2932,7 +2944,7 @@
             </h3>
 
             <div class="space-y-2">
-              <button onclick="openBulkImportModal()" class="w-full p-2.5 rounded-xl bg-[#F5F2EB] hover:bg-[#F5F2EB] border border-[#E8E3DA] text-[#1C241E] text-left text-xs font-sans flex items-center justify-between transition">
+              <button onclick="openBulkImportModal()" class="w-full p-2.5 rounded-xl neu-sm-btn text-[#1C241E] text-left text-xs font-sans flex items-center justify-between transition">
                 <div class="flex items-center space-x-2">
                   <span class="text-base">📥</span>
                   <div>
@@ -2943,7 +2955,7 @@
                 <i data-lucide="chevron-right" class="w-4 h-4 text-[#9AA49C]"></i>
               </button>
 
-              <button onclick="showToast({ title: 'Export Started', subtitle: 'Generating master department spreadsheet...', type: 'info' })" class="w-full p-2.5 rounded-xl bg-[#F5F2EB] hover:bg-[#F5F2EB] border border-[#E8E3DA] text-[#1C241E] text-left text-xs font-sans flex items-center justify-between transition">
+              <button onclick="showToast({ title: 'Export Started', subtitle: 'Generating master department spreadsheet...', type: 'info' })" class="w-full p-2.5 rounded-xl neu-sm-btn text-[#1C241E] text-left text-xs font-sans flex items-center justify-between transition">
                 <div class="flex items-center space-x-2">
                   <span class="text-base">📊</span>
                   <div>
@@ -2954,7 +2966,7 @@
                 <i data-lucide="download" class="w-4 h-4 text-[#9AA49C]"></i>
               </button>
 
-              <button onclick="showToast({ title: 'Cohort Compliant', subtitle: '0 defaulters found (<75% threshold).', type: 'success' })" class="w-full p-2.5 rounded-xl bg-[#F5F2EB] hover:bg-[#F5F2EB] border border-[#E8E3DA] text-[#1C241E] text-left text-xs font-sans flex items-center justify-between transition">
+              <button onclick="showToast({ title: 'Cohort Compliant', subtitle: '0 defaulters found (<75% threshold).', type: 'success' })" class="w-full p-2.5 rounded-xl neu-sm-btn text-[#1C241E] text-left text-xs font-sans flex items-center justify-between transition">
                 <div class="flex items-center space-x-2">
                   <span class="text-base">✉️</span>
                   <div>
@@ -2965,7 +2977,7 @@
                 <i data-lucide="send" class="w-4 h-4 text-[#9AA49C]"></i>
               </button>
 
-              <button onclick="openSecurityHub()" class="w-full p-2.5 rounded-xl bg-[#F5F2EB] hover:bg-[#F5F2EB] border border-[#E8E3DA] text-[#1C241E] text-left text-xs font-sans flex items-center justify-between transition">
+              <button onclick="openSecurityHub()" class="w-full p-2.5 rounded-xl neu-sm-btn text-[#1C241E] text-left text-xs font-sans flex items-center justify-between transition">
                 <div class="flex items-center space-x-2">
                   <span class="text-base">🛡️</span>
                   <div>
@@ -3103,7 +3115,7 @@
             </button>
 
             <!-- Bulk Ingest CSV/Excel Button -->
-            <button onclick="openBulkImportModal()" class="px-3 py-2 rounded-xl bg-[#F5F2EB] hover:bg-[#EAE5DA] border border-[#E8E3DA] text-[#1C241E] font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
+            <button onclick="openBulkImportModal()" class="px-3 py-2 rounded-xl neu-sm-btn text-[#1C241E] font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
               <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-[#4E6B52]"></i>
               <span>📥 Bulk CSV</span>
             </button>
@@ -3280,7 +3292,7 @@
 
           <div class="flex flex-wrap items-center gap-2">
             <!-- Bulk Ingest CSV Button -->
-            <button onclick="openBulkImportModal()" class="px-3 py-2 rounded-xl bg-[#F5F2EB] hover:bg-[#F5F2EB] border border-[#E8E3DA] text-[#1C241E] font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
+            <button onclick="openBulkImportModal()" class="px-3 py-2 rounded-xl neu-sm-btn text-[#1C241E] font-mono text-xs font-semibold flex items-center space-x-1.5 transition">
               <i data-lucide="file-up" class="w-3.5 h-3.5 text-[#4E6B52]"></i>
               <span>📥 Ingest CSV</span>
             </button>
@@ -3372,7 +3384,7 @@
               <option value="DEVICE_RESET">Hardware Device Resets</option>
               <option value="LOGIN">Logins & MFA Events</option>
             </select>
-            <button onclick="renderPrincipalAuditLedger()" class="p-1.5 rounded-xl bg-[#F5F2EB] hover:bg-[#F5F2EB] text-[#5A655C] border border-[#E8E3DA] text-xs font-mono flex items-center space-x-1" title="Refresh Audit Log">
+            <button onclick="renderPrincipalAuditLedger()" class="p-1.5 rounded-xl neu-sm-btn text-[#5A655C] border border-[#E8E3DA] text-xs font-mono flex items-center space-x-1" title="Refresh Audit Log">
               <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
               <span>Refresh</span>
             </button>
@@ -9141,7 +9153,7 @@ function renderStudentTimetable() {
             </span>
             ${isRescheduled ? '<span class="bg-amber-500/20 text-amber-800 border border-amber-500/40 text-[8px] font-mono font-bold px-1.5 py-0.2 rounded animate-pulse">UPDATED</span>' : ''}
           </div>
-          <button onclick="downloadSlotJSON('${s.id}', '${selectedTimetableDay}')" title="Export Session JSON" class="p-1.5 rounded-lg bg-[#F5F2EB] hover:bg-emerald-500/20 text-[#4E6B52] border border-[#E8E3DA] transition flex items-center space-x-1 text-[9px] font-mono font-bold">
+          <button onclick="downloadSlotJSON('${s.id}', '${selectedTimetableDay}')" title="Export Session JSON" class="p-1.5 rounded-lg neu-sm-btn text-[#4E6B52] transition flex items-center space-x-1 text-[9px] font-mono font-bold">
             <span>📄 JSON</span>
           </button>
         </div>
@@ -9216,10 +9228,10 @@ function renderFacultyTimetable() {
           </div>
         </div>
         <div class="flex items-center space-x-2 self-end sm:self-auto">
-          <button onclick="downloadSlotJSON('${s.id}', '${dayName}')" class="px-2 py-1 rounded-lg bg-[#F5F2EB] hover:bg-emerald-500/20 text-[#4E6B52] border border-[#E8E3DA] text-[9px] font-mono font-bold transition flex items-center space-x-1">
+          <button onclick="downloadSlotJSON('${s.id}', '${dayName}')" class="px-2 py-1 rounded-lg neu-sm-btn text-[#4E6B52] text-[9px] font-mono font-bold transition flex items-center space-x-1">
             <span>📄 JSON</span>
           </button>
-          <button onclick="openRescheduleModal('${s.id}', '${dayName}')" class="px-2 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 border border-amber-500/30 text-[9px] font-mono font-bold transition">
+          <button onclick="openRescheduleModal('${s.id}', '${dayName}')" class="px-2 py-1 rounded-lg neu-sm-btn text-amber-800 text-[9px] font-mono font-bold transition">
             ⚡ Reschedule
           </button>
         </div>
@@ -9234,7 +9246,7 @@ function renderFacultyTimetable() {
           <i data-lucide="calendar" class="w-4 h-4 text-[#4E6B52]"></i>
           <h3 class="font-bold text-[#1C241E] text-xs sm:text-sm">Today's Teaching Schedule (${dayName})</h3>
         </div>
-        <button onclick="downloadDepartmentJSON('${currentFaculty}')" class="px-2.5 py-1 rounded-lg bg-[#4E6B52]/10 hover:bg-[#4E6B52]/20 text-[#4E6B52] border border-[#4E6B52]/30 text-[10px] font-mono font-bold flex items-center space-x-1 transition">
+        <button onclick="downloadDepartmentJSON('${currentFaculty}')" class="px-2.5 py-1 rounded-lg neu-sm-btn text-[#4E6B52] text-[10px] font-mono font-bold flex items-center space-x-1 transition">
           <span>📥 Export My JSON Schedule (.json)</span>
         </button>
       </div>
@@ -9299,10 +9311,10 @@ function renderCoordinatorTimetableGrid() {
           </div>
         ` : ''}
         <div class="pt-2 border-t border-[#E8E3DA] flex items-center justify-between gap-1.5">
-          <button onclick="downloadSlotJSON('${s.id}', '${coordTimetableDay}')" class="flex-1 py-1 rounded-lg bg-[#F5F2EB] hover:bg-emerald-500/20 text-[#4E6B52] border border-[#E8E3DA] text-[9px] font-mono font-bold transition flex items-center justify-center space-x-1">
+          <button onclick="downloadSlotJSON('${s.id}', '${coordTimetableDay}')" class="flex-1 py-1 rounded-lg neu-sm-btn text-[#4E6B52] text-[9px] font-mono font-bold transition flex items-center justify-center space-x-1">
             <span>📄 JSON</span>
           </button>
-          <button onclick="openRescheduleModal('${s.id}', '${coordTimetableDay}')" class="flex-1 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 border border-indigo-500/30 text-[9px] font-mono font-bold transition flex items-center justify-center space-x-1">
+          <button onclick="openRescheduleModal('${s.id}', '${coordTimetableDay}')" class="flex-1 py-1 rounded-lg neu-sm-btn text-indigo-700 text-[9px] font-mono font-bold transition flex items-center justify-center space-x-1">
             <span>🔄 Reschedule</span>
           </button>
         </div>
