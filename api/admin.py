@@ -925,3 +925,113 @@ def get_admin_overview_stats(
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
+
+
+# ==========================================
+# 6. GENERIC USER PROVISIONING (ADMIN STAFF)
+# ==========================================
+
+@admin_router.post(
+    "/users/provision",
+    response_model=Dict[str, Any],
+    status_code=status.HTTP_201_CREATED,
+    summary="Admin Staff Direct User Provisioning"
+)
+def provision_new_user(
+    req: AdminProvisionUserRequest,
+    request: Request,
+    current_user: UserAccount = Depends(require_role(["PRINCIPAL", "ADMIN", "ADMIN_STAFF"])),
+    db: Session = Depends(get_db)
+):
+    """
+    Directly provision a new User Account (Student/Faculty/Admin Staff).
+    For STUDENTS, it also initializes the Student dimension record.
+    """
+    clean_id = req.identifier.strip().upper()
+    username = clean_id.lower().replace(" ", "").replace("-", ".")
+    
+    # Ensure User doesn't exist
+    existing = db.query(UserAccount).filter((UserAccount.username == username) | (UserAccount.email == req.email.strip().lower())).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"User with username {username} or email already exists."
+        )
+
+    pwd_hash = PasswordHasherService.get_password_hash(req.initial_password)
+
+    dept = db.query(Department).filter(Department.dept_code == req.department_code).first()
+    dept_id = dept.id if dept else None
+
+    # Determine role
+    cat_upper = req.category.strip().upper()
+    role_map = {
+        'STUDENT': 'STUDENT',
+        'FACULTY': 'TEACHER',
+        'COORDINATOR': 'COORDINATOR',
+        'ADMIN_STAFF': 'ADMIN_STAFF'
+    }
+    user_role = role_map.get(cat_upper, 'STUDENT')
+
+    student_id = None
+    if cat_upper == 'STUDENT':
+        # Create student first
+        new_student = Student(
+            student_id_str=clean_id,
+            full_name=req.full_name.strip(),
+            email=req.email.strip().lower(),
+            department_id=dept_id,
+            batch_year=req.batch_year,
+            semester=req.semester
+        )
+        db.add(new_student)
+        db.flush()
+        student_id = new_student.id
+        
+        course = db.query(Course).first()
+        if course:
+            summary = StudentCourseSummary(
+                student_id=student_id,
+                course_id=course.id,
+                semester=req.semester,
+                total_classes=0,
+                attended_classes=0
+            )
+            db.add(summary)
+
+    new_user = UserAccount(
+        username=username,
+        email=req.email.strip().lower(),
+        full_name=req.full_name.strip(),
+        role=user_role,
+        department_id=dept_id,
+        student_id=student_id,
+        password_hash=pwd_hash,
+        is_active=True
+    )
+    db.add(new_user)
+    db.flush()
+
+    ip_addr = request.client.host if request.client else "127.0.0.1"
+    audit = SecurityAuditLog(
+        user_id=new_user.id,
+        event_type="ADMIN_USER_PROVISIONED",
+        severity="INFO",
+        ip_address=ip_addr,
+        details=json.dumps({
+            "category": req.category,
+            "identifier": clean_id,
+            "department": req.department_code,
+            "authorized_by": req.authorized_by,
+            "expedited": req.expedited
+        })
+    )
+    db.add(audit)
+    db.commit()
+
+    return {
+        "status": "SUCCESS",
+        "message": f"Account provisioned for {req.full_name} ({clean_id})",
+        "user_id": new_user.id
+    }
+
