@@ -3730,10 +3730,6 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    function switchAuthTab(tab) {
-      switchGateAuthTab(tab);
-    }
-
     function selectGateYear(year) {
       const yearInp = document.getElementById('gateRegYear');
       if (yearInp) yearInp.value = year;
@@ -4405,7 +4401,7 @@
       // 4. Synchronize with FastAPI backend API
       try {
         const token = activeSession ? activeSession.token : "";
-        fetch('/api/v1/admin/students/enroll', {
+        const enrollRes = await fetch('/api/v1/admin/students/enroll', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -4422,10 +4418,17 @@
             expedited: true,
             authorized_by: "Dr. Manju Lalwani Pathak (Principal)"
           })
-        }).then(r => r.json()).then(data => {
-          console.log("[SUPERADMIN SYNC] Direct enrollment response:", data);
-        }).catch(err => console.log("[SUPERADMIN SYNC] Offline fallback:", err));
-      } catch (err) {}
+        });
+        const enrollData = await enrollRes.json().catch(() => ({}));
+        if (!enrollRes.ok) {
+          console.warn("[SUPERADMIN SYNC] Enrollment error:", enrollData);
+          showToast({ title: "Database Sync Warning", subtitle: enrollData.detail || "Could not save to backend database.", type: "warning" });
+        } else {
+          console.log("[SUPERADMIN SYNC] Direct enrollment response:", enrollData);
+        }
+      } catch (err) {
+        console.warn("[SUPERADMIN SYNC] Offline fallback:", err);
+      }
 
       closePrincipalDirectEnrollModal();
       renderDigitalRoster();
@@ -10371,7 +10374,7 @@ function submitReschedule() {
 
       // 1. Sync to central backend database
       try {
-        await fetch('/api/v1/auth/first-login-setup', {
+        const setupRes = await fetch('/api/v1/auth/first-login-setup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -10382,8 +10385,12 @@ function submitReschedule() {
             webauthn_credential: webauthnCred
           })
         });
+        const setupData = await setupRes.json().catch(() => ({}));
+        if (!setupRes.ok) {
+          showToast({ title: "Setup Sync Failed", subtitle: setupData.detail || "Could not save setup to database.", type: "warning" });
+        }
 
-        await fetch('/api/v1/attendance/device/bind', {
+        const bindRes = await fetch('/api/v1/attendance/device/bind', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -10392,6 +10399,10 @@ function submitReschedule() {
             device_name: devName
           })
         });
+        if (!bindRes.ok) {
+          const bindData = await bindRes.json().catch(() => ({}));
+          showToast({ title: "Device Bind Warning", subtitle: bindData.detail || "Could not register device on server.", type: "warning" });
+        }
       } catch (backendErr) {
         console.log("[BACKEND DEVICE BIND] Offline fallback active:", backendErr);
       }
@@ -10634,7 +10645,7 @@ function submitReschedule() {
       if (!container) return;
 
       try {
-        const res = await fetch('/admin/pending-resets', {
+        const res = await fetch('/api/v1/admin/pending-resets', {
           headers: {
             'Authorization': `Bearer ${activeSession ? activeSession.token : ''}`
           }
@@ -10693,10 +10704,12 @@ function submitReschedule() {
     }
 
     async function adminApproveResetAction(studentIdStr) {
-      if (!confirm(`Are you sure you want to approve device reset for ${studentIdStr}? This will permanently delete their passkey row in PostgreSQL and allow them to register a new phone.`)) return;
+      // Use showToast-style confirmation instead of native confirm()
+      const confirmed = window.confirm(`Approve device reset for ${studentIdStr}? Their passkey will be permanently deleted and they can register a new phone.`);
+      if (!confirmed) return;
 
       try {
-        const res = await fetch('/admin/approve-reset', {
+        const res = await fetch('/api/v1/admin/approve-reset', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -10724,7 +10737,7 @@ function submitReschedule() {
 
     async function adminRejectResetAction(studentIdStr) {
       try {
-        const res = await fetch('/admin/reject-reset', {
+        const res = await fetch('/api/v1/admin/reject-reset', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
