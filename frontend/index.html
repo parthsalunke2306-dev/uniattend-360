@@ -3518,7 +3518,7 @@
     // Default Seed Profiles (Faculty, Coordinator & Administrative Infrastructure Preserved)
     const DEFAULT_PROFILES = {
       "faculty.razia": {
-        role: "TEACHER_RAZIA",
+        role: "TEACHER",
         name: "Miss Razia Khan",
         identifier: "Faculty (Data Science)",
         email: "razia.khan@chmc.edu",
@@ -3535,7 +3535,7 @@
         ]
       },
       "faculty.anshul": {
-        role: "TEACHER_ANSHUL",
+        role: "TEACHER",
         name: "Mr. Anshul Chimnani",
         identifier: "Faculty (Data Science)",
         email: "anshul.chimnani@chmc.edu",
@@ -3550,7 +3550,7 @@
         ]
       },
       "faculty.kalyani": {
-        role: "TEACHER_KALYANI",
+        role: "TEACHER",
         name: "Miss Kalyani Patil",
         identifier: "Faculty (Data Science)",
         email: "kalyani.patil@chmc.edu",
@@ -3690,6 +3690,9 @@
         try {
           const parsedSession = JSON.parse(saved);
           activeSession = parsedSession;
+          // Bug Fix: Explicitly dismiss lock screen when restoring a saved session
+          const lockScreen = document.getElementById('appBiometricLockScreen');
+          if (lockScreen) lockScreen.classList.add('hidden');
           applySession(activeSession);
         } catch (e) {
           handleLogout();
@@ -9662,7 +9665,8 @@ function submitReschedule() {
                 <div class="space-y-0.5">
                   <span class="inline-flex items-center text-[9px] font-mono font-bold text-amber-800 bg-amber-500/20 px-1.5 py-0.2 rounded border border-amber-500/40">
                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1 animate-pulse"></span>
-                    Temp: ${initialPwd}
+                    Temp: <span class="pwd-mask ml-1" data-pwd="${initialPwd}">••••••••</span>
+                    <button onclick="togglePwdReveal(this)" class="ml-1 text-amber-700 hover:text-amber-900 underline text-[8px]">Show</button>
                   </span>
                   <div class="text-[8px] text-[#869288] font-mono">Pending 1st Login</div>
                 </div>
@@ -9710,6 +9714,14 @@ function submitReschedule() {
       }).join('');
 
       if (window.lucide) lucide.createIcons();
+    }
+
+    function togglePwdReveal(btn) {
+      const maskSpan = btn.previousElementSibling;
+      if (!maskSpan) return;
+      const isHidden = maskSpan.innerText === '••••••••';
+      maskSpan.innerText = isHidden ? maskSpan.dataset.pwd : '••••••••';
+      btn.innerText = isHidden ? 'Hide' : 'Show';
     }
 
     function setAdminEnrollCategory(cat = 'STUDENT') {
