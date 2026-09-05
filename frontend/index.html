@@ -34,7 +34,7 @@
           },
           colors: {
             canvas: {
-              DEFAULT: '#FBFBF7',
+              DEFAULT: '#E6E4DD',
               subtle: '#F4F0E8',
               muted: '#EFEAE0',
             },
@@ -83,7 +83,7 @@
               text: '#8C5B14',
             },
             stitch: {
-              bg: '#FBFBF7',
+              bg: '#E6E4DD',
               surface: '#FFFFFF',
               card: '#FFFFFF',
               border: '#E8E3DA',
@@ -95,7 +95,7 @@
               rose: '#8D3F30',
             },
             ios: {
-              bg: '#FBFBF7',
+              bg: '#E6E4DD',
               card: '#FFFFFF',
               cardTertiary: '#F5F2EB',
               separator: '#E8E3DA',
@@ -149,7 +149,7 @@
 
   <style>
     body {
-      background-color: #FBFBF7;
+      background-color: #E6E4DD;
       background-image: 
         radial-gradient(circle at 10% 0%, rgba(47, 82, 56, 0.03) 0%, transparent 40%),
         radial-gradient(circle at 90% 100%, rgba(194, 130, 34, 0.02) 0%, transparent 45%);
@@ -189,7 +189,7 @@
     }
     /* Header must be fully solid so the dropdown it contains has a clean backdrop */
     header.glass-panel {
-      background: #FBFBF7;
+      background: #E6E4DD;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
     }
@@ -278,56 +278,46 @@
     }
   
     /* NEUMORPHISM OVERRIDES */
-
-    .neu-sm-btn {
-      background: #FBFBF7 !important;
-      border: none !important;
-      box-shadow: 3px 3px 6px #dfdfdb, -3px -3px 6px #ffffff !important;
-      transition: all 0.2s ease-in-out !important;
-    }
-    .neu-sm-btn:active, button.neu-sm-btn:active {
-      box-shadow: inset 2px 2px 4px #dfdfdb, inset -2px -2px 4px #ffffff !important;
-      transform: scale(0.97) !important;
-    }
-
-
-    .neu-header {
-      background: #FBFBF7 !important;
-      border: none !important;
-      box-shadow: 0px 10px 20px #dfdfdb, inset 0px -2px 4px #ffffff !important;
-    }
-
-    .glass-panel {
-      background: #FBFBF7 !important;
+    .glass-panel, .neu-header {
+      background: #E6E4DD !important;
       border: none !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
-      box-shadow: 12px 12px 24px #dfdfdb, -12px -12px 24px #ffffff !important;
+      box-shadow: 14px 14px 28px #c8c6c0, -14px -14px 28px #ffffff !important;
     }
     .neu-pressed {
-      background: #FBFBF7 !important;
+      background: #E6E4DD !important;
       border: none !important;
-      box-shadow: inset 6px 6px 12px #dfdfdb, inset -6px -6px 12px #ffffff !important;
+      box-shadow: inset 7px 7px 14px #c8c6c0, inset -7px -7px 14px #ffffff !important;
       outline: none !important;
     }
     .neu-pressed:focus {
-      box-shadow: inset 8px 8px 16px #d5d5d1, inset -8px -8px 16px #ffffff !important;
+      box-shadow: inset 10px 10px 20px #bebcb7, inset -10px -10px 20px #ffffff !important;
     }
     .neu-btn {
-      background: #FBFBF7 !important;
+      background: #E6E4DD !important;
       color: #4E6B52 !important;
       border: none !important;
-      box-shadow: 7px 7px 14px #dfdfdb, -7px -7px 14px #ffffff !important;
+      box-shadow: 8px 8px 16px #c8c6c0, -8px -8px 16px #ffffff !important;
       transition: all 0.2s ease-in-out !important;
       font-weight: 800 !important;
     }
     .neu-btn:active, .neu-btn.active-pressed {
-      box-shadow: inset 4px 4px 8px #dfdfdb, inset -4px -4px 8px #ffffff !important;
+      box-shadow: inset 5px 5px 10px #c8c6c0, inset -5px -5px 10px #ffffff !important;
+      transform: scale(0.97) !important;
+    }
+    .neu-sm-btn {
+      background: #E6E4DD !important;
+      border: none !important;
+      box-shadow: 5px 5px 10px #c8c6c0, -5px -5px 10px #ffffff !important;
+      transition: all 0.2s ease-in-out !important;
+    }
+    .neu-sm-btn:active, button.neu-sm-btn:active {
+      box-shadow: inset 3px 3px 6px #c8c6c0, inset -3px -3px 6px #ffffff !important;
       transform: scale(0.97) !important;
     }
     .neu-btn i { color: #4E6B52 !important; }
-
-  </style>
+</style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-[#4E6B52] selection:text-white text-[#1C241E]">
 
@@ -338,7 +328,7 @@
   <!-- ============================================================== -->
   <!-- MANDATORY APP-LAUNCH GATE & AUTHENTICATION PORTAL (UNIFIED)    -->
   <!-- ============================================================== -->
-  <div id="appBiometricLockScreen" class="fixed top-0 left-0 w-screen h-screen z-[99998] flex items-center justify-center p-3 sm:p-4 bg-[#FBFBF7] transition-opacity duration-300 overflow-y-auto">
+  <div id="appBiometricLockScreen" class="fixed top-0 left-0 w-screen h-screen z-[99998] flex items-center justify-center p-3 sm:p-4 bg-[#E6E4DD] transition-opacity duration-300 overflow-y-auto">
     <div class="glass-panel w-full max-w-sm sm:max-w-md p-5 sm:p-7 rounded-3xl border border-[#D5E4D8] shadow-2xl space-y-4 text-center relative overflow-hidden max-h-[92vh] overflow-y-auto m-auto">
       
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/20 rounded-full blur-2xl pointer-events-none"></div>
@@ -347,7 +337,7 @@
       <!-- Header with Logo box and College Name (Matching Sketch) -->
       <div class="text-center space-y-1.5 relative z-10">
         <div class="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5 mx-auto  flex items-center justify-center">
-          <div class="h-full w-full bg-[#FBFBF7] rounded-[14px] flex items-center justify-center">
+          <div class="h-full w-full bg-[#E6E4DD] rounded-[14px] flex items-center justify-center">
             <i data-lucide="shield-check" class="w-6 h-6 text-[#4E6B52]"></i>
           </div>
         </div>
@@ -853,7 +843,7 @@
   <!-- PRINCIPAL SUPER-ADMIN DIRECT ENROLLMENT MODAL -->
   <!-- ============================================== -->
   <div id="principalDirectEnrollModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-[#4E6B52]/40 shadow-2xl space-y-4 relative bg-gradient-to-b from-[#FBFBF7] to-[#EDF4EF]">
+    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-[#4E6B52]/40 shadow-2xl space-y-4 relative bg-gradient-to-b from-[#E6E4DD] to-[#EDF4EF]">
       
       <!-- Modal Header -->
       <div class="flex items-center justify-between border-b border-[#E8E3DA] pb-3">
@@ -955,7 +945,7 @@
   <!-- ADMIN STAFF DIRECT INSTITUTIONAL ONBOARDING MODAL -->
   <!-- ============================================== -->
   <div id="adminDirectEnrollModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-teal-500/40 shadow-2xl space-y-4 relative bg-[#FBFBF7] text-left max-h-[92vh] overflow-y-auto">
+    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-teal-500/40 shadow-2xl space-y-4 relative bg-[#E6E4DD] text-left max-h-[92vh] overflow-y-auto">
       
       <!-- Modal Header -->
       <div class="flex items-center justify-between border-b border-[#E8E3DA] pb-3">
@@ -1097,7 +1087,7 @@
   <!-- ADMIN STAFF ONBOARDING SUCCESS CONFIRMATION POPUP -->
   <!-- ============================================== -->
   <div id="adminEnrollSuccessModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-md p-5 sm:p-6 rounded-3xl border border-emerald-500/50 shadow-2xl space-y-4 relative bg-[#FBFBF7] text-left animate-in fade-in zoom-in-95 duration-200">
+    <div class="glass-panel w-full max-w-md p-5 sm:p-6 rounded-3xl border border-emerald-500/50 shadow-2xl space-y-4 relative bg-[#E6E4DD] text-left animate-in fade-in zoom-in-95 duration-200">
       
       <!-- Top Success Icon & Heading -->
       <div class="text-center space-y-1 pb-3 border-b border-[#E8E3DA]">
@@ -1165,7 +1155,7 @@
   <!-- CROSS-DEVICE PASSKEY 2-STEP VERIFICATION MODAL (MICROSOFT AUTHENTICATOR STYLE) -->
   <!-- ============================================== -->
   <div id="passkeyCrossDeviceVerificationModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-[#4E6B52]/40 shadow-2xl space-y-4 relative bg-[#FBFBF7] text-left">
+    <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-[#4E6B52]/40 shadow-2xl space-y-4 relative bg-[#E6E4DD] text-left">
       <!-- Close Button -->
       <button 
         type="button" 
@@ -1220,7 +1210,7 @@
   <!-- FIRST LOGIN SETUP & HARDWARE DEVICE BINDING MODAL -->
   <!-- ============================================== -->
   <div id="firstLoginSetupModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-[#4E6B52]/40 shadow-2xl space-y-4 relative bg-[#FBFBF7] text-left">
+    <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-[#4E6B52]/40 shadow-2xl space-y-4 relative bg-[#E6E4DD] text-left">
       <!-- Dismiss Modal Button -->
       <button 
         type="button" 
@@ -1282,7 +1272,7 @@
   <!-- PRINCIPAL SUPER-ADMIN STUDENT EXPULSION MODAL -->
   <!-- ============================================== -->
   <div id="principalExpelStudentModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#F5F2EB] backdrop-blur-md hidden transition-all duration-300">
-    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-rose-500/50 shadow-2xl space-y-3.5 relative bg-gradient-to-b from-[#FBFBF7] to-rose-50 neon-border-rose">
+    <div class="glass-panel w-full max-w-lg p-5 rounded-3xl border border-rose-500/50 shadow-2xl space-y-3.5 relative bg-gradient-to-b from-[#E6E4DD] to-rose-50 neon-border-rose">
       
       <!-- Modal Header -->
       <div class="flex items-center justify-between border-b border-rose-500/30 pb-2.5">
@@ -1560,7 +1550,7 @@
         <!-- Left: Logo, College Title & App Name -->
         <div class="flex items-center space-x-3 min-w-0">
           <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-emerald-400 p-0.5  flex items-center justify-center shrink-0">
-            <div class="h-full w-full bg-[#FBFBF7] rounded-[14px] flex items-center justify-center">
+            <div class="h-full w-full bg-[#E6E4DD] rounded-[14px] flex items-center justify-center">
               <i data-lucide="radar" class="w-4 h-4 sm:w-5 sm:h-5 text-[#4E6B52]"></i>
             </div>
           </div>
@@ -2420,7 +2410,7 @@
         </div>
 
         <!-- 2. ATTENDANCE LIFECYCLE CONTROL STRIP (START / PAUSE / RESUME / STOP) -->
-        <div class="glass-panel p-3 sm:p-4 rounded-2xl border border-[#4E6B52]/20 bg-gradient-to-r from-[#F5F2EB] via-[#FBFBF7] to-[#EDF4EF] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="glass-panel p-3 sm:p-4 rounded-2xl border border-[#4E6B52]/20 bg-gradient-to-r from-[#F5F2EB] via-[#E6E4DD] to-[#EDF4EF] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center space-x-3">
             <div class="flex items-center space-x-2">
               <span class="text-[10px] font-mono text-[#4E6B52] uppercase tracking-wider font-semibold">Session Status:</span>
@@ -3137,7 +3127,7 @@
 
       
       <!-- 2B. Admin-Approved Device Reset Requests Queue (FIDO2 Enclave Governance) -->
-      <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3 border border-[#E8E3DA]  bg-gradient-to-b from-[#FBFBF7] to-[#F5F2EB]">
+      <div class="glass-panel p-4 sm:p-5 rounded-2xl space-y-3 border border-[#E8E3DA]  bg-gradient-to-b from-[#E6E4DD] to-[#F5F2EB]">
         <div class="flex items-center justify-between border-b border-[#E8E3DA] pb-2.5">
           <div class="flex items-center space-x-2">
             <i data-lucide="smartphone-nfc" class="w-4 h-4 text-amber-700"></i>
