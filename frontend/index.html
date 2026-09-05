@@ -287,8 +287,8 @@
   <!-- ============================================================== -->
   <!-- MANDATORY APP-LAUNCH GATE & AUTHENTICATION PORTAL (UNIFIED)    -->
   <!-- ============================================================== -->
-  <div id="appBiometricLockScreen" class="fixed inset-0 z-[99998] flex items-center justify-center p-3 sm:p-4 bg-[#FAFAF7] transition-all duration-300 overflow-y-auto">
-    <div class="glass-panel w-full max-w-sm sm:max-w-md p-5 sm:p-7 rounded-3xl border border-[#D5E4D8] shadow-2xl space-y-4 text-center relative overflow-hidden max-h-[92vh] overflow-y-auto">
+  <div id="appBiometricLockScreen" class="fixed top-0 left-0 w-screen h-screen z-[99998] flex items-center justify-center p-3 sm:p-4 bg-[#FAFAF7] transition-opacity duration-300 overflow-y-auto">
+    <div class="glass-panel w-full max-w-sm sm:max-w-md p-5 sm:p-7 rounded-3xl border border-[#D5E4D8] shadow-2xl space-y-4 text-center relative overflow-hidden max-h-[92vh] overflow-y-auto m-auto">
       
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/20 rounded-full blur-2xl pointer-events-none"></div>
       <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-600/20 rounded-full blur-2xl pointer-events-none"></div>
@@ -1494,6 +1494,11 @@
   </div>
 
 
+
+  <!-- ============================================== -->
+  <!-- MAIN APP WRAPPER (HIDDEN UNTIL UNLOCKED) -->
+  <!-- ============================================== -->
+  <div id="appMainWrapper" class="flex-1 flex flex-col hidden">
 
   <!-- ============================================== -->
   <!-- ULTRA-RESPONSIVE TOP NAVIGATION BAR           -->
@@ -3444,10 +3449,9 @@
 
   </main>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-[#E8E3DA] py-3 text-center text-[9px] sm:text-[10px] font-mono text-[#9AA49C] px-3">
-    UniAttend 360 • Smt. C.H.M. College (Ulhasnagar) • Responsive Enterprise Dashboard
   </footer>
+  </div>
+  <!-- END MAIN APP WRAPPER -->
 
   <!-- ============================================== -->
   <!-- COMPLETE AUTHENTICATION & APP CONTROLLER SCRIPT -->
@@ -3690,9 +3694,11 @@
         try {
           const parsedSession = JSON.parse(saved);
           activeSession = parsedSession;
-          // Bug Fix: Explicitly dismiss lock screen when restoring a saved session
+          // Bug Fix: Explicitly dismiss lock screen and show main content when restoring a saved session
           const lockScreen = document.getElementById('appBiometricLockScreen');
+          const mainWrapper = document.getElementById('appMainWrapper');
           if (lockScreen) lockScreen.classList.add('hidden');
+          if (mainWrapper) mainWrapper.classList.remove('hidden');
           applySession(activeSession);
         } catch (e) {
           handleLogout();
@@ -8480,6 +8486,7 @@
 
     function showAppLock(tab = 'SIGNIN') {
       const lockScreen = document.getElementById('appBiometricLockScreen');
+      const mainWrapper = document.getElementById('appMainWrapper');
       if (!lockScreen) return;
 
       isAppBiometricLocked = true;
@@ -8492,13 +8499,17 @@
       fillGateLogin(curName, curRoll, curEmail, 'CHMC@2026!');
 
       lockScreen.classList.remove('hidden');
+      if (mainWrapper) mainWrapper.classList.add('hidden');
       switchGateAuthTab(tab);
       if (window.lucide) lucide.createIcons();
     }
 
     function completeAppUnlock(method = 'CREDENTIALS') {
       const lockScreen = document.getElementById('appBiometricLockScreen');
+      const mainWrapper = document.getElementById('appMainWrapper');
       if (lockScreen) lockScreen.classList.add('hidden');
+      if (mainWrapper) mainWrapper.classList.remove('hidden');
+      
       isAppBiometricLocked = false;
       sessionStorage.setItem('uniattend_session_unlocked', 'true');
 
