@@ -278,6 +278,13 @@
     }
   
     /* NEUMORPHISM OVERRIDES */
+
+    .neu-header {
+      background: #FBFBF7 !important;
+      border: none !important;
+      box-shadow: 0px 10px 20px #dfdfdb, inset 0px -2px 4px #ffffff !important;
+    }
+
     .glass-panel {
       background: #FBFBF7 !important;
       border: none !important;
@@ -1534,7 +1541,7 @@
   <!-- ============================================== -->
   <!-- ULTRA-RESPONSIVE TOP NAVIGATION BAR           -->
   <!-- ============================================== -->
-  <header class="glass-panel sticky top-0 z-40 border-b border-[#E8E3DA] ">
+  <header class="neu-header sticky top-0 z-40">
     <div class="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
       
       <div class="flex items-center justify-between gap-2">
@@ -1555,7 +1562,7 @@
         <!-- Right: User Chip + Dropdown -->
         <div class="relative shrink-0">
           <button id="headerMenuBtn" onclick="toggleHeaderMenu(event)" title="Account Menu"
-            class="flex items-center space-x-2 pl-2 pr-3 py-1.5 rounded-full bg-[#F5F2EB] hover:bg-[#EAE5DA] border border-[#E8E3DA] transition focus:outline-none">
+            class="flex items-center space-x-2 pl-2 pr-3 py-1.5 rounded-full neu-btn transition focus:outline-none">
             <div id="headerUserAvatar" class="h-7 w-7 rounded-full bg-[#4E6B52]/20 border border-[#D5E4D8] flex items-center justify-center text-sm shrink-0">🎓</div>
             <div class="hidden sm:block text-left min-w-0">
               <div id="headerUserName" class="text-xs font-bold text-[#1C241E] truncate max-w-[100px]">Staff</div>
