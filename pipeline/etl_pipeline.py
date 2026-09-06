@@ -7,7 +7,7 @@ Implements Medallion Architecture:
 
 import math
 from datetime import datetime, date, timedelta
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Any, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
 
