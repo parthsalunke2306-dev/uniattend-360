@@ -19,7 +19,7 @@ DEFAULT_DB_PATH = os.path.join(os.path.dirname(__file__), "uniattend.db")
 DEFAULT_DB_URL = f"sqlite:///{DEFAULT_DB_PATH}"
 
 # Connection string can be overridden by environment variable for PostgreSQL / Supabase / Neon
-DATABASE_URL = os.environ.get("UNIATTEND_DATABASE_URL", DEFAULT_DB_URL)
+DATABASE_URL = os.environ.get("UNIATTEND_DATABASE_URL") or os.environ.get("POSTGRES_URL") or DEFAULT_DB_URL
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
@@ -30,6 +30,15 @@ if DATABASE_URL.startswith("sqlite"):
         connect_args={"check_same_thread": False},
         echo=False,
         pool_pre_ping=True
+    )
+elif os.environ.get("VERCEL") or "pooler.supabase.com" in DATABASE_URL or ":6543" in DATABASE_URL:
+    # Serverless / Connection Pooler configuration (NullPool prevents holding stale sockets in lambda)
+    from sqlalchemy.pool import NullPool
+    engine = create_engine(
+        DATABASE_URL,
+        echo=False,
+        poolclass=NullPool,
+        connect_args={"sslmode": "require"}
     )
 else:
     # Production PostgreSQL / Supabase pool configuration
