@@ -25,3 +25,10 @@ openpyxl>=3.1.0
 # QR Code & Image Generation
 qrcode>=7.4.0
 pillow>=10.0.0
+
+# Password Hashing & Security Fallback
+passlib>=1.7.4
+bcrypt>=4.0.0
+
+# Machine Learning Persistence
+joblib>=1.3.0

@@ -5,7 +5,12 @@ and generate interpretable risk explanations.
 """
 
 import os
-import joblib
+try:
+    import joblib
+    JOBLIB_AVAILABLE = True
+except ImportError:
+    joblib = None
+    JOBLIB_AVAILABLE = False
 import pandas as pd
 import numpy as np
 from typing import Dict, Any, List, Optional
