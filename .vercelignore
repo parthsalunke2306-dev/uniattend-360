@@ -1,6 +1,47 @@
+# ==========================================
+# UniAttend 360 - Vercel Deployment Exclusions
+# Minimizes bundle size and prevents Function Storage bloat
+# ==========================================
+
+# Virtual environments & Python bytecode
 venv/
+env/
+ENV/
 .pytest_cache/
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Local databases, SQL scripts & logs
 *.db
 *.sqlite3
+database/*.db
+database/*.sqlite3
+database/*.sql
+database/migrations/
+*.log
 output/
+
+# Development, Testing & Local Apps
+tests/
+scripts/
+data/
+app/
+.coverage
+htmlcov/
+requirements-dev.txt
+
+# Redundant frontend source files (frontend is static HTML in frontend/index.html)
+*.tsx
+*.ts
+frontend/*.tsx
+frontend/*.ts
+frontend/globals.css
+frontend/login.html
+tailwind.config.js
+
+# Project documentation & configuration
+DEPLOYMENT_GUIDE.md
+README.md
+.env.example
