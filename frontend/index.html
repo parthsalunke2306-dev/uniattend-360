@@ -1552,7 +1552,7 @@
   <!-- ============================================== -->
   <!-- MAIN APP WRAPPER (HIDDEN UNTIL UNLOCKED) -->
   <!-- ============================================== -->
-  <div id="appMainWrapper" class="flex-1 flex flex-col hidden">
+  <div id="appMainWrapper" class="flex-1 flex flex-col">
 
   <!-- ============================================== -->
   <!-- ULTRA-RESPONSIVE TOP NAVIGATION BAR           -->
@@ -1680,8 +1680,8 @@
           </div>
         </div>
 
-      </header>
-  </div>
+      </div>
+    </header>
   </div>
 
 
@@ -4103,7 +4103,9 @@
 
     function closeLoginModal() {
       const lockScreen = document.getElementById('appBiometricLockScreen');
+      const mainWrapper = document.getElementById('appMainWrapper');
       if (lockScreen) lockScreen.classList.add('hidden');
+      if (mainWrapper) mainWrapper.classList.remove('hidden');
     }
 
     function openSecurityHub() {
@@ -5412,6 +5414,8 @@
     }
 
     function applySession(session) {
+      const mainWrapper = document.getElementById('appMainWrapper');
+      if (mainWrapper) mainWrapper.classList.remove('hidden');
       document.getElementById('viewStudent').classList.add('hidden');
       document.getElementById('viewTeacher').classList.add('hidden');
       document.getElementById('viewCoordinator').classList.add('hidden');
